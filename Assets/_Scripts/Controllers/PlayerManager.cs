@@ -4,8 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Runtime.InteropServices;
 
 public class PlayerManager : MonoBehaviour {
+
+    [DllImport("__Internal")]
+    private static extern void SyncFiles();
+
+    [DllImport("__Internal")]
+    private static extern void WindowAlert(string message);
+
 
     #region Singleton
     public static PlayerManager instance;
@@ -101,6 +109,11 @@ public class PlayerManager : MonoBehaviour {
 
         bf.Serialize(file, data);
         file.Close();
+
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            SyncFiles();
+        }
     }
 
     public void Load()
@@ -121,6 +134,18 @@ public class PlayerManager : MonoBehaviour {
             loadItems(data.equippedItems, 0);
             loadItems(data.itemsInBag, 1);
 
+        }
+    }
+
+    private static void PlatformSafeMessage(string message)
+    {
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            WindowAlert(message);
+        }
+        else
+        {
+            Debug.Log(message);
         }
     }
 
