@@ -8,6 +8,8 @@ public class PlayerStats : CharacterStats {
     public Animator anim;
     public PlayerController playerControl;
 
+    public float exp;
+
     void Start () {
         EquipmentManager.instance.onEquipmentChanged += OnEquipmentChanged;
         anim = GetComponent<Animator>();
@@ -18,6 +20,11 @@ public class PlayerStats : CharacterStats {
         if (currentHealth == maxHealth)
         {
             RemoveHealthBar();
+        }
+
+        if (playerControl == null)
+        {
+            playerControl = PlayerController.instance;
         }
     }
 
@@ -60,5 +67,10 @@ public class PlayerStats : CharacterStats {
     void RemoveHealthBar()
     {
         playerControl.healthGroup.alpha -= 0.02f;
+    }
+
+    private void OnDisable()
+    {
+        EquipmentManager.instance.onEquipmentChanged -= OnEquipmentChanged;
     }
 }

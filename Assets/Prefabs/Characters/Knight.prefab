@@ -817,7 +817,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: d93292d6bbce1e94d8ce85ea89f763e5, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
@@ -889,6 +889,9 @@ MonoBehaviour:
     type: 2}
   projectilePoint: {fileID: 1939915817283284}
   projectileSpeed: 260
+  melee: 1
+  ranged: 0
+  dialogue: 0
   shadow: {fileID: 0}
 --- !u!114 &114392384795325464
 MonoBehaviour:
@@ -10224,7 +10227,7 @@ SpriteRenderer:
   m_SortingLayerID: -1648549513
   m_SortingLayer: 2
   m_SortingOrder: 175
-  m_Sprite: {fileID: 21300004, guid: 76db9d444e46de4459e2e2c2e4bd669d, type: 3}
+  m_Sprite: {fileID: 21300020, guid: 4dbc5581d0cbbbd46b5356464a1b5e82, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -10584,7 +10587,7 @@ SpriteRenderer:
   m_SortingLayerID: -1648549513
   m_SortingLayer: 2
   m_SortingOrder: 184
-  m_Sprite: {fileID: 21300020, guid: 76db9d444e46de4459e2e2c2e4bd669d, type: 3}
+  m_Sprite: {fileID: 21300030, guid: 4dbc5581d0cbbbd46b5356464a1b5e82, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

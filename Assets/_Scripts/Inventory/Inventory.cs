@@ -10,13 +10,10 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null)
+        if (instance == null)
         {
-            Debug.LogWarning("More than 1 inventory exists");
-            return;
+            instance = this;
         }
-
-        instance = this;
     }
     #endregion
 
@@ -30,24 +27,43 @@ public class Inventory : MonoBehaviour
     public List<Item> itemsInBag = new List<Item>();
     public List<Item> equip = new List<Item>();
 
+    public bool CheckIfItemsFitInBag()
+    {
+        if (itemsInBag.Count >= space)
+        {
+            Debug.Log("not enough room");
+            return false;
+        }
+        return true;
+    }
+
+    public bool CheckIfTwoItemsFitInBag()
+    {
+        if (itemsInBag.Count + 1 >= space)
+        {
+            Debug.Log("not enough room");
+            return false;
+        }
+        return true;
+    }
+
     public bool AddItemToBag(Item item)
     {
-        if (!item.isDefaultItem)
+        if (itemsInBag.Count >= space)
         {
-            if (itemsInBag.Count >= space)
-            {
-                Debug.Log("not enough room");
-                return false;
-            }
-            itemsInBag.Add(item);
-
-            if (OnItemChangedCallBack != null)
-            {
-                OnItemChangedCallBack.Invoke();
-            }
+            Debug.Log("not enough room");
+            return false;
         }
 
-        return true;
+        itemsInBag.Add(item);
+
+        if (OnItemChangedCallBack != null)
+        {
+            OnItemChangedCallBack.Invoke();
+        }
+       
+
+    return true;
     }
 
     public void Remove(Item item)

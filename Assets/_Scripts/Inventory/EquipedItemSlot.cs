@@ -3,12 +3,18 @@ using UnityEngine.UI;
 
 public class EquipedItemSlot : MonoBehaviour
 {
+    EquipmentManager equipManager;
 
     public Image icon;
     public Button removeButton;
     public int slotId;
 
     Item item;
+
+    private void Start()
+    {
+        equipManager = EquipmentManager.instance;
+    }
 
     public void AddItem(Item newItem)
     {
@@ -32,11 +38,21 @@ public class EquipedItemSlot : MonoBehaviour
     //    Inventory.instance.Remove(item);
     //}
 
-    //public void UseItem()
-    //{
-    //    if (item != null)
-    //    {
-    //        item.Use();
-    //    }
-    //}
+    public void UseItem()
+    {
+        if (item != null)
+        {
+            item.Use();
+        }
+    }
+
+    public void UnequipFromInventory()
+    {
+        equipManager.Unequip(slotId);
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log("yo");
+    }
 }

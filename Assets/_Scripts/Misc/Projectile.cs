@@ -5,7 +5,7 @@ public class Projectile : MonoBehaviour {
     public int damage;
     Rigidbody2D rigid;
     ParticleSystem impact;
-    CircleCollider2D myCollider;
+    public CircleCollider2D myCollider;
 
     private void Start()
     {

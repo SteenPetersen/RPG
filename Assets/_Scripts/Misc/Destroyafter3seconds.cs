@@ -1,13 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Destroyafter3seconds : MonoBehaviour {
-	
-	// Update is called once per frame
-	void Update () {
 
-        Destroy(gameObject, 3);
-		
-	}
+    private void OnEnable()
+    {
+        Invoke("Destroy", 3f);
+    }
+
+    private void Destroy()
+    {
+        gameObject.SetActive(false);
+        transform.parent = null;
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke();
+    }
 }

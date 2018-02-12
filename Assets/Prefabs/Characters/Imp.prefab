@@ -776,7 +776,7 @@ MonoBehaviour:
   maxHealth: 45
   regenRate: 0
   damage:
-    baseValue: 3
+    baseValue: 30
   armor:
     baseValue: 0
   anim: {fileID: 0}

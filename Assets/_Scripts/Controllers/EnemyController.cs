@@ -36,7 +36,7 @@ public class EnemyController : Enemy {
 
 
     void Start() {
-        target = playerManager.player.transform;
+        target = PlayerManager.instance.player.transform;
         combat = GetComponent<CharacterCombat>();
         anim = GetComponent<Animator>();
         nav = GetComponent<PolyNavAgent>();

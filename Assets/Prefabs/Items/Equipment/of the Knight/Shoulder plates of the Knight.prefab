@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114878373530024380}
   - component: {fileID: 212238999235808824}
   m_Layer: 0
-  m_Name: Helmet of Protection
+  m_Name: Shoulder plates of the Knight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,7 +62,7 @@ MonoBehaviour:
   healthGroup: {fileID: 0}
   healthbar: {fileID: 0}
   playercontrol: {fileID: 0}
-  item: {fileID: 11400000, guid: 9cad9b8a54fbc6f44b4a45a7d3cd0d64, type: 2}
+  item: {fileID: 11400000, guid: b0cad690f27cd5841badc3fd0b0ba51a, type: 2}
   chanceToDrop: 90
 --- !u!114 &114878373530024380
 MonoBehaviour:
@@ -123,7 +123,7 @@ SpriteRenderer:
   m_SortingLayerID: -1648549513
   m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 89465cb1f95843d4398c9f6d65639829, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 39dbfa599ec882140b5b6321942c8521, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -8,17 +8,17 @@ using UnityEngine;
 public class Enemy : Interactable {
 
 
-    [HideInInspector]
-    public PlayerManager playerManager;
+
     [HideInInspector]
     public CharacterStats myStats;
     [HideInInspector]
     public Animator anim;
 
 	void Awake () {
-        playerManager = GameObject.Find("GameManager").GetComponent<PlayerManager>();
         myStats = GetComponent<CharacterStats>();
-	}
+        playerManager = PlayerManager.instance;
+
+    }
 
     public override void Interact()
     {

@@ -9,13 +9,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cbc768d51da7bb40a80c951dddf2d8b, type: 3}
-  m_Name: Helmet of Protection
+  m_Name: Greaves of the Knight(r)
   m_EditorClassIdentifier: 
-  name: Helmet of Protection
-  icon: {fileID: 21300000, guid: 89465cb1f95843d4398c9f6d65639829, type: 3}
+  name: Gauntlet of the Knight - right
+  icon: {fileID: 21300000, guid: 77870e2c1c56d354c8e6eea37679e8ed, type: 3}
   isDefaultItem: 0
-  equipSlot: 0
-  characterVisibleSprite: {fileID: 21300016, guid: 76db9d444e46de4459e2e2c2e4bd669d,
+  equipSlot: 6
+  equipType: 2
+  characterVisibleSprite: {fileID: 21300008, guid: 76db9d444e46de4459e2e2c2e4bd669d,
     type: 3}
   armorModifier: 3
   damageModifier: 0

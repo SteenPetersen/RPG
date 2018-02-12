@@ -7,9 +7,12 @@ public class Interactable : MonoBehaviour {
     public string objectName;
 
     [HideInInspector]
+    public PlayerManager playerManager;
+
+    [HideInInspector]
     public bool isFocus, hasInteracted = false;
 
-    //Transform player;
+    public Transform player;
     [Tooltip("avoid complications during flipping - feed the 3D selector")]
     public GameObject selector;
 
@@ -26,7 +29,7 @@ public class Interactable : MonoBehaviour {
     public virtual void Interact()
     {
         // this method is meant to be overwritten
-        // Debug.Log("interacting with " + gameObject.name);
+        Debug.Log("interacting with " + gameObject.name);
     }
 
     public virtual void Follow()
@@ -43,14 +46,14 @@ public class Interactable : MonoBehaviour {
     public void OnFocused(Transform playerTransform)
     {
         isFocus = true;
-        //player = playerTransform;
+        player = playerTransform;
         hasInteracted = false;
     }
 
     public void OnDeFocused()
     {
         isFocus = false;
-        //player = null;
+        player = null;
         hasInteracted = false;
     }
 
@@ -59,7 +62,10 @@ public class Interactable : MonoBehaviour {
         return currentHealth / maxHealth;
     }
 
+    public virtual void AdvanceSpeech()
+    {
 
+    }
 
 
 }

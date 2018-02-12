@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class PlayerController : Interactable
 {
@@ -14,12 +15,6 @@ public class PlayerController : Interactable
 
     private void Awake()
     {
-        if (instance != null)
-        {
-            Debug.LogWarning("More than 1 inventory exists");
-            return;
-        }
-
         instance = this;
     }
     #endregion
@@ -34,10 +29,11 @@ public class PlayerController : Interactable
     public float speed;
 
     CameraController cameraControl;
+    PlayerStats playerStat;
     PlayerManager manager;
     GameObject cameraHolder;
     Camera cam;
-    EventSystem eventSys;
+    public EventSystem eventSys;
 
     Animator anim;
 
@@ -49,7 +45,7 @@ public class PlayerController : Interactable
     #endregion
 
     #region projectiles
-    public Rigidbody2D projectile1;
+    PooledProjectilesController pooledArrows;
     public GameObject projectilePoint;
     public float projectileSpeed;
     #endregion
@@ -65,6 +61,10 @@ public class PlayerController : Interactable
     bool weaponsGone = false;
     [HideInInspector]
     public GameObject shadow;
+
+    //blockState
+    bool hasAddedModifer;
+    int modifierToRemove;
     #endregion
 
     void Start()
@@ -74,9 +74,11 @@ public class PlayerController : Interactable
 
     private void Initialize()
     {
-        eventSys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
+        //eventSys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
         cameraControl = CameraController.instance;
+        cameraControl.lookAt = this.gameObject;
         rigid = gameObject.GetComponent<Rigidbody2D>();
+        playerStat = GetComponent<PlayerStats>();
         anim = GetComponent<Animator>();
         facingRight = true;
         shadow = this.gameObject.transform.GetChild(0).GetChild(2).gameObject;
@@ -84,11 +86,11 @@ public class PlayerController : Interactable
         manager = PlayerManager.instance;
         equip = EquipmentManager.instance;
         m_Plane = PlayerManager.instance.m_Plane;
+        pooledArrows = PooledProjectilesController.instance;
     }
 
     private void Update()
     {
-        ClickFeedback();
     }
 
     void FixedUpdate()
@@ -116,38 +118,53 @@ public class PlayerController : Interactable
         anim.SetFloat("VelocityX", Mathf.Abs(horizontal));
         anim.SetFloat("VelocityY", Mathf.Abs(vertical));
 
-        if (Input.GetMouseButtonDown(0))
+        if (melee)
         {
-            anim.SetLayerWeight(1, 1);
-            if (weaponsGone)
-                return;
-            anim.SetTrigger("Hit");
-        }
-        //if (Input.GetMouseButton(0))
-        //{
-        //    anim.SetLayerWeight(1, 1);
-        //    if (weaponsGone)
-        //        return;
-        //        anim.SetTrigger("Hit");
-        //}
-        //if (Input.GetMouseButtonUp(0))
-        //{
-        //    if (anim.GetCurrentAnimatorStateInfo(1).IsName("Humanoid_QuickShootBow"))
-        //    {
-        //        anim.SetLayerWeight(1, 0);
-        //        anim.StopPlayback();
-        //    }
-        //}
+            if (Input.GetMouseButtonDown(0))
+            {
+                Interactable inter = ClickFeedback();
+                if (inter != null)
+                    return;
 
-        if (Input.GetMouseButton(1))
-        {
-            anim.SetBool("Block", true);
+                anim.SetLayerWeight(1, 1);
+                if (weaponsGone)
+                    return;
+                anim.SetTrigger("HitMelee");
+            }
+            if (Input.GetMouseButton(1))
+            {
+                anim.SetBool("Block", true);
+                if (!hasAddedModifer)
+                {
+                    modifierToRemove = (int)playerStat.armor.GetValue();
+                    playerStat.armor.AddModifier((int)playerStat.armor.GetValue());
+                    hasAddedModifer = true;
+                }
+            }
+            if (!Input.GetMouseButton(1))
+            {
+                anim.SetBool("Block", false);
+                if (hasAddedModifer)
+                {
+                    playerStat.armor.RemoveModifier(modifierToRemove);
+                    hasAddedModifer = false;
+                }
+            }
         }
-        if (!Input.GetMouseButton(1))
+        else if (ranged)
         {
-            anim.SetBool("Block", false);
-        }
+            if (Input.GetMouseButtonDown(0))
+            {
+                Interactable inter = ClickFeedback();
+                if (inter != null)
+                    return;
 
+                anim.SetLayerWeight(1, 1);
+                if (weaponsGone)
+                    return;
+                anim.SetTrigger("ShootRanged");
+            }
+        }
 
         // TODO not necessary to have 2 bools
         if (!onLand && !changedWaterState)
@@ -272,45 +289,43 @@ public class PlayerController : Interactable
 
     }
 
-    private void ClickFeedback()
+    private Interactable ClickFeedback()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-            return;
+        Vector3 screenNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
+        Vector3 screenFar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
 
-        if (Input.GetMouseButtonDown(0))
+        Vector3 farPoint = Camera.main.ScreenToWorldPoint(screenFar);
+        Vector3 nearPoint = Camera.main.ScreenToWorldPoint(screenNear);
+
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(nearPoint, farPoint - nearPoint, out hit))
         {
+            Interactable interactable = hit.collider.GetComponentInParent<Interactable>();
+            if (interactable == null)
+                return null;
 
-            Vector3 screenNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
-            Vector3 screenFar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
-
-            Vector3 farPoint = Camera.main.ScreenToWorldPoint(screenFar);
-            Vector3 nearPoint = Camera.main.ScreenToWorldPoint(screenNear);
-
-
-            RaycastHit hit;
-
-            if (Physics.Raycast(nearPoint, farPoint - nearPoint, out hit))
+            if (interactable != null)
             {
-                Interactable interactable = hit.collider.GetComponentInParent<Interactable>();
-                if (interactable == null)
-                    return;
-
-                if (interactable != null)
-                {
-                    SetFocus(interactable);
-                }
-                else
-                {
-                    RemoveFocus();
-                }
+                SetFocus(interactable);
+                SetMousePosition();
+                return interactable;
             }
             else
             {
-                RemoveFocus();
+                Debug.Log("something wrong with the clickFeedback");
+                return null;
             }
-
-            SetMousePosition();
         }
+        else
+        {
+            RemoveFocus();
+            SetMousePosition();
+            return null;
+        }
+
+
     }
 
     void SetFocus(Interactable newFocus)
@@ -342,28 +357,33 @@ public class PlayerController : Interactable
 
         if (distanceFromBackToMouse > distanceFromFrontToMouse)
         {
-            var projectile = Instantiate(projectile1, projectilePoint.transform.position, Quaternion.identity);
-
             // create a direction vector from Hit position of the mouse and the projectiles original position
-            Vector2 direction = new Vector2(
-            clickPosition.x - projectilePoint.transform.position.x,
-            clickPosition.y - projectilePoint.transform.position.y
-            );
+            Vector2 direction = new Vector2(clickPosition.x - projectilePoint.transform.position.x, clickPosition.y - projectilePoint.transform.position.y);
             direction.Normalize();
 
-            // addforce force to the projectiles rigidbody in that direction.
-            projectile.AddForce(direction * projectileSpeed);
-
-            // turn the projectile correctly
+            // Determine the correct angle to turn to the projectile
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
+            GameObject projectile = pooledArrows.GetPooledArrow();
+
+            projectile.SetActive(true);
+            projectile.GetComponent<CircleCollider2D>().enabled = true;
+            transform.parent = null;
+            projectile.transform.position = projectilePoint.transform.position;
+            projectile.transform.rotation = Quaternion.identity;
+
+            projectile.GetComponent<Rigidbody2D>().isKinematic = false;
+
             projectile.transform.Rotate(0, 0, angle, Space.Self);
+
+            // addforce force to the projectiles rigidbody in that direction.
+            projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+
         }
         else
         {
             Debug.Log("I cannot shoot Backwards!");
         }
-
     }
 
     private void SheatheWeaponary()

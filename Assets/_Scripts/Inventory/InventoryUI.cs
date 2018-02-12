@@ -14,16 +14,15 @@ public class InventoryUI : MonoBehaviour {
 	void Start () {
         inventory = Inventory.instance;
         inventory.OnItemChangedCallBack += UpdateUI;
-        //inventory.OnItemChangedCallBack += UpdateEquipment;
 
         slots = itemsParent.GetComponentsInChildren<InventorySlot>();
 	}
 	
 	void Update () {
-        if (Input.GetButtonDown("Bag"))
-        {
-            BagUI.SetActive(!BagUI.activeSelf);
-        }
+        //if (Input.GetButtonDown("Bag"))
+        //{
+        //    BagUI.SetActive(!BagUI.activeSelf);
+        //}
 
         if (Input.GetButtonDown("Inventory"))
         {
@@ -47,6 +46,12 @@ public class InventoryUI : MonoBehaviour {
                 slots[i].ClearSLot();
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        inventory = Inventory.instance;
+        inventory.OnItemChangedCallBack -= UpdateUI;
     }
 
     //void UpdateEquipment()

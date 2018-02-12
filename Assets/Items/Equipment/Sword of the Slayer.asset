@@ -15,6 +15,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 3a2d245d4cd6f654590f8a4628e30544, type: 3}
   isDefaultItem: 0
   equipSlot: 3
+  equipType: 0
   characterVisibleSprite: {fileID: 21300014, guid: acae1970b99901349bfe9bdb70da463c,
     type: 3}
   armorModifier: 0

@@ -10,13 +10,10 @@ public class CameraController : MonoBehaviour {
 
     private void Awake()
     {
-        if (instance != null)
+        if (instance == null)
         {
-            Debug.LogWarning("More than 1 CameraController exists");
-            return;
+            instance = this;
         }
-
-        instance = this;
     }
     #endregion
 
@@ -34,6 +31,11 @@ public class CameraController : MonoBehaviour {
     }
     private void Update()
     {
+
+        if (lookAt == null)
+        {
+            lookAt = GameObject.Find("Player");
+        }
     }
 
     private void FixedUpdate()
