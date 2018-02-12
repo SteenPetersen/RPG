@@ -20,3 +20,4 @@ MonoBehaviour:
     type: 3}
   armorModifier: 3
   damageModifier: 0
+  rangedProjectile: 0

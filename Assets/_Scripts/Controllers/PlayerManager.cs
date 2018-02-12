@@ -45,7 +45,7 @@ public class PlayerManager : MonoBehaviour {
     private void Start()
     {
         playerStats = player.GetComponent<PlayerStats>();
-        Load();
+        //Load();
     }
 
     void Update()
@@ -96,6 +96,9 @@ public class PlayerManager : MonoBehaviour {
         data.stage = stage;
         data.kingSpeech = kingSpeech;
 
+        data.equippedItems = FetchItems("currentlyEquipped");
+        data.itemsInBag = FetchItems("itemsInBag");
+
         bf.Serialize(file, data);
         file.Close();
     }
@@ -114,6 +117,10 @@ public class PlayerManager : MonoBehaviour {
             playerStats.exp = data.experience;
             stage = data.stage;
             kingSpeech = data.kingSpeech;
+
+            loadItems(data.equippedItems, 0);
+            loadItems(data.itemsInBag, 1);
+
         }
     }
 
@@ -124,15 +131,106 @@ public class PlayerManager : MonoBehaviour {
             File.Delete(Application.persistentDataPath + "/playerInfo.dat");
         }
     }
+
+    List<string> FetchItems(string loc)
+    {
+        List<string> items = new List<string>();
+
+        if (loc == "currentlyEquipped")
+        {
+            for (int i = 0; i < EquipmentManager.instance.currentEquipment.Count; i++)
+            {
+                if (EquipmentManager.instance.currentEquipment[i] == null)
+                {
+                    items.Add(string.Empty);
+                }
+
+                if (EquipmentManager.instance.currentEquipment[i] != null)
+                {
+                    items.Add(EquipmentManager.instance.currentEquipment[i].name);
+                }
+            }
+        }
+        else if (loc == "itemsInBag")
+        {
+            for (int i = 0; i < Inventory.instance.itemsInBag.Count; i++)
+            {
+                if (Inventory.instance.itemsInBag[i] == null)
+                {
+                    items.Add(string.Empty);
+                }
+                if (Inventory.instance.itemsInBag[i] != null)
+                {
+                    items.Add(Inventory.instance.itemsInBag[i].name);
+                }
+            }
+        }
+
+        return items;
+
+    }
+
+    void loadItems(List<string> items, int target)
+    {
+        Debug.Log("Loading");
+        if (target == 0)
+        {
+            List<Equipment> tmp = new List<Equipment>(EquipmentManager.instance.currentEquipment.Count);
+            foreach (var item in items)
+            {
+                if (item == string.Empty)
+                {
+                    tmp.Add(null);
+                    Debug.Log("Adding null to tmp");
+
+                }
+                else
+                {
+                    var tmpEquip = Instantiate(Resources.Load("Equipment/" + item, typeof(Equipment))) as Equipment;
+                    tmp.Add(tmpEquip);
+                    Debug.Log("adding tmpequip to tmp" + tmpEquip.name);
+
+                }
+            }
+
+            for (int i = 0; i < EquipmentManager.instance.currentEquipment.Count; i++)
+            {
+                if (tmp[i] != null)
+                {
+                    EquipmentManager.instance.Equip(tmp[i]);
+                }
+            }
+        }
+
+        else if (target == 1)
+        {
+            foreach (string item in items)
+            {
+                var tmp = Resources.Load<Item>(item) as Item;
+                Inventory.instance.itemsInBag.Add(tmp);
+            }
+        }
+    }
 }
 
 [Serializable]
 class PlayerData
 {
+    // Stats
     public float currentHealth;
     public float maxHealth;
     public float experience;
+
+    // Progress
+    public int kingSpeech;
     public int stage;
 
-    public int kingSpeech;
+
+
+    // Currently equipped Items
+    public List<string> equippedItems;
+
+
+    // Items in Bag
+    public List<string> itemsInBag;
 }

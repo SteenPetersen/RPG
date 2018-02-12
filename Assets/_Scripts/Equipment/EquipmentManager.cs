@@ -28,7 +28,9 @@ public class EquipmentManager : MonoBehaviour {
     Sprite[] startGraphics;
     ProjectileList listOfProjectiles;
     Sprite targetSprite;
-    Equipment[] currentEquipment;
+
+    // currently equipped items
+    public List<Equipment> currentEquipment = new List<Equipment>(13);
 
     Inventory inventory;
     PlayerController player;
@@ -37,7 +39,7 @@ public class EquipmentManager : MonoBehaviour {
     {
         inventory = Inventory.instance;
         int numberOfSlots = System.Enum.GetNames(typeof(EquipmentSlot)).Length;
-        currentEquipment = new Equipment[numberOfSlots];
+        //currentEquipment = new List<Equipment>(numberOfSlots);
 
         startGraphics = new Sprite[equipmentSlots.Length];
 
@@ -220,7 +222,7 @@ public class EquipmentManager : MonoBehaviour {
 
     public void UnequipAll()
     {
-        for (int i = 0; i < currentEquipment.Length; i++)
+        for (int i = 0; i < currentEquipment.Count; i++)
         {
             Unequip(i);
         }
@@ -253,7 +255,6 @@ public class EquipmentManager : MonoBehaviour {
         {
             if (equip != null)
             {
-                Debug.Log("woop");
                 inventoryEquipment[(int)equip.equipSlot].icon.sprite = equip.icon;
                 inventoryEquipment[(int)equip.equipSlot].icon.enabled = true;
 

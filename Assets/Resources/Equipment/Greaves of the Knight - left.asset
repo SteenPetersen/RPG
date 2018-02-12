@@ -9,14 +9,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cbc768d51da7bb40a80c951dddf2d8b, type: 3}
-  m_Name: Greaves of the Knight(r)
+  m_Name: Greaves of the Knight - left
   m_EditorClassIdentifier: 
-  name: Gauntlet of the Knight - right
+  name: Greaves of the Knight - left
   icon: {fileID: 21300000, guid: 77870e2c1c56d354c8e6eea37679e8ed, type: 3}
   isDefaultItem: 0
-  equipSlot: 6
+  equipSlot: 5
   equipType: 2
-  characterVisibleSprite: {fileID: 21300008, guid: 76db9d444e46de4459e2e2c2e4bd669d,
+  characterVisibleSprite: {fileID: 21300010, guid: 76db9d444e46de4459e2e2c2e4bd669d,
     type: 3}
   armorModifier: 3
   damageModifier: 0
+  rangedProjectile: 0

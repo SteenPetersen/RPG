@@ -9,13 +9,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cbc768d51da7bb40a80c951dddf2d8b, type: 3}
-  m_Name: Sword of Awesome
+  m_Name: Sword of the Slayer
   m_EditorClassIdentifier: 
-  name: Sword of Awesome
-  icon: {fileID: 21300000, guid: b6bbff6951d4c514bac98ff7d4be3762, type: 3}
+  name: Sword of the Slayer
+  icon: {fileID: 21300000, guid: 3a2d245d4cd6f654590f8a4628e30544, type: 3}
   isDefaultItem: 0
   equipSlot: 3
-  characterVisibleSprite: {fileID: 21300002, guid: acae1970b99901349bfe9bdb70da463c,
+  equipType: 0
+  characterVisibleSprite: {fileID: 21300014, guid: acae1970b99901349bfe9bdb70da463c,
     type: 3}
   armorModifier: 0
   damageModifier: 3
+  rangedProjectile: 0
