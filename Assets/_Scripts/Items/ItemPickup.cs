@@ -10,7 +10,8 @@ public class ItemPickup : Interactable {
     {
         if (isFocus && !hasInteracted)
         {
-            float distance = Vector3.Distance(PlayerManager.instance.player.transform.position, transform.position);
+            //Debug.Log(gameDetails.player.name);
+            float distance = Vector3.Distance(player.transform.position, transform.position);
 
             if (distance <= radius)
             {

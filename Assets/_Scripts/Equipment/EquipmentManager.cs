@@ -21,7 +21,7 @@ public class EquipmentManager : MonoBehaviour {
     public delegate void OnEquipmentChanged(Equipment newItem, Equipment oldItem);
     public OnEquipmentChanged onEquipmentChanged;
 
-    public SpriteRenderer[] equipmentSlots;
+    public SpriteRenderer[] visibleGear;
     public EquipedItemSlot[] inventoryEquipment;
 
 
@@ -41,9 +41,10 @@ public class EquipmentManager : MonoBehaviour {
         int numberOfSlots = System.Enum.GetNames(typeof(EquipmentSlot)).Length;
         //currentEquipment = new List<Equipment>(numberOfSlots);
 
-        startGraphics = new Sprite[equipmentSlots.Length];
-
+        startGraphics = new Sprite[visibleGear.Length];
         checkStarterGraphics();
+
+
         player = PlayerController.instance;
         listOfProjectiles = ProjectileList.instance;
     }
@@ -76,7 +77,7 @@ public class EquipmentManager : MonoBehaviour {
                     currentEquipment[4] = null;
 
                     // set the sprite of the slot to the start sprite of the game
-                    equipmentSlots[4].sprite = startGraphics[4];
+                    visibleGear[4].sprite = startGraphics[4];
                     // remove that item from the list of currently equipped gear.
                     ClearEquippedGear(4);
 
@@ -124,7 +125,7 @@ public class EquipmentManager : MonoBehaviour {
             // is the item in that position a bow?
             if ((int)currentEquipment[slotIndex].equipType == 1)
             {
-                equipmentSlots[4].sprite = null;
+                visibleGear[4].sprite = null;
             }
 
             oldItem = currentEquipment[slotIndex];
@@ -161,7 +162,7 @@ public class EquipmentManager : MonoBehaviour {
         // instantiate a sprite corresponding to the new items visiblesprite
         Sprite newSprite = Instantiate<Sprite>(newItem.characterVisibleSprite);
         // update the sprite of the equipmentSlots with the new sprite
-        equipmentSlots[slotIndex].sprite = newSprite;
+        visibleGear[slotIndex].sprite = newSprite;
         //loop through all equipment in currentequipment and set inventoryequipmentSlot Icon correctly
         PlaceGearInCorrectSlot();
     }
@@ -179,7 +180,7 @@ public class EquipmentManager : MonoBehaviour {
                 if (space)
                 {
                     //remove the arrow from the players hand
-                    equipmentSlots[4].sprite = null;
+                    visibleGear[4].sprite = null;
                 }
                 else if (!space)
                 {
@@ -202,7 +203,7 @@ public class EquipmentManager : MonoBehaviour {
             currentEquipment[slotIndex] = null;
 
             // set the sprite of the slot to the start sprite of the game
-            equipmentSlots[slotIndex].sprite = startGraphics[slotIndex];
+            visibleGear[slotIndex].sprite = startGraphics[slotIndex];
             // remove that item from the list of currently equipped gear.
             ClearEquippedGear(slotIndex);
 
@@ -243,9 +244,12 @@ public class EquipmentManager : MonoBehaviour {
 
     void checkStarterGraphics()
     {
-        for (int i = 0; i < equipmentSlots.Length; i++)
+        for (int i = 0; i < visibleGear.Length; i++)
         {
-            startGraphics[i] = equipmentSlots[i].sprite;
+            if (visibleGear[i] != null)
+            {
+                startGraphics[i] = visibleGear[i].sprite;
+            }
         }
     }
 
@@ -294,11 +298,12 @@ public class EquipmentManager : MonoBehaviour {
         }
     }
 
-    private void SetProjectileType(int projectileType)
+    public void SetProjectileType(int projectileType)
     {
         //find the type of projectile
         GameObject newProjectile = listOfProjectiles.GetProjectile(projectileType);
 
+        Debug.Log("Pooling Arrows");
 
         if (currentEquipment[4] != null)
         {
@@ -307,29 +312,20 @@ public class EquipmentManager : MonoBehaviour {
 
             if (!space)
             {
-
                 return;
             }
 
             currentEquipment[4] = null;
-            equipmentSlots[4].sprite = startGraphics[4];
+            visibleGear[4].sprite = startGraphics[4];
             ClearEquippedGear(4);
-            //// invoke the callback for change of equopment
-            //if (onEquipmentChanged != null)
-            //{
-            //    onEquipmentChanged.Invoke(null, oldItem);
-            //}
         }
 
-
-
         //replace the currently pooled projectile with the new ones. TODO only do this if its different
-        PooledProjectilesController.instance.ReplaceArrows(newProjectile);
+        PooledProjectilesController.instance.PopulateArrows(newProjectile);
+
         // change graphic in the hand of the player, and remove shield if equipped
-
-
         Sprite newSprite = Instantiate<Sprite>(newProjectile.GetComponent<SpriteRenderer>().sprite);
-        equipmentSlots[4].sprite = newSprite;
+        visibleGear[4].sprite = newSprite;
 
     }
 }

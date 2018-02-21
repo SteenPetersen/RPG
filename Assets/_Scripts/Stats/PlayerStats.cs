@@ -50,7 +50,7 @@ public class PlayerStats : CharacterStats {
         playerControl.speed = 0;
         playerControl.isDead = true;
         anim.SetTrigger("Dead");
-        PlayerManager.instance.KillPlayer();
+        GameDetails.instance.KillPlayer();
     }
 
     public override void TakeDamage(int damage)
@@ -62,6 +62,22 @@ public class PlayerStats : CharacterStats {
         }
 
         playerControl.healthbar.value = playerControl.CalculateHealth(currentHealth, maxHealth);
+    }
+
+    public bool Heal(int healthIncrease)
+    {
+        if (currentHealth < maxHealth)
+        {
+            currentHealth += healthIncrease;
+            playerControl.healthbar.value = playerControl.CalculateHealth(currentHealth, maxHealth);
+            return true;
+        }
+        else if (currentHealth == maxHealth)
+        {
+            return false;
+        }
+
+        return false;
     }
 
     void RemoveHealthBar()

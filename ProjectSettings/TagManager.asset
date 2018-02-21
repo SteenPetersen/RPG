@@ -7,6 +7,7 @@ TagManager:
   - Obstacle
   - Enemy
   - ProjectileSurface
+  - Goal
   layers:
   - Default
   - TransparentFX
@@ -47,12 +48,21 @@ TagManager:
   - name: Background
     uniqueID: 365829451
     locked: 0
+  - name: 1st teir up
+    uniqueID: 2111912133
+    locked: 0
   - name: Player
     uniqueID: 2646417783
+    locked: 0
+  - name: Darkess_Zone_Line
+    uniqueID: 1069524385
     locked: 0
   - name: Weapon
     uniqueID: 3116436567
     locked: 0
   - name: ui
     uniqueID: 4002962849
+    locked: 0
+  - name: Above_Walls
+    uniqueID: 4147846817
     locked: 0

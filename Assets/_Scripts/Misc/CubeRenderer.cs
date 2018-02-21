@@ -4,20 +4,10 @@ using UnityEngine;
 
 public class CubeRenderer : MonoBehaviour
 {
-    public Renderer MyRenderer;
-    public string MySortingLayer;
-    public int MySortingOrderInLayer;
-
 
     // Use this for initialization
     void Start()
     {
-        if (MyRenderer == null)
-        {
-            MyRenderer = this.GetComponent<Renderer>();
-        }
-
-        SetLayer();
 
         Mesh mesh = GetComponent<MeshFilter>().mesh;
         
@@ -54,19 +44,4 @@ public class CubeRenderer : MonoBehaviour
         UVs[23] = new Vector2(1f, 0.333f);
         mesh.uv = UVs;
     }
-
-    public void SetLayer()
-    {
-        if (MyRenderer == null)
-        {
-            MyRenderer = this.GetComponent<Renderer>();
-        }
-
-        MyRenderer.sortingLayerName = "Player";
-        MyRenderer.sortingOrder = 0;
-
-        //Debug.Log(MyRenderer.sortingLayerName + " " + MyRenderer.sortingOrder);
-    }
-
-
 }

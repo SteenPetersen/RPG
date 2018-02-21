@@ -50,7 +50,7 @@ public class MeleeCollision : MonoBehaviour {
 
         if (col.tag == "ProjectileSurface")
         {
-            impact.Play();
+            //impact.Play();
         }
     }
 }

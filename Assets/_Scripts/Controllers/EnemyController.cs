@@ -20,27 +20,30 @@ public class EnemyController : Enemy {
 
     public bool isDead = false;
     bool displayingHealth = false;
-
     public float speed;
-
     float velocity;
 
     [HideInInspector]
     public bool facingRight = true;
     PolyNavAgent nav;
-
     Transform target;
 
     [HideInInspector]
     public CharacterCombat combat;
 
+    // a game object to hold items that we do not wish to flip
+    GameObject logic;
+    //[HideInInspector]
+    public List<GameObject> arrows = new List<GameObject>();
 
     void Start() {
-        target = PlayerManager.instance.player.transform;
         combat = GetComponent<CharacterCombat>();
         anim = GetComponent<Animator>();
         nav = GetComponent<PolyNavAgent>();
         playercontrol = PlayerController.instance;
+        player = playercontrol.gameObject.transform;
+        target = player;
+        logic = transform.Find("Logic").gameObject;
     }
 
     private void Update()
@@ -86,6 +89,11 @@ public class EnemyController : Enemy {
         if (isDead)
         {
             nav.SetDestination(transform.position);
+            foreach (GameObject arrow in arrows)
+            {
+                arrow.transform.SetParent(null);
+            }
+            logic.SetActive(false);
             return;
         }
 
@@ -144,23 +152,13 @@ public class EnemyController : Enemy {
     {
         if (isDead)
             return;
-        ////////////////////////////////////
-        //Gather obects not to tbe flipped//
-        ////////////////////////////////////
 
-        Transform tmp = selector.transform;
-        CanvasGroup healthImage = healthGroup;
+        Transform tmp = logic.transform;
 
         Vector3 pos = tmp.position;
-        Vector3 healthPos = healthImage.gameObject.transform.position;
 
         tmp.SetParent(null);
-        healthImage.transform.SetParent(null);
 
-
-        ////////////////////////////////////
-        //////////Flip the objects//////////
-        ////////////////////////////////////
         Vector3 theScale = transform.localScale;
 
         theScale.x *= -1;
@@ -171,10 +169,6 @@ public class EnemyController : Enemy {
 
         tmp.SetParent(transform);
         tmp.position = pos;
-
-        healthImage.transform.SetParent(transform);
-        healthImage.transform.position = healthPos;
-
     }
 
     private void OnDrawGizmosSelected()

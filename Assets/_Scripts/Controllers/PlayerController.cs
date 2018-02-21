@@ -1,7 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : Interactable
 {
@@ -15,30 +15,38 @@ public class PlayerController : Interactable
 
     private void Awake()
     {
-        instance = this;
+
+        if (instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+        cam = Camera.main;
+
     }
     #endregion
 
-    public Vector3 clickPosition;
     public Vector2 mousePosition;
-
+    public EventSystem eventSys;
     public bool isDead;
     public Interactable focus;
-
-    Rigidbody2D rigid;
     public float speed;
 
+
+    Rigidbody2D rigid;
     CameraController cameraControl;
     PlayerStats playerStat;
-    PlayerManager manager;
+    GameDetails manager;
     GameObject cameraHolder;
     Camera cam;
-    public EventSystem eventSys;
-
     Animator anim;
 
     [HideInInspector]
-    public bool onLand, facingRight = true;
+    public bool facingRight = true;
 
     #region Logic inside player Gameobject
     public Transform back;
@@ -51,20 +59,16 @@ public class PlayerController : Interactable
     #endregion
 
     #region State/etc
-    bool changedWaterState;
-
-    public bool melee = true;
-    public bool ranged;
-    public bool dialogue;
+    public Text stateText;          // to give player feedback of what state they are in
+    public bool melee = true;       // is the player in melee?
+    public bool ranged, dialogue;   // is the player using ranged or in a dialogue?
 
     EquipmentManager equip;
-    bool weaponsGone = false;
-    [HideInInspector]
-    public GameObject shadow;
+    bool weaponsGone = false;       // has the player unequipped his/her weapons
 
     //blockState
-    bool hasAddedModifer;
-    int modifierToRemove;
+    bool hasAddedModifer;           // To make sure armor modifer only get added once when block is clicked
+    int modifierToRemove;           // actual amount of extra damage that is absorbed when blocking
     #endregion
 
     void Start()
@@ -72,25 +76,16 @@ public class PlayerController : Interactable
         Initialize();
     }
 
-    private void Initialize()
-    {
-        //eventSys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
-        cameraControl = CameraController.instance;
-        cameraControl.lookAt = this.gameObject;
-        rigid = gameObject.GetComponent<Rigidbody2D>();
-        playerStat = GetComponent<PlayerStats>();
-        anim = GetComponent<Animator>();
-        facingRight = true;
-        shadow = this.gameObject.transform.GetChild(0).GetChild(2).gameObject;
-
-        manager = PlayerManager.instance;
-        equip = EquipmentManager.instance;
-        m_Plane = PlayerManager.instance.m_Plane;
-        pooledArrows = PooledProjectilesController.instance;
-    }
-
     private void Update()
     {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        if (isDead || manager.paused || dialogue)
+            return;
+
+        HandleCombatState();
+        HandleAnimation(horizontal, vertical);
     }
 
     void FixedUpdate()
@@ -98,21 +93,17 @@ public class PlayerController : Interactable
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
+        if (isDead || manager.paused || dialogue)
+            return;
 
-        if (cameraControl.lookAt != this.gameObject)
-        {
-            cameraControl.lookAt = this.gameObject;
-        }
-
-        Flip(horizontal);
-        HandleStates();
+        CheckIfFacingCorrectDirection(horizontal);
         HandleMovement(horizontal, vertical);
-        HandleAnimation(horizontal, vertical);
+
     }
 
     private void HandleAnimation(float horizontal, float vertical)
     {
-        if (isDead || dialogue || manager.paused || eventSys.IsPointerOverGameObject())
+        if (eventSys.IsPointerOverGameObject())
             return;
 
         anim.SetFloat("VelocityX", Mathf.Abs(horizontal));
@@ -160,39 +151,17 @@ public class PlayerController : Interactable
                     return;
 
                 anim.SetLayerWeight(1, 1);
+
                 if (weaponsGone)
                     return;
                 anim.SetTrigger("ShootRanged");
             }
         }
 
-        // TODO not necessary to have 2 bools
-        if (!onLand && !changedWaterState)
-        {
-            Color c = new Color32(43,77,121,50);
-            equip.equipmentSlots[2].color = c;
-            equip.equipmentSlots[5].color = c;
-            equip.equipmentSlots[6].color = c;
-            shadow.SetActive(false);
-            gameObject.transform.position = new Vector3((float)gameObject.transform.position.x, (float)(gameObject.transform.position.y - 0.225), 0f);
-            changedWaterState = true;
-        }
-        if (onLand && changedWaterState)
-        {
-            Color c = new Color32(255, 255, 255, 255);
-            equip.equipmentSlots[2].color = c;
-            equip.equipmentSlots[5].color = c;
-            equip.equipmentSlots[6].color = c;
-            shadow.SetActive(true);
-            gameObject.transform.position = new Vector3((float)gameObject.transform.position.x, (float)(gameObject.transform.position.y + 0.225), 0f);
-            changedWaterState = false;
-        }
     }
 
     private void HandleMovement(float horizontal, float vertical)
     {
-        if (isDead || dialogue || manager.paused)
-            return;
 
         if (Input.GetKey(KeyCode.D))
         {
@@ -223,28 +192,66 @@ public class PlayerController : Interactable
 
     }
 
-    private void HandleStates()
+    private void HandleCombatState()
     {
-        if (Input.GetKey(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("1");
+            SceneManager.LoadSceneAsync(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
             melee = true;
             ranged = false;
+            EquipFirstMatchingItemInBag(0, 3);
+            EquipFirstMatchingItemInBag(2, 4);
         }
-        if (Input.GetKey(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            Debug.Log("2");
             melee = false;
             ranged = true;
+            EquipFirstMatchingItemInBag(1, 3);
         }
-        if (Input.GetKey(KeyCode.Alpha3))
+        if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            Debug.Log("3");
             dialogue = !dialogue;
+        }
+
+        if (ranged)
+        {
+            stateText.text = "Ranged!";
+        }
+        else if (melee)
+        {
+            stateText.text = "Melee!";
         }
     }
 
-    private void Flip(float horizontal)
+    private static void EquipFirstMatchingItemInBag(int type, int slot)
+    {
+        // for all items in your bag
+        for (int i = 0; i < Inventory.instance.itemsInBag.Count; i++)
+        {
+            // check to see if you have equipment in your bag
+            if (Inventory.instance.itemsInBag[i] is Equipment)
+            {
+                // set tmp as the equipment found
+                Equipment tmp = (Equipment)Inventory.instance.itemsInBag[i];
+
+                // is tmp a Matching item?
+                if ((int)tmp.equipSlot == slot)
+                {
+                    // equip the first Matching item you find
+                    if ((int)tmp.equipType == type)
+                    {
+                        Inventory.instance.itemsInBag[i].Use();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void CheckIfFacingCorrectDirection(float horizontal)
     {
         float distanceFromFrontToMouse, distanceFromBackToMouse;
         CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
@@ -357,12 +364,24 @@ public class PlayerController : Interactable
 
         if (distanceFromBackToMouse > distanceFromFrontToMouse)
         {
+            SoundManager.instance.PlaySound("bow");
+
+            var startPos = projectilePoint.transform.position;
+
             // create a direction vector from Hit position of the mouse and the projectiles original position
-            Vector2 direction = new Vector2(clickPosition.x - projectilePoint.transform.position.x, clickPosition.y - projectilePoint.transform.position.y);
+            Vector2 direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
             direction.Normalize();
 
-            // Determine the correct angle to turn to the projectile
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            RaycastHit2D hit = Physics2D.Raycast(startPos, direction);
+            Debug.Log(hit.transform.name);
+            Debug.DrawLine(startPos, hit.point, Color.cyan);
+
+
+
+
+
+           // Determine the correct angle to turn to the projectile
+           float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
             GameObject projectile = pooledArrows.GetPooledArrow();
 
@@ -374,12 +393,12 @@ public class PlayerController : Interactable
 
             projectile.GetComponent<Rigidbody2D>().isKinematic = false;
 
-            projectile.transform.Rotate(0, 0, angle, Space.Self);
+            projectile.transform.Rotate(0, 0, angle, Space.World);
 
             // addforce force to the projectiles rigidbody in that direction.
             projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
-
         }
+
         else
         {
             Debug.Log("I cannot shoot Backwards!");
@@ -389,8 +408,8 @@ public class PlayerController : Interactable
     private void SheatheWeaponary()
     {
         Color c = new Color32(255, 255, 255, 0);
-        equip.equipmentSlots[3].color = c;
-        equip.equipmentSlots[4].color = c;
+        equip.visibleGear[3].color = c;
+        equip.visibleGear[4].color = c;
 
         weaponsGone = true;
     }
@@ -398,8 +417,8 @@ public class PlayerController : Interactable
     private void UnSheatheWeaponary()
     {
         Color c = new Color32(255, 255, 255, 255);
-        equip.equipmentSlots[3].color = c;
-        equip.equipmentSlots[4].color = c;
+        equip.visibleGear[3].color = c;
+        equip.visibleGear[4].color = c;
 
         weaponsGone = false;
     }
@@ -408,9 +427,8 @@ public class PlayerController : Interactable
     private void CheckDistancesToMouse(out float distanceFromFrontToMouse, out float distanceFromBackToMouse)
     {
         mousePosition = SetMousePosition();
-        distanceFromFrontToMouse = Vector3.Distance(projectilePoint.transform.position, clickPosition);
-        distanceFromBackToMouse = Vector3.Distance(back.position, clickPosition);
-        //Debug.Log(distanceFromFrontToMouse + "   " + distanceFromBackToMouse);
+        distanceFromFrontToMouse = Vector3.Distance(projectilePoint.transform.position, mousePosition);
+        distanceFromBackToMouse = Vector3.Distance(back.position, mousePosition);
     }
 
     //return the vector2 position of the mouse
@@ -426,9 +444,39 @@ public class PlayerController : Interactable
             //Get the point that is clicked
             Vector3 hitPoint = ray.GetPoint(enter);
 
-            clickPosition = hitPoint;
+            mousePosition = hitPoint;
         }
-        return clickPosition;
+        return mousePosition;
+    }
+
+    private void Initialize()
+    {
+        cameraControl = CameraController.instance;
+        cameraControl.lookAt = this.gameObject;
+        rigid = gameObject.GetComponent<Rigidbody2D>();
+        playerStat = GetComponent<PlayerStats>();
+        anim = GetComponent<Animator>();
+        facingRight = true;
+
+        manager = GameDetails.instance;
+        equip = EquipmentManager.instance;
+        m_Plane = GameDetails.instance.m_Plane;
+        pooledArrows = PooledProjectilesController.instance;
+
+        if (cameraControl.lookAt != this.gameObject)
+        {
+            cameraControl.lookAt = this.gameObject;
+        }
+    }
+
+    private void OnLevelWasLoaded(int level)
+    {
+        if (level == 0)
+        {
+            cam.backgroundColor = Color.black;
+            cam.fieldOfView = 43;
+            transform.position = new Vector3(-12.5f, 3.5f, 0);
+        }
     }
 
 }

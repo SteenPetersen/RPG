@@ -19,5 +19,5 @@ MonoBehaviour:
   characterVisibleSprite: {fileID: 21300006, guid: ef9674fc30a0bdd469fbc8d64035232b,
     type: 3}
   armorModifier: 0
-  damageModifier: 3
-  rangedProjectile: 0
+  damageModifier: 45
+  rangedProjectile: 1

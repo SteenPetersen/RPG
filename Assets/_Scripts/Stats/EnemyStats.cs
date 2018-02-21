@@ -6,7 +6,7 @@ public class EnemyStats : CharacterStats {
 
     public Animator anim;
     public EnemyController enemyControl;
-    PlayerManager playerManager;
+    GameDetails gameDetails;
     public bool hitByProjectile;
 
     public List<GameObject> specialLoot = new List<GameObject>();
@@ -15,7 +15,7 @@ public class EnemyStats : CharacterStats {
     {
         enemyControl = gameObject.GetComponent<EnemyController>();
         anim = GetComponent<Animator>();
-        playerManager = PlayerManager.instance;
+        gameDetails = GameDetails.instance;
     }
 
     private void Update()
@@ -47,15 +47,12 @@ public class EnemyStats : CharacterStats {
         enemyControl.isDead = true;
 
         // Loot logic
-        for (int i = 0; i < playerManager.generalObjects.Count; i++)
+        int randomIndex = Random.Range(0, gameDetails.generalObjects.Length);
+        int roll = Random.Range(0, 100);
+        if (roll < gameDetails.generalObjects[randomIndex].gameObject.GetComponent<ItemPickup>().chanceToDrop)
         {
-            float dropChance = Random.Range(0, 100);
-            Debug.Log(dropChance);
-            if (dropChance < playerManager.generalObjects[i].GetComponent<ItemPickup>().chanceToDrop)
-            {
-                Instantiate(playerManager.generalObjects[i], transform.position, Quaternion.identity);
-                // play loot sound
-            }
+            Instantiate(gameDetails.generalObjects[randomIndex], transform.position, Quaternion.identity);
+            // play loot sound
         }
 
         // Special loot
@@ -65,7 +62,7 @@ public class EnemyStats : CharacterStats {
             {
                 float dropChance = Random.Range(0, 100);
                 Debug.Log(dropChance + " in special loot");
-                if (dropChance < playerManager.generalObjects[i].GetComponent<ItemPickup>().chanceToDrop)
+                if (dropChance < gameDetails.generalObjects[i].GetComponent<ItemPickup>().chanceToDrop)
                 {
                     Instantiate(specialLoot[i], transform.position, Quaternion.identity);
                     // play loot sound

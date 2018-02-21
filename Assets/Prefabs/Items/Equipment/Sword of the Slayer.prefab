@@ -80,14 +80,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 1.16
   objectName: 
+  gameDetails: {fileID: 0}
   isFocus: 0
   hasInteracted: 0
+  player: {fileID: 0}
   selector: {fileID: 0}
   healthGroup: {fileID: 0}
   healthbar: {fileID: 0}
   playercontrol: {fileID: 0}
   item: {fileID: 11400000, guid: a32f9880eecac3842b0dc8c6ae2efcaf, type: 2}
-  chanceToDrop: 40
+  chanceToDrop: 1
 --- !u!212 &212231389549248408
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -101,7 +103,6 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -121,7 +122,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 3a2d245d4cd6f654590f8a4628e30544, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

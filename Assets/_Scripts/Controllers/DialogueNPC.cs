@@ -14,7 +14,7 @@ public class DialogueNPC : Interactable {
 
     public GameObject dialogueProper;
 
-    //[HideInInspector]
+    [HideInInspector]
     public bool currentlyInteractingWithPlayer;
 
     #region Text
@@ -33,8 +33,7 @@ public class DialogueNPC : Interactable {
 
     void Start () {
         dialogueAvailable = GetComponentInChildren<ParticleSystem>();
-        playerManager = PlayerManager.instance;
-        player = playerManager.player.transform;
+        gameDetails = GameDetails.instance;
         playerControl = PlayerController.instance;
         cam = CameraController.instance;
 
@@ -44,6 +43,11 @@ public class DialogueNPC : Interactable {
         if (textFile != null)
         {
             textLines = (textFile.text.Split('#'));
+        }
+
+        if (player == null)
+        {
+            player = GameObject.Find("Player").gameObject.transform;
         }
     }
 
@@ -69,21 +73,21 @@ public class DialogueNPC : Interactable {
         currentlyInteractingWithPlayer = true;
         dialogueAvailable.Stop();
         playerControl.dialogue = true;
-        playerManager.paused = true;
+        gameDetails.paused = true;
 
         float distanceFromLeftToPlayer = Vector3.Distance(cam.measurementTransform.position, player.position);
         float distanceFromLeftToNPC = Vector3.Distance(cam.measurementTransform.position, transform.position);
 
         if (distanceFromLeftToPlayer > distanceFromLeftToNPC)
         {
-            playerManager.dialogueCamera.transform.localPosition = playerManager.dialogueLeft;
+            gameDetails.dialogueCamera.transform.localPosition = gameDetails.dialogueNPCIsStandingOnTheLeft;
             dialogueProper.SetActive(true);
             speechBubble.sprite = bubbleRight;
         }
 
         else if (distanceFromLeftToPlayer < distanceFromLeftToNPC)
         {
-            playerManager.dialogueCamera.transform.localPosition = playerManager.dialogueRight;
+            gameDetails.dialogueCamera.transform.localPosition = gameDetails.dialogueNPCIsStandingOnTheRight;
             speechBubble.sprite = bubbleLeft;
 
             dialogueProper.SetActive(true);
@@ -94,7 +98,7 @@ public class DialogueNPC : Interactable {
             Debug.LogWarning("something wrong with camera positions in dialogue, distances are being measured incorrectly");
         }
 
-        playerManager.dialogueCamera.SetActive(!playerManager.dialogueCamera.activeSelf);
+        gameDetails.dialogueCamera.SetActive(!gameDetails.dialogueCamera.activeSelf);
 
     }
 
@@ -140,10 +144,10 @@ public class DialogueNPC : Interactable {
 
     public virtual void CloseDialogue()
     {
-        playerManager.dialogueCamera.SetActive(!playerManager.dialogueCamera.activeSelf);
+        gameDetails.dialogueCamera.SetActive(!gameDetails.dialogueCamera.activeSelf);
         dialogueProper.SetActive(false);
         playerControl.dialogue = false;
-        playerManager.paused = false;
+        gameDetails.paused = false;
         currentlyInteractingWithPlayer = false;
     }
 

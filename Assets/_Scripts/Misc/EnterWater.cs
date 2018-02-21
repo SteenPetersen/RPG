@@ -4,21 +4,22 @@ using UnityEngine;
 
 public class EnterWater : MonoBehaviour {
 
-    PlayerController player;
+    //PlayerController player;
 
     private void Start()
     {
-        player = PlayerController.instance;
+        //player = PlayerController.instance;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        player.onLand = true;
+        //Debug.Log("event");
+        //player.onLand = !player.onLand;
     }
 
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        player.onLand = false;
-    }
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    player.onLand = false;
+    //}
 }

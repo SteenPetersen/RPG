@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cbc768d51da7bb40a80c951dddf2d8b, type: 3}
+  m_Name: Wooden Buckler
+  m_EditorClassIdentifier: 
+  name: Wooden Buckler
+  icon: {fileID: 21300000, guid: ed64ef43783820945940c40b53222e46, type: 3}
+  sellValue: 5
+  isDefaultItem: 0
+  equipSlot: 4
+  equipType: 2
+  characterVisibleSprite: {fileID: 21300004, guid: b44bd656a2d810c42b3e851bf5511c08,
+    type: 3}
+  armorModifier: 1
+  damageModifier: 0
+  rangedProjectile: 0

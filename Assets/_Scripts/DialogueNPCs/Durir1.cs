@@ -20,7 +20,7 @@ public class Durir1 : DialogueNPC {
 
         if (player == null)
         {
-            player = playerManager.player.transform;
+            player = gameDetails.player.transform;
         }
         if (playercontrol == null)
         {
@@ -39,8 +39,8 @@ public class Durir1 : DialogueNPC {
 
         if (currentParagraph == textLines.Length - 1 && !contentAvailable)
         {
-            playerManager.stage = 1;
-            playerManager.kingSpeech = currentParagraph;
+            gameDetails.stage = 1;
+            gameDetails.kingSpeech = currentParagraph;
         }
     }
     public override void CloseDialogue()
@@ -57,6 +57,6 @@ public class Durir1 : DialogueNPC {
     {
         base.Interact();
 
-        currentParagraph = playerManager.kingSpeech;
+        currentParagraph = gameDetails.kingSpeech;
     }
 }

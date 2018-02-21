@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PooledProjectilesController : MonoBehaviour {
 
@@ -9,26 +10,25 @@ public class PooledProjectilesController : MonoBehaviour {
     public int pooledAmount;
     public bool willGrow = true;
 
-    List<GameObject> pooledArrows = new List<GameObject>();
+    public List<GameObject> pooledArrows = new List<GameObject>();
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 
     private void Awake()
     {
-        instance = this;
-    }
-
-    void Start () {
-
-        if (Arrow != null)
+        if (instance != null && instance != this)
         {
-            for (int i = 0; i < pooledAmount; i++)
-            {
-                GameObject obj = (GameObject)Instantiate(Arrow);
-                obj.SetActive(false);
-                pooledArrows.Add(obj);
-            }
+            Destroy(this.gameObject);
+            return;
         }
-
-	}
+        else
+        {
+            instance = this;
+        }
+    }
 
     public GameObject GetPooledArrow()
     {
@@ -50,26 +50,39 @@ public class PooledProjectilesController : MonoBehaviour {
         return null;
     }
 
-    public void ReplaceArrows(GameObject proj)
+    public void PopulateArrows(GameObject proj)
     {
-        //pooledArrows.Clear();
-
-        for (int i = 0; i < pooledArrows.Count; i++)
-        {
-            if (!pooledArrows[i].activeInHierarchy)
-            {
-                Destroy(pooledArrows[i]);
-            }
-        }
-
         pooledArrows.Clear();
 
+        // Pool arrows
         for (int i = 0; i < pooledAmount; i++)
         {
             GameObject obj = (GameObject)Instantiate(proj);
             obj.SetActive(false);
             pooledArrows.Add(obj);
         }
+       
+    }
+
+    private void OnDisable()
+    {
+        // unsubscribe from the scsnemanager.
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        //TODO this.
+        Debug.Log("loading arrows");
+
+        if (EquipmentManager.instance.currentEquipment[3] != null && (int)EquipmentManager.instance.currentEquipment[3].equipType == 1)
+        {
+            EquipmentManager.instance.SetProjectileType(EquipmentManager.instance.currentEquipment[3].rangedProjectile);
+            return;
+        }
+
+        pooledArrows.Clear();
+
     }
 
 }

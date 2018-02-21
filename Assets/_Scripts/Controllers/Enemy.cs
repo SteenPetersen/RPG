@@ -16,7 +16,7 @@ public class Enemy : Interactable {
 
 	void Awake () {
         myStats = GetComponent<CharacterStats>();
-        playerManager = PlayerManager.instance;
+        gameDetails = GameDetails.instance;
 
     }
 
@@ -24,7 +24,7 @@ public class Enemy : Interactable {
     {
         base.Interact();
 
-        CharacterCombat playerCombat = playerManager.player.GetComponent<CharacterCombat>();
+        CharacterCombat playerCombat = gameDetails.player.GetComponent<CharacterCombat>();
 
 
         if (playerCombat != null)
