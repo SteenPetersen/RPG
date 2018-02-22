@@ -103,12 +103,13 @@ public class EnemyController : Enemy {
             nav.SetDestination(transform.position);
             logic.SetActive(false);
 
-            foreach (GameObject arrow in arrows)
+            for (int i = 0; i < arrows.Count; i++)
             {
-                arrow.transform.SetParent(null);
-                arrow.gameObject.SetActive(false);
-                arrows.Remove(arrow);
+                arrows[i].transform.SetParent(null);
+                arrows[i].gameObject.SetActive(false);
+                arrows.Remove(arrows[i]);
             }
+
             return;
         }
 

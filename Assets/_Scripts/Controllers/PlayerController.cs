@@ -202,19 +202,27 @@ public class PlayerController : Interactable
         {
             Debug.Log("calling loadscene");
             SceneManager.LoadSceneAsync(0);
+            transform.position = new Vector2(-12f, 4);
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            melee = true;
-            ranged = false;
-            EquipFirstMatchingItemInBag(0, 3);
-            EquipFirstMatchingItemInBag(2, 4);
+            var tryMainHand = EquipFirstMatchingItemInBag(0, 3);
+            var tryOffhand = EquipFirstMatchingItemInBag(2, 4);
+            if (tryMainHand)
+            {
+                melee = true;
+                ranged = false;
+            }
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            melee = false;
-            ranged = true;
-            EquipFirstMatchingItemInBag(1, 3);
+            var tryEquip = EquipFirstMatchingItemInBag(1, 3);
+            if (tryEquip)
+            {
+                melee = false;
+                ranged = true;
+            }
+
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
@@ -268,7 +276,7 @@ public class PlayerController : Interactable
         image.AddComponent<Fade>();
     }
 
-    private static void EquipFirstMatchingItemInBag(int type, int slot)
+    private static bool EquipFirstMatchingItemInBag(int type, int slot)
     {
         // for all items in your bag
         for (int i = 0; i < Inventory.instance.itemsInBag.Count; i++)
@@ -286,11 +294,12 @@ public class PlayerController : Interactable
                     if ((int)tmp.equipType == type)
                     {
                         Inventory.instance.itemsInBag[i].Use();
-                        break;
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
 
     private void CheckIfFacingCorrectDirection(float horizontal)
