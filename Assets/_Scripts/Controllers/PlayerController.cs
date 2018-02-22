@@ -25,25 +25,31 @@ public class PlayerController : Interactable
         {
             Destroy(gameObject);
         }
-        cam = Camera.main;
+        //cam = Camera.main;
 
     }
     #endregion
 
+    GameObject skeleton;
     public Vector2 mousePosition;
     public EventSystem eventSys;
     public bool isDead;
     public Interactable focus;
-    public float speed;
-
+    [HideInInspector]
+    public float normalSpeed = 0.8f;            // used to reset speeds after death etc
+    public float speed;                         // actual speed of the character used for calculations
+    public float thrustSpeed;                   // speed of the thrust forward
 
     Rigidbody2D rigid;
     CameraController cameraControl;
     PlayerStats playerStat;
-    GameDetails manager;
     GameObject cameraHolder;
-    Camera cam;
+    //Camera cam;
     Animator anim;
+    ParticleSystem[] particles;
+
+    float horizontal;
+    float vertical;
 
     [HideInInspector]
     public bool facingRight = true;
@@ -78,10 +84,10 @@ public class PlayerController : Interactable
 
     private void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        horizontal = Input.GetAxis("Horizontal");
+        vertical = Input.GetAxis("Vertical");
 
-        if (isDead || manager.paused || dialogue)
+        if (isDead || gameDetails.paused || dialogue)
             return;
 
         HandleCombatState();
@@ -90,10 +96,7 @@ public class PlayerController : Interactable
 
     void FixedUpdate()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-
-        if (isDead || manager.paused || dialogue)
+        if (isDead || gameDetails.paused || dialogue)
             return;
 
         CheckIfFacingCorrectDirection(horizontal);
@@ -180,6 +183,7 @@ public class PlayerController : Interactable
             rigid.AddRelativeForce(Vector2.down * speed * Time.deltaTime);
         }
 
+
         // Sheathe weaponary
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -194,8 +198,9 @@ public class PlayerController : Interactable
 
     private void HandleCombatState()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.T))
         {
+            Debug.Log("calling loadscene");
             SceneManager.LoadSceneAsync(0);
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -224,6 +229,43 @@ public class PlayerController : Interactable
         {
             stateText.text = "Melee!";
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            var trail = GetSystem("thrustTrail");
+            trail.Play();
+            anim.SetTrigger("Thrust");
+            float distanceFromFrontToMouse, distanceFromBackToMouse;
+            CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
+
+            Vector2 direction = new Vector2(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y);
+            direction.Normalize();
+            SpawnGhostImage(direction);
+
+            // addforce force to the projectiles rigidbody in that direction.
+            rigid.AddForce(direction * thrustSpeed);
+        }
+
+    }
+
+    private void SpawnGhostImage(Vector2 direction)
+    {
+
+        // spawn a copy of player current skeleton with all gear etc
+        Vector2 spawnPoint = new Vector2(transform.position.x, transform.position.y + 0.452f);
+        var image = Instantiate(skeleton, spawnPoint, Quaternion.identity);
+
+
+        // if player is not facing right flip the image
+        if (!facingRight)
+        {
+            image.transform.localScale = new Vector2(image.transform.localScale.x * -1, image.transform.localScale.y);
+        }
+
+        var imageRigid = image.GetComponent<Rigidbody2D>();
+        imageRigid.bodyType = RigidbodyType2D.Dynamic;
+        imageRigid.AddForce(direction * thrustSpeed / 1.5f);
+        image.AddComponent<Fade>();
     }
 
     private static void EquipFirstMatchingItemInBag(int type, int slot)
@@ -372,26 +414,17 @@ public class PlayerController : Interactable
             Vector2 direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
             direction.Normalize();
 
-            RaycastHit2D hit = Physics2D.Raycast(startPos, direction);
-            Debug.Log(hit.transform.name);
-            Debug.DrawLine(startPos, hit.point, Color.cyan);
-
-
-
-
-
            // Determine the correct angle to turn to the projectile
            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
             GameObject projectile = pooledArrows.GetPooledArrow();
 
-            projectile.SetActive(true);
-            projectile.GetComponent<CircleCollider2D>().enabled = true;
-            transform.parent = null;
+            var projectileScript = projectile.GetComponent<Projectile>();
+            projectileScript.MakeProjectileReady();
+
             projectile.transform.position = projectilePoint.transform.position;
             projectile.transform.rotation = Quaternion.identity;
 
-            projectile.GetComponent<Rigidbody2D>().isKinematic = false;
 
             projectile.transform.Rotate(0, 0, angle, Space.World);
 
@@ -449,6 +482,7 @@ public class PlayerController : Interactable
         return mousePosition;
     }
 
+    // initializes the Gameobject with all necessary references
     private void Initialize()
     {
         cameraControl = CameraController.instance;
@@ -458,7 +492,12 @@ public class PlayerController : Interactable
         anim = GetComponent<Animator>();
         facingRight = true;
 
-        manager = GameDetails.instance;
+
+        particles = GetComponentsInChildren<ParticleSystem>();
+        skeleton = transform.Find("Skeleton").gameObject;
+
+
+        gameDetails = GameDetails.instance;
         equip = EquipmentManager.instance;
         m_Plane = GameDetails.instance.m_Plane;
         pooledArrows = PooledProjectilesController.instance;
@@ -469,14 +508,16 @@ public class PlayerController : Interactable
         }
     }
 
-    private void OnLevelWasLoaded(int level)
+    private ParticleSystem GetSystem(string systemName)
     {
-        if (level == 0)
+        foreach (ParticleSystem system in particles)
         {
-            cam.backgroundColor = Color.black;
-            cam.fieldOfView = 43;
-            transform.position = new Vector3(-12.5f, 3.5f, 0);
+            if (system.name == systemName)
+            {
+                return system;
+            }
         }
+        return null;
     }
 
 }

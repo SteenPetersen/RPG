@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Wooden Buckler
   icon: {fileID: 21300000, guid: ed64ef43783820945940c40b53222e46, type: 3}
-  sellValue: 5
+  sellValue: 0
   isDefaultItem: 0
   equipSlot: 4
   equipType: 2

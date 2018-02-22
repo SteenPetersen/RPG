@@ -18,6 +18,14 @@ public class EnemyController : Enemy {
     bool haveAggro;
     #endregion
 
+    //ranged
+    public GameObject enemyProjectile;
+    public float rangedDelay;
+    public float projectileSpeed;
+    float timer;
+
+
+
     public bool isDead = false;
     bool displayingHealth = false;
     public float speed;
@@ -30,6 +38,8 @@ public class EnemyController : Enemy {
 
     [HideInInspector]
     public CharacterCombat combat;
+
+    PooledProjectilesController pooledProjectiles;
 
     // a game object to hold items that we do not wish to flip
     GameObject logic;
@@ -44,13 +54,17 @@ public class EnemyController : Enemy {
         player = playercontrol.gameObject.transform;
         target = player;
         logic = transform.Find("Logic").gameObject;
+
+        pooledProjectiles = PooledProjectilesController.instance;
     }
 
     private void Update()
     {
+        timer -= Time.deltaTime;
 
         Follow();
         DisplayHealth();
+        RangedAttack();
 
         //check if focused and interact with
         //if (isFocus && !hasInteracted)
@@ -82,18 +96,19 @@ public class EnemyController : Enemy {
     public override void Follow()
     {
         if (playercontrol.isDead)
-        {
             return;
-        }
 
         if (isDead)
         {
             nav.SetDestination(transform.position);
+            logic.SetActive(false);
+
             foreach (GameObject arrow in arrows)
             {
                 arrow.transform.SetParent(null);
+                arrow.gameObject.SetActive(false);
+                arrows.Remove(arrow);
             }
-            logic.SetActive(false);
             return;
         }
 
@@ -135,6 +150,46 @@ public class EnemyController : Enemy {
                 anim.SetBool("Walk", false);
             }
         }
+    }
+
+    private void RangedAttack()
+    {
+        if (isDead || PlayerController.instance.isDead)
+            return;
+
+        float distance = Vector3.Distance(target.position, transform.position);
+        if (haveAggro && distance > radius)
+        {
+
+
+            if (timer < 0)
+            {
+                //do something
+                anim.SetTrigger("Shoot");
+
+                timer = rangedDelay;
+            }
+        }
+
+    }
+
+    private void OnThrowCOmplete()
+    {
+        Vector2 direction = new Vector2(target.transform.position.x - transform.position.x, target.transform.position.y - transform.position.y);
+        direction.Normalize();
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        GameObject projectile = pooledProjectiles.GetEnemyProjectile(gameObject.name);
+        var projectileScript = projectile.GetComponent<enemy_Projectile>();
+        projectileScript.MakeProjectileReady();
+
+        projectile.transform.position = transform.position;
+        projectile.transform.rotation = Quaternion.identity;
+
+        projectile.transform.Rotate(0, 0, angle, Space.World);
+
+        projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
     }
 
     void FaceTarget()

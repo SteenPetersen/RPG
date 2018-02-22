@@ -61,9 +61,8 @@ public class Inventory : MonoBehaviour
         {
             OnItemChangedCallBack.Invoke();
         }
-       
 
-    return true;
+        return true;
     }
 
     public void Remove(Item item)

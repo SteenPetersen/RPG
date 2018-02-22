@@ -24,19 +24,19 @@ public class LoadingLogic : MonoBehaviour {
     // The coroutine runs on its own at the same time as Update() and takes an integer indicating which scene to load.
     IEnumerator LoadNewScene(int scene)
     {
-        Application.backgroundLoadingPriority = ThreadPriority.Low;
+        //Application.backgroundLoadingPriority = ThreadPriority.Low;
         // Start an asynchronous operation to load the scene that was passed to the LoadNewScene coroutine.
         AsyncOperation async = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Single);
         async.allowSceneActivation = false;
 
-        while (async.progress < 0.9f)
+        while (async.progress < 0.89f)
         {
             Debug.Log(async.progress);
             yield return null;
         }
 
-        async.allowSceneActivation = true;
 
+        async.allowSceneActivation = true;
 
     }
 }

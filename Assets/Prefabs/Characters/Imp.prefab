@@ -398,7 +398,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4214828079868720}
-  - component: {fileID: 65104208989804496}
   m_Layer: 11
   m_Name: Imp - Selector
   m_TagString: Untagged
@@ -522,7 +521,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1852010146015402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.1617613, y: 11.968192, z: 0}
+  m_LocalPosition: {x: -18.439564, y: 2.3093061, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4606434453767672}
@@ -576,7 +575,7 @@ Transform:
   - {fileID: 4892672058294872}
   m_Father: {fileID: 4496609546665676}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 59.762646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.0660882}
 --- !u!4 &4606434453767672
 Transform:
   m_ObjectHideFlags: 1
@@ -733,9 +732,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.0372625, y: 0.4210968}
+  m_Offset: {x: -0.05154568, y: 0.35318363}
   serializedVersion: 2
-  m_Radius: 0.3913498
+  m_Radius: 0.339109
 --- !u!61 &61931952739775030
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -761,18 +760,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.0625, y: 0.375}
   m_EdgeRadius: 0
---- !u!65 &65104208989804496
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1885534129242454}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.7036648, y: 0.81194115, z: 1}
-  m_Center: {x: 0.034192562, y: 0.4074614, z: 0}
 --- !u!95 &95738032410796088
 Animator:
   serializedVersion: 3
@@ -919,6 +906,10 @@ MonoBehaviour:
   lookRadiusAggro: 7
   pullRadiusAggro: 30
   currentLookRadius: 0
+  enemyProjectile: {fileID: 1437101887666078, guid: b41ce6e1fd7b7b74ca53ed760e78ea92,
+    type: 2}
+  rangedDelay: 2
+  projectileSpeed: 430
   isDead: 0
   speed: 0.08
   facingRight: 1

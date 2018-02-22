@@ -3823,7 +3823,7 @@ Camera:
   far clip plane: 21
   field of view: 70
   orthographic: 0
-  orthographic size: 6.760375
+  orthographic size: 5.9822626
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -3859,7 +3859,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 3.1967084
+  orthographic size: 2.8287706
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -3895,7 +3895,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.80799997
+  orthographic size: 0.8937501
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -4822,6 +4822,8 @@ MonoBehaviour:
   cameraRot: 150
   measurementTransform: {fileID: 4149224597854082}
   cam: {fileID: 0}
+  fieldOfViewBase: 0
+  fieldOfViewDungeon: 0
   test: 0
 --- !u!114 &114085114304760864
 MonoBehaviour:
@@ -10939,8 +10941,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Arrow: {fileID: 1472819850106686, guid: 578b429524132c246a50e21af68545cc, type: 2}
+  impDagger: {fileID: 0}
   pooledAmount: 8
   willGrow: 0
+  impDaggers: []
   pooledArrows: []
 --- !u!114 &114679997857741046
 MonoBehaviour:

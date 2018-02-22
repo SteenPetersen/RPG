@@ -25,6 +25,9 @@ public class CameraController : MonoBehaviour {
     public float cameraRot;
     public Transform measurementTransform;
     public Camera cam;
+    public int fieldOfViewBase = 48;
+    public int fieldOfViewDungeon = 40;
+
 
     public float test;
     Vector3 offSet;

@@ -130,7 +130,7 @@ public class GameDetails : MonoBehaviour {
         }
 
         gameSaved.Play();
-
+        Debug.Log("saved");
     }
 
     public void Load()
@@ -144,9 +144,12 @@ public class GameDetails : MonoBehaviour {
             PlayerData data = (PlayerData)bf.Deserialize(file);
             file.Close();
 
+            DestroyAllPlayerPossessionsInBags();
+            DestroyAllCurrentlyEquippedGear();
+
             PlayerController.instance.isDead = false;
             player.GetComponent<Animator>().SetTrigger("LoadGame");
-            PlayerController.instance.speed = 0.8f;
+            PlayerController.instance.speed = PlayerController.instance.normalSpeed;
             playerStats.currentHealth = data.currentHealth;
             playerStats.maxHealth = data.maxHealth;
             playerStats.exp = data.experience;
@@ -157,13 +160,60 @@ public class GameDetails : MonoBehaviour {
             loadItems(data.itemsInBag, "itemsInBag");
 
             SceneManager.LoadScene(data.zone);
-            var cam = CameraController.instance.GetComponentInChildren<Camera>();
-            cam.fieldOfView = 70;
+            //var cam = CameraController.instance.GetComponentInChildren<Camera>();
+            //cam.fieldOfView = CameraController.instance.fieldOfViewBase;
             player.transform.position = new Vector2(data.locationX, data.locationY);
 
-            Debug.Log("loaded data");
+            //Debug.Log("loaded data");
 
         }
+    }
+
+    private void DestroyAllCurrentlyEquippedGear()
+    {
+        List<Equipment> items = new List<Equipment>();
+
+        for (int i = 0; i < EquipmentManager.instance.currentEquipment.Count; i++)
+        {
+            if (EquipmentManager.instance.currentEquipment[i] == null)
+            {
+                items.Add(EquipmentManager.instance.currentEquipment[i]);
+            }
+
+            if (EquipmentManager.instance.currentEquipment[i] != null)
+            {
+                items.Add(EquipmentManager.instance.currentEquipment[i]);
+            }
+        }
+
+
+        foreach (var item in items)
+        {
+            EquipmentManager.instance.UnequipAll();
+        }
+
+        DestroyAllPlayerPossessionsInBags();
+
+    }
+
+    private void DestroyAllPlayerPossessionsInBags()
+    {
+        List<Item> items = new List<Item>();
+
+        for (int i = 0; i < Inventory.instance.itemsInBag.Count; i++)
+        {
+            if (Inventory.instance.itemsInBag[i] != null)
+            {
+                items.Add(Inventory.instance.itemsInBag[i]);
+                //Debug.Log("adding " + Inventory.instance.itemsInBag[i] + " to list");
+            }
+        }
+
+        foreach (var item in items)
+        {
+            Inventory.instance.Remove(item);
+        }
+
     }
 
     private void PlatformSafeMessage(string message)
@@ -226,7 +276,7 @@ public class GameDetails : MonoBehaviour {
 
     void loadItems(List<string> items, string setToLoad)
     {
-        Debug.Log("Loading");
+        //Debug.Log("Loading");
         if (setToLoad == "currentlyEquipped")
         {
             List<Equipment> tmp = new List<Equipment>(EquipmentManager.instance.currentEquipment.Count);
@@ -235,15 +285,11 @@ public class GameDetails : MonoBehaviour {
                 if (item == string.Empty)
                 {
                     tmp.Add(null);
-                    //Debug.Log("Adding a null spot to tmp List");
-
                 }
                 else
                 {
                     var tmpEquip = Instantiate(Resources.Load("Equipment/" + item, typeof(Equipment))) as Equipment;
                     tmp.Add(tmpEquip);
-                    //Debug.Log("adding " + tmpEquip.name + " to tmp List");
-
                 }
             }
 
@@ -301,10 +347,6 @@ public class GameDetails : MonoBehaviour {
         if (playerStats == null)
         {
             playerStats = player.GetComponent<PlayerStats>();
-        }
-        if (dialogueCamera == null)
-        {
-            dialogueCamera = CameraController.instance.gameObject.transform.Find("DialogueCamera").gameObject;
         }
     }
 }

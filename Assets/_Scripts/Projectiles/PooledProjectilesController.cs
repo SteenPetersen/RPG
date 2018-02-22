@@ -7,10 +7,14 @@ public class PooledProjectilesController : MonoBehaviour {
 
     public static PooledProjectilesController instance;
     public GameObject Arrow;
+    public GameObject impDagger;
     public int pooledAmount;
     public bool willGrow = true;
 
+    public List<GameObject> impDaggers = new List<GameObject>();
     public List<GameObject> pooledArrows = new List<GameObject>();
+
+    Transform projectileHolder;
 
     private void OnEnable()
     {
@@ -28,6 +32,8 @@ public class PooledProjectilesController : MonoBehaviour {
         {
             instance = this;
         }
+
+
     }
 
     public GameObject GetPooledArrow()
@@ -42,10 +48,37 @@ public class PooledProjectilesController : MonoBehaviour {
 
         if (willGrow)
         {
-            GameObject obj = (GameObject)Instantiate(Arrow);
+            GameObject obj = Instantiate(Arrow) as GameObject;
             pooledArrows.Add(obj);
+            obj.transform.SetParent(projectileHolder);
             return obj;
         }
+
+        return null;
+    }
+
+    public GameObject GetEnemyProjectile(string enemyName)
+    {
+        switch (enemyName)
+        {
+            case "Imp(Clone)":
+            case "Imp":
+
+                for (int i = 0; i < impDaggers.Count; i++)
+                {
+                    if (!impDaggers[i].activeInHierarchy)
+                    {
+                        return impDaggers[i];
+                    }
+                }
+                Debug.Log("Creating an enemy projectile!");
+
+                GameObject obj = Instantiate(impDagger) as GameObject;
+                impDaggers.Add(obj);
+                obj.transform.SetParent(projectileHolder);
+                return obj;
+        }
+
 
         return null;
     }
@@ -57,9 +90,10 @@ public class PooledProjectilesController : MonoBehaviour {
         // Pool arrows
         for (int i = 0; i < pooledAmount; i++)
         {
-            GameObject obj = (GameObject)Instantiate(proj);
+            GameObject obj = Instantiate(proj) as GameObject;
             obj.SetActive(false);
             pooledArrows.Add(obj);
+            obj.transform.SetParent(projectileHolder);
         }
        
     }
@@ -74,6 +108,8 @@ public class PooledProjectilesController : MonoBehaviour {
     {
         //TODO this.
         Debug.Log("loading arrows");
+
+        projectileHolder = new GameObject("ProjectileHolder").transform;
 
         if (EquipmentManager.instance.currentEquipment[3] != null && (int)EquipmentManager.instance.currentEquipment[3].equipType == 1)
         {

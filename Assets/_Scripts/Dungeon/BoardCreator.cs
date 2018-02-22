@@ -44,27 +44,9 @@ public class BoardCreator : MonoBehaviour
         player = PlayerController.instance.gameObject;
         cam = CameraController.instance.GetComponentInChildren<Camera>();
         instance = this;
-    }
 
-    private void Start()
-    {
-        // Find the board and enemy holder.
-        boardHolder = GameObject.Find("BoardHolder");
-        enemyHolder = new GameObject("EnemyHolder");
-        outterWallHolder = GameObject.Find("OutterWallHolder");
+        StartCoroutine(InitializeMap());
 
-        cam.fieldOfView = 43;
-        cam.backgroundColor = Color.black;
-
-        SetupTilesArray();
-
-        CreateRoomsAndCorridors();
-
-        SetTilesValuesForRooms();
-        SetTilesValuesForCorridors();
-
-        InstantiateTiles();
-        InstantiateOuterWalls();
     }
 
     void SetupTilesArray()
@@ -274,9 +256,9 @@ public class BoardCreator : MonoBehaviour
                         yCoord += j;
 
                         tiles[xCoord][yCoord] = TileType.Floor;
-
+                        tiles[xCoord + 1][yCoord] = TileType.Floor;
                         //         Checking side tiles
-                        //         X [current tile] X
+                        //         X [current tile] X X
 
                         if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
                         {
@@ -284,12 +266,16 @@ public class BoardCreator : MonoBehaviour
                         }
                         if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
                         {
-                            tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
+                            tiles[xCoord + 1][yCoord] = TileType.Floor;
+                        }
+                        if (tiles[xCoord + 2][yCoord] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 2][yCoord] = TileType.ColliderWall;
                         }
 
                         //       Checking LOWER side tiles
                         //            [current tile] 
-                        //         X                 X
+                        //         X                 X X
 
                         if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
                         {
@@ -297,7 +283,11 @@ public class BoardCreator : MonoBehaviour
                         }
                         if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                            tiles[xCoord + 1][yCoord - 1] = TileType.Floor;
+                        }
+                        if (tiles[xCoord + 2][yCoord - 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 2][yCoord - 1] = TileType.ColliderWall;
                         }
 
 
@@ -311,7 +301,11 @@ public class BoardCreator : MonoBehaviour
                         }
                         if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
+                            tiles[xCoord + 1][yCoord + 1] = TileType.Floor;
+                        }
+                        if (tiles[xCoord + 2][yCoord + 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 2][yCoord + 1] = TileType.ColliderWall;
                         }
 
 
@@ -321,15 +315,22 @@ public class BoardCreator : MonoBehaviour
                         xCoord += j;
 
                         tiles[xCoord][yCoord] = TileType.Floor;
+                        tiles[xCoord][yCoord - 1] = TileType.Floor;
 
                         //         Checking side tiles
                         //                 X
                         //          [current tile]
                         //                 X
+                        //                 X
+
 
                         if (tiles[xCoord][yCoord - 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
+                            tiles[xCoord][yCoord - 1] = TileType.Floor;
+                        }
+                        if (tiles[xCoord][yCoord - 2] == TileType.BlackArea)
+                        {
+                            tiles[xCoord][yCoord - 2] = TileType.ColliderWall;
                         }
                         if (tiles[xCoord][yCoord + 1] == TileType.BlackArea)
                         {
@@ -340,15 +341,23 @@ public class BoardCreator : MonoBehaviour
                         //           X
                         //             [current tile]       
                         //           X
+                        //           X
+
 
                         if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
                         {
                             tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
                         }
+
                         if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                            tiles[xCoord - 1][yCoord - 1] = TileType.Floor;
                         }
+                        if (tiles[xCoord - 1][yCoord - 2] == TileType.BlackArea)
+                        {
+                            tiles[xCoord - 1][yCoord - 2] = TileType.ColliderWall;
+                        }
+
 
                         //          Checking Infront tiles
                         //                            X
@@ -361,7 +370,11 @@ public class BoardCreator : MonoBehaviour
                         }
                         if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                            tiles[xCoord + 1][yCoord - 1] = TileType.Floor;
+                        }
+                        if (tiles[xCoord + 1][yCoord - 2] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 1][yCoord - 2] = TileType.ColliderWall;
                         }
                         break;
 
@@ -370,10 +383,10 @@ public class BoardCreator : MonoBehaviour
 
 
                         tiles[xCoord][yCoord] = TileType.Floor;
-
+                        tiles[xCoord + 1][yCoord] = TileType.Floor;
 
                         //         Checking side tiles
-                        //         X [current tile] X
+                        //         X [current tile] X X
 
                         if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
                         {
@@ -381,12 +394,16 @@ public class BoardCreator : MonoBehaviour
                         }
                         if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
                         {
-                            tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
+                            tiles[xCoord + 1][yCoord] = TileType.Floor;
+                        }
+                        if (tiles[xCoord + 2][yCoord] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 2][yCoord] = TileType.ColliderWall;
                         }
 
                         //       Checking LOWER side tiles
                         //            [current tile] 
-                        //         X                 X
+                        //         X                 X X
 
                         if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
                         {
@@ -394,7 +411,11 @@ public class BoardCreator : MonoBehaviour
                         }
                         if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                            tiles[xCoord + 1][yCoord - 1] = TileType.Floor;
+                        }
+                        if (tiles[xCoord + 2][yCoord - 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 2][yCoord - 1] = TileType.ColliderWall;
                         }
 
 
@@ -408,7 +429,11 @@ public class BoardCreator : MonoBehaviour
                         }
                         if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
+                            tiles[xCoord + 1][yCoord + 1] = TileType.Floor;
+                        }
+                        if (tiles[xCoord + 2][yCoord + 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 2][yCoord + 1] = TileType.ColliderWall;
                         }
 
                         break;
@@ -417,17 +442,23 @@ public class BoardCreator : MonoBehaviour
                         xCoord -= j;
 
                         tiles[xCoord][yCoord] = TileType.Floor;
-
+                        tiles[xCoord][yCoord - 1] = TileType.Floor;
 
 
                         //         Checking side tiles
                         //                 X
                         //          [current tile]
                         //                 X
+                        //                 X
+
 
                         if (tiles[xCoord][yCoord - 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
+                            tiles[xCoord][yCoord - 1] = TileType.Floor;
+                        }
+                        if (tiles[xCoord][yCoord - 2] == TileType.BlackArea)
+                        {
+                            tiles[xCoord][yCoord - 2] = TileType.ColliderWall;
                         }
                         if (tiles[xCoord][yCoord + 1] == TileType.BlackArea)
                         {
@@ -438,15 +469,23 @@ public class BoardCreator : MonoBehaviour
                         //           X
                         //             [current tile]       
                         //           X
+                        //           X
+
 
                         if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
                         {
                             tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
                         }
+
                         if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                            tiles[xCoord - 1][yCoord - 1] = TileType.Floor;
                         }
+                        if (tiles[xCoord - 1][yCoord - 2] == TileType.BlackArea)
+                        {
+                            tiles[xCoord - 1][yCoord - 2] = TileType.ColliderWall;
+                        }
+
 
                         //          Checking Infront tiles
                         //                            X
@@ -459,7 +498,11 @@ public class BoardCreator : MonoBehaviour
                         }
                         if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
                         {
-                            tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                            tiles[xCoord + 1][yCoord - 1] = TileType.Floor;
+                        }
+                        if (tiles[xCoord + 1][yCoord - 2] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 1][yCoord - 2] = TileType.ColliderWall;
                         }
                         break;
                 }
@@ -624,5 +667,36 @@ public class BoardCreator : MonoBehaviour
 
         // Set the tile's parent to the board holder.
         tileInstance.transform.parent = boardHolder.transform;
+    }
+
+    public IEnumerator InitializeMap()
+    {
+        bool workDone = false;
+
+        while (!workDone)
+        {
+            // Let the engine run for a frame
+            yield return null;
+
+            // Find the board and enemy holder.
+            boardHolder = GameObject.Find("BoardHolder");
+            enemyHolder = new GameObject("EnemyHolder");
+            outterWallHolder = GameObject.Find("OutterWallHolder");
+
+            cam.fieldOfView = 43;
+            cam.backgroundColor = Color.black;
+
+            SetupTilesArray();
+
+            CreateRoomsAndCorridors();
+
+            SetTilesValuesForRooms();
+            SetTilesValuesForCorridors();
+
+            InstantiateTiles();
+            InstantiateOuterWalls();
+
+            workDone = true;
+        }
     }
 }
