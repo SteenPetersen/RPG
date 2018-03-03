@@ -2,12 +2,19 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using System.Collections;
 
 public class PlayerController : Interactable
 {
     // plane needed for hitray during projectiles
     // located on Gamemanager since monsters also need access to it.
     Plane m_Plane;
+    public Collider2D[] enemies;
+    bool enemiesInRange;
+
+    Vector3 prevPosition;
+    Vector3 move;
 
     #region Singleton
 
@@ -33,7 +40,7 @@ public class PlayerController : Interactable
     GameObject skeleton;
     public Vector2 mousePosition;
     public EventSystem eventSys;
-    public bool isDead;
+    public bool isDead, interruptMovement;
     public Interactable focus;
     [HideInInspector]
     public float normalSpeed = 0.8f;            // used to reset speeds after death etc
@@ -45,7 +52,7 @@ public class PlayerController : Interactable
     PlayerStats playerStat;
     GameObject cameraHolder;
     //Camera cam;
-    Animator anim;
+    public Animator anim;
     ParticleSystem[] particles;
 
     float horizontal;
@@ -62,6 +69,8 @@ public class PlayerController : Interactable
     PooledProjectilesController pooledArrows;
     public GameObject projectilePoint;
     public float projectileSpeed;
+    public Transform meleeStartPoint;
+    Vector2 direction;
     #endregion
 
     #region State/etc
@@ -84,12 +93,14 @@ public class PlayerController : Interactable
 
     private void Update()
     {
+        move = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0f);
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 
         if (isDead || gameDetails.paused || dialogue)
             return;
 
+        HandleAggro();
         HandleCombatState();
         HandleAnimation(horizontal, vertical);
     }
@@ -104,6 +115,25 @@ public class PlayerController : Interactable
 
     }
 
+    private void LateUpdate()
+    {
+        prevPosition = transform.position;
+    }
+
+    private void HandleAggro()
+    {
+        int layerId = 11;
+        int layerMask = 1 << layerId;
+
+        enemies = Physics2D.OverlapCircleAll(transform.position, 10, layerMask);
+
+        if (!enemiesInRange && enemies.Length > 0)
+        {
+            StartCoroutine(LineOfSight());
+            enemiesInRange = true;
+        }
+    }
+
     private void HandleAnimation(float horizontal, float vertical)
     {
         if (eventSys.IsPointerOverGameObject())
@@ -114,15 +144,37 @@ public class PlayerController : Interactable
 
         if (melee)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButton(0))
             {
-                Interactable inter = ClickFeedback();
-                if (inter != null)
+                bool canHit = CheckIfPlayerMayHit();
+
+                if (!canHit)
                     return;
 
-                anim.SetLayerWeight(1, 1);
-                if (weaponsGone)
+                var startPos = meleeStartPoint.position;
+
+                // create a direction vector from Hit position of the mouse and the projectiles original position
+                direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
+                direction.Normalize();
+
+                if (CollisionAboveCharacter.instance.mouseAbove)
+                {
+                    anim.SetTrigger("HitMeleeUp");
                     return;
+                }
+                else if (CollisionBelowCharacter.instance.mouseBelow)
+                {
+                    anim.SetTrigger("HitMeleeDown");
+                    return;
+                }
+
+
+                float distanceFromFrontToMouse, distanceFromBackToMouse;
+                CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
+
+                if (distanceFromBackToMouse < distanceFromFrontToMouse)
+                    return;
+
                 anim.SetTrigger("HitMelee");
             }
             if (Input.GetMouseButton(1))
@@ -147,7 +199,7 @@ public class PlayerController : Interactable
         }
         else if (ranged)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButton(0))
             {
                 Interactable inter = ClickFeedback();
                 if (inter != null)
@@ -163,41 +215,52 @@ public class PlayerController : Interactable
 
     }
 
+    private bool CheckIfPlayerMayHit()
+    {
+        Interactable inter = ClickFeedback();
+        if (inter != null)
+            return false;
+
+        //anim.SetLayerWeight(1, 1);
+        if (weaponsGone)
+            return false;
+
+
+        return true;
+    }
+
     private void HandleMovement(float horizontal, float vertical)
     {
+        if (interruptMovement)
+            return;
 
-        if (Input.GetKey(KeyCode.D))
+        move = move.normalized * Time.deltaTime * speed;
+
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
         {
-            rigid.AddRelativeForce(Vector2.right * speed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            rigid.AddRelativeForce(Vector2.left * speed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.W))
-        {
-            rigid.AddRelativeForce(Vector2.up * speed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            rigid.AddRelativeForce(Vector2.down * speed * Time.deltaTime);
+            rigid.AddRelativeForce(move);
         }
 
 
-        // Sheathe weaponary
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            SheatheWeaponary();
-        }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            UnSheatheWeaponary();
-        }
+        //// Sheathe weaponary
+        //if (Input.GetKeyDown(KeyCode.P))
+        //{
+        //    SheatheWeaponary();
+        //}
+        //if (Input.GetKeyDown(KeyCode.O))
+        //{
+        //    UnSheatheWeaponary();
+        //}
 
     }
 
     private void HandleCombatState()
     {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            //CombatTextManager.instance.FetchText(transform.position, gameObject.name);
+            PooledProjectilesController.instance.impDaggers.Clear();
+        }
         if (Input.GetKeyDown(KeyCode.T))
         {
             Debug.Log("calling loadscene");
@@ -207,7 +270,7 @@ public class PlayerController : Interactable
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             var tryMainHand = EquipFirstMatchingItemInBag(0, 3);
-            var tryOffhand = EquipFirstMatchingItemInBag(2, 4);
+            EquipFirstMatchingItemInBag(2, 4);
             if (tryMainHand)
             {
                 melee = true;
@@ -238,20 +301,28 @@ public class PlayerController : Interactable
             stateText.text = "Melee!";
         }
 
+        // jump forward
         if (Input.GetKeyDown(KeyCode.Space))
         {
             var trail = GetSystem("thrustTrail");
             trail.Play();
             anim.SetTrigger("Thrust");
-            float distanceFromFrontToMouse, distanceFromBackToMouse;
-            CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
 
-            Vector2 direction = new Vector2(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y);
+            Vector3 direction = move;
             direction.Normalize();
             SpawnGhostImage(direction);
 
-            // addforce force to the projectiles rigidbody in that direction.
-            rigid.AddForce(direction * thrustSpeed);
+            // if you're standing still move towards mnouse instead
+            if (move == Vector3.zero)
+            {
+                Vector3 directionMouse = new Vector3(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y, 0f);
+                directionMouse.Normalize();
+                rigid.AddRelativeForce(directionMouse * thrustSpeed);
+                return;
+            }
+
+            // add a relative local force to the player rigidbody in the given direction.
+            rigid.AddRelativeForce(direction * thrustSpeed);
         }
 
     }
@@ -262,7 +333,8 @@ public class PlayerController : Interactable
         // spawn a copy of player current skeleton with all gear etc
         Vector2 spawnPoint = new Vector2(transform.position.x, transform.position.y + 0.452f);
         var image = Instantiate(skeleton, spawnPoint, Quaternion.identity);
-
+        var col = image.GetComponent<CircleCollider2D>();
+        col.enabled = true;
 
         // if player is not facing right flip the image
         if (!facingRight)
@@ -366,7 +438,7 @@ public class PlayerController : Interactable
 
             if (interactable != null)
             {
-                SetFocus(interactable);
+                //SetFocus(interactable);
                 SetMousePosition();
                 return interactable;
             }
@@ -378,7 +450,7 @@ public class PlayerController : Interactable
         }
         else
         {
-            RemoveFocus();
+            //RemoveFocus();
             SetMousePosition();
             return null;
         }
@@ -386,26 +458,31 @@ public class PlayerController : Interactable
 
     }
 
-    void SetFocus(Interactable newFocus)
-    {
-        if (newFocus != focus)
-        {
-            if (focus != null)
-            {
-                focus.OnDeFocused();
-            }
-            focus = newFocus;
-        }
-        newFocus.OnFocused(gameObject.transform);
-    }
+    //void SetFocus(Interactable newFocus)
+    //{
+    //    if (newFocus != focus)
+    //    {
+    //        if (focus != null)
+    //        {
+    //            focus.OnDeFocused();
+    //        }
+    //        focus = newFocus;
+    //    }
+    //    newFocus.OnFocused(gameObject.transform);
+    //}
 
-    void RemoveFocus()
+    //void RemoveFocus()
+    //{
+    //    if (focus != null)
+    //    {
+    //        focus.OnDeFocused();
+    //    }
+    //    focus = null;
+    //}
+
+    public void KnockBack()
     {
-        if (focus != null)
-        {
-            focus.OnDeFocused();
-        }
-        focus = null;
+        
     }
 
     public void OnCastComplete()
@@ -413,57 +490,79 @@ public class PlayerController : Interactable
         float distanceFromFrontToMouse, distanceFromBackToMouse;
         CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
 
-        if (distanceFromBackToMouse > distanceFromFrontToMouse)
-        {
-            SoundManager.instance.PlaySound("bow");
+        SoundManager.instance.PlaySound("bow");
 
-            var startPos = projectilePoint.transform.position;
+        var startPos = projectilePoint.transform.position;
 
-            // create a direction vector from Hit position of the mouse and the projectiles original position
-            Vector2 direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
-            direction.Normalize();
+        // create a direction vector from Hit position of the mouse and the projectiles original position
+        Vector2 direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
+        direction.Normalize();
 
-           // Determine the correct angle to turn to the projectile
-           float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        // Determine the correct angle to turn to the projectile
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-            GameObject projectile = pooledArrows.GetPooledArrow();
+        GameObject projectile = pooledArrows.GetPooledArrow();
 
-            var projectileScript = projectile.GetComponent<Projectile>();
-            projectileScript.MakeProjectileReady();
+        var projectileScript = projectile.GetComponent<Projectile>();
+        projectileScript.MakeProjectileReady();
 
-            projectile.transform.position = projectilePoint.transform.position;
-            projectile.transform.rotation = Quaternion.identity;
+        projectile.transform.position = projectilePoint.transform.position;
+        projectile.transform.rotation = Quaternion.identity;
+        projectile.transform.localScale = new Vector3(1, 1, 1);
 
 
-            projectile.transform.Rotate(0, 0, angle, Space.World);
+        projectile.transform.Rotate(0, 0, angle, Space.World);
 
-            // addforce force to the projectiles rigidbody in that direction.
-            projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
-        }
+        // addforce force to the projectiles rigidbody in that direction.
+        projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+       
 
-        else
-        {
-            Debug.Log("I cannot shoot Backwards!");
-        }
     }
 
-    private void SheatheWeaponary()
+    public void OnStrikeComplete()
     {
-        Color c = new Color32(255, 255, 255, 0);
-        equip.visibleGear[3].color = c;
-        equip.visibleGear[4].color = c;
 
-        weaponsGone = true;
+        if (equip.visibleGear[3].sprite == null)
+            return;
+
+        SoundManager.instance.PlaySound("bladeSwing");
+
+        // Determine the correct angle to turn to the projectile
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        GameObject projectile = pooledArrows.GetPooledSword();
+
+        var projectileScript = projectile.GetComponent<Projectile>();
+        projectileScript.MakeProjectileReady();
+
+        projectile.transform.position = meleeStartPoint.position;
+        projectile.transform.rotation = Quaternion.identity;
+        projectile.transform.localScale = new Vector3(1, 1, 1);
+
+
+        projectile.transform.Rotate(0, 0, angle - 45, Space.World);
+        // addforce force to the projectiles rigidbody in that direction.
+        projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+        
     }
 
-    private void UnSheatheWeaponary()
-    {
-        Color c = new Color32(255, 255, 255, 255);
-        equip.visibleGear[3].color = c;
-        equip.visibleGear[4].color = c;
+    //private void SheatheWeaponary()
+    //{
+    //    Color c = new Color32(255, 255, 255, 0);
+    //    equip.visibleGear[3].color = c;
+    //    equip.visibleGear[4].color = c;
 
-        weaponsGone = false;
-    }
+    //    weaponsGone = true;
+    //}
+
+    //private void UnSheatheWeaponary()
+    //{
+    //    Color c = new Color32(255, 255, 255, 255);
+    //    equip.visibleGear[3].color = c;
+    //    equip.visibleGear[4].color = c;
+
+    //    weaponsGone = false;
+    //}
 
     // checks the distance from the front of the player to the mouse and back of the player to the mouse and returns both values
     private void CheckDistancesToMouse(out float distanceFromFrontToMouse, out float distanceFromBackToMouse)
@@ -485,9 +584,9 @@ public class PlayerController : Interactable
         {
             //Get the point that is clicked
             Vector3 hitPoint = ray.GetPoint(enter);
-
             mousePosition = hitPoint;
         }
+
         return mousePosition;
     }
 
@@ -529,5 +628,33 @@ public class PlayerController : Interactable
         return null;
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, 10);
+    }
+
+    IEnumerator LineOfSight()
+    {
+        while (enemies.Length > 0)
+        {
+            //Debug.Log("calling Coroutine");
+
+            for (int i = 0; i < enemies.Length; i++)
+            {
+                EnemyAI script = enemies[i].gameObject.GetComponent<EnemyAI>();
+                if (script != null)
+                {
+                    script.DetermineAggro(transform.position);
+                }
+
+            }
+            yield return new WaitForSeconds(0.5f);
+
+
+        }
+
+        enemiesInRange = false;
+    }
 }
 

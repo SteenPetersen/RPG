@@ -29,6 +29,7 @@ public class BoardCreator : MonoBehaviour
     public GameObject goalFloor;
     public GameObject player;
     public GameObject enemy;
+    public GameObject boss;
     public GameObject goal;
     public Camera cam;
 
@@ -38,6 +39,8 @@ public class BoardCreator : MonoBehaviour
     private GameObject boardHolder;                           // GameObject that acts as a container for all other tiles.
     private GameObject enemyHolder;
     private GameObject outterWallHolder;
+
+    private Vector2 goalPos;
 
     private void Awake()
     {
@@ -110,7 +113,7 @@ public class BoardCreator : MonoBehaviour
 
     public void SpawnElement(Vector2 pos, GameObject obj)
     {
-        GameObject tmp = Instantiate(obj, pos, Quaternion.identity);
+        GameObject tmp = Instantiate(obj, pos, Quaternion.Euler(-90,0,0));  // not Quaternion Identity to compensate for A* Pathfinding
 
         if (tmp.tag == "Enemy")
         {
@@ -119,29 +122,7 @@ public class BoardCreator : MonoBehaviour
 
         else if (tmp.tag == "Goal")
         {
-            Debug.Log("goal found");
-            int goalPositionX = (int)pos.x;
-            int goalPositionY = (int)pos.y;
-
-            // must be -1 as array starts counting at 0
-            Room lastRoom = rooms[rooms.Length - 1];
-
-            //for (int i = 0; i < lastRoom.roomWidth; i++)
-            //{
-            //    int xCoord = lastRoom.xPos + i;
-
-            //    for (int k = 0; k < lastRoom.roomHeight; k++)
-            //    {
-            //        int yCoord = lastRoom.xPos + k;
-            //        if (tiles[xCoord][yCoord] == tiles[goalPositionX][goalPositionY])
-            //        {
-            //            Debug.Log("found goal tile");
-            //            Debug.Log(i + " " + k);
-            //            Debug.Log(goalPositionX + " " + goalPositionY);
-
-            //        }
-            //    }
-            //}
+            goalPos = pos;
         }
     }
 
@@ -161,7 +142,7 @@ public class BoardCreator : MonoBehaviour
                 for (int k = 0; k < currentRoom.roomHeight; k++)
                 {
                     int yCoord = currentRoom.yPos + k;
-                    Debug.Log("  xCorrd is  " + xCoord + "  yCoord is  " + yCoord + "  i is   " + i + "  k is  " + k);
+                    Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  i is   " + i + "  k is  " + k);
                     // Make the left wall have colliders
                     if (xCoord == currentRoom.xPos && tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord] == TileType.BlackArea)
                     {
@@ -226,11 +207,15 @@ public class BoardCreator : MonoBehaviour
                         }
                     }
 
-
                     // The coordinates in the jagged array are based on the room's position and it's width and height.
-                    tiles[xCoord][yCoord] = TileType.Floor;
+                     tiles[xCoord][yCoord] = TileType.Floor;
                 }
             }
+
+
+            int x = (int)goalPos.x;
+            int y = (int)goalPos.y;
+            tiles[x][y] = TileType.Goal;
         }
     }
 
@@ -564,9 +549,10 @@ public class BoardCreator : MonoBehaviour
                 // If the tile type is Wall...
                 else if (tiles[i][j] == TileType.Goal)
                 {
+                    Debug.Log("calling goal tile");
                     // ... instantiate a goal see through floor over the top.
                     //Vector3 position = new Vector3(float)i, j, 0f);
-                    Vector3 position = new Vector3(i, j, 0f);
+                    Vector3 position = new Vector3(goalPos.x, goalPos.y, 0f);
                     Instantiate(goalFloor, position, Quaternion.identity);
                 }
             }

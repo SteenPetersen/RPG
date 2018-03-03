@@ -34,12 +34,12 @@ TagManager:
   - 
   - 
   - 
+  - Obstacles
+  - 
+  - A*
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerProjectileCollisions
   - 3DSelectors
   m_SortingLayers:
   - name: Default

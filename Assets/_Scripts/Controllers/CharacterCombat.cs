@@ -10,7 +10,7 @@ public class CharacterCombat : MonoBehaviour {
     public float damageDelay;
 
     // delegate returns void and has no arguments
-    public event System.Action OnAttack;
+    //public event System.Action OnAttack;
 
     public CharacterStats myStats;
 
@@ -27,23 +27,23 @@ public class CharacterCombat : MonoBehaviour {
     }
 
     // takes in the stats of the character that we want to attack
-    public void Attack (CharacterStats targetStats, Animator anim)
-    {
-        if (attackCooldown < 0f)
-        {
-            anim.SetTrigger("Hit1");
-            StartCoroutine(DoDamage(targetStats, damageDelay));
+    //public void Attack (CharacterStats targetStats, Animator anim)
+    //{
+    //    if (attackCooldown < 0f)
+    //    {
+    //        anim.SetTrigger("Hit1");
+    //        StartCoroutine(DoDamage(targetStats, damageDelay));
 
-            if (OnAttack != null)
-            {
-                OnAttack();
-            }
-            //play animation
+    //        if (OnAttack != null)
+    //        {
+    //            OnAttack();
+    //        }
+    //        //play animation
             
-            // the greater the attack speed the faster the cooldown
-            attackCooldown = 1f / attackSpeed;
-        }
-    }
+    //        // the greater the attack speed the faster the cooldown
+    //        attackCooldown = 1f / attackSpeed;
+    //    }
+    //}
 
     IEnumerator DoDamage(CharacterStats stats, float delay)
     {

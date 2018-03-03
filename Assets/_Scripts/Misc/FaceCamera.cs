@@ -16,6 +16,8 @@ public class FaceCamera : MonoBehaviour {
 
         if (target != null)
 
-            this.transform.rotation = Camera.main.transform.rotation;
+            //transform.eulerAngles = new Vector3(target.rotation.x, 0, 0);
+
+        this.transform.rotation = Camera.main.transform.rotation;
     }
 }

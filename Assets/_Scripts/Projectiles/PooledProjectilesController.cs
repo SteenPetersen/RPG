@@ -6,13 +6,19 @@ using UnityEngine.SceneManagement;
 public class PooledProjectilesController : MonoBehaviour {
 
     public static PooledProjectilesController instance;
-    public GameObject Arrow;
-    public GameObject impDagger;
+    public GameObject Arrow, swordShot, impDagger, ImpBossProjectile;
+
     public int pooledAmount;
     public bool willGrow = true;
 
     public List<GameObject> impDaggers = new List<GameObject>();
+
     public List<GameObject> pooledArrows = new List<GameObject>();
+    public List<GameObject> pooledSwords = new List<GameObject>();
+
+    // Boss'
+    public List<GameObject> impBossThrownProjectiles = new List<GameObject>();
+
 
     Transform projectileHolder;
 
@@ -57,6 +63,27 @@ public class PooledProjectilesController : MonoBehaviour {
         return null;
     }
 
+    public GameObject GetPooledSword()
+    {
+        for (int i = 0; i < pooledSwords.Count; i++)
+        {
+            if (!pooledSwords[i].activeInHierarchy)
+            {
+                return pooledSwords[i];
+            }
+        }
+
+        if (willGrow)
+        {
+            GameObject obj = Instantiate(swordShot) as GameObject;
+            pooledSwords.Add(obj);
+            obj.transform.SetParent(projectileHolder);
+            return obj;
+        }
+
+        return null;
+    }
+
     public GameObject GetEnemyProjectile(string enemyName)
     {
         switch (enemyName)
@@ -64,19 +91,44 @@ public class PooledProjectilesController : MonoBehaviour {
             case "Imp(Clone)":
             case "Imp":
 
-                for (int i = 0; i < impDaggers.Count; i++)
+                if (impDaggers.Count != 0)
                 {
-                    if (!impDaggers[i].activeInHierarchy)
+                    for (int i = 0; i < impDaggers.Count; i++)
                     {
-                        return impDaggers[i];
+                        if (!impDaggers[i].activeInHierarchy)
+                        {
+                            return impDaggers[i];
+                        }
                     }
                 }
+
                 Debug.Log("Creating an enemy projectile!");
 
                 GameObject obj = Instantiate(impDagger) as GameObject;
                 impDaggers.Add(obj);
                 obj.transform.SetParent(projectileHolder);
                 return obj;
+
+            case "Imp_Boss":
+            case "Imp_Boss(Clone)":
+
+                if (impBossThrownProjectiles.Count != 0)
+                {
+                    for (int i = 0; i < impBossThrownProjectiles.Count; i++)
+                    {
+                        if (!impBossThrownProjectiles[i].activeInHierarchy)
+                        {
+                            return impBossThrownProjectiles[i];
+                        }
+                    }
+                }
+
+                Debug.Log("Creating an enemy projectile!");
+
+                GameObject impBossProjectile = Instantiate(ImpBossProjectile) as GameObject;
+                impBossThrownProjectiles.Add(impBossProjectile);
+                impBossProjectile.transform.SetParent(projectileHolder);
+                return impBossProjectile;
         }
 
 
@@ -111,13 +163,17 @@ public class PooledProjectilesController : MonoBehaviour {
 
         projectileHolder = new GameObject("ProjectileHolder").transform;
 
+        pooledArrows.Clear();
+        impDaggers.Clear();
+        pooledSwords.Clear();
+        impBossThrownProjectiles.Clear();
+
         if (EquipmentManager.instance.currentEquipment[3] != null && (int)EquipmentManager.instance.currentEquipment[3].equipType == 1)
         {
             EquipmentManager.instance.SetProjectileType(EquipmentManager.instance.currentEquipment[3].rangedProjectile);
             return;
         }
 
-        pooledArrows.Clear();
 
     }
 

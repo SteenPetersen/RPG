@@ -23,14 +23,6 @@ public class Enemy : Interactable {
     public override void Interact()
     {
         base.Interact();
-
-        CharacterCombat playerCombat = gameDetails.player.GetComponent<CharacterCombat>();
-
-
-        if (playerCombat != null)
-        {
-           playerCombat.Attack(myStats, anim);
-        }
     }
 
 

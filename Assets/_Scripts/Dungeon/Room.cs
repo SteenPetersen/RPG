@@ -12,6 +12,8 @@ public class Room
 
     public List<Vector2> enemyPositions;
 
+    // must be above 5 or the building of walla on the outside of rooms can overreach the tile borders 
+    // and result in a null reference
     int buffer = 5;
 
     // This is used for the first room.  It does not have a Corridor parameter since there are no corridors yet.
@@ -73,7 +75,7 @@ public class Room
                 yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
                 break;
             case Direction.South:
-                // clamp the height of the room between 1 and the (int value given from EndPosition why (e.g 8)) and then subtract the buffer
+                // clamp the height of the room between 1 and the (int value given from EndPosition y (e.g 8)) and then subtract the buffer
                 roomHeight = Mathf.Clamp(roomHeight, 1, corridor.EndPositionY - buffer);
                 yPos = corridor.EndPositionY - roomHeight + 1;
 
@@ -105,10 +107,6 @@ public class Room
         int height = heightRange.Random;
         roomWidth = Mathf.Clamp(width, 2, width * 2);
         roomHeight = Mathf.Clamp(height, 2, height * 2);
-
-
-        //TODO add monster chance to drop
-        enemyAmount = enemies.Random;
 
         switch (corridor.direction)
         {
@@ -152,8 +150,22 @@ public class Room
                 break;
         }
 
-        CheckForEnemies();
+        CheckForBossEnemies();
         SetGoalLocation();
+    }
+
+    private void CheckForBossEnemies()
+    {
+        enemyPositions = new List<Vector2>();
+
+        int enemyXPos = Random.Range(xPos, xPos + roomWidth - 1);
+        int enemyYPos = Random.Range(yPos, yPos + roomHeight - 1);
+
+        Vector2 enemyVector = new Vector2(enemyXPos, enemyYPos);
+
+        enemyPositions.Add(enemyVector);
+        BoardCreator.instance.SpawnElement(enemyVector, BoardCreator.instance.boss);
+        
     }
 
     private void CheckForEnemies()

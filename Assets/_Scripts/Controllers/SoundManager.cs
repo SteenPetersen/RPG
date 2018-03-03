@@ -6,7 +6,7 @@ public class SoundManager : MonoBehaviour {
 
     public static SoundManager instance;
     [HideInInspector]
-    public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow;
+    public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow, bladeSwing, impBossHit, impBossDeath;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -27,6 +27,10 @@ public class SoundManager : MonoBehaviour {
         impactWood = Resources.Load<AudioClip>("Sound/" + "impact_wood");
         impactStone = Resources.Load<AudioClip>("Sound/" + "impact_stone");
         bow = Resources.Load<AudioClip>("Sound/" + "bow");
+        bladeSwing = Resources.Load<AudioClip>("Sound/" + "bladeSwing");
+
+        impBossHit = Resources.Load<AudioClip>("Sound/" + "imp_boss_hit");
+        impBossDeath = Resources.Load<AudioClip>("Sound/" + "imp_boss_death");
 
         audioSrc = GetComponent<AudioSource>();
     }
@@ -50,6 +54,13 @@ public class SoundManager : MonoBehaviour {
                 break;
             case "bow":
                 audioSrc.PlayOneShot(bow);
+                break;
+            case "bladeSwing":
+                audioSrc.PlayOneShot(bladeSwing);
+                break;
+            case "Imp_Boss":
+            case "Imp_Boss(Clone)":
+                audioSrc.PlayOneShot(impBossHit);
                 break;
         }
     }

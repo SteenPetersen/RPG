@@ -17,15 +17,8 @@ public class CharacterStats : MonoBehaviour {
 
     public virtual void TakeDamage(int damage)
     {
-        damage -= armor.GetValue();
-        damage = Mathf.Clamp(damage, 0, int.MaxValue);
-        currentHealth -= damage;
-        Debug.Log(transform.name + " takes " + damage + " points of damage " + transform.name + " armor is " + armor.GetValue());
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+
     }
 
     public virtual void Die()
@@ -41,5 +34,44 @@ public class CharacterStats : MonoBehaviour {
             Debug.Log("regen started");
             //currentHealth += 1 * 
         }
+    }
+
+
+    // logic behind variance in damage
+    public virtual void DamageVariance(int damage, out bool crit, out int newDamage)
+    {
+        // decrease damage by the armor of the player
+        damage -= armor.GetValue() / 2;
+
+        //generate a random number
+        float rand = Random.Range(0.0f, damage);
+
+        float limit = damage * 0.9f;
+
+        newDamage = Mathf.Clamp(damage + (int)rand, 0, int.MaxValue);
+
+        if (rand > limit)
+        {
+            crit = true;
+            return;
+        }
+        
+        crit = false;
+        //Debug.Log(transform.name + " takes " + newDamage + " points of damage " + transform.name + " armor is " + armor.GetValue());
+    }
+
+    public virtual bool Heal(int healthIncrease)
+    {
+        if (currentHealth < maxHealth)
+        {
+            currentHealth += Mathf.Clamp(healthIncrease, 1, maxHealth - currentHealth);
+            return true;
+        }
+        else if (currentHealth == maxHealth)
+        {
+            return false;
+        }
+
+        return false;
     }
 }

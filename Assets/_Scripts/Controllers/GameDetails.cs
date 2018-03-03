@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameDetails : MonoBehaviour {
 
@@ -15,6 +16,7 @@ public class GameDetails : MonoBehaviour {
     [DllImport("__Internal")]
     private static extern void WindowAlert(string message);
 
+    Canvas[] ui;
 
     #region Singleton
     public static GameDetails instance;
@@ -42,11 +44,17 @@ public class GameDetails : MonoBehaviour {
 
     #endregion
 
+    public Image fadeToBlack;
+    public float fadeSpeed;
+
+    public ParticleSystem playerFeedbackSystem;
+    public Text playerFeedbackText;
+
     public ParticleSystem gameSaved;
 
     public int stage;
     public int kingSpeech;
-    public bool paused;
+    public bool paused, loadingScene;
     [SerializeField]
     public GameObject[] generalObjects;
 
@@ -69,6 +77,10 @@ public class GameDetails : MonoBehaviour {
         }
 
         playerStats = player.GetComponent<PlayerStats>();
+
+        ui = gameObject.transform.GetComponentsInChildren<Canvas>();
+
+        StartCoroutine(enableUi());
     }
 
     void Update()
@@ -82,6 +94,38 @@ public class GameDetails : MonoBehaviour {
         else if (!paused)
         {
             Time.timeScale = 1;
+        }
+
+        // start death sequence
+        if (PlayerController.instance.isDead && fadeToBlack.color.a <= 1)
+        {
+            DeathSequence();
+        }
+
+    }
+
+    private void DeathSequence()
+    {
+        fadeToBlack.enabled = true;
+        fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
+        fadeSpeed += 0.01f;
+
+
+        if (fadeToBlack.color.a >= 1 && !loadingScene)
+        {
+            if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
+            {
+                Load();
+            }
+            else
+            {
+                PlayerController.instance.gameObject.transform.position = new Vector2(-12f, 4);
+                playerStats.Heal((int)playerStats.maxHealth);
+                SceneManager.LoadScene(0);
+                PlayerController.instance.isDead = false;
+                loadingScene = true;
+            }
+
         }
     }
 
@@ -147,10 +191,9 @@ public class GameDetails : MonoBehaviour {
             DestroyAllPlayerPossessionsInBags();
             DestroyAllCurrentlyEquippedGear();
 
-            PlayerController.instance.isDead = false;
-            player.GetComponent<Animator>().SetTrigger("LoadGame");
             PlayerController.instance.speed = PlayerController.instance.normalSpeed;
-            playerStats.currentHealth = data.currentHealth;
+            playerStats.currentHealth = 0;
+            playerStats.Heal((int)data.currentHealth);
             playerStats.maxHealth = data.maxHealth;
             playerStats.exp = data.experience;
             stage = data.stage;
@@ -160,11 +203,8 @@ public class GameDetails : MonoBehaviour {
             loadItems(data.itemsInBag, "itemsInBag");
 
             SceneManager.LoadScene(data.zone);
-            //var cam = CameraController.instance.GetComponentInChildren<Camera>();
-            //cam.fieldOfView = CameraController.instance.fieldOfViewBase;
             player.transform.position = new Vector2(data.locationX, data.locationY);
 
-            //Debug.Log("loaded data");
 
         }
     }
@@ -339,7 +379,6 @@ public class GameDetails : MonoBehaviour {
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("Loading a scene");
         if (player == null)
         {
             player = GameObject.Find("Player");
@@ -348,6 +387,47 @@ public class GameDetails : MonoBehaviour {
         {
             playerStats = player.GetComponent<PlayerStats>();
         }
+
+        if (PlayerController.instance.isDead)
+        {
+            PlayerController.instance.isDead = false;
+            PlayerController.instance.anim.SetTrigger("LoadGame");
+        }
+
+        StartCoroutine(enableUi());
+        StartCoroutine(UnFade());
+
+        // POC
+
+    }
+
+    IEnumerator enableUi()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        Debug.Log(ui.Length + "enabling ui");
+        foreach (Canvas canvas in ui)
+        {
+            canvas.enabled = true;
+
+            var a = gameObject.GetComponent<AstarPath>();
+            a.Scan();
+        }
+
+        loadingScene = false;
+
+    }
+    IEnumerator UnFade()
+    {
+        while (fadeToBlack.color.a >= 0.02)
+        {
+            fadeToBlack.enabled = true;
+            fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
+            fadeSpeed -= 0.01f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        yield return null;
     }
 }
 

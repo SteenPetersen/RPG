@@ -22,7 +22,8 @@ public class EnemyStats : CharacterStats {
     {
         if (hitByProjectile)
         {
-            enemyControl.currentLookRadius = enemyControl.pullRadiusAggro;
+            enemyControl.haveAggro = true;
+            hitByProjectile = false;
         }
     }
 
@@ -43,7 +44,6 @@ public class EnemyStats : CharacterStats {
 
         // Add death animation
         anim.SetTrigger("Dead");
-        enemyControl.speed = 0;
         enemyControl.isDead = true;
 
         // Loot logic
@@ -78,11 +78,51 @@ public class EnemyStats : CharacterStats {
     {
         base.TakeDamage(damage);
 
+        int newDmg = 0;
+        bool crit = false;
+
+        DamageVariance(damage, out crit, out newDmg);
+
+        if (crit)
+        {
+            //Debug.LogWarning("CRIT!");
+            int bonusDmg = Random.Range(0, newDmg / 2);
+            newDmg += bonusDmg;
+        }
+
+        currentHealth -= newDmg;
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+
+
+
+        var text = CombatTextManager.instance.FetchText(transform.position);
+        var textScript = text.GetComponent<CombatText>();
+        if (crit) { textScript.Crit(newDmg.ToString(), transform.position); }
+        else { textScript.White(newDmg.ToString(), transform.position); }
+        text.transform.position = transform.position;
+        text.gameObject.SetActive(true);
+
         if (currentHealth > 0)
         {
+
             anim.SetTrigger("Hurt");
-            // TODO sound of damage
+            SoundManager.instance.PlaySound(gameObject.name);
+            //Debug.Log(gameObject.name);
         }
         enemyControl.healthbar.value = enemyControl.CalculateHealth(currentHealth, maxHealth);
+    }
+
+
+    public override bool Heal(int healthIncrease)
+    {
+        bool tmp = base.Heal(healthIncrease);
+
+        enemyControl.healthbar.value = enemyControl.CalculateHealth(currentHealth, maxHealth);
+
+        return tmp;
     }
 }

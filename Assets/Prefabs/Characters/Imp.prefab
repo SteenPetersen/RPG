@@ -521,7 +521,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1852010146015402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.439564, y: 2.3093061, z: 0}
+  m_LocalPosition: {x: -22.45, y: -6.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4606434453767672}
@@ -732,16 +732,16 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.05154568, y: 0.35318363}
+  m_Offset: {x: 0.058865547, y: 0.35318363}
   serializedVersion: 2
-  m_Radius: 0.339109
+  m_Radius: 0.33329868
 --- !u!61 &61931952739775030
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1499169759910610}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
@@ -902,18 +902,24 @@ MonoBehaviour:
   playercontrol: {fileID: 0}
   myStats: {fileID: 0}
   anim: {fileID: 0}
-  lookRadiusNonAggro: 5
-  lookRadiusAggro: 7
-  pullRadiusAggro: 30
   currentLookRadius: 0
+  haveAggro: 0
+  inRange: 0
+  distanceToLook: 0
+  distanceToStop: 0.7
   enemyProjectile: {fileID: 1437101887666078, guid: b41ce6e1fd7b7b74ca53ed760e78ea92,
     type: 2}
+  projectilePoint: {fileID: 4284177804326750}
   rangedDelay: 2
   projectileSpeed: 430
   isDead: 0
   speed: 0.08
   facingRight: 1
+  nav: {fileID: 0}
+  target: {fileID: 0}
   combat: {fileID: 0}
+  pooledProjectiles: {fileID: 0}
+  logic: {fileID: 0}
   arrows: []
 --- !u!114 &114505577017676502
 MonoBehaviour:
@@ -930,7 +936,7 @@ MonoBehaviour:
   maxSpeed: 3.5
   mass: 10
   stoppingDistance: 0.1
-  slowingDistance: 1
+  slowingDistance: 0.1
   accelerationRate: 2
   decelerationRate: 8.62
   lookAheadDistance: 1
@@ -969,7 +975,7 @@ MonoBehaviour:
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 88865d4e0eaaaaf48b55e004941cbec5, type: 2}
   m_Color: {r: 0.8018868, g: 0.14751692, b: 0.14751692, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -1011,7 +1017,7 @@ MonoBehaviour:
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 88865d4e0eaaaaf48b55e004941cbec5, type: 2}
   m_Color: {r: 0.2650668, g: 0.8962264, b: 0.25787643, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:

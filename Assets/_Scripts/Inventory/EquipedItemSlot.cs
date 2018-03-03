@@ -53,6 +53,6 @@ public class EquipedItemSlot : MonoBehaviour
 
     private void OnDisable()
     {
-        Debug.Log("yo");
+        Debug.Log("Called OnDisabled on EquipedItemSlot");
     }
 }

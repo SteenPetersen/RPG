@@ -6,6 +6,8 @@ public class Projectile : MonoBehaviour {
     public Rigidbody2D rigid;
     ParticleSystem[] impacts;
 
+    public float destroyAfter;
+
     public Sprite hitSprite;
     public Sprite normalSprite;
     public CircleCollider2D myCollider;
@@ -17,6 +19,17 @@ public class Projectile : MonoBehaviour {
         impacts = GetComponentsInChildren<ParticleSystem>();
         myCollider = GetComponent<CircleCollider2D>();
         projectileSpriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void OnEnable()
+    {
+        Invoke("Destroy", destroyAfter);
+    }
+
+    private void Destroy()
+    {
+        gameObject.SetActive(false);
+        transform.parent = null;
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -39,9 +52,11 @@ public class Projectile : MonoBehaviour {
                     {
                         if (impact.name == "BloodImpact")
                         {
+                            
                             impact.Play();
                         }
                     }
+
                     GetComponent<SpriteRenderer>().sprite = hitSprite;
                     rigid.isKinematic = true;
                     rigid.velocity = Vector2.zero;
@@ -74,5 +89,10 @@ public class Projectile : MonoBehaviour {
         rigid.isKinematic = false;
         gameObject.SetActive(true);
         projectileSpriteRenderer.sprite = normalSprite;
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke();
     }
 }

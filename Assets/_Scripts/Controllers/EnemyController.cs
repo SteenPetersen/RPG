@@ -11,39 +11,40 @@ using UnityEngine.UI;
 public class EnemyController : Enemy {
 
     #region Aggro
-    public float lookRadiusNonAggro = 5f;
-    public float lookRadiusAggro = 7.5f;
-    public float pullRadiusAggro = 30f;
-    public float currentLookRadius;
-    bool haveAggro;
+    // raycast aggro system new stuff
+    [HideInInspector]
+    public bool haveAggro, inRange;
+    public float distanceToLook;
+    public float distanceToStop;
+    [HideInInspector]
+    public Vector3 lastKnownPlayerPosition;
     #endregion
 
     //ranged
-    public GameObject enemyProjectile;
+    public Transform projectilePoint;
     public float rangedDelay;
     public float projectileSpeed;
-    float timer;
-
-
+    [HideInInspector]
+    public float timer;
 
     public bool isDead = false;
     bool displayingHealth = false;
-    public float speed;
-    float velocity;
 
     [HideInInspector]
     public bool facingRight = true;
-    PolyNavAgent nav;
-    Transform target;
-
+    [HideInInspector]
+    public PolyNavAgent nav;
+    [HideInInspector]
+    public Transform target;
     [HideInInspector]
     public CharacterCombat combat;
-
-    PooledProjectilesController pooledProjectiles;
+    [HideInInspector]
+    public PooledProjectilesController pooledProjectiles;
 
     // a game object to hold items that we do not wish to flip
-    GameObject logic;
-    //[HideInInspector]
+    [HideInInspector]
+    public GameObject logic;
+    [HideInInspector]
     public List<GameObject> arrows = new List<GameObject>();
 
     void Start() {
@@ -62,24 +63,38 @@ public class EnemyController : Enemy {
     {
         timer -= Time.deltaTime;
 
-        Follow();
         DisplayHealth();
-        RangedAttack();
+        DetermineLookRadius();
 
-        //check if focused and interact with
-        //if (isFocus && !hasInteracted)
-        //{
-        //    float distance = Vector3.Distance(target.position, transform.position);
+        if (isDead)
+        {
+            nav.SetDestination(transform.position);
+            return;
+        }
 
-        //    if (distance <= radius)
-        //    {
-        //        Interact();
-        //    }
-        //    hasInteracted = true;
-        //}
+        Follow();
+
+
+        if (haveAggro && !playercontrol.isDead)
+        {
+            Chase();
+            DetermineAggro(target.position);
+        }
+
+        if (!haveAggro && (Vector2)transform.position == nav.nextPoint)
+        {
+            anim.SetBool("Walk", false);
+        }
+        else if (!haveAggro && (Vector2)transform.position != nav.nextPoint)
+        {
+            Debug.Log("trying to find a place to stop");
+            nav.SetDestination(lastKnownPlayerPosition);
+        }
+
+        Attack();
     }
 
-    private void DisplayHealth()
+    public virtual void DisplayHealth()
     {
         if (myStats.currentHealth < myStats.maxHealth && myStats.currentHealth > 0 && !displayingHealth)
         {
@@ -112,69 +127,26 @@ public class EnemyController : Enemy {
 
             return;
         }
-
-
-        float distance = Vector3.Distance(target.position, transform.position);
-        if (distance <= currentLookRadius && distance > radius)
-        {
-            //nav.centerOffset = new Vector2(center.position.x, center.position.y);
-            haveAggro = true;
-            currentLookRadius = lookRadiusAggro;
-            anim.SetBool("Walk", true);
-            nav.SetDestination(target.position);
-            FaceTarget();
-        }
-
-        else if (distance < radius)
-        {
-            //nav.centerOffset = Vector2.zero;
-            anim.SetBool("Walk", false);
-            nav.SetDestination(transform.position);
-            CharacterStats targetStats = target.GetComponent<CharacterStats>();
-            if (targetStats != null)
-            {
-                // if you're close enough then go to CharacterCombat and perform Attack();
-                combat.Attack(targetStats, anim);
-            }
-        }
-        else
-        {
-            if (haveAggro)
-            {
-                haveAggro = false;
-                // monster lost aggro
-            }
-            nav.SetDestination(nav.nextPoint);
-            currentLookRadius = lookRadiusNonAggro;
-            if ((Vector2)transform.position == nav.nextPoint)
-            {
-                anim.SetBool("Walk", false);
-            }
-        }
     }
 
-    private void RangedAttack()
+    public virtual void Attack()
     {
-        if (isDead || PlayerController.instance.isDead)
+        if (isDead || playercontrol.isDead)
             return;
 
-        float distance = Vector3.Distance(target.position, transform.position);
-        if (haveAggro && distance > radius)
+
+        if (haveAggro && !inRange)
         {
-
-
             if (timer < 0)
             {
-                //do something
                 anim.SetTrigger("Shoot");
 
                 timer = rangedDelay;
             }
         }
-
     }
 
-    private void OnThrowCOmplete()
+    public virtual void OnThrowCOmplete()
     {
         Vector2 direction = new Vector2(target.transform.position.x - transform.position.x, target.transform.position.y - transform.position.y);
         direction.Normalize();
@@ -185,7 +157,7 @@ public class EnemyController : Enemy {
         var projectileScript = projectile.GetComponent<enemy_Projectile>();
         projectileScript.MakeProjectileReady();
 
-        projectile.transform.position = transform.position;
+        projectile.transform.position = projectilePoint.transform.position;
         projectile.transform.rotation = Quaternion.identity;
 
         projectile.transform.Rotate(0, 0, angle, Space.World);
@@ -193,7 +165,30 @@ public class EnemyController : Enemy {
         projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
     }
 
-    void FaceTarget()
+    public virtual void OnStrikeComplete()
+    {
+        if (!playercontrol.isDead)
+        {
+            Vector2 direction = new Vector2(target.transform.position.x - transform.position.x, target.transform.position.y - transform.position.y);
+            direction.Normalize();
+
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            GameObject projectile = pooledProjectiles.GetEnemyProjectile(gameObject.name);
+            var projectileScript = projectile.GetComponent<enemy_Projectile>();
+            projectileScript.MakeProjectileReady();
+
+            projectile.transform.position = transform.position;
+            projectile.transform.rotation = Quaternion.identity;
+
+            projectile.transform.Rotate(0, 0, angle, Space.World);
+
+            projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+        }
+
+    }
+
+    public virtual void FaceTarget()
     {
         float distanceFromObjectToTarget = Vector3.Distance(CameraController.instance.measurementTransform.position, target.position);
         float distanceFromObjectToMe = Vector3.Distance(CameraController.instance.measurementTransform.position, transform.position);
@@ -204,7 +199,7 @@ public class EnemyController : Enemy {
         }
     }
 
-    void Flip()
+    public virtual void Flip()
     {
         if (isDead)
             return;
@@ -227,12 +222,104 @@ public class EnemyController : Enemy {
         tmp.position = pos;
     }
 
+    public virtual void Chase()
+    {
+        if (isDead || !haveAggro)
+            return;
+
+        int playerLayer = 10;
+        var playerlayerMask = 1 << playerLayer;
+
+
+        if (!inRange && haveAggro)
+        {
+            anim.SetBool("Walk", true);
+            nav.SetDestination(target.position);
+            FaceTarget();
+        }
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, (target.position - transform.position), distanceToStop, playerlayerMask);
+
+        if (hit.transform != null)
+        {
+            if (hit.transform.name == "Player")
+            {
+                inRange = true;
+                anim.SetBool("Walk", false);
+                nav.SetDestination(transform.position);
+                anim.SetTrigger("Hit1");
+            }
+        }
+
+        inRange = false;
+
+    }
+
+    public virtual void DetermineLookRadius()
+    {
+        if (haveAggro)
+        {
+            distanceToLook = 10;
+        }
+
+        else
+        {
+            distanceToLook = 5;
+        }
+    }
+
+    public virtual void DetermineAggro(Vector3 pos)
+    {
+        if (inRange || isDead)
+            return;
+
+        //create layer masks for the player and the obstacles ending a finalmask combining both
+        int playerLayer = 10;
+        int obstacleLayer = 13;
+        var playerlayerMask = 1 << playerLayer;
+        var obstacleLayerMask = 1 << obstacleLayer;
+        var finalMask = playerlayerMask | obstacleLayerMask;
+
+        // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, (pos - transform.position), distanceToLook, finalMask);
+
+        var drawdirection = (pos - transform.position).normalized;
+        Debug.DrawRay(transform.position, (pos - transform.position), Color.cyan);
+        Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
+
+        // if the ray hits the player then aggro him
+        if (hit.transform != null)
+        {
+            if (hit.transform.name == "Player")
+            {
+                lastKnownPlayerPosition = target.position;
+                if (!haveAggro)
+                {
+                    //Debug.Log("I see you!");
+                    haveAggro = true;
+                }
+            }
+            else if (haveAggro && hit.transform.name != "Player")
+            {
+                haveAggro = false;
+                //Debug.LogWarning("Lost  Line of sight to the player");
+            }
+        }
+        else if (hit.transform == null)
+        {
+            haveAggro = false;
+            //Debug.LogWarning("Ran out of my distance");
+        }
+
+    }
+
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position,currentLookRadius);
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(transform.position,currentLookRadius);
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, radius);
+        //Gizmos.color = Color.yellow;
+        //Gizmos.DrawWireSphere(transform.position, radius);
     }
+
 }

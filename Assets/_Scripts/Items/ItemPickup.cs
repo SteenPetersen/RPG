@@ -16,6 +16,12 @@ public class ItemPickup : Interactable {
             if (distance <= radius)
             {
                 Interact();
+
+                var text = CombatTextManager.instance.FetchText(transform.position);
+                var textScript = text.GetComponent<CombatText>();
+                textScript.White(gameObject.name, transform.position);
+                text.transform.position = transform.position;
+                text.SetActive(true);
             }
             hasInteracted = true;
         }

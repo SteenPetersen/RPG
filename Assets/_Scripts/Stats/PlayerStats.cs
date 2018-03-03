@@ -56,6 +56,25 @@ public class PlayerStats : CharacterStats {
     public override void TakeDamage(int damage)
     {
         base.TakeDamage(damage);
+
+        int newDmg;
+        bool crit;
+
+        DamageVariance(damage, out crit, out newDmg);
+
+        currentHealth -= newDmg;
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+
+        var text = CombatTextManager.instance.FetchText(transform.position);
+        var textScript = text.GetComponent<CombatText>();
+        textScript.Red(newDmg.ToString(), transform.position);
+        text.transform.position = transform.position;
+        text.gameObject.SetActive(true);
+
         if (playerControl.healthGroup.alpha == 0)
         {
             playerControl.healthGroup.alpha = 1f;
@@ -64,20 +83,13 @@ public class PlayerStats : CharacterStats {
         playerControl.healthbar.value = playerControl.CalculateHealth(currentHealth, maxHealth);
     }
 
-    public bool Heal(int healthIncrease)
+    public override bool Heal(int healthIncrease)
     {
-        if (currentHealth < maxHealth)
-        {
-            currentHealth += healthIncrease;
-            playerControl.healthbar.value = playerControl.CalculateHealth(currentHealth, maxHealth);
-            return true;
-        }
-        else if (currentHealth == maxHealth)
-        {
-            return false;
-        }
+        bool tmp = base.Heal(healthIncrease);
 
-        return false;
+        playerControl.healthbar.value = playerControl.CalculateHealth(currentHealth, maxHealth);
+
+        return tmp;
     }
 
     void RemoveHealthBar()
