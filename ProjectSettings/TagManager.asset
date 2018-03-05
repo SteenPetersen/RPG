@@ -38,7 +38,7 @@ TagManager:
   - 
   - A*
   - 
-  - 
+  - ProjectileCollision
   - PlayerProjectileCollisions
   - 3DSelectors
   m_SortingLayers:
