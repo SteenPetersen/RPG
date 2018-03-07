@@ -3,10 +3,12 @@
 public class enemy_Projectile : MonoBehaviour {
 
     public int damage;
-    public ParticleSystem impact;
+    public ParticleSystem impact, particles;
     SpriteRenderer sprite;
     Rigidbody2D rigid;
     Collider2D myCollider;
+
+    
 
     public float destroyAfter;
 
@@ -33,7 +35,7 @@ public class enemy_Projectile : MonoBehaviour {
     {
         if (col.tag == "Player")
         {
-            Debug.Log("hit the player");
+            //Debug.Log("hit the player");
 
             PlayerStats stats = col.gameObject.GetComponent<PlayerStats>();
 
@@ -43,16 +45,24 @@ public class enemy_Projectile : MonoBehaviour {
                 stats.TakeDamage(damage);
                 sprite.enabled = false;
                 impact.Play();
+                if (particles != null)
+                {
+                    particles.Stop();
+                }
             }
         }
 
         if (col.tag == "ProjectileSurface")
         {
-            Debug.Log("hit the wall");
+            //Debug.Log("hit the wall");
 
             rigid.isKinematic = true;
             myCollider.enabled = false;
             rigid.velocity = Vector2.zero;
+            if (particles != null)
+            {
+                particles.Stop();
+            }
         }
     }
 

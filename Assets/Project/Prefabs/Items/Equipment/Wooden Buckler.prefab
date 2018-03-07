@@ -64,7 +64,7 @@ MonoBehaviour:
   healthGroup: {fileID: 0}
   healthbar: {fileID: 0}
   playercontrol: {fileID: 0}
-  item: {fileID: 11400000, guid: 47b4f6b1de7a6654498e1e3a08d3d6ae, type: 2}
+  item: {fileID: 0}
   chanceToDrop: 6
 --- !u!114 &114536193123368490
 MonoBehaviour:
@@ -123,7 +123,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
   m_SortingLayer: 3
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: ed64ef43783820945940c40b53222e46, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

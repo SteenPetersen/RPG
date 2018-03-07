@@ -124,7 +124,7 @@ namespace Pathfinding {
 			}
 		}
 
-		static bool Is2D (GridGraph graph) {
+		public static bool Is2D (GridGraph graph) {
 			return Quaternion.Euler(graph.rotation) * Vector3.up == -Vector3.forward;
 		}
 

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198428471821725138}
   - component: {fileID: 199857345243313054}
   m_Layer: 14
-  m_Name: BloodImpact
+  m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,7 +97,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1472819850106686}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.319725, y: -2.1049948, z: 0}
+  m_LocalPosition: {x: -9.520733, y: -8.260995, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4018163337091184}
@@ -153,11 +153,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 5
   rigid: {fileID: 0}
+  impacts: []
   destroyAfter: 3
   hitSprite: {fileID: 21300004, guid: 8f323ffb8b4457847846353a2b597cea, type: 3}
   normalSprite: {fileID: 21300004, guid: 2256ae9abe9739a41ac7dab293d8f627, type: 3}
   myCollider: {fileID: 58595001038541288}
   projectileSpriteRenderer: {fileID: 212659204936523284}
+  knockBack: 0
 --- !u!198 &198428471821725138
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -218,7 +220,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -184434954
+  randomSeed: 467413931
   InitialModule:
     serializedVersion: 3
     enabled: 1

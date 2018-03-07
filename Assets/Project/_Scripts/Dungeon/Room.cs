@@ -180,7 +180,8 @@ public class Room
             Vector2 enemyVector = new Vector2(enemyXPos, enemyYPos);
 
             enemyPositions.Add(enemyVector);
-            BoardCreator.instance.SpawnElement(enemyVector, BoardCreator.instance.enemy);
+            int rand = Random.Range(0, BoardCreator.instance.enemy.Length);
+            BoardCreator.instance.SpawnElement(enemyVector, BoardCreator.instance.enemy[rand]);
         }
     }
 

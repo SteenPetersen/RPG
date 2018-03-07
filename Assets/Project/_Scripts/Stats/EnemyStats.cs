@@ -78,6 +78,9 @@ public class EnemyStats : CharacterStats {
     {
         base.TakeDamage(damage);
 
+        // hit sound
+        SoundManager.instance.PlaySound(gameObject.name + "_hit");
+        SoundManager.instance.PlaySound("impact_hit");
         int newDmg = 0;
         bool crit = false;
 
@@ -94,6 +97,7 @@ public class EnemyStats : CharacterStats {
 
         if (currentHealth <= 0)
         {
+            SoundManager.instance.PlaySound(gameObject.name + "_death");
             Die();
         }
 

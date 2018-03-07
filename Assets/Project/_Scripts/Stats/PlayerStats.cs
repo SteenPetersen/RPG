@@ -57,6 +57,8 @@ public class PlayerStats : CharacterStats {
     {
         base.TakeDamage(damage);
 
+        SoundManager.instance.PlaySound("player_hurt");
+
         int newDmg;
         bool crit;
 

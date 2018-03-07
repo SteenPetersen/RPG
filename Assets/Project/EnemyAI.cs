@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class EnemyAI : AIPath
 {
+
+    public float force;
     #region Health
     [SerializeField]
     public CanvasGroup healthGroup;
@@ -14,15 +16,15 @@ public class EnemyAI : AIPath
 
     #endregion
 
-    AIDestinationSetter setter;
+    public AIDestinationSetter setter;
 
     public float distanceToLook,  meleeRange;
     public bool isDead, inRange, haveAggro, pausingMovement, displayingHealth, alert, inMeleeRange;
     public bool facingRight = true;
-    Transform playerObj;
+    public Transform playerObj;
     public Animator anim;
 
-    bool moving;
+    public bool moving;
 
     public GameObject child;  // used to check if collison detected is self or not
     public CircleCollider2D myCollider;
@@ -36,7 +38,7 @@ public class EnemyAI : AIPath
     public Transform ArrowHolder;
 
     public float meleeDelay;
-    float timer;
+    public float timer;
 
 
     protected override void Start()
@@ -56,8 +58,13 @@ public class EnemyAI : AIPath
     {
         timer -= Time.deltaTime;
 
+        DisplayHealth();
+
+
         if (isDead)
         {
+            setter.ai.canMove = false;
+            GetComponent<Rigidbody2D>().isKinematic = true;
             setter.ai.destination = tr.position;
             setter.targetASTAR = null;
             setter.enabled = false;
@@ -66,18 +73,17 @@ public class EnemyAI : AIPath
 
         base.Update();
 
-        DisplayHealth();
         CheckMeleeRange();
 
         if (Mathf.Approximately(velocity.x, 0) && Mathf.Approximately(velocity.y, 0) && moving)
         {
-            Debug.Log("stopping");
+            //Debug.Log("stopping");
             anim.SetBool("Walk", false);
             moving = false;
         }
         else if (velocity.x > 0.03 || velocity.y > 0.03 && !moving)
         {
-            Debug.Log("moving");
+           // Debug.Log("moving");
             anim.SetBool("Walk", true);
             moving = true;
         }
@@ -105,7 +111,7 @@ public class EnemyAI : AIPath
         if (inRange || isDead || pausingMovement)
             return;
 
-        Debug.Log("calling DetermineAggro");
+        //Debug.Log("calling DetermineAggro");
 
         //create layer masks for the player and the obstacles ending a finalmask combining both
         int playerLayer = 10;
@@ -128,7 +134,7 @@ public class EnemyAI : AIPath
             {
                 if (!haveAggro)
                 {
-                    Debug.Log("I see you!");
+                    //Debug.Log("I see you!");
                     setter.targetASTAR = playerObj;
                     haveAggro = true;
                 }
@@ -137,7 +143,7 @@ public class EnemyAI : AIPath
             {
                 haveAggro = false;
                 setter.targetASTAR = null;
-                Debug.LogWarning("Lost Line of sight to the player");
+                //Debug.LogWarning("Lost Line of sight to the player");
                 return;
             }
         }
@@ -145,7 +151,7 @@ public class EnemyAI : AIPath
         {
             haveAggro = false;
             setter.targetASTAR = null;
-            Debug.LogWarning("Ran out of my distance");
+            //Debug.LogWarning("Ran out of my distance");
             return;
         }
 
@@ -155,7 +161,7 @@ public class EnemyAI : AIPath
     {
         if (!alert)
         {
-            distanceToLook = distanceToLook * 2;
+            distanceToLook = distanceToLook * 3;
             alert = true;
         }
     }
@@ -194,7 +200,7 @@ public class EnemyAI : AIPath
         //tmp.position = pos;
     }
 
-    public void CheckMeleeRange()
+    public virtual void CheckMeleeRange()
     {
         //create layer masks for the player and the obstacles ending a finalmask combining both
         int playerLayer = 10;
@@ -207,12 +213,12 @@ public class EnemyAI : AIPath
 
             if (hit.collider != null)
             {
-                Debug.Log(hit.collider.name);
+                //Debug.Log(hit.collider.name);
 
                 if (hit.collider.name == "Player")
                 {
                     Debug.DrawRay(transform.position, (playerObj.position - transform.position), Color.green);
-                    Debug.Log("reach target, in melee range");
+                   // Debug.Log("reach target, in melee range");
                     inMeleeRange = true;
                     return;
                 }
@@ -275,5 +281,36 @@ public class EnemyAI : AIPath
             healthGroup.alpha = 0;
             displayingHealth = false;
         }
+    }
+
+    public void Knockback(Vector3 dir)
+    {
+        int obstacleLayer = 13;
+        var obstacleLayerMask = 1 << obstacleLayer;
+
+        // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
+        RaycastHit2D hit = Physics2D.Raycast(tr.position, dir, 1.2f, obstacleLayerMask);
+
+        RaycastHit2D hit1 = Physics2D.Raycast(tr.position, Vector2.up, 1.2f, obstacleLayerMask);
+        RaycastHit2D hit2 = Physics2D.Raycast(tr.position, Vector2.down, 1.2f, obstacleLayerMask);
+        RaycastHit2D hit3 = Physics2D.Raycast(tr.position, Vector2.right, 1.2f, obstacleLayerMask);
+        RaycastHit2D hit4 = Physics2D.Raycast(tr.position, Vector2.left, 1.2f, obstacleLayerMask);
+
+        Debug.DrawRay(transform.position, dir, Color.cyan, 1);
+        Debug.DrawRay(transform.position, Vector2.up, Color.cyan, 1);
+        Debug.DrawRay(transform.position, Vector2.down, Color.cyan, 1);
+        Debug.DrawRay(transform.position, Vector2.right, Color.cyan, 1);
+        Debug.DrawRay(transform.position, Vector2.left, Color.cyan, 1);
+
+
+        if (hit.collider == null && hit1.collider == null && hit2.collider == null && hit3.collider == null && hit4.collider == null)
+        {
+            GetComponent<Rigidbody2D>().AddForce(dir * force * 10);
+        }
+    }
+
+    public virtual void OnEnemyCastComplete()
+    {
+        // meant to be overriden
     }
 }

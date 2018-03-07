@@ -5,14 +5,30 @@ using UnityEngine;
 public class ImpAnimationControl : MonoBehaviour {
 
     EnemyAI ai;
+    public ParticleSystem particles;
 
     private void Awake()
     {
-        ai = transform.root.gameObject.GetComponent<EnemyAI>();
+        ai = transform.parent.gameObject.GetComponent<EnemyAI>();
     }
 
     public void StrikeComplete()
     {
         ai.OnStrikeComplete();
+    }
+
+    public void CastComplete()
+    {
+        ai.OnEnemyCastComplete();
+    }
+
+    public void startParticles()
+    {
+        particles.Play();
+    }
+
+    public void stopParticles()
+    {
+        particles.Stop();
     }
 }

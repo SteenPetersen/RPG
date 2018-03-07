@@ -141,6 +141,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1057514803
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1057514804}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1057514804
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1057514803}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -300.3, y: -300.2, z: -1.4574442}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1470551377
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,8 +224,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5d15bd525dad846b7c3675fcd9a842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  columns: 130
-  rows: 130
+  columns: 200
+  rows: 200
   numRooms:
     m_Min: 34
     m_Max: 40
@@ -322,10 +350,13 @@ MonoBehaviour:
   - {fileID: 1986274438768818, guid: a01c4f23b5175fe4285dec8927f33c53, type: 2}
   goalFloor: {fileID: 1706755553763590, guid: 197658ba179a5bc4ab3d471b9c3110a6, type: 2}
   player: {fileID: 0}
-  enemy: {fileID: 1102277418783018, guid: 03aced079beebd345a0b54cb901d8874, type: 2}
+  enemy:
+  - {fileID: 1102277418783018, guid: 03aced079beebd345a0b54cb901d8874, type: 2}
+  - {fileID: 1721059457416130, guid: b73045d78e2a4b147a964f085fe0a005, type: 2}
   boss: {fileID: 1531521782100696, guid: 7993563eb983b574faa488e21991423b, type: 2}
   goal: {fileID: 1545105768644710, guid: f7532fc6aace4ba43bf2fa8fd2edf8c2, type: 2}
   cam: {fileID: 0}
+  aStarGridCreator: {fileID: 2001734319}
 --- !u!4 &1918078371
 Transform:
   m_ObjectHideFlags: 0
@@ -347,8 +378,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 2001734318}
-  - component: {fileID: 2001734317}
   - component: {fileID: 2001734316}
+  - component: {fileID: 2001734317}
+  - component: {fileID: 2001734319}
   m_Layer: 0
   m_Name: A*
   m_TagString: Untagged
@@ -387,7 +419,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   data:
-    dataString: UEsDBBQAAAgIAAAIIezRy/FOhwIAAF0FAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFtVN9v2jAQ/leQn8dE0jLK3rZA2Sa1RWXTHpY+HMmFWDh25B8FWvG/9+wEktJJSDHf3X13393Zr4xLU2NmlV5ont+pHNnXAfNn9mnAINgewXJFcEQIN6pCq3n2TW6E9x0R6CQvlK7m+QYTZawhuABhkExaWR8tCXodsD19hlMfcqBTPPGnFzpNR4MjHTOUFnXnenI8uTVeTmYCqhrzFX/Bzjken3nHjaMkNa3P6PPY8yshuGmrYfZQB7EJ1MaRFnLIOZC6UIIXWyLflNYz9oMfisKgbcvScJhxTU1qWNl3ZUvPVIHZNrU9g3A+z000jUNZDevdB4dhFMyFVtWPU+Jo5JPYkmfbRzhkYGyvt3149r5yJ3cgtrAW+LdEea8WWjmZk9Fq50OdwXjW/T1rS0rMth3elHoBuvrjhKJuQsegfp8IXq1D568bYCVU6HcYP2qazU+qNyyHaZkI9UX8MfgbNv0tag23XBtLpjah9NWtldPelc1Dy7wYZxOlJQa4rblGCcIelkRjL0d4YeulvbDcgr8nbfLWdroGFyEB7vxHowvTUu26WRn85ap6qbi0KwSdlT0+U6rdHZrywVnBJXaKvOGempgoKZv1M/8JWzldQNYLs7i3TuMMLIRLQDXRkuT9UGpoiJBOCL+PQYUn/0cq/O/JN7kEyisCzO6VDNfn3ffJL8LG8fz9lrObuIizaPJlHY2jOLqZDtdriCZZDPnV1XgSX8csXAMuqecglk3T2lHRBslOi6SVP71Wg4WGOty8XMNuwV8q1Rs/l4VaZRpRPjQMZ7GoKQm9Efk85yRzhdZyGXaPvaZMqGyLeXomSkNj53urIe1YUlbzZ2U9krIkvGEpO7LjG1BLAwQUAAAICAAACCHsQ5aeKG0AAAB4AAAACQAkAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAatWKkstKs7Mz1OyUjDRM9QzNNJRUEovSizIKAaKGII4pZkpIHa0koVRmlGyoblZkqGpoZGhhaVuUlKioXmyUWKKsbGpuZGJkVIsUH1JZUGqX2JuKkRPQGJJRlpmXkpmXrqee1FmijvIaKXYWgBQSwECLQAUAAAICAAACCHs0cvxTocCAABdBQAACwAkAAAAAAAAAAAAAAAAAAAAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFQSwECLQAUAAAICAAACCHsQ5aeKG0AAAB4AAAACQAkAAAAAAAAAAAAAADUAgAAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsFBgAAAAACAAIAuAAAAIwDAAAAAA==
+    dataString: UEsDBBQAAAgIAAAIIex5g/0SNQAAAD4AAAAJACQAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0Bq1YqSy0qzszPU7JSMNEz1DM00lFQSi9KLMgoBooYgDilmSkgdnQskFNSWZDql5ibChGoBQBQSwECLQAUAAAICAAACCHseYP9EjUAAAA+AAAACQAkAAAAAAAAAAAAAAAAAAAAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsFBgAAAAABAAEAWwAAAIAAAAAAAA==
     upgradeData: 
     file_cachedStartup: {fileID: 0}
     data_cachedStartup: 
@@ -435,9 +467,25 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2001734315}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.752754, y: -7.9171944, z: 0}
+  m_LocalPosition: {x: 289, y: 186, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2001734319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2001734315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e86c58ae4c1a9864489188726a6d7c40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  d: 0
+  w: 0
+  node: 0.5
+  diameter: 1
+  cutCorners: 0

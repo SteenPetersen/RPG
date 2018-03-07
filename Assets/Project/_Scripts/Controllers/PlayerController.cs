@@ -37,7 +37,7 @@ public class PlayerController : Interactable
     }
     #endregion
 
-    public direction dir;
+    public CoordinateDirection dir;
 
     GameObject skeleton;
     public Vector2 mousePosition;
@@ -127,7 +127,7 @@ public class PlayerController : Interactable
         int layerId = 11;
         int layerMask = 1 << layerId;
 
-        enemies = Physics2D.OverlapCircleAll(transform.position, 10, layerMask);
+        enemies = Physics2D.OverlapCircleAll(transform.position, 20, layerMask);
 
         if (!enemiesInRange && enemies.Length > 0)
         {
@@ -146,7 +146,7 @@ public class PlayerController : Interactable
 
         if (melee)
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 bool canHit = CheckIfPlayerMayHit();
 
@@ -159,25 +159,21 @@ public class PlayerController : Interactable
                 direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
                 direction.Normalize();
 
-                //if (CollisionAboveCharacter.instance.mouseAbove)
-                //{
-                //    anim.SetTrigger("HitMeleeUp");
-                //    return;
-                //}
-                //else if (CollisionBelowCharacter.instance.mouseBelow)
-                //{
-                //    anim.SetTrigger("HitMeleeDown");
-                //    return;
-                //}
-
-
                 float distanceFromFrontToMouse, distanceFromBackToMouse;
                 CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
 
                 if (distanceFromBackToMouse < distanceFromFrontToMouse)
                     return;
 
-                anim.SetTrigger("HitMelee");
+                if (dir == CoordinateDirection.NE || dir == CoordinateDirection.NW)
+                {
+                    anim.SetTrigger("HitMeleeUp");
+                }
+                else if (dir == CoordinateDirection.SE || dir == CoordinateDirection.SW)
+                {
+                    anim.SetTrigger("HitMeleeDown");
+                }
+
             }
             if (Input.GetMouseButton(1))
             {
@@ -440,6 +436,7 @@ public class PlayerController : Interactable
 
             if (interactable != null)
             {
+                Debug.Log(interactable.name + " hit it!");
                 SetFocus(interactable);
                 SetMousePosition();
                 return interactable;
@@ -537,12 +534,12 @@ public class PlayerController : Interactable
         var projectileScript = projectile.GetComponent<Projectile>();
         projectileScript.MakeProjectileReady();
 
-        projectile.transform.position = meleeStartPoint.position;
+        projectile.transform.position = transform.position;
         projectile.transform.rotation = Quaternion.identity;
         projectile.transform.localScale = new Vector3(1, 1, 1);
 
 
-        projectile.transform.Rotate(0, 0, angle - 45, Space.World);
+        projectile.transform.Rotate(0, 0, angle, Space.World);
         // addforce force to the projectiles rigidbody in that direction.
         projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
         
@@ -660,7 +657,7 @@ public class PlayerController : Interactable
         enemiesInRange = false;
     }
 
-    public void SetMouseQuadrant(direction newDir)
+    public void SetMouseQuadrant(CoordinateDirection newDir)
     {
         dir = newDir;
     }

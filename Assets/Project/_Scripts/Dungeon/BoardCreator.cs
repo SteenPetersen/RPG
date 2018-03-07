@@ -28,7 +28,7 @@ public class BoardCreator : MonoBehaviour
     public GameObject[] outerWallTiles;                       // An array of outer wall tile prefabs.
     public GameObject goalFloor;
     public GameObject player;
-    public GameObject enemy;
+    public GameObject[] enemy;
     public GameObject boss;
     public GameObject goal;
     public Camera cam;
@@ -42,6 +42,8 @@ public class BoardCreator : MonoBehaviour
 
     private Vector2 goalPos;
 
+    public CreateGraph aStarGridCreator;
+
     private void Awake()
     {
         player = PlayerController.instance.gameObject;
@@ -49,7 +51,8 @@ public class BoardCreator : MonoBehaviour
         instance = this;
 
         StartCoroutine(InitializeMap());
-
+        aStarGridCreator.d = rows;
+        aStarGridCreator.w = columns;
     }
 
     void SetupTilesArray()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HitDirectionDetection : MonoBehaviour {
 
-    public direction dir;
+    public CoordinateDirection dir;
     PlayerController player;
 
     public bool mouseAbove = false;
@@ -36,5 +36,5 @@ public class HitDirectionDetection : MonoBehaviour {
     }
 }
 
-public enum direction { NW, NE, SW, SE }
+public enum CoordinateDirection { NW, NE, SW, SE }
 
