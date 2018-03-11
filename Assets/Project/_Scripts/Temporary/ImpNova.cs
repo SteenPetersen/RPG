@@ -24,7 +24,7 @@ public class ImpNova : MonoBehaviour {
         for (int i = 0; i < collisionEvents.Count; i++)
         {
 
-            if (other.gameObject.name == "Player")
+            if (other.gameObject.tag == "Player")
             {
                 Debug.Log("Collided with " + other.gameObject.name);
 

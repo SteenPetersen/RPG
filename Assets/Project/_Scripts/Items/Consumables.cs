@@ -12,8 +12,8 @@ public class Consumables : Item {
 
     public override void Use()
     {
-        base.Use();
-        // use the potion
+        //base.Use();
+        //// use the potion
 
         Consume();
         //remove it from inventory
@@ -22,6 +22,7 @@ public class Consumables : Item {
 
     void Consume()
     {
+        Debug.Log("using potion");
         if (potionType == 0)
         {
             bool tryHeal = PlayerController.instance.gameObject.GetComponent<PlayerStats>().Heal(valueIncrease);
@@ -29,6 +30,7 @@ public class Consumables : Item {
             if (tryHeal)
             {
                 RemoveFromInventory();
+                SoundManager.instance.PlayInventorySound("gulp");
             }
         }
     }

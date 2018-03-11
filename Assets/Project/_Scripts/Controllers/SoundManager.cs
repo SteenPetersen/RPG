@@ -7,8 +7,8 @@ public class SoundManager : MonoBehaviour {
     public static SoundManager instance;
     [HideInInspector]
     public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow, 
-                     bladeSwing, impBossHit, impBossDeath, impSwing, impHit, impDeath, playerHurt, playerHurt1,
-                     impactHit, impactHit1;
+                     bladeSwing, impBossHit, impBossDeath, impSwing, impHit, impHit1, impDeath, impDeath1, playerHurt, playerHurt1,
+                     impactHit, impactHit1, potionInteract, potionPickup, fireBurst, firebuildup;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -43,10 +43,18 @@ public class SoundManager : MonoBehaviour {
         impSwing = Resources.Load<AudioClip>("Sound/" + "imp_swing");
         impHit = Resources.Load<AudioClip>("Sound/" + "short_hit_monster_imp");
         impDeath = Resources.Load<AudioClip>("Sound/" + "short_death_monster_imp");
+        impHit1 = Resources.Load<AudioClip>("Sound/" + "short_hit_monster_imp_1");
+        impDeath1 = Resources.Load<AudioClip>("Sound/" + "short_death_monster_imp_1");
 
 
         impBossHit = Resources.Load<AudioClip>("Sound/" + "imp_boss_hit");
         impBossDeath = Resources.Load<AudioClip>("Sound/" + "imp_boss_death");
+        fireBurst = Resources.Load<AudioClip>("Sound/" + "fire_burst");
+        firebuildup = Resources.Load<AudioClip>("Sound/" + "fire_buildup");
+
+        potionInteract = Resources.Load<AudioClip>("Sound/" + "potion_interact");
+        potionPickup = Resources.Load<AudioClip>("Sound/" + "potion_pickup");
+
 
         audioSrc = GetComponent<AudioSource>();
     }
@@ -55,7 +63,7 @@ public class SoundManager : MonoBehaviour {
 		
 	}
 
-    public void PlaySound(string clip)
+    public void PlayCombatSound(string clip)
     {
         switch (clip)
         {
@@ -108,6 +116,17 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(impBossHit);
                 break;
 
+
+            case "ImpGiant_sound1":
+            case "ImpGiant(Clone)_sound1":
+                audioSrc.PlayOneShot(fireBurst);
+                break;
+
+            case "ImpGiant_sound2":
+            case "ImpGiant(Clone)_sound2":
+                audioSrc.PlayOneShot(firebuildup);
+                break;
+
             case "Imp_swing":
             case "Imp(Clone)_swing":
                 audioSrc.PlayOneShot(impSwing);
@@ -115,7 +134,13 @@ public class SoundManager : MonoBehaviour {
 
             case "Imp_hit":
             case "Imp(Clone)_hit":
-                audioSrc.PlayOneShot(impHit);
+                int Imp_hit = Random.Range(1, 3);
+                if (Imp_hit == 1)
+                {
+                    audioSrc.PlayOneShot(impHit);
+                    break;
+                }
+                audioSrc.PlayOneShot(impHit1);
                 break;
 
             case "Imp_death":
@@ -123,6 +148,52 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(impDeath);
                 break;
 
+            case "ImpRanged_hit":
+            case "ImpRanged(Clone)_hit":
+                int ImpRanged_hit = Random.Range(1, 3);
+                if (ImpRanged_hit == 1)
+                {
+                    audioSrc.PlayOneShot(impHit);
+                    break;
+                }
+                audioSrc.PlayOneShot(impHit1);
+                break;
+
+            case "ImpRanged_death":
+            case "ImpRanged(Clone)_death":
+                audioSrc.PlayOneShot(impDeath);
+                break;
+
+
+        }
+    }
+
+    public void PlayInventorySound(string clip)
+    {
+        switch (clip)
+        {
+            case "player_hurt":
+                int rand = Random.Range(1, 3);
+                if (rand == 1)
+                {
+                    audioSrc.PlayOneShot(playerHurt);
+                    break;
+                }
+                audioSrc.PlayOneShot(playerHurt1);
+                break;
+
+            case "AddItem":
+                audioSrc.PlayOneShot(impactStone);
+                break;
+
+            case "gulp":
+                audioSrc.PlayOneShot(potionPickup);
+                break;
+
+            case "Small Health Potion_pickup":
+            case "Small Health Potion(Clone)_pickup":
+                audioSrc.PlayOneShot(potionInteract);
+                break;
 
         }
     }

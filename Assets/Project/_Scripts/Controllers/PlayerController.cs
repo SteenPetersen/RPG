@@ -39,7 +39,7 @@ public class PlayerController : Interactable
 
     public CoordinateDirection dir;
 
-    GameObject skeleton;
+    public GameObject skeleton;
     public Vector2 mousePosition;
     public EventSystem eventSys;
     public bool isDead, interruptMovement;
@@ -489,7 +489,7 @@ public class PlayerController : Interactable
         float distanceFromFrontToMouse, distanceFromBackToMouse;
         CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
 
-        SoundManager.instance.PlaySound("bow");
+        SoundManager.instance.PlayCombatSound("bow");
 
         var startPos = projectilePoint.transform.position;
 
@@ -520,11 +520,12 @@ public class PlayerController : Interactable
 
     public void OnStrikeComplete()
     {
+        Debug.Log(equip.visibleGear.Length);
 
         if (equip.visibleGear[3].sprite == null)
             return;
 
-        SoundManager.instance.PlaySound("bladeSwing");
+        SoundManager.instance.PlayCombatSound("bladeSwing");
 
         // Determine the correct angle to turn to the projectile
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -602,6 +603,7 @@ public class PlayerController : Interactable
 
         particles = GetComponentsInChildren<ParticleSystem>();
         skeleton = transform.Find("Skeleton").gameObject;
+        eventSys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
 
 
         gameDetails = GameDetails.instance;
@@ -637,16 +639,21 @@ public class PlayerController : Interactable
     {
         while (enemies.Length > 0)
         {
-            Debug.Log("calling Coroutine");
+            //Debug.Log("calling Coroutine");
 
             for (int i = 0; i < enemies.Length; i++)
             {
-                EnemyAI script = enemies[i].transform.parent.GetComponent<EnemyAI>();
-                if (script != null)
+                if (enemies[i].transform.parent.GetComponent<EnemyAI>() != null)
                 {
-                    Debug.Log(enemies[i].transform.GetInstanceID());
-                    script.DetermineAggro(transform.position);
+                    EnemyAI script = enemies[i].transform.parent.GetComponent<EnemyAI>();
+
+                    if (script != null)
+                    {
+                        //Debug.Log(enemies[i].transform.GetInstanceID());
+                        script.DetermineAggro(transform.position);
+                    }
                 }
+
 
             }
             yield return new WaitForSeconds(0.5f);

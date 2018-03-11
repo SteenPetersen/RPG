@@ -79,8 +79,8 @@ public class EnemyStats : CharacterStats {
         base.TakeDamage(damage);
 
         // hit sound
-        SoundManager.instance.PlaySound(gameObject.name + "_hit");
-        SoundManager.instance.PlaySound("impact_hit");
+        SoundManager.instance.PlayCombatSound(gameObject.name + "_hit");
+        SoundManager.instance.PlayCombatSound("impact_hit");
         int newDmg = 0;
         bool crit = false;
 
@@ -88,7 +88,7 @@ public class EnemyStats : CharacterStats {
 
         if (crit)
         {
-            //Debug.LogWarning("CRIT!");
+            Debug.LogWarning("CRIT!");
             int bonusDmg = Random.Range(0, newDmg / 2);
             newDmg += bonusDmg;
         }
@@ -97,7 +97,7 @@ public class EnemyStats : CharacterStats {
 
         if (currentHealth <= 0)
         {
-            SoundManager.instance.PlaySound(gameObject.name + "_death");
+            SoundManager.instance.PlayCombatSound(gameObject.name + "_death");
             Die();
         }
 
@@ -114,7 +114,7 @@ public class EnemyStats : CharacterStats {
         {
 
             anim.SetTrigger("Hurt");
-            SoundManager.instance.PlaySound(gameObject.name);
+            SoundManager.instance.PlayCombatSound(gameObject.name);
             //Debug.Log(gameObject.name);
         }
         enemyAI.healthbar.value = enemyAI.CalculateHealth(currentHealth, maxHealth);

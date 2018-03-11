@@ -21,7 +21,7 @@ public class EquipmentManager : MonoBehaviour {
     public delegate void OnEquipmentChanged(Equipment newItem, Equipment oldItem);
     public OnEquipmentChanged onEquipmentChanged;
 
-    public SpriteRenderer[] visibleGear;
+    public SpriteRenderer[] visibleGear = new SpriteRenderer[10];
     public EquipedItemSlot[] inventoryEquipment;
 
 
@@ -42,6 +42,7 @@ public class EquipmentManager : MonoBehaviour {
         //currentEquipment = new List<Equipment>(numberOfSlots);
 
         startGraphics = new Sprite[visibleGear.Length];
+        SetVisibleGearSpriteRenderers();
         checkStarterGraphics();
 
 
@@ -159,8 +160,10 @@ public class EquipmentManager : MonoBehaviour {
     {
         // update the array of equipment with the new items
         currentEquipment[slotIndex] = newItem;
+
+        Debug.Log(slotIndex);
         // instantiate a sprite corresponding to the new items visiblesprite
-        Sprite newSprite = Instantiate<Sprite>(newItem.characterVisibleSprite);
+        Sprite newSprite = Instantiate(newItem.characterVisibleSprite) as Sprite;
         // update the sprite of the equipmentSlots with the new sprite
         visibleGear[slotIndex].sprite = newSprite;
         //loop through all equipment in currentequipment and set inventoryequipmentSlot Icon correctly
@@ -242,10 +245,59 @@ public class EquipmentManager : MonoBehaviour {
         }
     }
 
+    void SetVisibleGearSpriteRenderers()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (i == 0)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Body/Head/Helm").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 1)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Body").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 2)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Legs").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 3)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Body/MainHand/MainItem").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 4)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Body/OffHand/OffItem").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 5)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Legs/MainFoot").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 6)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Legs/OffFoot").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 7)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Body/MainHand").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 8)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Body/OffHand").GetComponent<SpriteRenderer>();
+            }
+            else if (i == 9)
+            {
+                visibleGear[i] = PlayerController.instance.gameObject.transform.Find("Skeleton/Body/Shoulder").GetComponent<SpriteRenderer>();
+            }
+        }
+    }
+
     void checkStarterGraphics()
     {
         for (int i = 0; i < visibleGear.Length; i++)
         {
+            Debug.Log("setting start graphic " + i);
+
             if (visibleGear[i] != null)
             {
                 startGraphics[i] = visibleGear[i].sprite;

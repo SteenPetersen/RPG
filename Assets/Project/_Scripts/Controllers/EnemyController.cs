@@ -148,21 +148,21 @@ public class EnemyController : Enemy {
 
     public virtual void OnThrowCOmplete()
     {
-        Vector2 direction = new Vector2(target.transform.position.x - transform.position.x, target.transform.position.y - transform.position.y);
-        direction.Normalize();
+        //Vector2 direction = new Vector2(target.transform.position.x - transform.position.x, target.transform.position.y - transform.position.y);
+        //direction.Normalize();
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        //float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        GameObject projectile = pooledProjectiles.GetEnemyProjectile(gameObject.name);
-        var projectileScript = projectile.GetComponent<enemy_Projectile>();
-        projectileScript.MakeProjectileReady();
+        //GameObject projectile = pooledProjectiles.GetEnemyProjectile(gameObject.name, );
+        //var projectileScript = projectile.GetComponent<enemy_Projectile>();
+        //projectileScript.MakeProjectileReady();
 
-        projectile.transform.position = projectilePoint.transform.position;
-        projectile.transform.rotation = Quaternion.identity;
+        //projectile.transform.position = projectilePoint.transform.position;
+        //projectile.transform.rotation = Quaternion.identity;
 
-        projectile.transform.Rotate(0, 0, angle, Space.World);
+        //projectile.transform.Rotate(0, 0, angle, Space.World);
 
-        projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+        //projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
     }
 
     //public virtual void OnStrikeComplete()

@@ -4086,7 +4086,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 1.8871657
+  orthographic size: 2.3658807
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -4122,7 +4122,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.79499996
+  orthographic size: 0.74749994
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -10768,11 +10768,17 @@ MonoBehaviour:
   impBossDeath: {fileID: 0}
   impSwing: {fileID: 0}
   impHit: {fileID: 0}
+  impHit1: {fileID: 0}
   impDeath: {fileID: 0}
+  impDeath1: {fileID: 0}
   playerHurt: {fileID: 0}
   playerHurt1: {fileID: 0}
   impactHit: {fileID: 0}
   impactHit1: {fileID: 0}
+  potionInteract: {fileID: 0}
+  potionPickup: {fileID: 0}
+  fireBurst: {fileID: 0}
+  firebuildup: {fileID: 0}
   audioSrc: {fileID: 0}
 --- !u!114 &114635079993162884
 MonoBehaviour:
@@ -11386,9 +11392,10 @@ MonoBehaviour:
   pooledAmount: 8
   willGrow: 1
   impDaggers: []
+  impFireballs: []
   pooledArrows: []
   pooledSwords: []
-  impBossThrownProjectiles: []
+  projectileHolder: {fileID: 0}
 --- !u!114 &114679997857741046
 MonoBehaviour:
   m_ObjectHideFlags: 1

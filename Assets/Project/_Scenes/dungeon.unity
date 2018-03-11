@@ -224,17 +224,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5d15bd525dad846b7c3675fcd9a842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  columns: 200
-  rows: 200
+  columns: 150
+  rows: 150
   numRooms:
-    m_Min: 34
-    m_Max: 40
+    m_Min: 25
+    m_Max: 35
   roomWidth:
-    m_Min: 7
-    m_Max: 15
+    m_Min: 8
+    m_Max: 30
   roomHeight:
-    m_Min: 7
-    m_Max: 15
+    m_Min: 8
+    m_Max: 30
   corridorLength:
     m_Min: 5
     m_Max: 15
@@ -353,7 +353,7 @@ MonoBehaviour:
   enemy:
   - {fileID: 1102277418783018, guid: 03aced079beebd345a0b54cb901d8874, type: 2}
   - {fileID: 1721059457416130, guid: b73045d78e2a4b147a964f085fe0a005, type: 2}
-  boss: {fileID: 1531521782100696, guid: 7993563eb983b574faa488e21991423b, type: 2}
+  boss: {fileID: 1102277418783018, guid: 03aced079beebd345a0b54cb901d8874, type: 2}
   goal: {fileID: 1545105768644710, guid: f7532fc6aace4ba43bf2fa8fd2edf8c2, type: 2}
   cam: {fileID: 0}
   aStarGridCreator: {fileID: 2001734319}

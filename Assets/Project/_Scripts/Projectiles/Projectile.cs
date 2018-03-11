@@ -57,26 +57,22 @@ public class Projectile : MonoBehaviour {
         {
             // grab the enemies stats
             EnemyStats targetStatsScript = col.transform.parent.GetComponent<EnemyStats>();
+            EnemyAI script = col.transform.parent.GetComponent<EnemyAI>();
 
             // check to see if he had stats
-            if (targetStatsScript != null)
+            if (targetStatsScript != null && script != null)
             {
                 // if he still has health left
                 if (targetStatsScript.currentHealth > 0)
                 {
-                    foreach (var impact in impacts)
-                    {
-                        if (impact.name == "Enemy")
-                        {
-                            impact.Play();
-                        }
-                    }
+                    // play the impact particles that the enemy is holding
+                    script.impact.Play();
 
                     GetComponent<SpriteRenderer>().sprite = hitSprite;
                     rigid.isKinematic = true;
                     rigid.velocity = Vector2.zero;
                     myCollider.enabled = false;
-                    var script = col.transform.parent.GetComponent<EnemyAI>();
+                    
                     //script.haveAggro = true;
                     script.arrows.Add(gameObject);
                     //script.WalkToShooterPosition(PlayerController.instance.transform.position);
@@ -95,7 +91,7 @@ public class Projectile : MonoBehaviour {
 
         else if (col.tag == "ProjectileSurface")
         {
-            SoundManager.instance.PlaySound("hit_wall");
+            SoundManager.instance.PlayCombatSound("hit_wall");
             rigid.isKinematic = true;
             myCollider.enabled = false;
             rigid.velocity = Vector2.zero;

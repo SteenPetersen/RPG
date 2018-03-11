@@ -15,14 +15,15 @@ public class Equipment : Item {
 
     public override void Use()
     {
-        base.Use();
-        // equip the items
-        //Debug.Log("Attempting to equip");
-        bool equipIt = EquipmentManager.instance.Equip(this);
-        //remove it from inventory if it managed to get equipped
-        if (equipIt)
+        Debug.Log("trying to use equipment");
+        if ((int)equipType != 5)
         {
-            RemoveFromInventory();
+            bool equipIt = EquipmentManager.instance.Equip(this);
+            //remove it from inventory if it managed to get equipped
+            if (equipIt)
+            {
+                RemoveFromInventory();
+            }
         }
     }
 

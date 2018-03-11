@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4570898311006392}
   - component: {fileID: 212224631805075818}
   - component: {fileID: 61524349208342978}
-  - component: {fileID: 114332857408564346}
+  - component: {fileID: 114360363219911988}
   m_Layer: 0
   m_Name: GoalFloor
   m_TagString: Untagged
@@ -67,7 +67,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.31064415, y: 0.28909922}
   m_EdgeRadius: 0
---- !u!114 &114332857408564346
+--- !u!114 &114360363219911988
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -75,10 +75,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1706755553763590}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f90b58e7ac144bf419440ca05458fba9, type: 3}
+  m_Script: {fileID: 11500000, guid: c58f8b46d6a98f6439490e864a95b71d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ZoneToLoad: 2
 --- !u!212 &212224631805075818
 SpriteRenderer:
   m_ObjectHideFlags: 1

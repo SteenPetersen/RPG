@@ -20,6 +20,8 @@ public class EquipedItemSlot : MonoBehaviour
     {
         item = newItem;
 
+        SoundManager.instance.PlayInventorySound("AddItem");
+
         icon.sprite = item.icon;
         icon.enabled = true;
         removeButton.interactable = true;

@@ -35,9 +35,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1915258496484184}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.1, y: 0.43, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.33333334, y: 1, z: 0.3333335}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -54,7 +54,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   impNova: {fileID: 198872974837270738}
-  explosion: {fileID: 198313108421336222, guid: 3c07b7c77dd354d46ae9364c7358d0b8,
+  explosion: {fileID: 198730187870710956, guid: a654ed297121ce549853e15c4f1af14f,
     type: 2}
   force: 0.005
 --- !u!198 &198872974837270738
@@ -117,7 +117,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1888424697
+  randomSeed: 1362542074
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -269,7 +269,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 5
       minScalar: 0.8
       maxCurve:
         serializedVersion: 2
@@ -3465,7 +3465,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
   m_SortingLayer: 3
-  m_SortingOrder: 1
+  m_SortingOrder: 11
   m_RenderMode: 1
   m_SortMode: 0
   m_MinParticleSize: 0

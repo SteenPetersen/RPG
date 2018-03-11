@@ -37,6 +37,7 @@ public class ItemPickup : Interactable {
     private void Pickup()
     {
         Debug.Log("Picking up " + item.name);
+        SoundManager.instance.PlayInventorySound(gameObject.name + "_pickup");
         bool wasPickedUp = Inventory.instance.AddItemToBag(item);
 
         if (wasPickedUp)

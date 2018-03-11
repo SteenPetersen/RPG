@@ -9,9 +9,11 @@ public class Item : ScriptableObject {
     public int sellValue;
     public bool isDefaultItem = false;
 
+    public EquipmentType typeOfEquipment;
+
     public virtual void Use()
     {
-        //Debug.Log("Using " + name);
+        Debug.Log("Using " + name);
     }
 
     public void RemoveFromInventory()

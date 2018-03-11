@@ -44,6 +44,16 @@ public class CombatText : MonoBehaviour {
         StartCoroutine(FadeOut());
     }
 
+    public void Green(string heal, Vector3 position)
+    {
+        gameObject.transform.localScale = new Vector3(1, 1, 1);
+        gameObject.SetActive(true);
+        textObject.text = "+" + heal;
+        textObject.color = new Color32(47, 184, 42, 255);
+        gameObject.transform.position = position;
+        StartCoroutine(FadeOut());
+    }
+
     public void Crit(string damage, Vector3 position)
     {
         gameObject.SetActive(true);

@@ -57,7 +57,7 @@ public class PlayerStats : CharacterStats {
     {
         base.TakeDamage(damage);
 
-        SoundManager.instance.PlaySound("player_hurt");
+        SoundManager.instance.PlayCombatSound("player_hurt");
 
         int newDmg;
         bool crit;

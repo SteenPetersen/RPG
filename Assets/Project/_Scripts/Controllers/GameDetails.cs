@@ -46,6 +46,8 @@ public class GameDetails : MonoBehaviour {
 
     #endregion
 
+    public static int dungeonLevel;
+
     public Image fadeToBlack;
     public float fadeSpeed;
 

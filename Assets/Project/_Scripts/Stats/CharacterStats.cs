@@ -64,6 +64,13 @@ public class CharacterStats : MonoBehaviour {
     {
         if (currentHealth < maxHealth)
         {
+
+            var text = CombatTextManager.instance.FetchText(transform.position);
+            var textScript = text.GetComponent<CombatText>();
+            textScript.Green(healthIncrease.ToString(), transform.position);
+            text.transform.position = transform.position;
+            text.gameObject.SetActive(true);
+
             currentHealth += Mathf.Clamp(healthIncrease, 1, maxHealth - currentHealth);
             return true;
         }
