@@ -7,6 +7,22 @@ public class ImpAnimationControl : MonoBehaviour {
     EnemyAI ai;
     public ParticleSystem particles;
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            GetComponent<Animator>().SetTrigger("walk");
+        }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            GetComponent<Animator>().SetTrigger("run");
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            GetComponent<Animator>().SetTrigger("explode");
+        }
+    }
+
     private void Awake()
     {
         ai = transform.parent.gameObject.GetComponent<EnemyAI>();
@@ -35,5 +51,10 @@ public class ImpAnimationControl : MonoBehaviour {
     public void CastFireCircle()
     {
         ai.CastFireCircle();
+    }
+
+    public void Explode()
+    {
+        ai.OnExplode();
     }
 }

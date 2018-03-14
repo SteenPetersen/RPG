@@ -78,7 +78,7 @@ public class PooledProjectilesController : MonoBehaviour {
         {
             GameObject obj = Instantiate(swordShot) as GameObject;
             pooledSwords.Add(obj);
-            obj.transform.SetParent(projectileHolder);
+            //obj.transform.SetParent(projectileHolder);
             return obj;
         }
 

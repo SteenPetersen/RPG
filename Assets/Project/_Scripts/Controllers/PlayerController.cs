@@ -10,8 +10,8 @@ public class PlayerController : Interactable
     // plane needed for hitray during projectiles
     // located on Gamemanager since monsters also need access to it.
     Plane m_Plane;
-    public Collider2D[] enemies;
-    bool enemiesInRange;
+    public List<GameObject> enemies = new List<GameObject>();
+    bool enemiesInRange, lineOfSightRoutineActivated;
 
     Vector3 prevPosition;
     Vector3 move;
@@ -39,6 +39,7 @@ public class PlayerController : Interactable
 
     public CoordinateDirection dir;
 
+    public GameObject bodyLight;
     public GameObject skeleton;
     public Vector2 mousePosition;
     public EventSystem eventSys;
@@ -53,7 +54,6 @@ public class PlayerController : Interactable
     CameraController cameraControl;
     PlayerStats playerStat;
     GameObject cameraHolder;
-    //Camera cam;
     public Animator anim;
     ParticleSystem[] particles;
 
@@ -88,9 +88,15 @@ public class PlayerController : Interactable
     int modifierToRemove;           // actual amount of extra damage that is absorbed when blocking
     #endregion
 
+    private void OnEnable()
+    {
+        // subscribe to notice is a scene is loaded.
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
     void Start()
     {
-        Initialize();
+        InitializePlayerGameObject();
     }
 
     private void Update()
@@ -109,68 +115,145 @@ public class PlayerController : Interactable
 
     void FixedUpdate()
     {
+        // we do this in fixedupdate to mke sure that camera movement updates happen in the same frame as the actual movement
         if (isDead || gameDetails.paused || dialogue)
             return;
 
         CheckIfFacingCorrectDirection(horizontal);
         HandleMovement(horizontal, vertical);
-
     }
 
     private void LateUpdate()
     {
+        // set the previous position to be the current position but do it in the late update so we can draw
+        // direction for the Ghost
         prevPosition = transform.position;
-    }
+    } // commented
 
     private void HandleAggro()
     {
+        // make a layerMask
         int layerId = 11;
         int layerMask = 1 << layerId;
 
-        enemies = Physics2D.OverlapCircleAll(transform.position, 20, layerMask);
+        // make a temporary array to hold the overlapping enemies on the layer in question
+        Collider2D[] currentEnemiesInRange = Physics2D.OverlapCircleAll(transform.position, 10, layerMask);
 
-        if (!enemiesInRange && enemies.Length > 0)
+        // if there are objects in the list
+        if (currentEnemiesInRange.Length > 0)
         {
-            StartCoroutine(LineOfSight());
+            // then there are enemies nearby
             enemiesInRange = true;
+
+            // run through all of those enemies
+            foreach (var enemy in currentEnemiesInRange)
+            {
+                // if the enemy is not already in the list and the enemy is not dead
+                if (!enemies.Contains(enemy.transform.parent.gameObject) && !enemy.transform.parent.gameObject.GetComponent<EnemyAI>().isDead)
+                {
+                    // add the enemy to the list / enemy gets removed from this list when dying or when out of range
+                    enemies.Add(enemy.gameObject.transform.parent.gameObject);
+                }
+            }
         }
-    }
+
+        // if there are no enemies in the list
+        else if (currentEnemiesInRange.Length == 0)
+        {
+            // then there are no enemies nearby
+            enemiesInRange = false;
+            // so clear the list of enemies so we dont iterate through enemies that we outran
+            enemies.Clear();
+        }
+
+        // there are enemies nearby and you are not already checking line of sight
+        if (enemiesInRange && !lineOfSightRoutineActivated)
+        {
+            // start the coroutine to check if they can see you
+            StartCoroutine(LineOfSight());
+
+            // let the script know that you have activated the corutine so you dont keep calling it
+            lineOfSightRoutineActivated = true;
+        }
+    } // commented
+
+    IEnumerator LineOfSight()
+    {
+        // while you have enemies in the area
+        while(enemiesInRange)
+        {
+            //Debug.Log("calling Coroutine");
+
+            // run through all the enemies in the list
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                // if the enemy has an EnemyAI script
+                if (enemies[i].GetComponent<EnemyAI>() != null)
+                {
+                    // call the enemies DetermineAggro Method and have it check if it can see you or not.
+                    enemies[i].GetComponent<EnemyAI>().DetermineAggro(transform.position);
+                }
+            }
+
+            // when all enemies have been checked but there are still enemies in range wait for a moment
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        // if there are no enemies in range then let the HandleAggro function know that the coroutine is not running and it can be restarted.
+        lineOfSightRoutineActivated = false;
+    } // commented
 
     private void HandleAnimation(float horizontal, float vertical)
     {
+        // make sure that is players mouse is over the UI that the player doesnt start performing animations
         if (eventSys.IsPointerOverGameObject())
             return;
 
+        // set the animation parameters of X and Y velocities to be equal to the absolute values of the parameters horizontal and vertical
         anim.SetFloat("VelocityX", Mathf.Abs(horizontal));
         anim.SetFloat("VelocityY", Mathf.Abs(vertical));
 
+        // if the current state of the player is melee
         if (melee)
         {
+            // if the player presses the left mouse button
             if (Input.GetMouseButtonDown(0))
             {
+                // check if the playaer is allowed to hit or if he hit something interactable with the mouse
                 bool canHit = CheckIfPlayerMayHit();
 
+                // if player is not allowed to hit the stop the code from running further
                 if (!canHit)
                     return;
 
+                // set the startPosition of the hit animation
                 var startPos = meleeStartPoint.position;
 
                 // create a direction vector from Hit position of the mouse and the projectiles original position
                 direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
+
+                // normalize the direction which gives it a magnitude of 1
                 direction.Normalize();
 
+                // initialize two floats and populate them with the CheckDistancesToMouse Method call
                 float distanceFromFrontToMouse, distanceFromBackToMouse;
                 CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
 
+                // if the player is trying to shoot backwards for whatever reason dont do it
                 if (distanceFromBackToMouse < distanceFromFrontToMouse)
                     return;
 
+                // if the mouse is in the upper 2 quadrants
                 if (dir == CoordinateDirection.NE || dir == CoordinateDirection.NW)
                 {
+                    // the animate hitting up
                     anim.SetTrigger("HitMeleeUp");
                 }
+
+                // if the mouse is in one of the lower two quadrants
                 else if (dir == CoordinateDirection.SE || dir == CoordinateDirection.SW)
                 {
+                    // animate hitting down
                     anim.SetTrigger("HitMeleeDown");
                 }
 
@@ -195,37 +278,44 @@ public class PlayerController : Interactable
                 }
             }
         }
+
+
+        // if the player is in a ranged state
         else if (ranged)
         {
+            // if the player hits the left mouse button
             if (Input.GetMouseButton(0))
             {
-                Interactable inter = ClickFeedback();
-                if (inter != null)
+                // check if the playaer is allowed to hit or if he hit something interactable with the mouse
+                bool canHit = CheckIfPlayerMayHit();
+
+                // if player is not allowed to hit then stop the code from running further
+                if (!canHit)
                     return;
 
-                anim.SetLayerWeight(1, 1);
-
-                if (weaponsGone)
-                    return;
+                // if player is allowed to hit then animate the shooting
                 anim.SetTrigger("ShootRanged");
             }
         }
 
-    }
+    } // commented
 
     private bool CheckIfPlayerMayHit()
     {
+        // check if player hit something with the mouse when clicking that interacable
         Interactable inter = ClickFeedback();
+
+        // if the player did hit something interacable with the mouse then do not allow the player to hit
         if (inter != null)
             return false;
 
-        //anim.SetLayerWeight(1, 1);
+        // if the player does not have weapons in his hands
         if (weaponsGone)
             return false;
 
-
+        // otherwise let him hit
         return true;
-    }
+    } // commented
 
     private void HandleMovement(float horizontal, float vertical)
     {
@@ -327,12 +417,14 @@ public class PlayerController : Interactable
 
     private void SpawnGhostImage(Vector2 direction)
     {
-
-        // spawn a copy of player current skeleton with all gear etc
+        // set a vector2 Position that we can use to spawn the ghost at
         Vector2 spawnPoint = new Vector2(transform.position.x, transform.position.y + 0.452f);
+
+        // spawn the ghost at the aforementioned spawnpoint
         var image = Instantiate(skeleton, spawnPoint, Quaternion.identity);
-        var col = image.GetComponent<CircleCollider2D>();
-        col.enabled = true;
+
+        // enable the collider on the skeleton
+        image.GetComponent<CircleCollider2D>().enabled = true;
 
         // if player is not facing right flip the image
         if (!facingRight)
@@ -340,11 +432,18 @@ public class PlayerController : Interactable
             image.transform.localScale = new Vector2(image.transform.localScale.x * -1, image.transform.localScale.y);
         }
 
+        // make a ref to the rigidbody on the ghost
         var imageRigid = image.GetComponent<Rigidbody2D>();
+
+        // set the rigidbody to be dynamic
         imageRigid.bodyType = RigidbodyType2D.Dynamic;
+
+        // add a force to the ghost in the direction the player is moving
         imageRigid.AddForce(direction * thrustSpeed / 1.5f);
+
+        // make sure the ghost as well as all its children fade away
         image.AddComponent<Fade>();
-    }
+    } // commented
 
     private static bool EquipFirstMatchingItemInBag(int type, int slot)
     {
@@ -425,7 +524,6 @@ public class PlayerController : Interactable
         Vector3 farPoint = Camera.main.ScreenToWorldPoint(screenFar);
         Vector3 nearPoint = Camera.main.ScreenToWorldPoint(screenNear);
 
-
         RaycastHit hit;
 
         if (Physics.Raycast(nearPoint, farPoint - nearPoint, out hit))
@@ -436,14 +534,13 @@ public class PlayerController : Interactable
 
             if (interactable != null)
             {
-                Debug.Log(interactable.name + " hit it!");
                 SetFocus(interactable);
                 SetMousePosition();
                 return interactable;
             }
             else
             {
-                Debug.Log("something wrong with the clickFeedback");
+                Debug.LogWarning("something wrong with the clickFeedback");
                 return null;
             }
         }
@@ -546,6 +643,127 @@ public class PlayerController : Interactable
         
     }
 
+    private void CheckDistancesToMouse(out float distanceFromFrontToMouse, out float distanceFromBackToMouse)
+    {
+        // get the Vector2 Position fof the mouse
+        mousePosition = SetMousePosition();
+
+        // check the distance from the "front" gameobject on the player to the mouse
+        distanceFromFrontToMouse = Vector3.Distance(projectilePoint.transform.position, mousePosition);
+
+        // check the distance from the "back" gameobject on the player to the mouse
+        distanceFromBackToMouse = Vector3.Distance(back.position, mousePosition);
+    }
+
+    private Vector2 SetMousePosition()
+    {
+        //Create a ray from the Mouse click position
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        //Initialise the enter variable
+        float enter = 0.0f;
+
+        // shoot the ray at the plane and return the enter float
+        if (m_Plane.Raycast(ray, out enter))
+        {
+            //Get the point that is clicked
+            Vector3 hitPoint = ray.GetPoint(enter);
+
+            // set mouseposition to the position hit.
+            mousePosition = hitPoint;
+        }
+
+        // return the place hit
+        return mousePosition;
+    } // commented
+
+    private void InitializePlayerGameObject()
+    {
+        // Set all necessary references
+        rigid = gameObject.GetComponent<Rigidbody2D>();
+        playerStat = GetComponent<PlayerStats>();
+        anim = GetComponent<Animator>();
+        gameDetails = GameDetails.instance;
+        equip = EquipmentManager.instance;
+        m_Plane = GameDetails.instance.m_Plane;
+        pooledArrows = PooledProjectilesController.instance;
+        cameraControl = CameraController.instance;
+
+        // set the lookat on the camera controller to be the playerObject.
+        cameraControl.lookAt = this.gameObject;
+
+        // fetch all particleSystems that are children of this gameObject and place them in an array of particleSystems
+        particles = GetComponentsInChildren<ParticleSystem>();
+
+        // Find the child GameObject called "Skeleton" and make a reference to it
+        skeleton = transform.Find("Skeleton").gameObject;
+
+        // Find the object called "EventSystem" and make a reference to it
+        eventSys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
+
+        // make sure that the camera is always looking at the player
+        if (cameraControl.lookAt != this.gameObject)
+        {
+            cameraControl.lookAt = this.gameObject;
+        }
+    } // commented
+
+    private ParticleSystem GetSystem(string systemName)
+    {
+        // run through all the particle systems in the list of particle systems.
+        foreach (ParticleSystem system in particles)
+        {
+            // if its the one that matches the parameter that has been passed in
+            if (system.name == systemName)
+            {
+                // the return the system
+                return system;
+            }
+        }
+
+        // if nothing matches the parameter then return nothing
+        return null;
+    }  // commented
+
+    private void OnDrawGizmosSelected()
+    {
+        // set the color of the gizmo
+        Gizmos.color = Color.yellow;
+        // set the size of the gizmo ( this one relates to the range at which the player will consider enemies to be "in range")
+        Gizmos.DrawWireSphere(transform.position, 10);
+    } // commented
+
+    public void SetMouseQuadrant(CoordinateDirection newDir)
+    {
+        // set the mouseQuadrant to be the same as the paramter that has been passed in from the
+        // HitDirectionDetection Script to let the player know in which of the 4 quadrants the mouse is.
+        dir = newDir;
+    } // commented
+
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // if you're not in the dungeon
+        if (SceneManager.GetActiveScene().name != "dungeon")
+        {
+            // turn off your bodyLight
+            bodyLight.SetActive(false);
+        }
+
+        // if you ARE in the dungeon
+        else if (SceneManager.GetActiveScene().name == "dungeon")
+        {
+            // turn off your bodyLight
+            bodyLight.SetActive(true);
+
+        }
+    }
+
+    private void OnDisable()
+    {
+        // unsubscribe from the scenemanager.
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     //private void SheatheWeaponary()
     //{
     //    Color c = new Color32(255, 255, 255, 0);
@@ -565,108 +783,6 @@ public class PlayerController : Interactable
     //}
 
     // checks the distance from the front of the player to the mouse and back of the player to the mouse and returns both values
-    private void CheckDistancesToMouse(out float distanceFromFrontToMouse, out float distanceFromBackToMouse)
-    {
-        mousePosition = SetMousePosition();
-        distanceFromFrontToMouse = Vector3.Distance(projectilePoint.transform.position, mousePosition);
-        distanceFromBackToMouse = Vector3.Distance(back.position, mousePosition);
-    }
 
-    //return the vector2 position of the mouse
-    private Vector2 SetMousePosition()
-    {
-        //Create a ray from the Mouse click position
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //Initialise the enter variable
-        float enter = 0.0f;
-
-        if (m_Plane.Raycast(ray, out enter))
-        {
-            //Get the point that is clicked
-            Vector3 hitPoint = ray.GetPoint(enter);
-            mousePosition = hitPoint;
-        }
-
-        return mousePosition;
-    }
-
-    // initializes the Gameobject with all necessary references
-    private void Initialize()
-    {
-        cameraControl = CameraController.instance;
-        cameraControl.lookAt = this.gameObject;
-        rigid = gameObject.GetComponent<Rigidbody2D>();
-        playerStat = GetComponent<PlayerStats>();
-        anim = GetComponent<Animator>();
-        facingRight = true;
-
-
-        particles = GetComponentsInChildren<ParticleSystem>();
-        skeleton = transform.Find("Skeleton").gameObject;
-        eventSys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
-
-
-        gameDetails = GameDetails.instance;
-        equip = EquipmentManager.instance;
-        m_Plane = GameDetails.instance.m_Plane;
-        pooledArrows = PooledProjectilesController.instance;
-
-        if (cameraControl.lookAt != this.gameObject)
-        {
-            cameraControl.lookAt = this.gameObject;
-        }
-    }
-
-    private ParticleSystem GetSystem(string systemName)
-    {
-        foreach (ParticleSystem system in particles)
-        {
-            if (system.name == systemName)
-            {
-                return system;
-            }
-        }
-        return null;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, 10);
-    }
-
-    IEnumerator LineOfSight()
-    {
-        while (enemies.Length > 0)
-        {
-            //Debug.Log("calling Coroutine");
-
-            for (int i = 0; i < enemies.Length; i++)
-            {
-                if (enemies[i].transform.parent.GetComponent<EnemyAI>() != null)
-                {
-                    EnemyAI script = enemies[i].transform.parent.GetComponent<EnemyAI>();
-
-                    if (script != null)
-                    {
-                        //Debug.Log(enemies[i].transform.GetInstanceID());
-                        script.DetermineAggro(transform.position);
-                    }
-                }
-
-
-            }
-            yield return new WaitForSeconds(0.5f);
-
-
-        }
-
-        enemiesInRange = false;
-    }
-
-    public void SetMouseQuadrant(CoordinateDirection newDir)
-    {
-        dir = newDir;
-    }
 }
 

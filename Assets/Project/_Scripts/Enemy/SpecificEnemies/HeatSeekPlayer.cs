@@ -32,7 +32,6 @@ public class HeatSeekPlayer : MonoBehaviour {
         int enemyLayer = 11;
         var playerlayerMask = 1 << playerLayer;
         var enemyLayerMask = 1 << enemyLayer;
-        var finalMask = playerlayerMask | enemyLayerMask;
 
         RaycastHit2D hitPlayer = Physics2D.Raycast(transform.position, (player.position - transform.position), 1f, playerlayerMask);
 

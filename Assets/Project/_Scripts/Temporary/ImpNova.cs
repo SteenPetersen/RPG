@@ -10,11 +10,9 @@ public class ImpNova : MonoBehaviour {
 
     List<ParticleCollisionEvent> collisionEvents = new List<ParticleCollisionEvent>();
 
-    Transform target;
 
 	void Start () {
 
-        target = PlayerController.instance.gameObject.transform;
 	}
 
     private void OnParticleCollision(GameObject other)

@@ -11,10 +11,17 @@ public class ProjectileList : MonoBehaviour {
     }
 
     public List<GameObject> projectileList = new List<GameObject>();
+    public List<Sprite> arrowHitGraphics = new List<Sprite>();
 
     public GameObject GetProjectile(int id)
     {
         GameObject obj = projectileList[id];
         return obj;
     }
+
 }
+
+public enum ArrowType { StartArrow, Arrow }
+public enum ProjectileType { Arrow, Sword, Axe, FireBall }
+
+

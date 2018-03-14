@@ -296,8 +296,6 @@ public class EquipmentManager : MonoBehaviour {
     {
         for (int i = 0; i < visibleGear.Length; i++)
         {
-            Debug.Log("setting start graphic " + i);
-
             if (visibleGear[i] != null)
             {
                 startGraphics[i] = visibleGear[i].sprite;

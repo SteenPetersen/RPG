@@ -5,7 +5,7 @@ public class Projectile : MonoBehaviour {
     [Header("Stats Settings")]
     public int damage;
     public bool knockBack;
-
+    public ArrowType arrowType;
 
     [Header("Logic Settings")]
     public Rigidbody2D rigid;
@@ -14,13 +14,11 @@ public class Projectile : MonoBehaviour {
     [Tooltip("How long till we add it back to the pool of projectile of this type?")]
     public float destroyAfter;
 
-    public Sprite hitSprite;
-    public Sprite normalSprite;
     public Collider2D myCollider;
     public SpriteRenderer projectileSpriteRenderer;
 
     [Tooltip("Make swords invisible and disable colliders shortly after launch but leaves them alive for particle effects")]
-    public bool sword;
+    public ProjectileType projectileType;
 
     private void Awake()
     {
@@ -38,7 +36,7 @@ public class Projectile : MonoBehaviour {
 
     private void OnEnable()
     {
-        if (sword)
+        if (projectileType == ProjectileType.Sword)
         {
             Invoke("Invisible", 0.1f);
         }
@@ -53,10 +51,12 @@ public class Projectile : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D col)
     {
+        // was the collider hit an enemy?
         if (col.tag == "Enemy")
         {
             // grab the enemies stats
             EnemyStats targetStatsScript = col.transform.parent.GetComponent<EnemyStats>();
+            // make a ref to the script on the enemy
             EnemyAI script = col.transform.parent.GetComponent<EnemyAI>();
 
             // check to see if he had stats
@@ -68,22 +68,39 @@ public class Projectile : MonoBehaviour {
                     // play the impact particles that the enemy is holding
                     script.impact.Play();
 
-                    GetComponent<SpriteRenderer>().sprite = hitSprite;
+                    // stop the projectile from moving any further
                     rigid.isKinematic = true;
                     rigid.velocity = Vector2.zero;
+
+                    // disable the projectile collider so it cannot hit anything else
                     myCollider.enabled = false;
-                    
-                    //script.haveAggro = true;
-                    script.arrows.Add(gameObject);
-                    //script.WalkToShooterPosition(PlayerController.instance.transform.position);
+
+                    // make the arrow invisible
+                    projectileSpriteRenderer.enabled = false;
+
+                    // if this projectile is not a sword
+                    if ((int)projectileType == 0)
+                    {
+                        Debug.Log("this is not a sword");
+                        // increment the amount of arrows that have hit the enemy
+                        script.ProjectileWoundGraphics(arrowType);
+                    }
+
+                    // Chanage the behaviour of the enemy because he has been hit
                     script.HyperAlert();
+
+                    // does this projectile have the ability to knock things back?
                     if (knockBack)
                     {
+                        // create a direction
                         Vector3 dir = col.transform.position - PlayerController.instance.transform.position;
+                        // normalize the direction to give it magnitude of 1
                         dir = dir.normalized;
+                        // call the knockback method in the direction
                         script.Knockback(dir);
                     }
-                    transform.parent = script.ArrowHolder;
+
+                    // make the enemy take the damage
                     targetStatsScript.TakeDamage(damage);
                 }
             }
@@ -110,7 +127,6 @@ public class Projectile : MonoBehaviour {
         myCollider.enabled = true;
         rigid.isKinematic = false;
         gameObject.SetActive(true);
-        projectileSpriteRenderer.sprite = normalSprite;
         projectileSpriteRenderer.enabled = true;
     }
 

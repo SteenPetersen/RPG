@@ -154,14 +154,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 5
   knockBack: 0
+  arrowType: 1
   rigid: {fileID: 0}
   impacts: []
   destroyAfter: 3
-  hitSprite: {fileID: 21300004, guid: 8f323ffb8b4457847846353a2b597cea, type: 3}
-  normalSprite: {fileID: 21300004, guid: 2256ae9abe9739a41ac7dab293d8f627, type: 3}
   myCollider: {fileID: 58595001038541288}
   projectileSpriteRenderer: {fileID: 212659204936523284}
-  sword: 0
+  projectileType: 0
 --- !u!198 &198428471821725138
 ParticleSystem:
   m_ObjectHideFlags: 1

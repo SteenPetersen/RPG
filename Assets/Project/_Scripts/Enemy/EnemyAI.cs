@@ -32,11 +32,12 @@ public class EnemyAI : AIPath
     public Collider2D myCollider;
     public CharacterStats myStats;
 
-
     public Transform effectPoint;
+    [Tooltip("The sprite holders that will become populated when this enemy is hit by a projectile")]
+    public GameObject[] woundGraphics;
 
     [HideInInspector]
-    public List<GameObject> arrows = new List<GameObject>();
+    public int PlayerProjectileHits;
     public Transform ArrowHolder;
 
     [Header("Unique Variable")]
@@ -45,6 +46,8 @@ public class EnemyAI : AIPath
     public GameObject strikeGraphic;
     [Header("Unique Variable")]
     public ParticleSystem impact;
+    [Header("Unique Variable")]
+    public ParticleSystem specialExplosion;
 
 
 
@@ -349,8 +352,35 @@ public class EnemyAI : AIPath
         // meant to be overriden
     }
 
+    public virtual void OnExplode()
+    {
+        // meant to be overriden
+    }
+
     public virtual void AggroFromDistance(int newLookDistance)
     {
         distanceToLook = newLookDistance;
+    }
+
+    public virtual void ProjectileWoundGraphics(ArrowType arrowType)
+    {
+        Sprite woundArrow = null;
+
+        for (int i = 0; i < ProjectileList.instance.arrowHitGraphics.Count; i++)
+        {
+            if (ProjectileList.instance.arrowHitGraphics[i].name == arrowType + "_hit")
+            {
+                woundArrow = ProjectileList.instance.arrowHitGraphics[i];
+            }
+        }
+
+        foreach (var wound in woundGraphics)
+        {
+            if (wound.GetComponent<SpriteRenderer>().sprite == null)
+            {
+                wound.GetComponent<SpriteRenderer>().sprite = woundArrow;
+                return;
+            }
+        }
     }
 }

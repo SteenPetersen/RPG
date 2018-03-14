@@ -4086,7 +4086,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 2.3658807
+  orthographic size: 1.926729
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -4122,7 +4122,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.74749994
+  orthographic size: 0.8116667
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -4388,6 +4388,7 @@ MonoBehaviour:
   projectileList:
   - {fileID: 1001193493289250, guid: 47f2c6de8b475614280e896e5d5fd57c, type: 2}
   - {fileID: 1472819850106686, guid: 578b429524132c246a50e21af68545cc, type: 2}
+  arrowHitGraphics: []
 --- !u!114 &114002675473455756
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13990,6 +13991,7 @@ MonoBehaviour:
   dialogueNPCIsStandingOnTheRight: {x: 0, y: -9, z: -6.3}
   dialogueNPCIsStandingOnTheLeft: {x: 1.86, y: -9, z: -6.3}
   dialogueCamera: {fileID: 0}
+  sunLight: {fileID: 0}
   fadeToBlack: {fileID: 114666093297855654}
   fadeSpeed: 0.01
   playerFeedbackSystem: {fileID: 0}

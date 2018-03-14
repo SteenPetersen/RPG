@@ -47,6 +47,7 @@ public class GameDetails : MonoBehaviour {
     #endregion
 
     public static int dungeonLevel;
+    public Light sunLight;
 
     public Image fadeToBlack;
     public float fadeSpeed;
@@ -67,11 +68,11 @@ public class GameDetails : MonoBehaviour {
     public GameObject player;
     PlayerStats playerStats;
 
-    //private void OnEnable()
-    //{
-    //    // subscribe to notice is a scene is loaded.
-    //    SceneManager.sceneLoaded += OnSceneLoaded;
-    //}
+    private void OnEnable()
+    {
+        // subscribe to notice is a scene is loaded.
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 
     private void Start()
     {
@@ -144,6 +145,7 @@ public class GameDetails : MonoBehaviour {
     public void KillPlayer()
     {
         Debug.Log("killing player");
+        PlayerController.instance.enemies.Clear();
     }
 
     public void Save()
@@ -383,30 +385,59 @@ public class GameDetails : MonoBehaviour {
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // if you dont know who the player is anymore
         if (player == null)
         {
+            // find the player
             player = GameObject.Find("Player");
         }
+
+        // if you dont know what the playerStats are anymore
         if (playerStats == null)
         {
+            // get them from the player
             playerStats = player.GetComponent<PlayerStats>();
         }
 
+        // if the player is loading in dead
         if (PlayerController.instance.isDead)
         {
+            // undeadify the player
             PlayerController.instance.isDead = false;
+
+            // allow player to animate back to life - get it?
             PlayerController.instance.anim.SetTrigger("LoadGame");
         }
 
+        // If you know what the Ui is
         if (ui != null)
         {
+            // iterate through all the elements in the UI 
             foreach (Canvas canvas in ui)
             {
+                // and enable them
                 canvas.enabled = true;
 
             }
         }
 
+        // if you have entered the dungeon
+        if (SceneManager.GetActiveScene().name == "dungeon")
+        {
+            // then dim the lights
+            sunLight.intensity = 0.2f;
+        }
+
+        // if its not the dungeon
+        else if (SceneManager.GetActiveScene().name != "dungeon")
+        {
+            // then increase the light intensity
+            sunLight.intensity = 0.8f;
+        }
+
+
+        // in case there are enemies nearby when a Load happens clear all enemies from the list
+        PlayerController.instance.enemies.Clear();
 
         StartCoroutine(enableUi());
 
@@ -423,6 +454,7 @@ public class GameDetails : MonoBehaviour {
         loadingScene = false;
 
     }
+
     IEnumerator UnFade()
     {
         AstarPath.active.Scan();

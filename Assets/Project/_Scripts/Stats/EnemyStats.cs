@@ -31,6 +31,13 @@ public class EnemyStats : CharacterStats {
     {
         base.Die();
 
+        // If this enemy was on the players enemies list
+        if (PlayerController.instance.enemies.Contains(gameObject))
+        {
+            //  then remove him from it
+            PlayerController.instance.enemies.Remove(gameObject);
+        }
+
         // remove all the projectiles if there are any
         var projectiles = new List<Transform>();
         foreach (Transform child in transform)

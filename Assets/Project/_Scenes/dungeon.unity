@@ -353,6 +353,7 @@ MonoBehaviour:
   enemy:
   - {fileID: 1102277418783018, guid: 03aced079beebd345a0b54cb901d8874, type: 2}
   - {fileID: 1721059457416130, guid: b73045d78e2a4b147a964f085fe0a005, type: 2}
+  - {fileID: 1077856273101138, guid: 8d517fc811910ec4c973b5a19056fff4, type: 2}
   boss: {fileID: 1102277418783018, guid: 03aced079beebd345a0b54cb901d8874, type: 2}
   goal: {fileID: 1545105768644710, guid: f7532fc6aace4ba43bf2fa8fd2edf8c2, type: 2}
   cam: {fileID: 0}
