@@ -8,7 +8,8 @@ public class SoundManager : MonoBehaviour {
     [HideInInspector]
     public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow, 
                      bladeSwing, impBossHit, impBossDeath, impSwing, impHit, impHit1, impDeath, impDeath1, playerHurt, playerHurt1,
-                     impactHit, impactHit1, potionInteract, potionPickup, fireBurst, firebuildup;
+                     impactHit, impactHit1, potionInteract, potionPickup, fireBurst, firebuildup,
+                     levelup, deathsound;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -55,6 +56,9 @@ public class SoundManager : MonoBehaviour {
         potionInteract = Resources.Load<AudioClip>("Sound/" + "potion_interact");
         potionPickup = Resources.Load<AudioClip>("Sound/" + "potion_pickup");
 
+        // UI
+        levelup = Resources.Load<AudioClip>("Sound/" + "levelup");
+        deathsound = Resources.Load<AudioClip>("Sound/" + "deathsound");
 
         audioSrc = GetComponent<AudioSource>();
     }
@@ -194,6 +198,22 @@ public class SoundManager : MonoBehaviour {
             case "Small Health Potion(Clone)_pickup":
                 audioSrc.PlayOneShot(potionInteract);
                 break;
+
+        }
+    }
+
+    public void PlayUiSound(string clip)
+    {
+        switch (clip)
+        {
+            case "levelup":
+                audioSrc.PlayOneShot(levelup);
+                break;
+
+            case "deathsound":
+                audioSrc.PlayOneShot(deathsound);
+                break;
+
 
         }
     }

@@ -16,6 +16,11 @@ public class Stat {
         return finalValue;
     }
 
+    public int GetBaseValue()
+    {
+        return baseValue;
+    }
+
     public void AddModifier(int modifier)
     {
         if (modifier != 0)
@@ -30,5 +35,11 @@ public class Stat {
         {
             modifiers.Remove(modifier);
         }
+    }
+
+    public void SetValue(int value)
+    {
+        baseValue = value;
+        return;
     }
 }

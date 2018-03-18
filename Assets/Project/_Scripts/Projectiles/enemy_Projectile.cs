@@ -13,6 +13,7 @@ public class enemy_Projectile : MonoBehaviour {
     Transform projectileHolder;
 
     public float destroyAfter;
+    public GameObject lightEffect;
 
 
     private void OnEnable()
@@ -54,6 +55,10 @@ public class enemy_Projectile : MonoBehaviour {
                 {
                     particles.Stop();
                 }
+                if (lightEffect != null)
+                {
+                    lightEffect.SetActive(false);
+                }
             }
         }
 
@@ -75,6 +80,11 @@ public class enemy_Projectile : MonoBehaviour {
                 particles.Stop();
             }
 
+            if (lightEffect != null)
+            {
+                lightEffect.SetActive(false);
+            }
+
         }
     }
 
@@ -87,6 +97,11 @@ public class enemy_Projectile : MonoBehaviour {
         impact = transform.Find("impact").GetComponent<ParticleSystem>();
         particles = transform.Find("particles").GetComponent<ParticleSystem>();
         wallImpact = transform.Find("wallimpact").GetComponent<ParticleSystem>();
+
+        if (lightEffect != null)
+        {
+            lightEffect.SetActive(true);
+        }
     }
 
 

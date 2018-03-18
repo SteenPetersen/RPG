@@ -13,11 +13,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Wooden Bow
   icon: {fileID: 21300000, guid: ef9b0a43cc35425488d95f233d698480, type: 3}
+  sellValue: 0
   isDefaultItem: 0
+  typeOfEquipment: 0
   equipSlot: 3
   equipType: 1
   characterVisibleSprite: {fileID: 21300006, guid: ef9674fc30a0bdd469fbc8d64035232b,
     type: 3}
   armorModifier: 0
-  damageModifier: 45
+  damageModifier: 3
   rangedProjectile: 1

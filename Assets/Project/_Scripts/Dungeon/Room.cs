@@ -37,7 +37,7 @@ public class Room
 
 
     // This is an overload of the SetupRoom function and has a corridor parameter that represents the corridor entering the room.
-    public void SetupRoom(IntRange widthRange, IntRange heightRange, int columns, int rows, Corridor corridor, IntRange enemies)
+    public void SetupRoom(IntRange widthRange, IntRange heightRange, int columns, int rows, Corridor corridor, IntRange enemies, bool middle = false)
     {
         // Set the entering corridor direction.
         enteringCorridor = corridor.direction;
@@ -48,6 +48,8 @@ public class Room
 
         //TODO add monster chance to drop
         enemyAmount = enemies.Random;
+
+
 
         switch (corridor.direction)
         {
@@ -92,7 +94,10 @@ public class Room
         }
 
         CheckForEnemies();
-
+        if (middle)
+        {
+            SetMapLocation();
+        }
     }
 
 
@@ -195,5 +200,17 @@ public class Room
         Vector2 pos = new Vector2(goalX, goalY);
 
         BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.goal);
+    }
+
+    private void SetMapLocation()
+    {
+        int mapX = Random.Range(xPos, xPos + (roomWidth / 2));
+        int mapY = Random.Range(yPos, yPos + (roomHeight / 2));
+
+        Debug.Log(mapX + " " + mapY);
+
+        Vector2 pos = new Vector2(mapX, mapY);
+
+        BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.map);
     }
 }

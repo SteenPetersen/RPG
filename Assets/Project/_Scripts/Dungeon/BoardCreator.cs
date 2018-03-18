@@ -31,6 +31,8 @@ public class BoardCreator : MonoBehaviour
     public GameObject[] enemy;
     public GameObject boss;
     public GameObject goal;
+    public GameObject map;
+
     public Camera cam;
 
     private TileType[][] tiles;                               // A jagged array of tile types representing the board, like a grid.
@@ -41,8 +43,12 @@ public class BoardCreator : MonoBehaviour
     private GameObject outterWallHolder;
 
     private Vector2 goalPos;
+    private Vector2 mapPos;
 
     public CreateGraph aStarGridCreator;
+
+    [HideInInspector]
+    public int currentBoardsNumberOfRooms;
 
     private void Awake()
     {
@@ -71,7 +77,8 @@ public class BoardCreator : MonoBehaviour
     void CreateRoomsAndCorridors()
     {
         // Create the rooms array with a random size.
-        rooms = new Room[numRooms.Random];
+        currentBoardsNumberOfRooms = numRooms.Random;
+        rooms = new Room[currentBoardsNumberOfRooms];
 
         // There should be one less corridor than there is rooms.
         corridors = new Corridor[rooms.Length - 1];
@@ -93,6 +100,10 @@ public class BoardCreator : MonoBehaviour
             // Setup the room based on the previous corridor.
             rooms[i].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[i - 1], numEnemy);
 
+            if (i == rooms.Length / 2)
+            {
+                rooms[i].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[i - 1], numEnemy, true);
+            }
 
             if (i == corridors.Length)
             {
@@ -126,6 +137,11 @@ public class BoardCreator : MonoBehaviour
         else if (tmp.tag == "Goal")
         {
             goalPos = pos;
+        }
+
+        else if (tmp.tag == "Map")
+        {
+            mapPos = pos;
         }
     }
 

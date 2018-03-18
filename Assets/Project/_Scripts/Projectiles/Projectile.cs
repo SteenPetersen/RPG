@@ -16,6 +16,7 @@ public class Projectile : MonoBehaviour {
 
     public Collider2D myCollider;
     public SpriteRenderer projectileSpriteRenderer;
+    private PlayerStats playerStats;
 
     [Tooltip("Make swords invisible and disable colliders shortly after launch but leaves them alive for particle effects")]
     public ProjectileType projectileType;
@@ -26,6 +27,11 @@ public class Projectile : MonoBehaviour {
         impacts = GetComponentsInChildren<ParticleSystem>();
         myCollider = GetComponent<Collider2D>();
         projectileSpriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {
+        playerStats = PlayerController.instance.gameObject.GetComponent<PlayerStats>();
     }
 
     private void Invisible()
@@ -101,7 +107,7 @@ public class Projectile : MonoBehaviour {
                     }
 
                     // make the enemy take the damage
-                    targetStatsScript.TakeDamage(damage);
+                    targetStatsScript.TakeDamage(playerStats.damage.GetValue());
                 }
             }
         }

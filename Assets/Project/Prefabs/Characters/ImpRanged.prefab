@@ -1219,7 +1219,7 @@ MonoBehaviour:
   repathRate: 0.5
   canSearch: 1
   canMove: 1
-  maxSpeed: 2
+  maxSpeed: 3
   gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
     serializedVersion: 2
@@ -1264,16 +1264,17 @@ MonoBehaviour:
   meleeRange: 2
   force: 450
   projectileSpeed: 200
-  experienceGain: 0
+  experienceGain: 6
   meleeDelay: 3
   timer: 0
+  meleeHitRange: 2.5
   strikeGraphic: {fileID: 1646857127479758, guid: 0f82bea811cab1c4785141982dfde3d5,
     type: 2}
   impact: {fileID: 198186632619352948}
   specialExplosion: {fileID: 0}
   myProjectile: {fileID: 1403467400305918, guid: ec078c7d2885f544aaf5e5626e8828ab,
     type: 2}
-  castingRange: 5
+  castingRange: 7
 --- !u!114 &114920448886117006
 MonoBehaviour:
   m_ObjectHideFlags: 1

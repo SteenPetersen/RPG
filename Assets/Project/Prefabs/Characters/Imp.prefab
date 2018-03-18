@@ -583,7 +583,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1102277418783018}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.369942, y: 2.6739528, z: 0}
+  m_LocalPosition: {x: -8.412249, y: -7.856758, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4222326294375492}
@@ -1218,9 +1218,10 @@ MonoBehaviour:
   meleeRange: 3
   force: 450
   projectileSpeed: 430
-  experienceGain: 0
+  experienceGain: 5
   meleeDelay: 1
   timer: 0
+  meleeHitRange: 2.7
   strikeGraphic: {fileID: 1646857127479758, guid: 0f82bea811cab1c4785141982dfde3d5,
     type: 2}
   impact: {fileID: 198325743298679192}

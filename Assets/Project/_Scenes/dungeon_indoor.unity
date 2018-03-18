@@ -356,8 +356,10 @@ MonoBehaviour:
   - {fileID: 1077856273101138, guid: 8d517fc811910ec4c973b5a19056fff4, type: 2}
   boss: {fileID: 1102277418783018, guid: 03aced079beebd345a0b54cb901d8874, type: 2}
   goal: {fileID: 1545105768644710, guid: f7532fc6aace4ba43bf2fa8fd2edf8c2, type: 2}
+  map: {fileID: 1282454706914116, guid: 3090d617d12e16d45a69e51cd5d28c37, type: 2}
   cam: {fileID: 0}
   aStarGridCreator: {fileID: 2001734319}
+  currentBoardsNumberOfRooms: 0
 --- !u!4 &1918078371
 Transform:
   m_ObjectHideFlags: 0

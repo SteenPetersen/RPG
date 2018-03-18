@@ -83,6 +83,8 @@ public class EquipmentManager : MonoBehaviour {
                     ClearEquippedGear(4);
 
                     PlaceTheNewItem(newItem, slotIndex);
+                    onEquipmentChanged(newItem, oldItem);
+                    onEquipmentChanged(null, oldOffhand);
                 }
 
                 else if (!space)
@@ -126,6 +128,7 @@ public class EquipmentManager : MonoBehaviour {
             // is the item in that position a bow?
             if ((int)currentEquipment[slotIndex].equipType == 1)
             {
+                // remove the arrow
                 visibleGear[4].sprite = null;
             }
 
@@ -136,6 +139,7 @@ public class EquipmentManager : MonoBehaviour {
             {
                 inventory.AddItemToBag(oldItem);
                 PlaceTheNewItem(newItem, slotIndex);
+                onEquipmentChanged(newItem, oldItem);
             }
             else if (!space)
             {
@@ -145,7 +149,7 @@ public class EquipmentManager : MonoBehaviour {
             return true;
         }
 
-        // invoke the callback for change of equopment
+        // invoke the callback for change of equipment
         if (onEquipmentChanged != null)
         {
             onEquipmentChanged.Invoke(newItem, oldItem);

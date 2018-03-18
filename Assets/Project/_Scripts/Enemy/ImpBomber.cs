@@ -85,6 +85,14 @@ public class ImpBomber : EnemyAI {
             myCollider.enabled = false;
             Destroy(gameObject, 3f);
             hasExploded = true;
+
+            foreach (var wound in woundGraphics)
+            {
+                if (wound.GetComponent<SpriteRenderer>().sprite != null)
+                {
+                    wound.GetComponent<SpriteRenderer>().sprite = null;
+                }
+            }
         }
 
     }

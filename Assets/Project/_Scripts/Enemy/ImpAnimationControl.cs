@@ -9,18 +9,7 @@ public class ImpAnimationControl : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            GetComponent<Animator>().SetTrigger("walk");
-        }
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            GetComponent<Animator>().SetTrigger("run");
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            GetComponent<Animator>().SetTrigger("explode");
-        }
+
     }
 
     private void Awake()

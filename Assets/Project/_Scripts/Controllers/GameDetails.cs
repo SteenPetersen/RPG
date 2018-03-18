@@ -158,9 +158,21 @@ public class GameDetails : MonoBehaviour {
         FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
 
         PlayerData data = new PlayerData();
+
+        // save Stats
         data.currentHealth = playerStats.currentHealth;
         data.maxHealth = playerStats.maxHealth;
-        data.experience = playerStats.exp;
+        data.experience = ExperienceManager.instance.experience;
+        data.level = ExperienceManager.instance.level;
+        data.experienceNeeded = ExperienceManager.instance.experienceRequired;
+        data.Stamina = playerStats.Sta.GetBaseValue();
+        data.Strength = playerStats.Str.GetBaseValue();
+        data.Agility = playerStats.Agi.GetBaseValue();
+        data.Damage = playerStats.damage.GetBaseValue();
+        data.Armor = playerStats.armor.GetBaseValue();
+
+
+
         data.stage = stage;
         data.kingSpeech = kingSpeech;
 
@@ -196,12 +208,27 @@ public class GameDetails : MonoBehaviour {
 
             DestroyAllPlayerPossessionsInBags();
             DestroyAllCurrentlyEquippedGear();
+            ExperienceManager.instance.experience = 0;
 
+
+            // Load Stats
             PlayerController.instance.speed = PlayerController.instance.normalSpeed;
             playerStats.currentHealth = 0;
             playerStats.Heal((int)data.currentHealth);
             playerStats.maxHealth = data.maxHealth;
-            playerStats.exp = data.experience;
+            ExperienceManager.instance.level = data.level;
+            ExperienceManager.instance.experienceRequired = data.experienceNeeded;
+            playerStats.Agi.SetValue(data.Agility);
+            playerStats.Sta.SetValue(data.Stamina);
+            playerStats.Str.SetValue(data.Strength);
+            playerStats.damage.SetValue(data.Damage);
+            playerStats.armor.SetValue(data.Armor);
+
+            playerStats.UpdateStats();
+
+            ExperienceManager.instance.AddExp(data.experience);
+
+
             stage = data.stage;
             kingSpeech = data.kingSpeech;
 
@@ -421,15 +448,15 @@ public class GameDetails : MonoBehaviour {
             }
         }
 
-        // if you have entered the dungeon
-        if (SceneManager.GetActiveScene().name == "dungeon")
+        // if you are in an indoor zone
+        if (SceneManager.GetActiveScene().name.EndsWith("_indoor"))
         {
             // then dim the lights
             sunLight.intensity = 0.2f;
         }
 
-        // if its not the dungeon
-        else if (SceneManager.GetActiveScene().name != "dungeon")
+        // if you are not in an indoor zone
+        else if (!SceneManager.GetActiveScene().name.EndsWith("_indoor"))
         {
             // then increase the light intensity
             sunLight.intensity = 0.8f;
@@ -478,6 +505,14 @@ class PlayerData
     public float currentHealth;
     public float maxHealth;
     public float experience;
+    public float experienceNeeded;
+    public int level;
+    public int Stamina;
+    public int Agility;
+    public int Strength;
+    public int Damage;
+    public int Armor;
+
 
     // Progress
     public int kingSpeech;

@@ -9,6 +9,8 @@ public class EnemyStats : CharacterStats {
     GameDetails gameDetails;
     public bool hitByProjectile;
 
+    ExperienceManager playerExp;
+
     public List<GameObject> specialLoot = new List<GameObject>();
 
     private void Start()
@@ -16,6 +18,7 @@ public class EnemyStats : CharacterStats {
         enemyAI = gameObject.GetComponent<EnemyAI>();
         //anim = GetComponent<Animator>();
         gameDetails = GameDetails.instance;
+        playerExp = ExperienceManager.instance;
     }
 
     private void Update()
@@ -38,16 +41,9 @@ public class EnemyStats : CharacterStats {
             PlayerController.instance.enemies.Remove(gameObject);
         }
 
-        // remove all the projectiles if there are any
-        var projectiles = new List<Transform>();
-        foreach (Transform child in transform)
-        {
-            if (child.name == "projectile(Clone)")
-            {
-                projectiles.Add(child);
-            }
-        }
-        projectiles.ForEach(child => Destroy(child.gameObject));
+        // Give Player experience
+        playerExp.AddExp(enemyAI.experienceGain);
+        // TODO something fancy with combattext or something
 
         // Add death animation
         anim.SetTrigger("Dead");

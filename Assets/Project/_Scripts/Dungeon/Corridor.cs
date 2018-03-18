@@ -54,7 +54,7 @@ public class Corridor
         // Overall effect is if the direction was South then that is 2, becomes 4, remainder is 0, which is north.
         Direction oppositeDirection = (Direction)(((int)room.enteringCorridor + 2) % 4);
 
-        // If this is noth the first corridor and the randomly selected direction is opposite to the previous corridor's direction...
+        // If this is not the first corridor and the randomly selected direction is opposite to the previous corridor's direction...
         if (!firstCorridor && direction == oppositeDirection)
         {
             // Rotate the direction 90 degrees clockwise (North becomes East, East becomes South, etc).
@@ -69,6 +69,11 @@ public class Corridor
 
         // Set a random length.
         corridorLength = length.Random;
+
+        if (firstCorridor)
+        {
+            corridorLength = corridorLength * 3;
+        }
 
         // Create a cap for how long the length can be (this will be changed based on the direction and position).
         int maxLength = length.m_Max;

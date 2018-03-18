@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+
 
 public class PlayerStats : CharacterStats {
 
@@ -10,11 +9,32 @@ public class PlayerStats : CharacterStats {
 
     public float exp;
 
+    public Stat Agi;
+    public Stat Str;
+    public Stat Sta;
+
+    // UI display
+    public Text maxhps;
+    public Text hps;
+    public Text dmg;
+    public Text ac;
+    public Text stmina;
+    public Text strn;
+    public Text agil;
+    public Text lvl;
+
+
+
+
     void Start () {
         EquipmentManager.instance.onEquipmentChanged += OnEquipmentChanged;
         anim = GetComponent<Animator>();
         playerControl = PlayerController.instance;
+
+        UpdateStats();
+        currentHealth = maxHealth;
 	}
+
     private void Update()
     {
         if (currentHealth == maxHealth)
@@ -26,20 +46,30 @@ public class PlayerStats : CharacterStats {
         {
             playerControl = PlayerController.instance;
         }
+
+        maxhps.text = "Max health: " + maxHealth.ToString();
+        hps.text = "Health: " + currentHealth.ToString();
+        dmg.text = "Damage: " + damage.GetValue().ToString();
+        ac.text = "Armor: " + armor.GetValue().ToString();
+        stmina.text = "Stamina: " + Sta.GetValue().ToString();
+        strn.text = "Strength: " + Str.GetValue().ToString();
+        agil.text = "Agilty: " + Agi.GetValue().ToString();
+        lvl.text = "Level: " + ExperienceManager.instance.level.ToString();
     }
 
     private void OnEquipmentChanged(Equipment newItem, Equipment oldItem)
     {
-        if(newItem != null)
-        {
-            armor.AddModifier(newItem.armorModifier);
-            damage.AddModifier(newItem.damageModifier);
-        }
 
         if (oldItem != null)
         {
             armor.RemoveModifier(oldItem.armorModifier);
             damage.RemoveModifier(oldItem.damageModifier);
+        }
+
+        if (newItem != null)
+        {
+            armor.AddModifier(newItem.armorModifier);
+            damage.AddModifier(newItem.damageModifier);
         }
     }
 
@@ -49,6 +79,7 @@ public class PlayerStats : CharacterStats {
         // kill the player in some way
         playerControl.speed = 0;
         playerControl.isDead = true;
+        SoundManager.instance.PlayUiSound("deathsound");
         anim.SetTrigger("Dead");
         GameDetails.instance.KillPlayer();
     }
@@ -97,6 +128,24 @@ public class PlayerStats : CharacterStats {
     void RemoveHealthBar()
     {
         playerControl.healthGroup.alpha -= 0.02f;
+    }
+
+    public void LevelUpStats()
+    {
+        Agi.SetValue(ExperienceManager.instance.level);
+        Str.SetValue(ExperienceManager.instance.level);
+        Sta.SetValue(ExperienceManager.instance.level);
+
+        UpdateStats();
+
+        currentHealth = maxHealth;
+    }
+
+    public void UpdateStats()
+    {
+        maxHealth = ExperienceManager.instance.level + (Sta.GetValue() * 10);
+        damage.SetValue(Str.GetValue());
+        armor.SetValue(Agi.GetValue());
     }
 
     private void OnDisable()

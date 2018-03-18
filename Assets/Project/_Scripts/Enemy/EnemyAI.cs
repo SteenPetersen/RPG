@@ -41,7 +41,7 @@ public class EnemyAI : AIPath
     public Transform ArrowHolder;
 
     [Header("Unique Variable")]
-    public float distanceToLook, meleeRange, force, projectileSpeed, experienceGain, meleeDelay, timer;
+    public float distanceToLook, meleeRange, force, projectileSpeed, experienceGain, meleeDelay, timer, meleeHitRange;
     [Header("Unique Variable")]
     public GameObject strikeGraphic;
     [Header("Unique Variable")]
@@ -184,7 +184,7 @@ public class EnemyAI : AIPath
     {
         if (!alert)
         {
-            distanceToLook = distanceToLook * 3;
+            distanceToLook = distanceToLook * 6;
             alert = true;
         }
     }
@@ -281,10 +281,6 @@ public class EnemyAI : AIPath
 
             SoundManager.instance.PlayCombatSound(gameObject.name + "_swing");
 
-            //GameObject projectile = pooledProjectiles.GetEnemyProjectile(gameObject.name);
-            //var projectileScript = projectile.GetComponent<enemy_Projectile>();
-            //projectileScript.MakeProjectileReady();
-
             GameObject strike = Instantiate(strikeGraphic, null, true);
 
             strike.transform.position = effectPoint.position;
@@ -293,6 +289,29 @@ public class EnemyAI : AIPath
             strike.transform.Rotate(0, 0, angle, Space.World);
 
             strike.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+
+            //create layer masks for the player
+            int playerLayer = 10;
+            var playerlayerMask = 1 << playerLayer;
+
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, playerObj.transform.position - transform.position, meleeHitRange, playerlayerMask);
+
+
+
+            if (hit.transform != null)
+            {
+                if (hit.collider.name == "Player")
+                {
+                    Debug.Log("Hit the player");
+                    if (hit.collider.transform.root.GetComponent<PlayerStats>() != null)
+                    {
+                        var script = hit.collider.transform.root.GetComponent<PlayerStats>();
+                        script.TakeDamage(myStats.damage.GetValue());
+                    }
+                }
+            }
+
+
         }
 
     }

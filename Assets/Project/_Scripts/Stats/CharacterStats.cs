@@ -41,6 +41,7 @@ public class CharacterStats : MonoBehaviour {
     public virtual void DamageVariance(int damage, out bool crit, out int newDamage)
     {
         // decrease damage by the armor of the player
+        var minValue = Random.Range(1, 5);
         damage -= armor.GetValue() / 2;
 
         //generate a random number
@@ -48,7 +49,7 @@ public class CharacterStats : MonoBehaviour {
 
         float limit = damage * 0.9f;
 
-        newDamage = Mathf.Clamp(damage + (int)rand, 0, int.MaxValue);
+        newDamage = Mathf.Clamp(damage + (int)rand, minValue, int.MaxValue);
 
         if (rand > limit)
         {

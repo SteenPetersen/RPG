@@ -37,6 +37,7 @@ public class PlayerController : Interactable
     }
     #endregion
 
+    public GameObject miniMap;
     public CoordinateDirection dir;
 
     public GameObject bodyLight;
@@ -223,8 +224,10 @@ public class PlayerController : Interactable
                 bool canHit = CheckIfPlayerMayHit();
 
                 // if player is not allowed to hit the stop the code from running further
-                if (!canHit)
+                if (!canHit) {
+                    anim.SetTrigger("PickUp");
                     return;
+                }
 
                 // set the startPosition of the hit animation
                 var startPos = meleeStartPoint.position;
@@ -289,9 +292,12 @@ public class PlayerController : Interactable
                 // check if the playaer is allowed to hit or if he hit something interactable with the mouse
                 bool canHit = CheckIfPlayerMayHit();
 
-                // if player is not allowed to hit then stop the code from running further
+                // if player is not allowed to hit the stop the code from running further
                 if (!canHit)
+                {
+                    anim.SetTrigger("PickUp");
                     return;
+                }
 
                 // if player is allowed to hit then animate the shooting
                 anim.SetTrigger("ShootRanged");
@@ -310,7 +316,7 @@ public class PlayerController : Interactable
             return false;
 
         // if the player does not have weapons in his hands
-        if (weaponsGone)
+        if (EquipmentManager.instance.currentEquipment[3] == null)
             return false;
 
         // otherwise let him hit
@@ -742,20 +748,23 @@ public class PlayerController : Interactable
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // if you're not in the dungeon
-        if (SceneManager.GetActiveScene().name != "dungeon")
+        // if you're not in an indoor zone
+        if (!SceneManager.GetActiveScene().name.EndsWith("_indoor"))
         {
             // turn off your bodyLight
             bodyLight.SetActive(false);
         }
 
-        // if you ARE in the dungeon
-        else if (SceneManager.GetActiveScene().name == "dungeon")
+        // if you ARE in a indoor zone
+        else if (SceneManager.GetActiveScene().name.EndsWith("_indoor"))
         {
             // turn off your bodyLight
             bodyLight.SetActive(true);
 
         }
+
+        miniMap.SetActive(false);
+
     }
 
     private void OnDisable()
