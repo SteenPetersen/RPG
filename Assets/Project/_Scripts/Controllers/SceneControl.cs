@@ -17,15 +17,15 @@ public class SceneControl : MonoBehaviour {
 
     void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "dungeon")
+        if (scene.name == "dungeon_indoor")
         {
             dungeonLevel += 1;
         }
-        else if (scene.name != "dungeon" && scene.name != "Loading")
+        else if (scene.name != "dungeon_indoor" && scene.name != "Loading")
         {
             dungeonLevel = 0;
         }
-        if (scene.name == "bossroom1")
+        if (scene.name == "bossroom1_indoor")
         {
             var spawn = GameObject.Find("PlayerSpawnPosition");
             PlayerController.instance.gameObject.transform.position = spawn.transform.position;

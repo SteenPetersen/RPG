@@ -71,8 +71,8 @@ public class Projectile : MonoBehaviour {
                 // if he still has health left
                 if (targetStatsScript.currentHealth > 0)
                 {
-                    // play the impact particles that the enemy is holding
-                    script.impact.Play();
+                    // play the impact particles that belongs to this enemy
+                    ParticleSystemHolder.instance.PlayImpactEffect(col.transform.parent.name + "_impact", transform.position);
 
                     // stop the projectile from moving any further
                     rigid.isKinematic = true;
@@ -87,7 +87,6 @@ public class Projectile : MonoBehaviour {
                     // if this projectile is not a sword
                     if ((int)projectileType == 0)
                     {
-                        Debug.Log("this is not a sword");
                         // increment the amount of arrows that have hit the enemy
                         script.ProjectileWoundGraphics(arrowType);
                     }

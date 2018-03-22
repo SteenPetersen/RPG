@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4190540930397656}
   - component: {fileID: 198723816214596072}
   - component: {fileID: 199030014524276732}
+  - component: {fileID: 114428302931317004}
   m_Layer: 14
   m_Name: enemyBloodGreen
   m_TagString: Untagged
@@ -65,13 +66,25 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1747964869828114}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -7.6231513, y: 1.3965495, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4154216074314458}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &114428302931317004
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1747964869828114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01f2696d7df1eca45bbdbea9012f72ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delay: 3.6
 --- !u!198 &198494309471109902
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -84,7 +97,7 @@ ParticleSystem:
   stopAction: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 0
+  playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -132,7 +145,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1943558966
+  randomSeed: 1516424777
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3496,7 +3509,7 @@ ParticleSystem:
   stopAction: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 0
+  playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -3544,7 +3557,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -2087322803
+  randomSeed: -1645652305
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6985,7 +6998,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 365829451
   m_SortingLayer: 1
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0

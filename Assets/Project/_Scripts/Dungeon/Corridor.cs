@@ -70,42 +70,57 @@ public class Corridor
         // Set a random length.
         corridorLength = length.Random;
 
-        if (firstCorridor)
-        {
-            corridorLength = corridorLength * 3;
-        }
-
         // Create a cap for how long the length can be (this will be changed based on the direction and position).
         int maxLength = length.m_Max;
 
-        switch (direction)
+        if (firstCorridor)
         {
-            // If the choosen direction is North (up)...
-            case Direction.North:
-                // ... the starting position in the x axis can be random but within the width of the room.
-                startXPos = Random.Range(room.xPos, room.xPos + room.roomWidth - 2);
+            corridorLength = corridorLength * 2;
+            direction = Direction.East;
 
-                // The starting position in the y axis must be the top of the room.
-                startYPos = room.yPos + room.roomHeight;
+            startXPos = room.xPos + room.roomWidth;
+            startYPos = Random.Range(room.yPos + 1, room.yPos + room.roomHeight - 1);
+            maxLength = (columns - startXPos - roomWidth.m_Min) - 2;
+        }
 
-                // The maximum length the corridor can be is the height of the board (rows) but from the top of the room (y pos + height).
-                maxLength = (rows - startYPos - roomHeight.m_Min) - 2;
-                break;
-            case Direction.East:
-                startXPos = room.xPos + room.roomWidth;
-                startYPos = Random.Range(room.yPos + 1, room.yPos + room.roomHeight - 1);
-                maxLength = (columns - startXPos - roomWidth.m_Min) - 2;
-                break;
-            case Direction.South:
-                startXPos = Random.Range(room.xPos, room.xPos + room.roomWidth - 2);
-                startYPos = room.yPos;
-                maxLength = (startYPos - roomHeight.m_Min) - 2;
-                break;
-            case Direction.West:
-                startXPos = room.xPos;
-                startYPos = Random.Range(room.yPos + 1, room.yPos + room.roomHeight - 1);
-                maxLength = (startXPos - roomWidth.m_Min) - 2;
-                break;
+
+
+        if (!firstCorridor)
+        {
+            switch (direction)
+            {
+                // If the choosen direction is North (up)...
+                case Direction.North:
+                    // ... the starting position in the x axis can be random but within the width of the room.
+                    startXPos = Random.Range(room.xPos, room.xPos + room.roomWidth - 2);
+
+                    // The starting position in the y axis must be the top of the room.
+                    startYPos = room.yPos + room.roomHeight;
+
+                    // The maximum length the corridor can be is the height of the board (rows) but from the top of the room (y pos + height).
+                    maxLength = (rows - startYPos - roomHeight.m_Max) - 2;
+                    break;
+
+                case Direction.East:
+
+                    startXPos = room.xPos + room.roomWidth;
+                    startYPos = Random.Range(room.yPos + 1, room.yPos + room.roomHeight - 1);
+                    maxLength = (columns - startXPos - roomWidth.m_Max) - 2;
+                    break;
+
+                case Direction.South:
+                    startXPos = Random.Range(room.xPos, room.xPos + room.roomWidth - 2);
+                    startYPos = room.yPos;
+                    maxLength = (startYPos - roomHeight.m_Max) - 2;
+                    break;
+
+                case Direction.West:
+
+                    startXPos = room.xPos;
+                    startYPos = Random.Range(room.yPos + 1, room.yPos + room.roomHeight - 1);
+                    maxLength = (startXPos - roomWidth.m_Max) - 2;
+                    break;
+            }
         }
 
         // We clamp the length of the corridor to make sure it doesn't go off the board.

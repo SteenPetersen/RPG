@@ -39,7 +39,7 @@ public class GameDetails : MonoBehaviour {
     #endregion
 
     #region Dialogue
-    public Vector3 dialogueNPCIsStandingOnTheRight = new Vector3(0f, -9f, -6.3f);
+    public Vector3 dialogueNPCIsStandingOnTheRight = new Vector3(-1.5f, -9f, -6.3f);
     public Vector3 dialogueNPCIsStandingOnTheLeft = new Vector3(1.86f, -9f, -6.3f);
 
     public GameObject dialogueCamera;

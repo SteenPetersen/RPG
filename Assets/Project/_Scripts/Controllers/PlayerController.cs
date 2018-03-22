@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Collections;
+using System;
 
 public class PlayerController : Interactable
 {
@@ -79,7 +80,7 @@ public class PlayerController : Interactable
     #region State/etc
     public Text stateText;          // to give player feedback of what state they are in
     public bool melee = true;       // is the player in melee?
-    public bool ranged, dialogue;   // is the player using ranged or in a dialogue?
+    public bool ranged, dialogue;   // is the player using ranged or in a dialogue? Player can still animate during pause due to unscaled time on his animator
 
     EquipmentManager equip;
     bool weaponsGone = false;       // has the player unequipped his/her weapons
@@ -138,7 +139,7 @@ public class PlayerController : Interactable
         int layerMask = 1 << layerId;
 
         // make a temporary array to hold the overlapping enemies on the layer in question
-        Collider2D[] currentEnemiesInRange = Physics2D.OverlapCircleAll(transform.position, 10, layerMask);
+        Collider2D[] currentEnemiesInRange = Physics2D.OverlapCircleAll(transform.position, 25, layerMask);
 
         // if there are objects in the list
         if (currentEnemiesInRange.Length > 0)
@@ -484,42 +485,46 @@ public class PlayerController : Interactable
 
         if (distanceFromFrontToMouse > distanceFromBackToMouse + 0.05f )
         {
-            //||
-            if (isDead)
-                return;
-            ////////////////////////////////////
-            //Gather obects not to tbe flipped//
-            ////////////////////////////////////
-
-            Transform tmp = selector.transform;
-            CanvasGroup healthImage = healthGroup;
-
-            Vector3 pos = tmp.position;
-            Vector3 healthPos = healthImage.gameObject.transform.position;
-
-            tmp.SetParent(null);
-            healthImage.transform.SetParent(null);
-
-
-
-            ////////////////////////////////////
-            //////////Flip the objects//////////
-            ////////////////////////////////////
-            Vector3 theScale = transform.localScale;
-
-            theScale.x *= -1;
-
-            facingRight = !facingRight;
-
-            transform.localScale = theScale;
-
-            tmp.SetParent(transform);
-            tmp.position = pos;
-
-            healthImage.transform.SetParent(transform);
-            healthImage.transform.position = healthPos;
+            FlipPlayer();
         }
 
+    }
+
+    public void FlipPlayer()
+    {
+        if (isDead)
+            return;
+        ////////////////////////////////////
+        //Gather obects not to tbe flipped//
+        ////////////////////////////////////
+
+        Transform tmp = selector.transform;
+        CanvasGroup healthImage = healthGroup;
+
+        Vector3 pos = tmp.position;
+        Vector3 healthPos = healthImage.gameObject.transform.position;
+
+        tmp.SetParent(null);
+        healthImage.transform.SetParent(null);
+
+
+
+        ////////////////////////////////////
+        //////////Flip the objects//////////
+        ////////////////////////////////////
+        Vector3 theScale = transform.localScale;
+
+        theScale.x *= -1;
+
+        facingRight = !facingRight;
+
+        transform.localScale = theScale;
+
+        tmp.SetParent(transform);
+        tmp.position = pos;
+
+        healthImage.transform.SetParent(transform);
+        healthImage.transform.position = healthPos;
     }
 
     private Interactable ClickFeedback()
@@ -736,7 +741,7 @@ public class PlayerController : Interactable
         // set the color of the gizmo
         Gizmos.color = Color.yellow;
         // set the size of the gizmo ( this one relates to the range at which the player will consider enemies to be "in range")
-        Gizmos.DrawWireSphere(transform.position, 10);
+        Gizmos.DrawWireSphere(transform.position, 25);
     } // commented
 
     public void SetMouseQuadrant(CoordinateDirection newDir)

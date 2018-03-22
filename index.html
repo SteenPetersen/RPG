@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Pixlrelm</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap and Font Awesome css-->
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Google fonts-->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Pacifico">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
+    <!-- Theme stylesheet-->
+    <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="css/custom.css">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="favicon.png">
+    <!--<link rel="shortcut icon" href="TemplateData/favicon.ico">-->
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="Build/UnityLoader.js"></script>
+    <!-- Tweaks for older IEs--><!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+  </head>
+  <body>
+    <div style="background-image: url('img/video-bg.jpg')" class="main"> 
+      <!-- video background-->
+      <!-- replace URLs with your video content URL-->
+      <video id="video-background" preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
+        <!--<source src="http://www.pixlrelm.com/video/bg.webm" type="video/webm">-->
+        <source src="http://www.pixlrelm.com/video/bg.mp4" type="video/mp4">
+      </video>
+      <div class="overlay"></div>
+        <div class="container">
+            <p class="social"><a href="https://twitter.com/Pixlrelm" title="" class="twitter"><i class="fa fa-twitter"></i></a></p>
+            <h1 style="font-family:'Pixl'; text-align:center; margin-bottom:0px; position:relative; color: #77c3bf">Welcome to Pixlrelm</h1>
+            <script>
+                var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Builds.json", { onProgress: UnityProgress });
+            </script>
+
+            <div class="webgl-content" style="width: 100%; height: 600px; position: relative; padding-top: 40px;">
+                <div id="gameContainer"></div>  <!--style="width: 100%; height: 600px; margin-left: auto; margin-right: auto;"-->
+                <div class="footer" style="position:relative">
+                    <div class="fullscreen" onclick="gameInstance.SetFullscreen(1)"></div>
+                </div>
+            </div>
+
+            <div class="mailing-list" style="padding-top:40px;">
+
+                <h4 style="font-family:'Pixl'; position:relative; color: #77c3bf">Follow my progress on Twitter @Pixlrelm for more information</h4>
+                <h5 style="font-family:'Pixl'; position:relative; color: #77c3bf">Contact me directly at info@pixlrelm.com</h5>
+
+                <h7 style="font-family:'Pixl'; position:relative; color: #77c3bf">&copy; 2018 Pixlrelm.com</h7>
+                <!--<div class="row">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="email" class="sr-only"></label>
+                        <input type="email" placeholder="jane.doe@example.com" id="email" class="form-control transparent">
+                    </div>
+                    <a href="http://www.google.com" class="btn btn-danger" style="margin-top:20px;">ChangeLog</a>
+                </form>
+            </div>-->
+            </div>
+
+                <div class="col-xs-12" style="display:grid; justify-content: center; align-items:center; margin-top:10px;">
+                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        Change Log
+                    </a>
+
+                    <div class="collapse" id="collapseExample">
+                        <div class="card card-body" style="color: #77c3bf">
+
+
+                            <br />
+                            <br />
+
+                            V 0.0.0.6
+                            <br />
+                            - It should no longer be possible for enemies to be standing next to where the player spawns in (requires testing by simply running many dungeons and seeing if enemies ever attack upon entry)<br />
+                            - it should no longer be possible for the dungeon to fail in its creation due to IndexOutOfArray exceptions (requires testing by creating many dungeons and seeing if it fails)<br />
+                            - start room now has a special tile upon which the player spawns<br />
+                            - start room has torches in each corner showing the limits of the original room<br />
+                            - arrows no longer fly for a long time after leaving the screen view.<br />
+                            - blood impacts are now done in the correct sorting layer and looks more correct, required a rewrite of how particle effects are instantiated.<br />
+                            - Implemented first boss and made it easy to get to him for testing<br />
+                            - Dialogue system tweaked with boss<br />
+                            - fixed some lighting issues that where causing load on the game, fireballs etc should be alot smoother now.<br />
+
+
+                            <br />
+                            <br />
+
+                                V 0.0.0.5
+                            <br />
+                                - fixed ImpBomber glitch with arrows staying after he exploded.<br />
+                                - Imp Melee Hits are now avoidable (testing required for distances etc)<br />
+                                - first implementation of experience system<br />
+                                - impBomber now runs faster, beware!<br />
+                                - sound effect added for level up<br />
+                                - game saves and loads experience and level of the player<br />
+                                - loading of stats needs extensive testing as it has been redone a bit and should be correctly loaded and saved.<br />
+                                - damage is now related to actual player damage and increments in gear and level should effect damage and armor.<br />
+                                - Player can no longer do damage if he has no weapon<br />
+                                - Lighting settings are now recoded so they I can label any zone as "_indoor" and the lights will be set down in the zone and up on the character<br />
+                                - experience income has been halved.<br />
+                                - implemented minimap functionality (requires testing for use)<br />
+                                - trying out perspective camera again.<br />
+                                - A map now drops in the dungeon that allows players to attain a minimap. (requires testing)<br />
+
+                                <br />
+                                <br />
+
+                                V 0.0.0.4
+                                <br />
+                                - Major Fixes for Handling Aggro, monsters are now set into a list<GameObject> which is regularly updated making it easer to iterate through only relevant enemies.<br />
+                                - Added a ton of comments to platerController script to make it easier to understand and to make sure I have no superfluous code.<br />
+                                - Implementation of ImpBomber<br />
+                                - first implementation of light inside the dungeons<br />
+                                - fix for null reference exception on impbomber and made him able to die and be destroyed either by explosion or by health drop<br />
+                                - rework of how projectiles hit enemies and display graphics. was causing a rare null reference and glitchy graphics anyway. Graphics now look much better and should not seem weird when monster dies. Should also be impossible to get null references in the same way<br />
+
+                                <br />
+                                <br />
+
+                                V 0.0.0.3
+                                <br />
+                                - fix for health bar on enemies, it was flipping with the monster.<br />
+                                - fix for inventory overlaps where causing use of wrong item.<br />
+                                - added sound effects for potions<br />
+                                - added green combat text for when player is healed.<br />
+                                - first implementation of boss with boss room<br />
+                                - first version of boss fight is live and as of now no exceptions<br />
+                                - fixed a bunch of positioning glitches with mobs and players. Not sure if they all fixed as of yet.<br />
+                                - removed TextMeshPro as it was giving errors on building.<br />
+
+
+                                <br />
+                                <br />
+
+                                V 0.0.0.2
+                                <br />
+                                - monsters movement is a bit better and shouldn't clip through walls as much in dungeons.<br />
+                                - particle effects for hitting<br />
+                                - placeholder sound effects so they easily can be changed later.<br />
+                                - directional hitting improved.<br />
+                                - rework of the animator controller to minimize use of "Any State" for better debugging.<br />
+                                - Optimizations for dungeons, Astar grid is now only the size that of the actual dungeon and not bigger.<br />
+                                - fixed issue with player only being able to hit a few times and then stopping. was a canvas group that stopped raycasts.<br />
+                                - fixed an issue that was rendering inventory incorrectly<br />
+                                - fix to picking up items which arose in combination with trying to fix the player not being able to hit.<br />
+                                - fixed block so it comes from any state so player can always interrupt himself and block at any time<br />
+                                - fixed dungeons so that weird angled entries to rooms are still passable by the AI<br />
+                                - Fixed dropped loot icons on ground so they render above corpses.<br />
+                                - Fixed outside area having a border so that players cannot run into Oblivion<br />
+                                - Added more sound effects (mainly combat)<br />
+                                - Added new enemy (Ranged Imp)<br />
+
+
+                                <br />
+                                <br />
+                                V 0.0.0.1
+                                <br />
+                                - Major fixes to zoning with fade to black masking the loading of zone and the scanning of the pathfinding grid.<br />
+                                - Monsters now avoid each other and and can attack the player under the new melee system.<br />
+                                - Player has an Enum that dictates which quadrant the mouse is in (preparation for quadrant based attacking in 4 directions)<br />
+                                - New A* pathfinding implemented on IMPs requires testing for distances etc.<br />
+
+                                <br />
+                                <br />
+
+</div>
+                    </div>
+                </div>
+
+        </div>
+      <!--<div class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <p>&copy;2018 Pixlrelm.com</p>
+            </div>
+            
+          </div>
+        </div>
+      </div>-->
+    </div>
+    
+    <!-- JAVASCRIPT FILES -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.11.0.min.js"><\/script>')</script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/front.js"></script>
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID.-->
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      e.src='//www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>
+  </body>
+</html>

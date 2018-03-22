@@ -509,7 +509,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: aeb81cfa4dd41b54e98306dc860f85c1, type: 2}
+  m_Motion: {fileID: 7400000, guid: 177f37ea6c039324b84730957a8bbfc3, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -561,7 +561,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 29a53f0981241cb46be97c352452b886, type: 2}
+  m_Motion: {fileID: 7400000, guid: 24699736ab178624f9a6f6ce6154b2d1, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -598,7 +598,7 @@ AnimatorState:
   m_ObjectHideFlags: 3
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Humanoid_Walk
+  m_Name: ImpGiantWalk
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -612,7 +612,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 042d062fe42cf5340a591b8a8e72ba41, type: 2}
+  m_Motion: {fileID: 7400000, guid: e03e4e37c40500247a8d671f2698d67d, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

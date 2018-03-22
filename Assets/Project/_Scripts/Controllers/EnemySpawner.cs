@@ -18,14 +18,15 @@ public class EnemySpawner : MonoBehaviour {
 
         if (timer < 0)
         {
-            SpawnEnemy();
             timer = spawnDelay;
+
+            SpawnEnemy();
         }
     }
 
     private void SpawnEnemy()
     {
-        if (EnemyHolder.instance.enemies.Count < EnemyHolder.instance.maxAmountOfEnemies)
+        if (EnemyHolder.instance.enemies.Count < 4)
         {
             Debug.Log("spawning enemy");
             int rand = UnityEngine.Random.Range(0, enemy.Length);

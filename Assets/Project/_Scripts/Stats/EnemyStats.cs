@@ -41,6 +41,18 @@ public class EnemyStats : CharacterStats {
             PlayerController.instance.enemies.Remove(gameObject);
         }
 
+
+        if (EnemyHolder.instance != null)
+        {
+            // If this enemy was on the EnemyHolderBoss event list
+            if (EnemyHolder.instance.enemies.Contains(gameObject))
+            {
+                //  then remove him from it
+                EnemyHolder.instance.enemies.Remove(gameObject);
+            }
+        }
+
+
         // Give Player experience
         playerExp.AddExp(enemyAI.experienceGain);
         // TODO something fancy with combattext or something

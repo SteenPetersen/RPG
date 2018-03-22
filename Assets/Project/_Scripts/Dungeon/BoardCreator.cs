@@ -32,6 +32,8 @@ public class BoardCreator : MonoBehaviour
     public GameObject boss;
     public GameObject goal;
     public GameObject map;
+    public GameObject entranceTile;
+    public GameObject entranceTorch;
 
     public Camera cam;
 
@@ -161,43 +163,72 @@ public class BoardCreator : MonoBehaviour
                 for (int k = 0; k < currentRoom.roomHeight; k++)
                 {
                     int yCoord = currentRoom.yPos + k;
-                    Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  i is   " + i + "  k is  " + k);
-                    // Make the left wall have colliders
-                    if (xCoord == currentRoom.xPos && tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord] == TileType.BlackArea)
-                    {
-                        tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                    Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  room number is:   " + i + "  k is  " + k);
 
-                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1 && tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+
+                    // Make the left wall have colliders
+                    if (xCoord == currentRoom.xPos)
+                    {
+                        if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                        }
+                        if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
                         {
                             tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
+                        }
+
+                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
+                        {
+                            if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+                            {
+                                tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
+                            }
 
                             if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
                             {
                                 tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
                             }
                         }
+                        
+
                     }
 
                     // Make the Right wall have colliders
-                    if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1 && tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                    if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1)
                     {
-                        tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                        if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                        }
 
-                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1 && tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                        if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
                         {
                             tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
+                        }
+
+                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
+                        {
+                            if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                            {
+                                tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
+                            }
 
                             if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
                             {
                                 tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
                             }
                         }
+
                     }
 
                     // Make the Top wall have colliders
-                    if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1 && tiles[xCoord][yCoord + 1] == TileType.BlackArea)
+                    if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
                     {
-                        tiles[xCoord][yCoord + 1] = TileType.ColliderWall;
+                        if (tiles[xCoord][yCoord + 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord][yCoord + 1] = TileType.ColliderWall;
+                        }
 
                         if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
                         {
@@ -211,9 +242,12 @@ public class BoardCreator : MonoBehaviour
                     }
 
                     // Make the Bottom wall have colliders
-                    if (yCoord == currentRoom.yPos && tiles[xCoord][yCoord - 1] == TileType.BlackArea)
+                    if (yCoord == currentRoom.yPos)
                     {
-                        tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
+                        if (tiles[xCoord][yCoord - 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
+                        }
 
                         if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
                         {
@@ -231,10 +265,13 @@ public class BoardCreator : MonoBehaviour
                 }
             }
 
+            if (i == rooms.Length - 1)
+            {
+                int x = (int)goalPos.x;
+                int y = (int)goalPos.y;
+                tiles[x][y] = TileType.Goal;
+            }
 
-            int x = (int)goalPos.x;
-            int y = (int)goalPos.y;
-            tiles[x][y] = TileType.Goal;
         }
     }
 
@@ -548,7 +585,7 @@ public class BoardCreator : MonoBehaviour
                 {
                     // ... instantiate a floor tile for it.
                     InstantiateFromArrayFloor(floorTiles, i, j);
-                    Debug.Log("there are " + (int)tiles[i][j] + " floor tiles");
+                    //Debug.Log("there are " + (int)tiles[i][j] + " floor tiles");
                 }
 
                 // If the tile type is Black area...
@@ -565,7 +602,7 @@ public class BoardCreator : MonoBehaviour
                     InstantiateFromArrayWall(colliderWalls, i, j);
                 }
 
-                // If the tile type is Wall...
+                // If the tile type is Goal...
                 else if (tiles[i][j] == TileType.Goal)
                 {
                     Debug.Log("calling goal tile");
@@ -674,6 +711,12 @@ public class BoardCreator : MonoBehaviour
         tileInstance.transform.parent = boardHolder.transform;
     }
 
+    void BuildEntranceRoom()
+    {
+        Vector3 position = new Vector3(player.transform.position.x, player.transform.position.y, 0f);
+        Instantiate(entranceTile, position, Quaternion.identity);
+    }
+
     public IEnumerator InitializeMap()
     {
         bool workDone = false;
@@ -701,7 +744,103 @@ public class BoardCreator : MonoBehaviour
             InstantiateTiles();
             InstantiateOuterWalls();
 
+            BuildEntranceRoom();
+
             workDone = true;
         }
+    }
+
+    void FunctionHolderForTestingPurposes()
+    {
+        // Go through all the rooms...
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            Room currentRoom = rooms[i];
+
+            // ... and for each room go through it's width.
+            for (int j = 0; j < currentRoom.roomWidth; j++)
+            {
+                int xCoord = currentRoom.xPos + j;
+
+                //// For each horizontal tile, go up vertically through the room's height.
+                for (int k = 0; k < currentRoom.roomHeight; k++)
+                {
+                    int yCoord = currentRoom.yPos + k;
+                    Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  i is   " + i + "  k is  " + k);
+                    // Make the left wall have colliders
+                    if (xCoord == currentRoom.xPos && tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+                    {
+                        tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+
+                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1 && tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+                        {
+                            tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
+
+                            if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
+                            }
+                        }
+                    }
+
+                    // Make the Right wall have colliders
+                    if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1 && tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                    {
+                        tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+
+                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1 && tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
+
+                            if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
+                            }
+                        }
+                    }
+
+                    // Make the Top wall have colliders
+                    if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1 && tiles[xCoord][yCoord + 1] == TileType.BlackArea)
+                    {
+                        tiles[xCoord][yCoord + 1] = TileType.ColliderWall;
+
+                        if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
+                        }
+
+                        if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
+                        }
+                    }
+
+                    // Make the Bottom wall have colliders
+                    if (yCoord == currentRoom.yPos && tiles[xCoord][yCoord - 1] == TileType.BlackArea)
+                    {
+                        tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
+
+                        if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                        }
+
+                        if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
+                        {
+                            tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                        }
+                    }
+
+                    // The coordinates in the jagged array are based on the room's position and it's width and height.
+                    tiles[xCoord][yCoord] = TileType.Floor;
+                }
+            }
+
+
+            int x = (int)goalPos.x;
+            int y = (int)goalPos.y;
+            tiles[x][y] = TileType.Goal;
+        }
+        
     }
 }

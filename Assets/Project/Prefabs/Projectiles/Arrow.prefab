@@ -157,7 +157,7 @@ MonoBehaviour:
   arrowType: 1
   rigid: {fileID: 0}
   impacts: []
-  destroyAfter: 3
+  destroyAfter: 0.6
   myCollider: {fileID: 58595001038541288}
   projectileSpriteRenderer: {fileID: 212659204936523284}
   projectileType: 0

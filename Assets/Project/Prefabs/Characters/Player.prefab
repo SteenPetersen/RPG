@@ -163,7 +163,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1349318803505560
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
@@ -316,24 +316,6 @@ GameObject:
   - component: {fileID: 212936759010588482}
   m_Layer: 10
   m_Name: MainHand
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1554169129523276
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4417038727259200}
-  - component: {fileID: 23763747987163564}
-  - component: {fileID: 33751129708103126}
-  - component: {fileID: 114502313040058622}
-  m_Layer: 0
-  m_Name: TestLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -512,12 +494,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1349318803505560}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.81, z: -0.63}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.81000006, z: -0.63}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4417038727259200}
-  m_RootOrder: 0
+  m_Father: {fileID: 4160916535438512}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4028408343976220
 Transform:
@@ -531,7 +513,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4690258149587194}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 14.51091}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -3.5875921}
 --- !u!4 &4030013246531102
 Transform:
   m_ObjectHideFlags: 1
@@ -596,14 +578,14 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1760166937193192}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.42594, y: 2.6558504, z: 0}
+  m_LocalPosition: {x: -9.681, y: 1.311, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4104276641515972}
   - {fileID: 4375242013450916}
   - {fileID: 4761093350005730}
   - {fileID: 4503147372456244}
-  - {fileID: 4417038727259200}
+  - {fileID: 4026610300211450}
   - {fileID: 4717949468858770}
   - {fileID: 224086989199366062}
   m_Father: {fileID: 0}
@@ -622,7 +604,7 @@ Transform:
   - {fileID: 4471985348146388}
   m_Father: {fileID: 4690258149587194}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.6440735}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 13.168004}
 --- !u!4 &4323123426971908
 Transform:
   m_ObjectHideFlags: 1
@@ -676,20 +658,6 @@ Transform:
   - {fileID: 4323123426971908}
   m_Father: {fileID: 4160916535438512}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4417038727259200
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1554169129523276}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4026610300211450}
-  m_Father: {fileID: 4160916535438512}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4440562096519564
 Transform:
@@ -830,7 +798,7 @@ Transform:
   - {fileID: 4805935905327712}
   m_Father: {fileID: 4690258149587194}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.1897583}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.7475004}
 --- !u!4 &4805935905327712
 Transform:
   m_ObjectHideFlags: 1
@@ -857,47 +825,6 @@ Transform:
   m_Father: {fileID: 4702266881058488}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23763747987163564
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1554169129523276}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 1
-  m_Materials:
-  - {fileID: 2100000, guid: 721fe554da1cfcc46abfb09fd18552a5, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
-  m_SortingOrder: 0
---- !u!33 &33751129708103126
-MeshFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1554169129523276}
-  m_Mesh: {fileID: 0}
 --- !u!50 &50011800068612374
 Rigidbody2D:
   serializedVersion: 4
@@ -1085,7 +1012,9 @@ MonoBehaviour:
   playercontrol: {fileID: 0}
   enemies:
   - {fileID: 0}
+  miniMap: {fileID: 0}
   dir: 1
+  bodyLight: {fileID: 1349318803505560}
   skeleton: {fileID: 1181809678313842}
   mousePosition: {x: 92.452255, y: 145.46751}
   eventSys: {fileID: 0}
@@ -1131,64 +1060,26 @@ MonoBehaviour:
   maxHealth: 100
   regenRate: 0
   damage:
-    baseValue: 6
+    baseValue: 1
   armor:
     baseValue: 0
   anim: {fileID: 95868846984876030}
   playerControl: {fileID: 114124858234543866}
   exp: 0
---- !u!114 &114502313040058622
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1554169129523276}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 302d2eb1ab4ab4ae395943b9209056dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DDLEvent_OnEnterFOV:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: DynamicLight2D.DynamicLightEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  DDLEvent_OnExitFOV:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: DynamicLight2D.DynamicLightEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  DDLEvent_InsideFOV:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: DynamicLight2D.DynamicLightEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  Version: 1.3.1
-  SolidColor: 1
-  LightColor: {r: 0, g: 0, b: 0, a: 0}
-  Intensity: 1.81
-  LightMaterial: {fileID: 2100000, guid: 721fe554da1cfcc46abfb09fd18552a5, type: 2}
-  light2DType: 1
-  SortOrderID: 0
-  strokeRender: 0
-  LightRadius: 8.3
-  Segments: 8
-  Layer:
-    serializedVersion: 2
-    m_Bits: 0
-  useEvents: 0
-  objectsWithinSight: 0
-  intelliderConvex: 0
-  recalculateNormals: 1
-  flipXYtoXZ: 0
-  debugLines: 1
-  uv_Offset: {x: 0.5, y: 0.5}
-  uv_Scale: {x: 0.45120156, y: 0.45120156}
-  vertexWorking: 0
-  RangeAngle: 360
-  staticScene: 0
-  doNotRenderMesh: 0
-  lastLight2DType: 1
+  Agi:
+    baseValue: 1
+  Str:
+    baseValue: 1
+  Sta:
+    baseValue: 1
+  maxhps: {fileID: 0}
+  hps: {fileID: 0}
+  dmg: {fileID: 0}
+  ac: {fileID: 0}
+  stmina: {fileID: 0}
+  strn: {fileID: 0}
+  agil: {fileID: 0}
+  lvl: {fileID: 0}
 --- !u!114 &114519247616958460
 MonoBehaviour:
   m_ObjectHideFlags: 1

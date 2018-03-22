@@ -45,8 +45,6 @@ public class EnemyAI : AIPath
     [Header("Unique Variable")]
     public GameObject strikeGraphic;
     [Header("Unique Variable")]
-    public ParticleSystem impact;
-    [Header("Unique Variable")]
     public ParticleSystem specialExplosion;
 
 
@@ -78,6 +76,7 @@ public class EnemyAI : AIPath
             setter.ai.destination = tr.position;
             setter.targetASTAR = null;
             setter.enabled = false;
+
 
             CheckIfEnemyIsOnAList();
 

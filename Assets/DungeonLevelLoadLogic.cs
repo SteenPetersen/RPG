@@ -32,8 +32,10 @@ public class DungeonLevelLoadLogic : MonoBehaviour {
 
         int ZoneToLoad = 1;
 
-        if (level > 3)
+        if (level > 0)
         {
+            // set the camera correctly so we can know the outset of the player when zoning in if not it can be hard to determine how dialogue looks.
+            CameraController.instance.transform.rotation = Quaternion.Euler(0, 0, 0);
             ZoneToLoad = 3;
         }
 

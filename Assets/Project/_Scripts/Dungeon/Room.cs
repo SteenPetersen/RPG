@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Room
@@ -22,17 +23,27 @@ public class Room
         // Set a random width and height.
         int width = widthRange.Random;
         int height = heightRange.Random;
-        roomWidth = Mathf.Clamp(width, 5, width);
-        roomHeight = Mathf.Clamp(height, 5, height);
+        roomWidth = 9;
+        roomHeight = 9;
 
         // Set the x and y coordinates so the room is roughly in the middle of the board.
-        xPos = Mathf.RoundToInt((columns / 2f) - (roomWidth / 2f));
+        xPos = 10;
         yPos = Mathf.RoundToInt((rows / 2f) - (roomHeight / 2f));
+
+        //xPos = Mathf.RoundToInt((columns / 2f) - (roomWidth / 2f));
+        //yPos = Mathf.RoundToInt((rows / 2f) - (roomHeight / 2f));
 
         Debug.Log(xPos + " " + yPos);
 
-        Vector3 playerPos = new Vector3(xPos + 2, yPos + 2, 0);
+        Vector3 playerPos = new Vector3(xPos + (roomWidth / 2), yPos + (roomHeight / 2), 0);
         BoardCreator.instance.player.transform.position = playerPos;
+
+        Vector3[] corners = new[] { new Vector3(xPos, yPos, 0f), new Vector3(xPos + roomWidth - 1, yPos, 0f), new Vector3(xPos, yPos + roomHeight - 1, 0f), new Vector3(xPos + roomWidth - 1, yPos + roomHeight - 1, 0f) };
+
+        foreach (var corner in corners)
+        {
+            BoardCreator.instance.SpawnElement(corner, BoardCreator.instance.entranceTorch);
+        }
     }
 
 
@@ -49,8 +60,6 @@ public class Room
         //TODO add monster chance to drop
         enemyAmount = enemies.Random;
 
-
-
         switch (corridor.direction)
         {
             // If the corridor entering this room is going north...
@@ -64,34 +73,77 @@ public class Room
 
                 // The x coordinate can be random but the left-most possibility is no further than the width
                 // and the right-most possibility is that the end of the corridor is at the position of the room.
-                xPos = Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
+                xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
 
                 // This must be clamped to ensure that the room doesn't go off the board.
-                xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
+                xPos = Mathf.Clamp(xPos, buffer, (columns - BoardCreator.instance.roomWidth.m_Max) - buffer);
                 break;
             case Direction.East:
                 roomWidth = Mathf.Clamp(roomWidth, 1, (columns - corridor.EndPositionX) - buffer);
                 xPos = corridor.EndPositionX;
 
-                yPos = Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
-                yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
+                yPos = UnityEngine.Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
+                yPos = Mathf.Clamp(yPos, buffer, (rows - BoardCreator.instance.roomHeight.m_Max) - buffer);
                 break;
             case Direction.South:
                 // clamp the height of the room between 1 and the (int value given from EndPosition y (e.g 8)) and then subtract the buffer
                 roomHeight = Mathf.Clamp(roomHeight, 1, corridor.EndPositionY - buffer);
                 yPos = corridor.EndPositionY - roomHeight + 1;
 
-                xPos = Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
-                xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
+                xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
+                xPos = Mathf.Clamp(xPos, buffer, (columns - BoardCreator.instance.roomWidth.m_Max) - buffer);
                 break;
             case Direction.West:
                 roomWidth = Mathf.Clamp(roomWidth, 1, corridor.EndPositionX - buffer);
                 xPos = corridor.EndPositionX - roomWidth + 1;
 
-                yPos = Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
-                yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
+                yPos = UnityEngine.Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
+                yPos = Mathf.Clamp(yPos, buffer, (rows - BoardCreator.instance.roomHeight.m_Max) - buffer);
                 break;
         }
+
+
+        //switch (corridor.direction)
+        //{
+        //    // If the corridor entering this room is going north...
+        //    case Direction.North:
+        //        // ... the height of the room mustn't go beyond the board so it must be clamped based
+        //        // on the height of the board (rows) and the end of corridor that leads to the room.
+        //        roomHeight = Mathf.Clamp(roomHeight, 1, (rows - corridor.EndPositionY) - buffer);
+
+        //        // The y coordinate of the room must be at the end of the corridor (since the corridor leads to the bottom of the room).
+        //        yPos = corridor.EndPositionY;
+
+        //        // The x coordinate can be random but the left-most possibility is no further than the width
+        //        // and the right-most possibility is that the end of the corridor is at the position of the room.
+        //        xPos = Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
+
+        //        // This must be clamped to ensure that the room doesn't go off the board.
+        //        xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
+        //        break;
+        //    case Direction.East:
+        //        roomWidth = Mathf.Clamp(roomWidth, 1, (columns - corridor.EndPositionX) - buffer);
+        //        xPos = corridor.EndPositionX;
+
+        //        yPos = Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
+        //        yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
+        //        break;
+        //    case Direction.South:
+        //        // clamp the height of the room between 1 and the (int value given from EndPosition y (e.g 8)) and then subtract the buffer
+        //        roomHeight = Mathf.Clamp(roomHeight, 1, corridor.EndPositionY - buffer);
+        //        yPos = corridor.EndPositionY - roomHeight + 1;
+
+        //        xPos = Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
+        //        xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
+        //        break;
+        //    case Direction.West:
+        //        roomWidth = Mathf.Clamp(roomWidth, 1, corridor.EndPositionX - buffer);
+        //        xPos = corridor.EndPositionX - roomWidth + 1;
+
+        //        yPos = Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
+        //        yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
+        //        break;
+        //}
 
         CheckForEnemies();
         if (middle)
@@ -126,7 +178,7 @@ public class Room
 
                 // The x coordinate can be random but the left-most possibility is no further than the width
                 // and the right-most possibility is that the end of the corridor is at the position of the room.
-                xPos = Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
+                xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
 
                 // This must be clamped to ensure that the room doesn't go off the board.
                 xPos = Mathf.Clamp(xPos, 0, (columns - roomWidth) - buffer);
@@ -135,7 +187,7 @@ public class Room
                 roomWidth = Mathf.Clamp(roomWidth, 1, (columns - corridor.EndPositionX) - buffer);
                 xPos = corridor.EndPositionX;
 
-                yPos = Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
+                yPos = UnityEngine.Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
                 yPos = Mathf.Clamp(yPos, 0, (rows - roomHeight) - buffer);
                 break;
             case Direction.South:
@@ -143,28 +195,45 @@ public class Room
                 roomHeight = Mathf.Clamp(roomHeight, 1, corridor.EndPositionY - buffer);
                 yPos = corridor.EndPositionY - roomHeight + 1;
 
-                xPos = Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
+                xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
                 xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
                 break;
             case Direction.West:
                 roomWidth = Mathf.Clamp(roomWidth, 1, corridor.EndPositionX - buffer);
                 xPos = corridor.EndPositionX - roomWidth + 1;
 
-                yPos = Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
+                yPos = UnityEngine.Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
                 yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
                 break;
         }
 
         CheckForBossEnemies();
         SetGoalLocation();
+
+        RemoveAllEnemiesNearStartPoint();
+    }
+
+    private void RemoveAllEnemiesNearStartPoint()
+    {
+        // make a layerMask
+        int layerId = 11;
+        int enemyMask = 1 << layerId;
+
+        Collider2D[] killzone = Physics2D.OverlapCircleAll(BoardCreator.instance.player.transform.position, 10, enemyMask);
+
+        foreach (var enemy in killzone)
+        {
+            Debug.Log("Im a: " + enemy.transform.parent.gameObject.name);
+            UnityEngine.Object.Destroy(enemy.transform.parent.gameObject);
+        }
     }
 
     private void CheckForBossEnemies()
     {
         enemyPositions = new List<Vector2>();
 
-        int enemyXPos = Random.Range(xPos, xPos + roomWidth - 1);
-        int enemyYPos = Random.Range(yPos, yPos + roomHeight - 1);
+        int enemyXPos = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
+        int enemyYPos = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
 
         Vector2 enemyVector = new Vector2(enemyXPos, enemyYPos);
 
@@ -179,21 +248,21 @@ public class Room
 
         for (int i = 0; i < enemyAmount; i++)
         {
-            int enemyXPos = Random.Range(xPos, xPos + roomWidth - 1);
-            int enemyYPos = Random.Range(yPos, yPos + roomHeight - 1);
+            int enemyXPos = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
+            int enemyYPos = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
 
             Vector2 enemyVector = new Vector2(enemyXPos, enemyYPos);
 
             enemyPositions.Add(enemyVector);
-            int rand = Random.Range(0, BoardCreator.instance.enemy.Length);
+            int rand = UnityEngine.Random.Range(0, BoardCreator.instance.enemy.Length);
             BoardCreator.instance.SpawnElement(enemyVector, BoardCreator.instance.enemy[rand]);
         }
     }
 
     private void SetGoalLocation()
     {
-        int goalX = Random.Range(xPos, xPos + roomWidth - 1);
-        int goalY = Random.Range(yPos, yPos + roomHeight - 1);
+        int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
+        int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
 
         Debug.Log(goalX + " " + goalY);
 
@@ -204,8 +273,8 @@ public class Room
 
     private void SetMapLocation()
     {
-        int mapX = Random.Range(xPos, xPos + (roomWidth / 2));
-        int mapY = Random.Range(yPos, yPos + (roomHeight / 2));
+        int mapX = UnityEngine.Random.Range(xPos, xPos + (roomWidth / 2));
+        int mapY = UnityEngine.Random.Range(yPos, yPos + (roomHeight / 2));
 
         Debug.Log(mapX + " " + mapY);
 

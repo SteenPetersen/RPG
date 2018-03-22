@@ -11,6 +11,9 @@ public class ImpGiant : EnemyAI {
     public float novaRotationSpeed; // speed at which fireball launcher rotates around boss. this relates directly to how many fireballs are launched
     public float fireDelay;
 
+    [HideInInspector]
+    public bool dialogueFinished;  // so boss doesnt start fighting before dialogue is finished
+
     protected override void Start()
     {
         setter = GetComponent<AIDestinationSetter>();
@@ -19,47 +22,53 @@ public class ImpGiant : EnemyAI {
 
     protected override void Update()
     {
-        timer -= Time.deltaTime;
-
-        novaCannon.transform.Rotate(0, 0, novaRotationSpeed);
-
-        DisplayHealth();
-
-        if (isDead)
+        if (dialogueFinished)
         {
-            setter.ai.canMove = false;
-            GetComponent<Rigidbody2D>().isKinematic = true;
-            setter.ai.destination = tr.position;
-            setter.targetASTAR = null;
-            setter.enabled = false;
-            return;
+            timer -= Time.deltaTime;
+
+            novaCannon.transform.Rotate(0, 0, novaRotationSpeed);
+
+            DisplayHealth();
+
+            if (isDead)
+            {
+                setter.ai.canMove = false;
+                GetComponent<Rigidbody2D>().isKinematic = true;
+                setter.ai.destination = tr.position;
+                setter.targetASTAR = null;
+                setter.enabled = false;
+
+                EnemyHolder.instance.bossIsAlive = false;
+
+
+                return;
+            }
+
+            base.Update();
+
+
+            if (Mathf.Approximately(velocity.x, 0) && Mathf.Approximately(velocity.y, 0) && moving)
+            {
+                //Debug.Log("stopping");
+                anim.SetBool("Walk", false);
+                moving = false;
+            }
+            else if (velocity.x > 0.03 || velocity.y > 0.03 && !moving)
+            {
+                // Debug.Log("moving");
+                anim.SetBool("Walk", true);
+                moving = true;
+            }
+
+            if (timer < 0 && haveAggro)
+            {
+                Debug.Log("summon");
+                anim.SetTrigger("Summon");
+
+                timer = fireDelay;
+            }
+
         }
-
-        base.Update();
-
-
-        if (Mathf.Approximately(velocity.x, 0) && Mathf.Approximately(velocity.y, 0) && moving)
-        {
-            //Debug.Log("stopping");
-            anim.SetBool("Walk", false);
-            moving = false;
-        }
-        else if (velocity.x > 0.03 || velocity.y > 0.03 && !moving)
-        {
-            // Debug.Log("moving");
-            anim.SetBool("Walk", true);
-            moving = true;
-        }
-
-        if (timer < 0 && haveAggro)
-        {
-            Debug.Log("summon");
-            anim.SetTrigger("Summon");
-
-            timer = fireDelay;
-        }
-
-
     }
 
     public override void CastFireCircle()

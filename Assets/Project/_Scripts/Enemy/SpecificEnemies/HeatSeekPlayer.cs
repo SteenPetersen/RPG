@@ -38,7 +38,10 @@ public class HeatSeekPlayer : MonoBehaviour {
         RaycastHit2D hitBoss = Physics2D.Raycast(transform.position, (boss.position - transform.position), 1f, enemyLayerMask);
 
 
-
+        if (hitBoss.collider != null)
+        {
+            Debug.Log(hitBoss.collider.transform.parent.name);
+        }
 
 
         if (hitPlayer.collider != null)
@@ -51,12 +54,12 @@ public class HeatSeekPlayer : MonoBehaviour {
         }
         if (hitBoss.collider != null)
         {
-            if (hitBoss.collider.name != "ImpGiant" || hitBoss.collider.name != "ImpGiant(Clone)")
+            if (hitBoss.collider.transform.parent.name != "ImpGiant" && hitBoss.collider.transform.parent.name != "ImpGiant(Clone)")
                 return;
 
             Debug.Log("hitBoss hit: " + hitBoss.collider.name);
 
-            var enemyStat = hitBoss.collider.gameObject.transform.root.GetComponent<EnemyStats>();
+            var enemyStat = hitBoss.collider.transform.parent.GetComponent<EnemyStats>();
             enemyStat.TakeDamage(damage);
             return;
         }

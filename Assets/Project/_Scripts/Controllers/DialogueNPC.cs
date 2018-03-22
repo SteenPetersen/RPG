@@ -6,11 +6,13 @@ public class DialogueNPC : Interactable {
     //[HideInInspector]
     public ParticleSystem dialogueAvailable;
     //public Transform player;
-    PlayerController playerControl;
-    CameraController cam;
+    [HideInInspector]
+    public PlayerController playerControl;
+    [HideInInspector]
+    public CameraController cam;
 
-    GameObject front;
-    GameObject back;
+    public GameObject front;
+    public GameObject back;
 
     public GameObject dialogueProper;
 
@@ -37,8 +39,6 @@ public class DialogueNPC : Interactable {
         playerControl = PlayerController.instance;
         cam = CameraController.instance;
 
-        front = transform.Find("Logic/Front").gameObject;
-        back = transform.Find("Logic/Back").gameObject;
 
         if (textFile != null)
         {
@@ -70,9 +70,19 @@ public class DialogueNPC : Interactable {
         base.Interact();
 
         MakeNPCFacePlayer();
+
         currentlyInteractingWithPlayer = true;
-        dialogueAvailable.Stop();
-        playerControl.dialogue = true;
+
+        if (dialogueAvailable != null)
+        {
+            dialogueAvailable.Stop();
+        }
+
+        if (playercontrol != null)
+        {
+            playerControl.dialogue = true;
+        }
+
         gameDetails.paused = true;
 
         float distanceFromLeftToPlayer = Vector3.Distance(cam.measurementTransform.position, player.position);

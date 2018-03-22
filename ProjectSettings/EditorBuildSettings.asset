@@ -9,11 +9,11 @@ EditorBuildSettings:
     path: Assets/Project/_Scenes/main.unity
     guid: bdad5da1d45347544b99cff98038650c
   - enabled: 1
-    path: Assets/Project/_Scenes/dungeon.unity
+    path: Assets/Project/_Scenes/dungeon_indoor.unity
     guid: 5c2d7c7bc0bb55b4d846212100aafa09
   - enabled: 1
     path: Assets/Project/_Scenes/Loading.unity
     guid: f947c6d8b8f011247ba9bcf777997ece
   - enabled: 1
-    path: Assets/Project/_Scenes/bossroom1.unity
+    path: Assets/Project/_Scenes/bossroom1_indoor.unity
     guid: 2d4ceba27224269469ba87b6c628e5c6

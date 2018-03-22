@@ -2,9 +2,11 @@
 
 public class DestroyParticleEffect : MonoBehaviour {
 
+    public float delay;
+
 	void Start () {
 
-        Invoke("Destroy", 1.5f);
+        Invoke("Destroy", delay);
 
 	}
 
