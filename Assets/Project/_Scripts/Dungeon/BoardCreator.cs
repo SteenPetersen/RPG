@@ -12,6 +12,8 @@ public class BoardCreator : MonoBehaviour
 
     public static BoardCreator instance;
 
+    public int chanceOfChestPerRoom;
+    public int chanceOfBetterChestPerRoom;
 
     public int columns = 100;                                 // The number of columns on the board (how wide it will be).
     public int rows = 100;                                    // The number of rows on the board (how tall it will be).
@@ -34,6 +36,8 @@ public class BoardCreator : MonoBehaviour
     public GameObject map;
     public GameObject entranceTile;
     public GameObject entranceTorch;
+    public GameObject chestLowerTier;
+    public GameObject chestHigherTier;
 
     public Camera cam;
 

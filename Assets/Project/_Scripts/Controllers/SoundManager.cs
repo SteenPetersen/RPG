@@ -8,8 +8,9 @@ public class SoundManager : MonoBehaviour {
     [HideInInspector]
     public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow, 
                      bladeSwing, impBossHit, impBossDeath, impSwing, impHit, impHit1, impDeath, impDeath1, playerHurt, playerHurt1,
-                     impactHit, impactHit1, potionInteract, potionPickup, fireBurst, firebuildup,
-                     levelup, deathsound;
+                     impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, potionInteract, potionPickup, fireBurst, firebuildup,
+                     levelup, deathsound, bomb,
+                     lootdrop, chestopen, chestclose;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -33,7 +34,11 @@ public class SoundManager : MonoBehaviour {
 
         impactHit = Resources.Load<AudioClip>("Sound/" + "impact4");
         impactHit1 = Resources.Load<AudioClip>("Sound/" + "impact2");
-
+        fireballimpact = Resources.Load<AudioClip>("Sound/" + "Imp_Fireball_impact");
+        fireballimpact1 = Resources.Load<AudioClip>("Sound/" + "Imp_Fireball_impact1");
+        fireballimpact2 = Resources.Load<AudioClip>("Sound/" + "Imp_Fireball_impact2");
+        fireballimpact3 = Resources.Load<AudioClip>("Sound/" + "Imp_Fireball_impact3");
+        bomb = Resources.Load<AudioClip>("Sound/" + "bomb");
 
 
         impactWood = Resources.Load<AudioClip>("Sound/" + "impact_wood");
@@ -59,6 +64,10 @@ public class SoundManager : MonoBehaviour {
         // UI
         levelup = Resources.Load<AudioClip>("Sound/" + "levelup");
         deathsound = Resources.Load<AudioClip>("Sound/" + "deathsound");
+
+        lootdrop = Resources.Load<AudioClip>("Sound/" + "lootdrop");
+        chestopen = Resources.Load<AudioClip>("Sound/" + "chestopen");
+        chestclose = Resources.Load<AudioClip>("Sound/" + "chestclose");
 
         audioSrc = GetComponent<AudioSource>();
     }
@@ -95,6 +104,58 @@ public class SoundManager : MonoBehaviour {
 
             case "impact_stone":
                 audioSrc.PlayOneShot(impactStone);
+                break;
+
+            case "Imp_Fireball_impact":
+            case "Imp_Fireball(Clone)_impact":
+                int randHitFire = Random.Range(1, 5);
+                if (randHitFire == 1)
+                {
+                    audioSrc.PlayOneShot(fireballimpact);
+                    break;
+                }
+                else if (randHitFire == 2)
+                {
+                    audioSrc.PlayOneShot(fireballimpact1);
+                    break;
+                }
+                else if (randHitFire == 3)
+                {
+                    audioSrc.PlayOneShot(fireballimpact2);
+                    break;
+                }
+                else if (randHitFire == 4)
+                {
+                    audioSrc.PlayOneShot(fireballimpact3);
+                    break;
+                }
+                audioSrc.PlayOneShot(fireballimpact1);
+                break;
+
+            case "Imp_Fireball_wallimpact":
+            case "Imp_Fireball(Clone)_wallimpact":
+                int randHitFireWall = Random.Range(1, 5);
+                if (randHitFireWall == 1)
+                {
+                    audioSrc.PlayOneShot(fireballimpact);
+                    break;
+                }
+                else if (randHitFireWall == 2)
+                {
+                    audioSrc.PlayOneShot(fireballimpact1);
+                    break;
+                }
+                else if (randHitFireWall == 3)
+                {
+                    audioSrc.PlayOneShot(fireballimpact2);
+                    break;
+                }
+                else if (randHitFireWall == 4)
+                {
+                    audioSrc.PlayOneShot(fireballimpact3);
+                    break;
+                }
+                audioSrc.PlayOneShot(fireballimpact1);
                 break;
 
             case "impact_hit":
@@ -168,6 +229,10 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(impDeath);
                 break;
 
+            case "bomb":
+                audioSrc.PlayOneShot(bomb);
+                break;
+
 
         }
     }
@@ -212,6 +277,18 @@ public class SoundManager : MonoBehaviour {
 
             case "deathsound":
                 audioSrc.PlayOneShot(deathsound);
+                break;
+
+            case "lootdrop":
+                audioSrc.PlayOneShot(lootdrop);
+                break;
+
+            case "chestopen":
+                audioSrc.PlayOneShot(chestopen);
+                break;
+
+            case "chestclose":
+                audioSrc.PlayOneShot(chestclose);
                 break;
 
 

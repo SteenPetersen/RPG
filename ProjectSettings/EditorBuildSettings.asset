@@ -17,3 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/_Scenes/bossroom1_indoor.unity
     guid: 2d4ceba27224269469ba87b6c628e5c6
+  - enabled: 1
+    path: Assets/Project/_Scenes/DeathScreen.unity
+    guid: 63335be23dfa8e3428887e537ab5f60b

@@ -19,10 +19,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4294662580345024}
-  - component: {fileID: 135637456217327426}
   - component: {fileID: 114022098808768532}
   - component: {fileID: 114536193123368490}
   - component: {fileID: 212034577808442458}
+  - component: {fileID: 65702328680191896}
   m_Layer: 0
   m_Name: Wooden Buckler
   m_TagString: Untagged
@@ -36,13 +36,25 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1715581533285192}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.50048, y: 3.7960658, z: -0.29606307}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -6.926936, y: 11.386341, z: -0.2919534}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &65702328680191896
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1715581533285192}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.7477207, y: 0.8001671, z: 0.2}
+  m_Center: {x: -0.01585102, y: -0.08718443, z: 0}
 --- !u!114 &114022098808768532
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -64,7 +76,7 @@ MonoBehaviour:
   healthGroup: {fileID: 0}
   healthbar: {fileID: 0}
   playercontrol: {fileID: 0}
-  item: {fileID: 0}
+  item: {fileID: 11400000, guid: 3e3930e4c7168a64c829f976a0a33f12, type: 2}
   chanceToDrop: 6
 --- !u!114 &114536193123368490
 MonoBehaviour:
@@ -78,18 +90,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
---- !u!135 &135637456217327426
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1715581533285192}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!212 &212034577808442458
 SpriteRenderer:
   m_ObjectHideFlags: 1

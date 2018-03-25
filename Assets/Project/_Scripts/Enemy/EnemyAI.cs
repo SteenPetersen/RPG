@@ -24,6 +24,7 @@ public class EnemyAI : AIPath
     public bool facingRight = true;
     public Transform playerObj;
     public Animator anim;
+    public int tier;
 
     [HideInInspector]
     public bool moving;
@@ -68,6 +69,11 @@ public class EnemyAI : AIPath
 
         DisplayHealth();
 
+        var thePlayerIsDead = checkifPlayerIsDead();
+
+        if (thePlayerIsDead)
+            return;
+
 
         if (isDead)
         {
@@ -111,6 +117,16 @@ public class EnemyAI : AIPath
             }
         }
 
+    }
+
+    public virtual bool checkifPlayerIsDead()
+    {
+        if (PlayerController.instance.isDead)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public virtual void CheckIfEnemyIsOnAList()

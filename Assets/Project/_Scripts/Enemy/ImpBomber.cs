@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using EZCameraShake;
 
 public class ImpBomber : EnemyAI {
 
@@ -30,6 +31,10 @@ public class ImpBomber : EnemyAI {
 
         DisplayHealth();
 
+        var thePlayerIsDead = checkifPlayerIsDead();
+
+        if (thePlayerIsDead)
+            return;
 
         if (isDead)
         {
@@ -85,6 +90,10 @@ public class ImpBomber : EnemyAI {
             myCollider.enabled = false;
             Destroy(gameObject, 3f);
             hasExploded = true;
+
+
+            CameraShaker.Instance.ShakeOnce(3f, 3f, 0.1f, 0.5f);
+            SoundManager.instance.PlayCombatSound("bomb");
 
             foreach (var wound in woundGraphics)
             {

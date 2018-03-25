@@ -52,6 +52,9 @@ public class EnemyStats : CharacterStats {
             }
         }
 
+        // Add to statistics
+        GameDetails.enemiesKilled++;
+
 
         // Give Player experience
         playerExp.AddExp(enemyAI.experienceGain);
@@ -62,29 +65,32 @@ public class EnemyStats : CharacterStats {
         enemyAI.isDead = true;
 
         // Loot logic
-        int randomIndex = Random.Range(0, gameDetails.generalObjects.Length);
-        int roll = Random.Range(0, 100);
-        if (roll < gameDetails.generalObjects[randomIndex].gameObject.GetComponent<ItemPickup>().chanceToDrop)
-        {
-            Instantiate(gameDetails.generalObjects[randomIndex], transform.position, Quaternion.identity);
-            // play loot sound
-        }
+
+        LootController.instance.EnemyLoot(enemyAI.tier, transform.position);
+
+        //int randomIndex = Random.Range(0, gameDetails.generalObjects.Length);
+        //int roll = Random.Range(0, 100);
+        //if (roll < gameDetails.generalObjects[randomIndex].gameObject.GetComponent<ItemPickup>().chanceToDrop)
+        //{
+        //    Instantiate(gameDetails.generalObjects[randomIndex], transform.position, Quaternion.identity);
+        //    // play loot sound
+        //}
 
         // Special loot
-        if (specialLoot.Count != 0)
-        {
-            for (int i = 0; i < specialLoot.Count; i++)
-            {
-                float dropChance = Random.Range(0, 100);
-                Debug.Log(dropChance + " in special loot");
-                if (dropChance < gameDetails.generalObjects[i].GetComponent<ItemPickup>().chanceToDrop)
-                {
-                    Instantiate(specialLoot[i], transform.position, Quaternion.identity);
-                    // play loot sound
-                    break;
-                }
-            }
-        }
+        //if (specialLoot.Count != 0)
+        //{
+        //    for (int i = 0; i < specialLoot.Count; i++)
+        //    {
+        //        float dropChance = Random.Range(0, 100);
+        //        Debug.Log(dropChance + " in special loot");
+        //        if (dropChance < gameDetails.generalObjects[i].GetComponent<ItemPickup>().chanceToDrop)
+        //        {
+        //            Instantiate(specialLoot[i], transform.position, Quaternion.identity);
+        //            // play loot sound
+        //            break;
+        //        }
+        //    }
+        //}
 
         Destroy(gameObject, 5f);
     }

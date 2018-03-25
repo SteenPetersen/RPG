@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 4895249672902400}
   - component: {fileID: 114694352450535456}
   m_Layer: 0
-  m_Name: Test
+  m_Name: ImpBossNuke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

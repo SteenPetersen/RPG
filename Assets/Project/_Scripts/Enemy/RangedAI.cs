@@ -28,6 +28,10 @@ public class RangedAI : EnemyAI {
 
         DisplayHealth();
 
+        var thePlayerIsDead = checkifPlayerIsDead();
+
+        if (thePlayerIsDead)
+            return;
 
         if (isDead)
         {

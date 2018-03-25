@@ -30,6 +30,9 @@ public class DungeonLevelLoadLogic : MonoBehaviour {
             yield return new WaitForSeconds(0.01f);
         }
 
+        // add to statistics
+        GameDetails.dungeonFloorsExplored++;
+
         int ZoneToLoad = 1;
 
         if (level > 0)

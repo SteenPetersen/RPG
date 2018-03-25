@@ -102,53 +102,45 @@ public class Room
                 break;
         }
 
+        float chestRand = UnityEngine.Random.Range(0, 100);
 
-        //switch (corridor.direction)
-        //{
-        //    // If the corridor entering this room is going north...
-        //    case Direction.North:
-        //        // ... the height of the room mustn't go beyond the board so it must be clamped based
-        //        // on the height of the board (rows) and the end of corridor that leads to the room.
-        //        roomHeight = Mathf.Clamp(roomHeight, 1, (rows - corridor.EndPositionY) - buffer);
 
-        //        // The y coordinate of the room must be at the end of the corridor (since the corridor leads to the bottom of the room).
-        //        yPos = corridor.EndPositionY;
-
-        //        // The x coordinate can be random but the left-most possibility is no further than the width
-        //        // and the right-most possibility is that the end of the corridor is at the position of the room.
-        //        xPos = Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
-
-        //        // This must be clamped to ensure that the room doesn't go off the board.
-        //        xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
-        //        break;
-        //    case Direction.East:
-        //        roomWidth = Mathf.Clamp(roomWidth, 1, (columns - corridor.EndPositionX) - buffer);
-        //        xPos = corridor.EndPositionX;
-
-        //        yPos = Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
-        //        yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
-        //        break;
-        //    case Direction.South:
-        //        // clamp the height of the room between 1 and the (int value given from EndPosition y (e.g 8)) and then subtract the buffer
-        //        roomHeight = Mathf.Clamp(roomHeight, 1, corridor.EndPositionY - buffer);
-        //        yPos = corridor.EndPositionY - roomHeight + 1;
-
-        //        xPos = Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
-        //        xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
-        //        break;
-        //    case Direction.West:
-        //        roomWidth = Mathf.Clamp(roomWidth, 1, corridor.EndPositionX - buffer);
-        //        xPos = corridor.EndPositionX - roomWidth + 1;
-
-        //        yPos = Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
-        //        yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
-        //        break;
-        //}
 
         CheckForEnemies();
+
         if (middle)
         {
             SetMapLocation();
+        }
+
+        if (chestRand <= BoardCreator.instance.chanceOfChestPerRoom)
+        {
+            if (chestRand < BoardCreator.instance.chanceOfBetterChestPerRoom)
+            {
+                SetAChestInRoom(1);
+                return;
+            }
+
+            SetAChestInRoom(0);
+        }
+    }
+
+    private void SetAChestInRoom(int type)
+    {
+        int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
+        int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
+
+        Debug.Log(goalX + " " + goalY);
+
+        Vector2 pos = new Vector2(goalX, goalY);
+
+        if (type == 0)
+        {
+            BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.chestLowerTier);
+        }
+        else if (type == 1)
+        {
+            BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.chestHigherTier);
         }
     }
 

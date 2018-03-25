@@ -224,11 +224,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5d15bd525dad846b7c3675fcd9a842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chanceOfChestPerRoom: 5
+  chanceOfBetterChestPerRoom: 1
   columns: 150
   rows: 150
   numRooms:
-    m_Min: 5
-    m_Max: 8
+    m_Min: 15
+    m_Max: 20
   roomWidth:
     m_Min: 8
     m_Max: 30
@@ -360,6 +362,10 @@ MonoBehaviour:
   entranceTile: {fileID: 1750332740582046, guid: e37ae5e6007200c4898e122ac6ab06ed,
     type: 2}
   entranceTorch: {fileID: 1955567858648624, guid: 2bb382aeb991fc1479c8f7cde9874e01,
+    type: 2}
+  chestLowerTier: {fileID: 1303986947323326, guid: ea13e3c0441246345a005eb5c90e635e,
+    type: 2}
+  chestHigherTier: {fileID: 1303986947323326, guid: 195f999a930ee5a49a4e60371cb59641,
     type: 2}
   cam: {fileID: 0}
   aStarGridCreator: {fileID: 2001734319}

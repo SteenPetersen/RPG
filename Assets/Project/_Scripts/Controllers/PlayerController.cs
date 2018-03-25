@@ -90,6 +90,9 @@ public class PlayerController : Interactable
     int modifierToRemove;           // actual amount of extra damage that is absorbed when blocking
     #endregion
 
+    private Interactable currentInteractable;
+    public bool mouseOverInteractableAndPlayerInRange;
+
     private void OnEnable()
     {
         // subscribe to notice is a scene is loaded.
@@ -121,6 +124,7 @@ public class PlayerController : Interactable
         if (isDead || gameDetails.paused || dialogue)
             return;
 
+        currentInteractable = ClickFeedback();
         CheckIfFacingCorrectDirection(horizontal);
         HandleMovement(horizontal, vertical);
     }
@@ -182,7 +186,7 @@ public class PlayerController : Interactable
     IEnumerator LineOfSight()
     {
         // while you have enemies in the area
-        while(enemiesInRange)
+        while (enemiesInRange)
         {
             //Debug.Log("calling Coroutine");
 
@@ -221,12 +225,9 @@ public class PlayerController : Interactable
             // if the player presses the left mouse button
             if (Input.GetMouseButtonDown(0))
             {
-                // check if the playaer is allowed to hit or if he hit something interactable with the mouse
-                bool canHit = CheckIfPlayerMayHit();
-
-                // if player is not allowed to hit the stop the code from running further
-                if (!canHit) {
-                    anim.SetTrigger("PickUp");
+                if (mouseOverInteractableAndPlayerInRange)
+                {
+                    SetFocus(currentInteractable);
                     return;
                 }
 
@@ -290,13 +291,10 @@ public class PlayerController : Interactable
             // if the player hits the left mouse button
             if (Input.GetMouseButton(0))
             {
-                // check if the playaer is allowed to hit or if he hit something interactable with the mouse
-                bool canHit = CheckIfPlayerMayHit();
-
                 // if player is not allowed to hit the stop the code from running further
-                if (!canHit)
+                if (mouseOverInteractableAndPlayerInRange)
                 {
-                    anim.SetTrigger("PickUp");
+                    SetFocus(currentInteractable);
                     return;
                 }
 
@@ -331,10 +329,43 @@ public class PlayerController : Interactable
 
         move = move.normalized * Time.deltaTime * speed;
 
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            if (!facingRight)
+            {
+                rigid.AddRelativeForce(move / 2);
+                return;
+            }
+            else if (facingRight)
+            {
+                rigid.AddRelativeForce(move);
+                return;
+            }
+        }
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            if (facingRight)
+            {
+                rigid.AddRelativeForce(move / 2);
+                return;
+            }
+            else if (!facingRight)
+            {
+                rigid.AddRelativeForce(move);
+                return;
+            }
+        }
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             rigid.AddRelativeForce(move);
+            return;
         }
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+            rigid.AddRelativeForce(move);
+            return;
+        }
+
 
 
         //// Sheathe weaponary
@@ -540,14 +571,30 @@ public class PlayerController : Interactable
         if (Physics.Raycast(nearPoint, farPoint - nearPoint, out hit))
         {
             Interactable interactable = hit.collider.GetComponentInParent<Interactable>();
+
             if (interactable == null)
+            {
+                mouseOverInteractableAndPlayerInRange = false;
                 return null;
+            }
 
             if (interactable != null)
             {
-                SetFocus(interactable);
-                SetMousePosition();
-                return interactable;
+
+
+                // check if player is close enough to interact with the interactable
+                float distanceFromInteractable = Vector2.Distance(hit.collider.gameObject.transform.position, transform.position);
+
+                Debug.Log(distanceFromInteractable + "   " + interactable.radius);
+
+                if (distanceFromInteractable < interactable.radius)
+                {
+                    mouseOverInteractableAndPlayerInRange = true;
+                    return interactable;
+                }
+
+                mouseOverInteractableAndPlayerInRange = false;
+                return null;
             }
             else
             {
@@ -559,6 +606,7 @@ public class PlayerController : Interactable
         {
             RemoveFocus();
             SetMousePosition();
+            mouseOverInteractableAndPlayerInRange = false;
             return null;
         }
 

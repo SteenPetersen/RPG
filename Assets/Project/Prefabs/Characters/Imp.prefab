@@ -1140,6 +1140,7 @@ MonoBehaviour:
   facingRight: 1
   playerObj: {fileID: 0}
   anim: {fileID: 95283838999566108}
+  tier: 0
   moving: 0
   child: {fileID: 1816586640100016}
   myCollider: {fileID: 0}
@@ -1159,10 +1160,9 @@ MonoBehaviour:
   experienceGain: 5
   meleeDelay: 1
   timer: 0
-  meleeHitRange: 2.7
+  meleeHitRange: 3.7
   strikeGraphic: {fileID: 1646857127479758, guid: 0f82bea811cab1c4785141982dfde3d5,
     type: 2}
-  impact: {fileID: 0}
   specialExplosion: {fileID: 0}
 --- !u!114 &114677511156904108
 MonoBehaviour:

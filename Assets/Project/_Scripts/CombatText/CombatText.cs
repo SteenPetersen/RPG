@@ -68,11 +68,11 @@ public class CombatText : MonoBehaviour {
     {
         gameObject.transform.localScale = new Vector3(1, 1, 1);
         string displayText = text.Replace("(Clone)", "");
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
         textObject.text = displayText;
         gameObject.transform.position = position;
         textObject.color = Color.white;
-        StartCoroutine(FadeOut());
+        textObject.transform.rotation = Camera.main.transform.rotation;
     }
 
     private void Destroy()
@@ -87,7 +87,7 @@ public class CombatText : MonoBehaviour {
         CancelInvoke();
     }
 
-    private IEnumerator FadeOut()
+    public IEnumerator FadeOut()
     {
         gameObject.GetComponent<Outline>().effectColor = new Color(textObject.color.r / 1.5f, textObject.color.g / 1.5f, textObject.color.b / 1.5f);
         float startAlpha = GetComponent<Text>().color.a;

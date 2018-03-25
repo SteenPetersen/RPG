@@ -90,6 +90,13 @@ public class ExperienceManager : MonoBehaviour {
         }
     }
 
+    // needed so we dont have a sound effect upon loading of dinging etc.
+    public void AddExpFromLoadedGame(float exp)
+    {
+        experience += exp;
+        startLerping();
+    }
+
     private float UpdateExperienceRequired()
     {
         float value = 0;

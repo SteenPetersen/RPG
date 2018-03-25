@@ -1398,6 +1398,7 @@ MonoBehaviour:
   facingRight: 1
   playerObj: {fileID: 0}
   anim: {fileID: 95914602946881628}
+  tier: 1
   moving: 0
   child: {fileID: 1927950602354868}
   myCollider: {fileID: 61569492235889942}

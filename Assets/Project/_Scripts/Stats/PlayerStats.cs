@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using EZCameraShake;
 
 
 public class PlayerStats : CharacterStats {
@@ -42,6 +43,11 @@ public class PlayerStats : CharacterStats {
             RemoveHealthBar();
         }
 
+        if (currentHealth < 0)
+        {
+            RemoveHealthBar();
+        }
+
         if (playerControl == null)
         {
             playerControl = PlayerController.instance;
@@ -77,6 +83,7 @@ public class PlayerStats : CharacterStats {
     {
         base.Die();
         // kill the player in some way
+        RemoveHealthBar();
         playerControl.speed = 0;
         playerControl.isDead = true;
         SoundManager.instance.PlayUiSound("deathsound");
@@ -101,6 +108,8 @@ public class PlayerStats : CharacterStats {
         {
             Die();
         }
+
+        CameraShaker.Instance.ShakeOnce(1f, 1f, 0.1f, 0.1f);
 
         var text = CombatTextManager.instance.FetchText(transform.position);
         var textScript = text.GetComponent<CombatText>();

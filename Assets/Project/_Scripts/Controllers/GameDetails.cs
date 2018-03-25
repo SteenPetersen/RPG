@@ -46,7 +46,14 @@ public class GameDetails : MonoBehaviour {
 
     #endregion
 
+    // statics
     public static int dungeonLevel;
+
+    // used for deathScreen statistics
+    public static int enemiesKilled;
+    public static int dungeonFloorsExplored;
+
+
     public Light sunLight;
 
     public Image fadeToBlack;
@@ -76,6 +83,13 @@ public class GameDetails : MonoBehaviour {
 
     private void Start()
     {
+        // if player does not have a saved game
+        if (!File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
+        {
+            // then create one
+            Save();
+        }
+
         if (player == null)
         {
             player = PlayerController.instance.gameObject;
@@ -118,19 +132,24 @@ public class GameDetails : MonoBehaviour {
 
         if (fadeToBlack.color.a >= 1 && !loadingScene)
         {
-            if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
-            {
-                Load();
-            }
-            else
-            {
-                PlayerController.instance.gameObject.transform.position = new Vector2(-12f, 4);
-                playerStats.Heal((int)playerStats.maxHealth);
-                SceneManager.LoadScene(0);
-                PlayerController.instance.isDead = false;
-                loadingScene = true;
-            }
+            PlayerController.instance.anim.SetLayerWeight(1, 0);
 
+            SceneManager.LoadScene("DeathScreen");
+
+            // disallow player to animate walking
+
+            //if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
+            //{
+            //    Load();
+            //}
+            //else
+            //{
+            //    PlayerController.instance.gameObject.transform.position = new Vector2(-12f, 4);
+            //    playerStats.Heal((int)playerStats.maxHealth);
+            //    SceneManager.LoadScene(0);
+            //    PlayerController.instance.isDead = false;
+            //    loadingScene = true;
+            //}
         }
     }
 
@@ -214,8 +233,8 @@ public class GameDetails : MonoBehaviour {
             // Load Stats
             PlayerController.instance.speed = PlayerController.instance.normalSpeed;
             playerStats.currentHealth = 0;
-            playerStats.Heal((int)data.currentHealth);
             playerStats.maxHealth = data.maxHealth;
+            playerStats.Heal((int)data.currentHealth);
             ExperienceManager.instance.level = data.level;
             ExperienceManager.instance.experienceRequired = data.experienceNeeded;
             playerStats.Agi.SetValue(data.Agility);
@@ -226,7 +245,7 @@ public class GameDetails : MonoBehaviour {
 
             playerStats.UpdateStats();
 
-            ExperienceManager.instance.AddExp(data.experience);
+            ExperienceManager.instance.AddExpFromLoadedGame(data.experience);
 
 
             stage = data.stage;
@@ -427,10 +446,13 @@ public class GameDetails : MonoBehaviour {
         }
 
         // if the player is loading in dead
-        if (PlayerController.instance.isDead)
+        if (PlayerController.instance.isDead && scene.name != "DeathScreen")
         {
             // undeadify the player
             PlayerController.instance.isDead = false;
+
+            // reallow player to animate walking
+            PlayerController.instance.anim.SetLayerWeight(1, 1);
 
             // allow player to animate back to life - get it?
             PlayerController.instance.anim.SetTrigger("LoadGame");
@@ -484,7 +506,10 @@ public class GameDetails : MonoBehaviour {
 
     IEnumerator UnFade()
     {
-        AstarPath.active.Scan();
+        if (AstarPath.active != null)
+        {
+            AstarPath.active.Scan();
+        }
 
         while (fadeToBlack.color.a >= 0.02)
         {

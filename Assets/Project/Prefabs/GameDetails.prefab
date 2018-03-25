@@ -4546,7 +4546,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 1.4677955
+  orthographic size: 1.8990347
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -4582,7 +4582,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.9275
+  orthographic size: 0.8
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -11738,12 +11738,20 @@ MonoBehaviour:
   playerHurt1: {fileID: 0}
   impactHit: {fileID: 0}
   impactHit1: {fileID: 0}
+  fireballimpact: {fileID: 0}
+  fireballimpact1: {fileID: 0}
+  fireballimpact2: {fileID: 0}
+  fireballimpact3: {fileID: 0}
   potionInteract: {fileID: 0}
   potionPickup: {fileID: 0}
   fireBurst: {fileID: 0}
   firebuildup: {fileID: 0}
   levelup: {fileID: 0}
   deathsound: {fileID: 0}
+  bomb: {fileID: 0}
+  lootdrop: {fileID: 0}
+  chestopen: {fileID: 0}
+  chestclose: {fileID: 0}
   audioSrc: {fileID: 0}
 --- !u!114 &114635079993162884
 MonoBehaviour:
@@ -15223,7 +15231,7 @@ MonoBehaviour:
   - {fileID: 1939266952197240, guid: 34d0269fb6b197c4db6738f952a8ba5f, type: 2}
   - {fileID: 1939266952197240, guid: 44cacd91ad95fd84486ad7130ba42c60, type: 2}
   - {fileID: 1003413813164730, guid: f3d9dad5702fc0548b571dfb343ae722, type: 2}
-  - {fileID: 1154410413141084, guid: ee31dd9d39a819c4ba176fd529b63348, type: 2}
+  - {fileID: 0}
   player: {fileID: 0}
 --- !u!114 &114974164105653276
 MonoBehaviour:
