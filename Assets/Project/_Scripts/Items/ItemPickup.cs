@@ -19,7 +19,6 @@ public class ItemPickup : Interactable {
             if (distance <= radius)
             {
                 Interact();
-
             }
             hasInteracted = true;
         }
@@ -36,10 +35,9 @@ public class ItemPickup : Interactable {
     {
         if (!hasInteracted)
         {
-
             Debug.Log("Picking up " + item.name);
             SoundManager.instance.PlayInventorySound(gameObject.name + "_pickup");
-            bool wasPickedUp = Inventory.instance.AddItemToBag(item);
+            bool wasPickedUp = InventoryScript.instance.AddItem(item);
 
             if (wasPickedUp)
             {
@@ -48,7 +46,6 @@ public class ItemPickup : Interactable {
                 var text = CombatTextManager.instance.FetchText(transform.position);
                 var textScript = text.GetComponent<CombatText>();
                 textScript.White(gameObject.name, transform.position);
-                text.SetActive(true);
             }
             else if (!wasPickedUp)
             {

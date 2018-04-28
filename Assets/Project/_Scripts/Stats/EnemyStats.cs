@@ -6,7 +6,6 @@ public class EnemyStats : CharacterStats {
 
     public Animator anim;
     public EnemyAI enemyAI;
-    GameDetails gameDetails;
     public bool hitByProjectile;
 
     ExperienceManager playerExp;
@@ -17,7 +16,6 @@ public class EnemyStats : CharacterStats {
     {
         enemyAI = gameObject.GetComponent<EnemyAI>();
         //anim = GetComponent<Animator>();
-        gameDetails = GameDetails.instance;
         playerExp = ExperienceManager.instance;
     }
 
@@ -68,30 +66,6 @@ public class EnemyStats : CharacterStats {
 
         LootController.instance.EnemyLoot(enemyAI.tier, transform.position);
 
-        //int randomIndex = Random.Range(0, gameDetails.generalObjects.Length);
-        //int roll = Random.Range(0, 100);
-        //if (roll < gameDetails.generalObjects[randomIndex].gameObject.GetComponent<ItemPickup>().chanceToDrop)
-        //{
-        //    Instantiate(gameDetails.generalObjects[randomIndex], transform.position, Quaternion.identity);
-        //    // play loot sound
-        //}
-
-        // Special loot
-        //if (specialLoot.Count != 0)
-        //{
-        //    for (int i = 0; i < specialLoot.Count; i++)
-        //    {
-        //        float dropChance = Random.Range(0, 100);
-        //        Debug.Log(dropChance + " in special loot");
-        //        if (dropChance < gameDetails.generalObjects[i].GetComponent<ItemPickup>().chanceToDrop)
-        //        {
-        //            Instantiate(specialLoot[i], transform.position, Quaternion.identity);
-        //            // play loot sound
-        //            break;
-        //        }
-        //    }
-        //}
-
         Destroy(gameObject, 5f);
     }
 
@@ -109,7 +83,11 @@ public class EnemyStats : CharacterStats {
 
         if (crit)
         {
-            Debug.LogWarning("CRIT!");
+            Quaternion rot = new Quaternion(0, 0, 0, 0);
+            var system = ParticleSystemHolder.instance.CritWord();
+            var go = Instantiate(system, transform.position, rot, enemyAI.skeleton);
+            go.transform.localPosition = Vector3.zero;
+
             int bonusDmg = Random.Range(0, newDmg / 2);
             newDmg += bonusDmg;
         }
@@ -136,18 +114,7 @@ public class EnemyStats : CharacterStats {
 
             anim.SetTrigger("Hurt");
             SoundManager.instance.PlayCombatSound(gameObject.name);
-            //Debug.Log(gameObject.name);
         }
         enemyAI.healthbar.value = enemyAI.CalculateHealth(currentHealth, maxHealth);
     }
-
-
-    //public override bool Heal(int healthIncrease)
-    //{
-    //    bool tmp = base.Heal(healthIncrease);
-
-    //    enemyAI.healthbar.value = enemyAI.CalculateHealth(currentHealth, maxHealth);
-
-    //    return tmp;
-    //}
 }

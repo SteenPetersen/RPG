@@ -18,7 +18,7 @@ public class EnemyAI : AIPath
 
     public AIDestinationSetter setter;
 
-    [HideInInspector]
+    //[HideInInspector]
     public bool isDead, inRange, haveAggro, pausingMovement, displayingHealth, alert, inMeleeRange;
     [HideInInspector]
     public bool facingRight = true;
@@ -48,6 +48,9 @@ public class EnemyAI : AIPath
     [Header("Unique Variable")]
     public ParticleSystem specialExplosion;
 
+    //[HideInInspector]
+    public Transform skeleton;
+
 
 
 
@@ -65,9 +68,20 @@ public class EnemyAI : AIPath
 
     protected override void Update()
     {
+        DisplayHealth();
+
+        if (pausingMovement)
+        {
+            if (isDead)
+            {
+                anim.SetBool("Stunned", false);
+            }
+            return;
+        }
+
         timer -= Time.deltaTime;
 
-        DisplayHealth();
+
 
         var thePlayerIsDead = checkifPlayerIsDead();
 
@@ -149,7 +163,7 @@ public class EnemyAI : AIPath
         if (inRange || isDead || pausingMovement)
             return;
 
-        //Debug.Log("calling DetermineAggro");
+        Debug.Log("calling DetermineAggro");
 
         //create layer masks for the player and the obstacles ending a finalmask combining both
         int playerLayer = 10;
@@ -289,46 +303,30 @@ public class EnemyAI : AIPath
     {
         if (!PlayerController.instance.isDead)
         {
-            Vector2 direction = new Vector2(playerObj.transform.position.x - transform.position.x, playerObj.transform.position.y - transform.position.y);
-            direction.Normalize();
-
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-            SoundManager.instance.PlayCombatSound(gameObject.name + "_swing");
-
-            GameObject strike = Instantiate(strikeGraphic, null, true);
-
-            strike.transform.position = effectPoint.position;
-            strike.transform.rotation = Quaternion.identity;
-
-            strike.transform.Rotate(0, 0, angle, Space.World);
-
-            strike.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
-
-            //create layer masks for the player
-            int playerLayer = 10;
-            var playerlayerMask = 1 << playerLayer;
-
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, playerObj.transform.position - transform.position, meleeHitRange, playerlayerMask);
-
-
-
-            if (hit.transform != null)
+            if (!pausingMovement)
             {
-                if (hit.collider.name == "Player")
+                SoundManager.instance.PlayCombatSound(gameObject.name + "_swing");
+
+                //create layer masks for the player
+                int playerLayer = 10;
+                var playerlayerMask = 1 << playerLayer;
+
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, playerObj.transform.position - transform.position, meleeHitRange, playerlayerMask);
+
+                if (hit.transform != null)
                 {
-                    Debug.Log("Hit the player");
-                    if (hit.collider.transform.root.GetComponent<PlayerStats>() != null)
+                    if (hit.collider.name == "Player")
                     {
-                        var script = hit.collider.transform.root.GetComponent<PlayerStats>();
-                        script.TakeDamage(myStats.damage.GetValue());
+                        Debug.Log("Hit the player");
+                        if (hit.collider.transform.root.GetComponent<PlayerStats>() != null)
+                        {
+                            var statScript = hit.collider.transform.root.GetComponent<PlayerStats>();
+                            statScript.TakeDamage(myStats.damage.GetValue());
+                        }
                     }
                 }
             }
-
-
         }
-
     }
 
     public float CalculateHealth(float currentHealth, float maxHealth)
@@ -350,7 +348,7 @@ public class EnemyAI : AIPath
         }
     }
 
-    public void Knockback(Vector3 dir)
+    public virtual void Knockback(Vector3 dir)
     {
         int obstacleLayer = 13;
         var obstacleLayerMask = 1 << obstacleLayer;
@@ -416,5 +414,42 @@ public class EnemyAI : AIPath
                 return;
             }
         }
+    }
+
+    /// <summary>
+    /// Temporarily stuns the enemy
+    /// </summary>
+    public virtual void Stunned()
+    {
+        // stop the enemy from moving temporarily
+        pausingMovement = true;
+        canMove = false;
+
+        // set the animation of stunned
+        anim.SetBool("Stunned", true);
+
+
+        // play the particle effect of being stunned
+        Quaternion rot = new Quaternion(0, 0, 0, 0);
+        var system = ParticleSystemHolder.instance.PlayerStunnedEffect();
+        var go = Instantiate(system, tr.position, rot, skeleton);
+        go.transform.localPosition = Vector3.zero;
+
+
+        // unstun the monster after a given time
+        StartCoroutine(UnStun(go));
+
+
+
+    }
+
+    public virtual IEnumerator UnStun(GameObject go)
+    {
+        yield return new WaitForSeconds(2f);
+
+        anim.SetBool("Stunned", false);
+        pausingMovement = false;
+        canMove = true;
+        Destroy(go);
     }
 }

@@ -20,16 +20,21 @@ public class Consumables : Item {
 
     }
 
+    /// <summary>
+    /// Uses the consumable and applies its effect
+    /// </summary>
     void Consume()
     {
         Debug.Log("using potion");
+        // Health Potion
         if (potionType == 0)
         {
             bool tryHeal = PlayerController.instance.gameObject.GetComponent<PlayerStats>().Heal(valueIncrease);
 
             if (tryHeal)
             {
-                RemoveFromInventory();
+                Remove();
+                //RemoveFromInventory();
                 SoundManager.instance.PlayInventorySound("gulp");
             }
         }

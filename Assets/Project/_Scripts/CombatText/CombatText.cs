@@ -11,6 +11,8 @@ public class CombatText : MonoBehaviour {
     string text;
     public Text textObject;
     float startAlpha;
+    float progress = 0.0f;
+
 
     private void Start()
     {
@@ -19,7 +21,6 @@ public class CombatText : MonoBehaviour {
 
     private void OnEnable()
     {
-        Invoke("Destroy", 1f);
     }
 
     private void Update()
@@ -40,7 +41,21 @@ public class CombatText : MonoBehaviour {
         gameObject.SetActive(true);
         textObject.text = "-" + damage;
         textObject.color = new Color32(178, 47, 47, 255);
+        gameObject.GetComponent<Outline>().effectColor = new Color32(144, 37, 37, 255);
         gameObject.transform.position = position;
+        startAlpha = GetComponent<Text>().color.a;
+        StartCoroutine(FadeOut());
+    }
+
+    public void Gray(string text, Vector3 position)
+    {
+        gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 1);
+        gameObject.SetActive(true);
+        textObject.text = text;
+        textObject.color = new Color32(141, 141, 141, 255);
+        gameObject.GetComponent<Outline>().effectColor = new Color32(113, 113, 113, 255);
+        gameObject.transform.position = position;
+        startAlpha = GetComponent<Text>().color.a;
         StartCoroutine(FadeOut());
     }
 
@@ -50,7 +65,9 @@ public class CombatText : MonoBehaviour {
         gameObject.SetActive(true);
         textObject.text = "+" + heal;
         textObject.color = new Color32(47, 184, 42, 255);
+        gameObject.GetComponent<Outline>().effectColor = new Color32(40, 140, 37, 255);
         gameObject.transform.position = position;
+        startAlpha = GetComponent<Text>().color.a;
         StartCoroutine(FadeOut());
     }
 
@@ -60,7 +77,9 @@ public class CombatText : MonoBehaviour {
         textObject.text = "-" + damage;
         gameObject.transform.position = position;
         textObject.color = new Color32(236, 221, 61, 255);
+        gameObject.GetComponent<Outline>().effectColor = new Color32(195, 183, 57, 255);
         gameObject.transform.localScale = new Vector3(1, 1, 1);
+        startAlpha = GetComponent<Text>().color.a;
         StartCoroutine(FadeOut());
     }
 
@@ -68,14 +87,17 @@ public class CombatText : MonoBehaviour {
     {
         gameObject.transform.localScale = new Vector3(1, 1, 1);
         string displayText = text.Replace("(Clone)", "");
-        //gameObject.SetActive(true);
+        gameObject.SetActive(true);
         textObject.text = displayText;
         gameObject.transform.position = position;
         textObject.color = Color.white;
+        gameObject.GetComponent<Outline>().effectColor = Color.gray;
         textObject.transform.rotation = Camera.main.transform.rotation;
+        startAlpha = GetComponent<Text>().color.a;
+        StartCoroutine(FadeOut());
     }
 
-    private void Destroy()
+    private void MakeTextInactive()
     {
         gameObject.SetActive(false);
         StopCoroutine(FadeOut());
@@ -90,10 +112,8 @@ public class CombatText : MonoBehaviour {
     public IEnumerator FadeOut()
     {
         gameObject.GetComponent<Outline>().effectColor = new Color(textObject.color.r / 1.5f, textObject.color.g / 1.5f, textObject.color.b / 1.5f);
-        float startAlpha = GetComponent<Text>().color.a;
-        float rate = 1.0f / fadeTime;
-        float progress = 0.0f;
-        //Debug.Log(progress + "   " + rate);
+        float rate = 0.7f / fadeTime;
+
         while (progress < 1.0)
         {
             Color tmpColor = GetComponent<Text>().color;
@@ -104,7 +124,8 @@ public class CombatText : MonoBehaviour {
             yield return null;
         }
 
-
+        MakeTextInactive();
+        progress = 0.0f;
     }
 
 }

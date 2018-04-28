@@ -764,7 +764,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1721059457416130}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.858711, y: -1.2441959, z: 0}
+  m_LocalPosition: {x: -15.6485195, y: -1.2156773, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4820424459523668}
@@ -896,8 +896,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 2
-  m_AngularDrag: 2
+  m_LinearDrag: 34
+  m_AngularDrag: 34
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -1272,9 +1272,12 @@ MonoBehaviour:
   strikeGraphic: {fileID: 1646857127479758, guid: 0f82bea811cab1c4785141982dfde3d5,
     type: 2}
   specialExplosion: {fileID: 0}
+  skeleton: {fileID: 4375850212807304}
   myProjectile: {fileID: 1403467400305918, guid: ec078c7d2885f544aaf5e5626e8828ab,
     type: 2}
   castingRange: 23
+  castingDelay: 4
+  castingTimer: 4
 --- !u!114 &114920448886117006
 MonoBehaviour:
   m_ObjectHideFlags: 1

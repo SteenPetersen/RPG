@@ -28,6 +28,13 @@ public class CombatTextManager : MonoBehaviour {
     }
 
 
+    /// <summary>
+    /// Runs through the pool of text objects and find an available one 
+    /// and returns it to the script the requested it, if there is no available text object
+    /// it creates a new one
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
     public GameObject FetchText(Vector3 position)
     {
 

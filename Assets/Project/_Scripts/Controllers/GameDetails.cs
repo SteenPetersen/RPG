@@ -53,9 +53,6 @@ public class GameDetails : MonoBehaviour {
     public static int enemiesKilled;
     public static int dungeonFloorsExplored;
 
-
-    public Light sunLight;
-
     public Image fadeToBlack;
     public float fadeSpeed;
 
@@ -74,6 +71,7 @@ public class GameDetails : MonoBehaviour {
 
     public GameObject player;
     PlayerStats playerStats;
+    float normalSpeed = 0.8f;
 
     private void OnEnable()
     {
@@ -104,8 +102,6 @@ public class GameDetails : MonoBehaviour {
 
     void Update()
     {
-        HandleInput();
-
         if (paused)
         {
             Time.timeScale = 0;
@@ -153,14 +149,6 @@ public class GameDetails : MonoBehaviour {
         }
     }
 
-    private void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            paused = !paused;
-        }
-    }
-
     public void KillPlayer()
     {
         Debug.Log("killing player");
@@ -195,8 +183,17 @@ public class GameDetails : MonoBehaviour {
         data.stage = stage;
         data.kingSpeech = kingSpeech;
 
-        data.equippedItems = FindItemsToSave("currentlyEquipped");
-        data.itemsInBag = FindItemsToSave("itemsInBag");
+        // bags
+        data.amountOfBags = AmountOfBags();
+        data.amountOfSlotsPerBag = GetAmountOfSlotsPerBag();
+
+        //equipped Items
+        data.equippedItems = GetEquippedItemsToSave();
+
+        // Items in bags
+        data.amountOfStackableItemsPerSlot = AmountOfStackableItemsPerSlot();
+        data.itemsInTheSlot = ItemsInTheSlot();
+
 
         data.zone = SceneManager.GetActiveScene().buildIndex;
         data.locationX = player.transform.position.x;
@@ -227,11 +224,12 @@ public class GameDetails : MonoBehaviour {
 
             DestroyAllPlayerPossessionsInBags();
             DestroyAllCurrentlyEquippedGear();
+            DestroyAllNonDefaultBags();
             ExperienceManager.instance.experience = 0;
 
 
             // Load Stats
-            PlayerController.instance.speed = PlayerController.instance.normalSpeed;
+            PlayerController.instance.speed = normalSpeed;
             playerStats.currentHealth = 0;
             playerStats.maxHealth = data.maxHealth;
             playerStats.Heal((int)data.currentHealth);
@@ -251,8 +249,14 @@ public class GameDetails : MonoBehaviour {
             stage = data.stage;
             kingSpeech = data.kingSpeech;
 
-            loadItems(data.equippedItems, "currentlyEquipped");
-            loadItems(data.itemsInBag, "itemsInBag");
+            // bags
+            LoadBags(data.amountOfBags, data.amountOfSlotsPerBag);
+
+            // currently equipped items
+            LoadEquippedItems(data.equippedItems);
+
+            // items in bags
+            LoadAllItemsInBags(data.itemsInTheSlot, data.amountOfStackableItemsPerSlot);
 
             SceneManager.LoadScene(data.zone);
             player.transform.position = new Vector2(data.locationX, data.locationY);
@@ -261,6 +265,7 @@ public class GameDetails : MonoBehaviour {
         }
     }
 
+    #region Destroy
     private void DestroyAllCurrentlyEquippedGear()
     {
         List<Equipment> items = new List<Equipment>();
@@ -290,23 +295,197 @@ public class GameDetails : MonoBehaviour {
 
     private void DestroyAllPlayerPossessionsInBags()
     {
-        List<Item> items = new List<Item>();
-
-        for (int i = 0; i < Inventory.instance.itemsInBag.Count; i++)
+        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
         {
-            if (Inventory.instance.itemsInBag[i] != null)
+            slot.MyItems.Clear();
+            slot.RemoveItem(slot.MyItem);
+        }
+
+        //for (int i = InventoryScript.instance.MyBags.Count - 1; i >= 0; i--)
+        //{
+        //    Destroy(InventoryScript.instance.MyBags[i]);
+        //}
+
+
+
+    }
+
+    /// <summary>
+    /// Destroys all bags except the one the player starts with, then destroys all the items that were inside the bags
+    /// </summary>
+    private void DestroyAllNonDefaultBags()
+    {
+        for (int i = InventoryScript.instance.MyBagButtons.Length - 1; i >= 1; i--)
+        {
+            BagButton bagButton = InventoryScript.instance.MyBagButtons[i];
+
+            if (bagButton.MyBag != null)
             {
-                items.Add(Inventory.instance.itemsInBag[i]);
-                //Debug.Log("adding " + Inventory.instance.itemsInBag[i] + " to list");
+                bagButton.RemoveBag();
             }
         }
 
-        foreach (var item in items)
+        DestroyAllPlayerPossessionsInBags();
+    }
+
+    #endregion Destroy
+
+    #region Bags
+    int AmountOfBags()
+    {
+        return InventoryScript.instance.MyBags.Count - 1;
+    }
+
+    List<int> GetAmountOfSlotsPerBag()
+    {
+        List<int> slotsPerBag = new List<int>();
+
+        foreach (Bag bag in InventoryScript.instance.MyBags)
         {
-            Inventory.instance.Remove(item);
+            slotsPerBag.Add(bag.Slots);
         }
 
+        return slotsPerBag;
     }
+
+    void LoadBags(int bags, List<int> slotsPerBag)
+    {
+        for (int i = 0; i < bags; i++)
+        {
+            Bag bag = (Bag)Instantiate(InventoryScript.instance.MyItems[0]);
+            bag.Initialize(slotsPerBag[i + 1]);
+            InventoryScript.instance.AddItem(bag);
+        }
+    }
+
+    #endregion Bags
+
+    #region Equipped items
+    List<string> GetEquippedItemsToSave()
+    {
+        List<string> items = new List<string>();
+
+        for (int i = 0; i < EquipmentManager.instance.currentEquipment.Count; i++)
+        {
+            if (EquipmentManager.instance.currentEquipment[i] == null)
+            {
+                items.Add(string.Empty);
+            }
+
+            if (EquipmentManager.instance.currentEquipment[i] != null)
+            {
+                items.Add(EquipmentManager.instance.currentEquipment[i].name);
+            }
+        }
+        
+        return items;
+    }
+
+    void LoadEquippedItems(List<string> items)
+    {
+        List<Equipment> tmp = new List<Equipment>(EquipmentManager.instance.currentEquipment.Count);
+
+        foreach (var item in items)
+        {
+            if (item == string.Empty)
+            {
+                tmp.Add(null);
+            }
+            else
+            {
+                var tmpEquip = Instantiate(Resources.Load("Equipment/" + item, typeof(Equipment))) as Equipment;
+                tmp.Add(tmpEquip);
+            }
+        }
+
+        for (int i = 0; i < EquipmentManager.instance.currentEquipment.Count; i++)
+        {
+            if (tmp[i] != null)
+            {
+                EquipmentManager.instance.Equip(tmp[i]);
+            }
+        }
+    }
+
+    #endregion Equipped items
+
+    #region Items In Bags
+
+    List<string> ItemsInTheSlot()
+    {
+        List<string> itemInSlot = new List<string>();
+
+        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
+        {
+            if (slot.IsEmpty)
+            {
+                itemInSlot.Add(string.Empty);
+            }
+            else if (slot.MyCount > 0)
+            {
+                itemInSlot.Add(slot.MyItems.Peek().name);
+            }
+
+        }
+
+        return itemInSlot;
+    }
+
+    List<int> AmountOfStackableItemsPerSlot()
+    {
+        List<int> itemsPerSlot = new List<int>();
+
+        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
+        {
+            itemsPerSlot.Add(slot.MyCount);
+        }
+
+        return itemsPerSlot;
+    }
+
+    void LoadAllItemsInBags(List<string> itemInSlot, List<int> amountOfitemsPerSlot)
+    {
+        int count = 0;
+
+        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
+        {
+            Debug.Log("running through slot " + count + " there are: " + amountOfitemsPerSlot[count] + "items in this slot. And the item is :" + itemInSlot[count]);
+            if (amountOfitemsPerSlot[count] == 0)
+            {
+                count++;
+                continue;
+            }
+            else if (amountOfitemsPerSlot[count] == 1)
+            {
+                Debug.Log("inside 1 slot function");
+                if (Resources.Load("Equipment/" + itemInSlot[count]) != null)
+                {
+                    Debug.Log("inside resource test");
+                    var tmpEquip = Instantiate(Resources.Load("Equipment/" + itemInSlot[count], typeof(Equipment))) as Equipment;
+                    slot.AddItem(tmpEquip);
+                }
+                else if (Resources.Load("Equipment/" + itemInSlot[count]) == null)
+                {
+                    var tmpItem = Instantiate(Resources.Load("Items/" + itemInSlot[count], typeof(Item))) as Item;
+                    slot.AddItem(tmpItem);
+                }
+                count++;
+            }
+            else if (amountOfitemsPerSlot[count] > 1)
+            {
+                for (int i = 0; i < amountOfitemsPerSlot[count]; i++)
+                {
+                    var tmpItem = Instantiate(Resources.Load("Items/" + itemInSlot[count], typeof(Item))) as Item;
+                    slot.AddItem(tmpItem);
+                }
+                count++;
+            }
+            UiManager.instance.UpdateStackSize(slot);
+        }
+        
+    }
+
+    #endregion Items In Bags
 
     private void PlatformSafeMessage(string message)
     {
@@ -325,101 +504,6 @@ public class GameDetails : MonoBehaviour {
         if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
         {
             File.Delete(Application.persistentDataPath + "/playerInfo.dat");
-        }
-    }
-
-    List<string> FindItemsToSave(string loc)
-    {
-        List<string> items = new List<string>();
-
-        if (loc == "currentlyEquipped")
-        {
-            for (int i = 0; i < EquipmentManager.instance.currentEquipment.Count; i++)
-            {
-                if (EquipmentManager.instance.currentEquipment[i] == null)
-                {
-                    items.Add(string.Empty);
-                }
-
-                if (EquipmentManager.instance.currentEquipment[i] != null)
-                {
-                    items.Add(EquipmentManager.instance.currentEquipment[i].name);
-                }
-            }
-        }
-        else if (loc == "itemsInBag")
-        {
-            for (int i = 0; i < Inventory.instance.itemsInBag.Count; i++)
-            {
-                if (Inventory.instance.itemsInBag[i] == null)
-                {
-                    //items.Add(string.Empty);
-                }
-                if (Inventory.instance.itemsInBag[i] != null)
-                {
-                    items.Add(Inventory.instance.itemsInBag[i].name);
-                }
-            }
-        }
-
-        return items;
-
-    }
-
-    void loadItems(List<string> items, string setToLoad)
-    {
-        //Debug.Log("Loading");
-        if (setToLoad == "currentlyEquipped")
-        {
-            List<Equipment> tmp = new List<Equipment>(EquipmentManager.instance.currentEquipment.Count);
-            foreach (var item in items)
-            {
-                if (item == string.Empty)
-                {
-                    tmp.Add(null);
-                }
-                else
-                {
-                    var tmpEquip = Instantiate(Resources.Load("Equipment/" + item, typeof(Equipment))) as Equipment;
-                    tmp.Add(tmpEquip);
-                }
-            }
-
-            for (int i = 0; i < EquipmentManager.instance.currentEquipment.Count; i++)
-            {
-                if (tmp[i] != null)
-                {
-                    EquipmentManager.instance.Equip(tmp[i]);
-                }
-            }
-        }
-
-        else if (setToLoad == "itemsInBag")
-        {
-            List<Item> tmp = new List<Item>(Inventory.instance.space);
-            foreach (var item in items)
-            {
-                if (Resources.Load("Equipment/" + item) != null)
-                {
-                    var tmpItem = Instantiate(Resources.Load("Equipment/" + item, typeof(Item))) as Item;
-                    tmp.Add(tmpItem);
-
-                }
-                else if (Resources.Load("Equipment/" + item) == null)
-                {
-                    var tmpItem = Instantiate(Resources.Load("Items/" + item, typeof(Item))) as Item;
-                    tmp.Add(tmpItem);
-                }
-
-            }
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                if (tmp[i] != null)
-                {
-                    Inventory.instance.AddItemToBag(tmp[i]);
-                }
-            }
         }
     }
 
@@ -469,21 +553,6 @@ public class GameDetails : MonoBehaviour {
 
             }
         }
-
-        // if you are in an indoor zone
-        if (SceneManager.GetActiveScene().name.EndsWith("_indoor"))
-        {
-            // then dim the lights
-            sunLight.intensity = 0.2f;
-        }
-
-        // if you are not in an indoor zone
-        else if (!SceneManager.GetActiveScene().name.EndsWith("_indoor"))
-        {
-            // then increase the light intensity
-            sunLight.intensity = 0.8f;
-        }
-
 
         // in case there are enemies nearby when a Load happens clear all enemies from the list
         PlayerController.instance.enemies.Clear();
@@ -544,12 +613,16 @@ class PlayerData
     public int stage;
 
 
+    // currently equipped bags
+    public int amountOfBags;
+    public List<int> amountOfSlotsPerBag;
+
     // Currently equipped Items
     public List<string> equippedItems;
 
-
     // Items in Bag
-    public List<string> itemsInBag;
+    public List<int> amountOfStackableItemsPerSlot;
+    public List<string> itemsInTheSlot;
 
     // zone information
     public int zone;

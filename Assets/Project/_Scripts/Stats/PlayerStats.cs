@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using EZCameraShake;
-
+using System.Collections;
 
 public class PlayerStats : CharacterStats {
 
@@ -24,8 +24,22 @@ public class PlayerStats : CharacterStats {
     public Text agil;
     public Text lvl;
 
+    GameObject statHolder;
 
+    public static PlayerStats instance;
 
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            instance = this;
+        }
+    }
 
     void Start () {
         EquipmentManager.instance.onEquipmentChanged += OnEquipmentChanged;
@@ -34,7 +48,20 @@ public class PlayerStats : CharacterStats {
 
         UpdateStats();
         currentHealth = maxHealth;
-	}
+
+
+        statHolder = GameObject.Find("UiCanvas").transform.Find("EquipmentWindow").transform.Find("Stats").gameObject;
+        maxhps = statHolder.transform.Find("Maxhps").GetComponent<Text>();
+        hps = statHolder.transform.Find("Hps").GetComponent<Text>();
+        dmg = statHolder.transform.Find("Damage").GetComponent<Text>();
+        ac = statHolder.transform.Find("Armor").GetComponent<Text>();
+        stmina = statHolder.transform.Find("Stamina").GetComponent<Text>();
+        strn = statHolder.transform.Find("Strength").GetComponent<Text>();
+        agil = statHolder.transform.Find("Agility").GetComponent<Text>();
+        lvl = statHolder.transform.Find("Level").GetComponent<Text>();
+
+
+    }
 
     private void Update()
     {
@@ -93,10 +120,6 @@ public class PlayerStats : CharacterStats {
 
     public override void TakeDamage(int damage)
     {
-        base.TakeDamage(damage);
-
-        SoundManager.instance.PlayCombatSound("player_hurt");
-
         int newDmg;
         bool crit;
 
@@ -109,27 +132,56 @@ public class PlayerStats : CharacterStats {
             Die();
         }
 
-        CameraShaker.Instance.ShakeOnce(1f, 1f, 0.1f, 0.1f);
+        // if player is NOT blocking
+        if (!playerControl.blocking)
+        {
+            SoundManager.instance.PlayCombatSound("player_hurt");
 
-        var text = CombatTextManager.instance.FetchText(transform.position);
-        var textScript = text.GetComponent<CombatText>();
-        textScript.Red(newDmg.ToString(), transform.position);
-        text.transform.position = transform.position;
-        text.gameObject.SetActive(true);
+            // careful changing values here it feels correct
+            CameraShaker.Instance.ShakeOnce(0.5f, 3, 0.1f, 0.5f);
+
+            var text = CombatTextManager.instance.FetchText(transform.position);
+            var textScript = text.GetComponent<CombatText>();
+            textScript.Red(newDmg.ToString(), transform.position);
+            text.transform.position = transform.position;
+            text.gameObject.SetActive(true);
+        }
+
+        // if player is blocking
+        if (playerControl.blocking)
+        {
+            // If the player timed the block well
+            if (playerControl.timedBlock)
+            {
+                playerControl.StartCoroutine(playerControl.Riposte());
+            }
+
+
+            // play blocking sound
+            SoundManager.instance.PlayCombatSound("shieldblock");
+            playerControl.KnockBack(0.005f);
+            StartCoroutine(returnMovement());
+
+            var blockText = CombatTextManager.instance.FetchText(transform.position);
+            var blockTextScript = blockText.GetComponent<CombatText>();
+            blockTextScript.Gray("-" + newDmg.ToString() + " block", transform.position);
+            blockText.transform.position = transform.position;
+            blockText.gameObject.SetActive(true);
+        }
 
         if (playerControl.healthGroup.alpha == 0)
         {
             playerControl.healthGroup.alpha = 1f;
         }
 
-        playerControl.healthbar.value = playerControl.CalculateHealth(currentHealth, maxHealth);
+        playerControl.healthBar.value = CalculateHealth(currentHealth, maxHealth);
     }
 
     public override bool Heal(int healthIncrease)
     {
         bool tmp = base.Heal(healthIncrease);
 
-        playerControl.healthbar.value = playerControl.CalculateHealth(currentHealth, maxHealth);
+        playerControl.healthBar.value = CalculateHealth(currentHealth, maxHealth);
 
         return tmp;
     }
@@ -152,13 +204,27 @@ public class PlayerStats : CharacterStats {
 
     public void UpdateStats()
     {
-        maxHealth = ExperienceManager.instance.level + (Sta.GetValue() * 10);
+        maxHealth = 100 + ExperienceManager.instance.level + (Sta.GetValue() * 10);
         damage.SetValue(Str.GetValue());
         armor.SetValue(Agi.GetValue());
+    }
+
+    public float CalculateHealth(float currentHealth, float maxHealth)
+    {
+        return currentHealth / maxHealth;
     }
 
     private void OnDisable()
     {
         EquipmentManager.instance.onEquipmentChanged -= OnEquipmentChanged;
+    }
+
+
+    // amount of time player is interupted when being hit by a boss projectile
+    IEnumerator returnMovement()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        PlayerController.instance.interruptMovement = false;
     }
 }

@@ -13,7 +13,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Shoulder Plates of the Knight
   icon: {fileID: 21300000, guid: 39dbfa599ec882140b5b6321942c8521, type: 3}
+  sellValue: 15
+  buyValue: 100
   isDefaultItem: 0
+  typeOfEquipment: 0
+  stackSize: 0
+  MySlot: {fileID: 0}
   equipSlot: 9
   equipType: 2
   characterVisibleSprite: {fileID: 21300018, guid: 76db9d444e46de4459e2e2c2e4bd669d,

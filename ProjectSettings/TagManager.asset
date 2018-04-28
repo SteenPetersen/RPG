@@ -9,6 +9,7 @@ TagManager:
   - ProjectileSurface
   - Goal
   - Map
+  - Keybind
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Background
   - Player
   - Enemy
-  - NavObstacles
+  - HouseEntryDetection
   - PlayerObstacles
   - Projectile
   - MeleeWeapon

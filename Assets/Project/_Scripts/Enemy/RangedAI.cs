@@ -10,12 +10,15 @@ public class RangedAI : EnemyAI {
     public GameObject myProjectile;
     public float castingRange;
     bool inCastingRange;
+    public float castingDelay;
+    public float castingTimer;
 
 	protected override void Start () {
 
         maxSpeed = UnityEngine.Random.Range(maxSpeed - 1, maxSpeed + 1);
         distanceToLook = UnityEngine.Random.Range(distanceToLook - 2, distanceToLook + 2);
         meleeDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
+        castingDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
 
         setter = GetComponent<AIDestinationSetter>();
         playerObj = PlayerController.instance.gameObject.transform;
@@ -24,9 +27,21 @@ public class RangedAI : EnemyAI {
 
     protected override void Update () {
 
-        timer -= Time.deltaTime;
-
         DisplayHealth();
+
+        if (pausingMovement)
+        {
+            if (isDead)
+            {
+                anim.SetBool("Stunned", false);
+            }
+            timer = meleeDelay;
+            return;
+        }
+
+        timer -= Time.deltaTime;
+        castingTimer -= Time.deltaTime;
+
 
         var thePlayerIsDead = checkifPlayerIsDead();
 
@@ -72,17 +87,18 @@ public class RangedAI : EnemyAI {
             {
                 anim.SetTrigger("hit1");
                 timer = meleeDelay;
+                castingTimer = castingDelay;
             }
 
             else if (inCastingRange && timer < 0)
             {
                 anim.SetTrigger("Shoot");
+                castingTimer = castingDelay;
                 timer = meleeDelay;
             }
         }
 
     }
-
 
     public override void DetermineAggro(Vector3 pos)
     {
@@ -193,7 +209,7 @@ public class RangedAI : EnemyAI {
 
             if (hit.collider != null)
             {
-                Debug.Log(hit.collider.name);
+                //Debug.Log(hit.collider.name);
 
                 if (hit.collider.name == "Player")
                 {

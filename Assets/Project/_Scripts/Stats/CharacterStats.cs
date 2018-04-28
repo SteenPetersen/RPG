@@ -24,7 +24,7 @@ public class CharacterStats : MonoBehaviour {
     public virtual void Die()
     {
         // Die in some way this method is meant to be overwritten
-        Debug.Log(transform.name + "died");
+        //Debug.Log(transform.name + "died");
     }
 
     public virtual void Regenerate()
@@ -37,11 +37,24 @@ public class CharacterStats : MonoBehaviour {
     }
 
 
-    // logic behind variance in damage
+    /// <summary>
+    /// Create a damage variance so that the results of hitting are not so similar
+    /// </summary>
+    /// <param name="damage">Amount of damage that has come in</param>
+    /// <param name="crit">This function will determine if the hit was a crit or not</param>
+    /// <param name="newDamage">The new damage amount after applying the variance</param>
+    /// 
     public virtual void DamageVariance(int damage, out bool crit, out int newDamage)
     {
-        // decrease damage by the armor of the player
-        var minValue = Random.Range(1, 5);
+        // Set a minimum Value
+        var minValue = 0;
+
+        if (!PlayerController.instance.blocking)
+        {
+            minValue = Random.Range(1, 5);
+        }
+
+
         damage -= armor.GetValue() / 2;
 
         //generate a random number
@@ -51,7 +64,8 @@ public class CharacterStats : MonoBehaviour {
 
         newDamage = Mathf.Clamp(damage + (int)rand, minValue, int.MaxValue);
 
-        if (rand > limit)
+        // if the random number is above the 90% mark which means 10% chance to crit
+        if (rand > limit) 
         {
             crit = true;
             return;

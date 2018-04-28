@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 
-public class PlayerController : Interactable
+public class PlayerController : MonoBehaviour
 {
     // plane needed for hitray during projectiles
     // located on Gamemanager since monsters also need access to it.
     Plane m_Plane;
-    public List<GameObject> enemies = new List<GameObject>();
-    bool enemiesInRange, lineOfSightRoutineActivated;
+    [SerializeField] bool ripostePossible, enemiesInRange, lineOfSightRoutineActivated, largeStrike, largeStrikeAnimationReady, 
+                          heldStrikeCoroutinePlaying, maxChargedHit;
+    [SerializeField] float riposteTime, chargeTime, blockTime = 0;
 
     Vector3 prevPosition;
     Vector3 move;
@@ -38,42 +39,71 @@ public class PlayerController : Interactable
     }
     #endregion
 
-    public GameObject miniMap;
-    public CoordinateDirection dir;
-
-    public GameObject bodyLight;
-    public GameObject skeleton;
-    public Vector2 mousePosition;
-    public EventSystem eventSys;
-    public bool isDead, interruptMovement;
-    public Interactable focus;
-    [HideInInspector]
-    public float normalSpeed = 0.8f;            // used to reset speeds after death etc
-    public float speed;                         // actual speed of the character used for calculations
-    public float thrustSpeed;                   // speed of the thrust forward
+    GameObject skeleton;
+    Vector2 mousePosition;
+    EventSystem eventSys;
+    float thrustSpeed = 0.1f;                  
 
     Rigidbody2D rigid;
     CameraController cameraControl;
     PlayerStats playerStat;
     GameObject cameraHolder;
-    public Animator anim;
     ParticleSystem[] particles;
 
-    float horizontal;
-    float vertical;
+    #region Public Variables
 
-    [HideInInspector]
-    public bool facingRight = true;
+    /// <summary>
+    /// playerstats needs reference to check if player can riposte or not
+    /// </summary>
+    public bool timedBlock;
+
+    /// <summary>
+    /// Needed everyTime an outside scripts wishes to stun the player or knockback
+    /// </summary>
+    [HideInInspector] public bool interruptMovement;
+
+    /// <summary>
+    /// Activated when player is dead
+    /// Gamedetails needs reference to it to start the death sequence
+    /// Enemies needs reference to it to stop attacking when player is dead
+    /// </summary>
+    [HideInInspector] public bool isDead;
+
+    /// <summary>
+    /// List of enemies neaby
+    /// Gamedetails needs reference to remove enemies from list when they die or on loading scenes
+    /// </summary>
+    [HideInInspector] public List<GameObject> enemies = new List<GameObject>();
+
+    /// <summary>
+    /// Speed of Character
+    /// Needed for saving and Loading incase we make it possible for player to adjust this.
+    /// </summary>
+    [HideInInspector] public float speed;
+
+    /// <summary>
+    /// needed on gamedetails for setting death animation etc
+    /// </summary>
+    [HideInInspector] public Animator anim;
+
+    /// <summary>
+    /// needed for correcting position during dialogue and inventory
+    /// </summary>
+    [HideInInspector] public bool facingRight = true;
+
+    #endregion Public Variables
 
     #region Logic inside player Gameobject
     public Transform back;
+    [HideInInspector] public CanvasGroup healthGroup;
+    [HideInInspector] public Slider healthBar;
     #endregion
 
     #region projectiles
     PooledProjectilesController pooledArrows;
-    public GameObject projectilePoint;
-    public float projectileSpeed;
-    public Transform meleeStartPoint;
+    [SerializeField] GameObject projectilePoint;
+    [SerializeField] float projectileSpeed;
+    [SerializeField] Transform meleeStartPoint;
     Vector2 direction;
     #endregion
 
@@ -83,15 +113,15 @@ public class PlayerController : Interactable
     public bool ranged, dialogue;   // is the player using ranged or in a dialogue? Player can still animate during pause due to unscaled time on his animator
 
     EquipmentManager equip;
-    bool weaponsGone = false;       // has the player unequipped his/her weapons
+    //bool weaponsGone = false;       // has the player unequipped his/her weapons
 
     //blockState
-    bool hasAddedModifer;           // To make sure armor modifer only get added once when block is clicked
+    bool hasBlockingModifier;           // To make sure armor modifer only get added once when block is clicked
     int modifierToRemove;           // actual amount of extra damage that is absorbed when blocking
+    public bool blocking;
     #endregion
 
-    private Interactable currentInteractable;
-    public bool mouseOverInteractableAndPlayerInRange;
+    private bool mouseOverInteractableAndPlayerInRange;
 
     private void OnEnable()
     {
@@ -106,35 +136,23 @@ public class PlayerController : Interactable
 
     private void Update()
     {
-        move = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0f);
-        horizontal = Input.GetAxis("Horizontal");
-        vertical = Input.GetAxis("Vertical");
-
-        if (isDead || gameDetails.paused || dialogue)
+        if (isDead || GameDetails.instance.paused || dialogue)
             return;
 
         HandleAggro();
         HandleCombatState();
-        HandleAnimation(horizontal, vertical);
+        HandleActionBarInput();
+        HandleAnimation();
+
+        CheckForInteractable();
+        CheckIfFacingCorrectDirection();
+        HandleMovement();
+
+        if (largeStrikeAnimationReady)
+        {
+            ChargeHit();
+        }
     }
-
-    void FixedUpdate()
-    {
-        // we do this in fixedupdate to mke sure that camera movement updates happen in the same frame as the actual movement
-        if (isDead || gameDetails.paused || dialogue)
-            return;
-
-        currentInteractable = ClickFeedback();
-        CheckIfFacingCorrectDirection(horizontal);
-        HandleMovement(horizontal, vertical);
-    }
-
-    private void LateUpdate()
-    {
-        // set the previous position to be the current position but do it in the late update so we can draw
-        // direction for the Ghost
-        prevPosition = transform.position;
-    } // commented
 
     private void HandleAggro()
     {
@@ -188,7 +206,7 @@ public class PlayerController : Interactable
         // while you have enemies in the area
         while (enemiesInRange)
         {
-            //Debug.Log("calling Coroutine");
+            Debug.Log("calling Coroutine");
 
             // run through all the enemies in the list
             for (int i = 0; i < enemies.Count; i++)
@@ -209,77 +227,139 @@ public class PlayerController : Interactable
         lineOfSightRoutineActivated = false;
     } // commented
 
-    private void HandleAnimation(float horizontal, float vertical)
+    private void HandleAnimation()
     {
         // make sure that is players mouse is over the UI that the player doesnt start performing animations
         if (eventSys.IsPointerOverGameObject())
             return;
 
         // set the animation parameters of X and Y velocities to be equal to the absolute values of the parameters horizontal and vertical
-        anim.SetFloat("VelocityX", Mathf.Abs(horizontal));
-        anim.SetFloat("VelocityY", Mathf.Abs(vertical));
+        anim.SetFloat("VelocityX", Mathf.Abs(rigid.velocity.x));
+        anim.SetFloat("VelocityY", Mathf.Abs(rigid.velocity.y));
 
         // if the current state of the player is melee
         if (melee)
         {
-            // if the player presses the left mouse button
-            if (Input.GetMouseButtonDown(0))
+            if (!ripostePossible)
             {
-                if (mouseOverInteractableAndPlayerInRange)
+                // if the player presses the left mouse button
+                if (Input.GetMouseButtonUp(0))
                 {
-                    SetFocus(currentInteractable);
-                    return;
+                    // stop the strike
+                    StopCoroutine(CheckForHeldStrike());
+                    largeStrike = false;
+
+                    // check if player interacts with anything else in the environment
+                    // if he does then run the appropriate functions and disallow hit animations
+                    bool canHit = CheckIfPlayerMayHit();
+
+                    // if you cannot hit then interact with the thing that is in your way
+                    if (!canHit)
+                    {
+                        Vendor vendor = CheckForVendor();
+                        Interactable inter = CheckForInteractable();
+
+                        if (inter != null)
+                        {
+                            inter.Interact();
+                            return;
+                        }
+
+                        if (vendor != null)
+                        {
+                            vendor.Interact();
+                            return;
+                        }
+                    }
+
+                    // make sure maxChargedHit is set to false for every attempt at hitting 
+                    // only set it to true if its true for this particular hit
+                    maxChargedHit = false;
+
+                    // check if player was rtying to to do a charged hit
+                    if (largeStrikeAnimationReady)
+                    {
+                        anim.SetBool("StrikeHold", false);
+                        largeStrikeAnimationReady = false;
+
+                        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
+                        {
+                            Debug.Log("Maximum Hit");
+                            maxChargedHit = true;
+                        }
+
+                        Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+                        tmp.a = 0;
+                        EquipmentManager.instance.weaponGlowSlot.color = tmp;
+
+                        return;
+                    }
+
+                    int rnd = UnityEngine.Random.Range(0, 4);
+
+                    // run a switch case on rnd and play a random hit animation
+                    switch (rnd)
+                    {
+                        case 0:
+                            anim.SetTrigger("Strike1");
+                            break;
+
+                        case 1:
+                            anim.SetTrigger("Strike2");
+                            break;
+
+                        case 2:
+                            anim.SetTrigger("Strike3");
+                            break;
+                    }
                 }
-
-                // set the startPosition of the hit animation
-                var startPos = meleeStartPoint.position;
-
-                // create a direction vector from Hit position of the mouse and the projectiles original position
-                direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
-
-                // normalize the direction which gives it a magnitude of 1
-                direction.Normalize();
-
-                // initialize two floats and populate them with the CheckDistancesToMouse Method call
-                float distanceFromFrontToMouse, distanceFromBackToMouse;
-                CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
-
-                // if the player is trying to shoot backwards for whatever reason dont do it
-                if (distanceFromBackToMouse < distanceFromFrontToMouse)
-                    return;
-
-                // if the mouse is in the upper 2 quadrants
-                if (dir == CoordinateDirection.NE || dir == CoordinateDirection.NW)
-                {
-                    // the animate hitting up
-                    anim.SetTrigger("HitMeleeUp");
-                }
-
-                // if the mouse is in one of the lower two quadrants
-                else if (dir == CoordinateDirection.SE || dir == CoordinateDirection.SW)
-                {
-                    // animate hitting down
-                    anim.SetTrigger("HitMeleeDown");
-                }
-
             }
+
             if (Input.GetMouseButton(1))
             {
-                anim.SetBool("Block", true);
-                if (!hasAddedModifer)
+                if (EquipmentManager.instance.currentEquipment[4] != null)
                 {
-                    modifierToRemove = (int)playerStat.armor.GetValue();
-                    playerStat.armor.AddModifier((int)playerStat.armor.GetValue());
-                    hasAddedModifer = true;
+                    anim.SetBool("Block", true);
+
+                    StartCoroutine(TimedBlockInitialize());
+
+                    if (!hasBlockingModifier)
+                    {
+                        blocking = true;
+                        modifierToRemove = (int)playerStat.armor.GetValue();
+                        playerStat.armor.AddModifier((int)playerStat.armor.GetValue());
+                        hasBlockingModifier = true;
+                    }
                 }
+
             }
+
             if (!Input.GetMouseButton(1))
             {
                 anim.SetBool("Block", false);
-                if (hasAddedModifer)
+                if (hasBlockingModifier)
                 {
+                    blocking = false;
                     playerStat.armor.RemoveModifier(modifierToRemove);
-                    hasAddedModifer = false;
+                    hasBlockingModifier = false;
+                }
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                // start checking if player wants to hold button in
+                if (!heldStrikeCoroutinePlaying)
+                {
+                    StartCoroutine(CheckForHeldStrike());
+                }
+            }
+
+            if (ripostePossible)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    anim.SetTrigger("Riposte");
+                    ripostePossible = false;
                 }
             }
         }
@@ -294,7 +374,7 @@ public class PlayerController : Interactable
                 // if player is not allowed to hit the stop the code from running further
                 if (mouseOverInteractableAndPlayerInRange)
                 {
-                    SetFocus(currentInteractable);
+                    //SetFocus(currentInteractable);
                     return;
                 }
 
@@ -305,13 +385,28 @@ public class PlayerController : Interactable
 
     } // commented
 
+    /// <summary>
+    /// Determines the speed at which the players weapon charges a power hit
+    /// </summary>
+    private void ChargeHit()
+    {
+        if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
+        {
+            Debug.Log("!");
+            Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+            tmp.a += 0.006f;
+            EquipmentManager.instance.weaponGlowSlot.color = tmp;
+        }
+    }
+
     private bool CheckIfPlayerMayHit()
     {
         // check if player hit something with the mouse when clicking that interacable
-        Interactable inter = ClickFeedback();
+        Interactable inter = CheckForInteractable();
+        Vendor vendor = CheckForVendor();
 
         // if the player did hit something interacable with the mouse then do not allow the player to hit
-        if (inter != null)
+        if (inter != null || vendor != null)
             return false;
 
         // if the player does not have weapons in his hands
@@ -322,88 +417,201 @@ public class PlayerController : Interactable
         return true;
     } // commented
 
-    private void HandleMovement(float horizontal, float vertical)
+    private Vendor CheckForVendor()
+    {
+        Vector3 screenNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
+        Vector3 screenFar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
+
+        Vector3 farPoint = Camera.main.ScreenToWorldPoint(screenFar);
+        Vector3 nearPoint = Camera.main.ScreenToWorldPoint(screenNear);
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(nearPoint, farPoint - nearPoint, out hit))
+        {
+            Vendor vendor = hit.collider.GetComponentInParent<Vendor>();
+
+            if (vendor == null)
+            {
+                mouseOverInteractableAndPlayerInRange = false;
+                return null;
+            }
+
+            if (vendor != null)
+            {
+                // check if player is close enough to interact with the interactable
+                float distanceFromInteractable = Vector2.Distance(hit.collider.gameObject.transform.position, transform.position);
+
+                if (distanceFromInteractable < vendor.radius)
+                {
+                    mouseOverInteractableAndPlayerInRange = true;
+                    return vendor;
+                }
+
+                return null;
+            }
+            else
+            {
+                Debug.LogWarning("something wrong with the clickFeedback");
+                return null;
+            }
+        }
+        else
+        {
+            //RemoveFocus();
+            SetMousePosition();
+            return null;
+        }
+
+
+    }
+
+    private Interactable CheckForInteractable()
+    {
+        Vector3 screenNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
+        Vector3 screenFar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
+
+        Vector3 farPoint = Camera.main.ScreenToWorldPoint(screenFar);
+        Vector3 nearPoint = Camera.main.ScreenToWorldPoint(screenNear);
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(nearPoint, farPoint - nearPoint, out hit))
+        {
+            Interactable interactable = hit.collider.GetComponentInParent<Interactable>();
+
+            if (interactable == null)
+            {
+                mouseOverInteractableAndPlayerInRange = false;
+                return null;
+            }
+
+            if (interactable != null)
+            {
+                // check if player is close enough to interact with the interactable
+                float distanceFromInteractable = Vector2.Distance(hit.collider.gameObject.transform.position, transform.position);
+
+                //Debug.Log(distanceFromInteractable + "   " + interactable.radius);
+
+                if (distanceFromInteractable < interactable.radius)
+                {
+                    mouseOverInteractableAndPlayerInRange = true;
+                    return interactable;
+                }
+
+                mouseOverInteractableAndPlayerInRange = false;
+                return null;
+            }
+            else
+            {
+                Debug.LogWarning("something wrong with the clickFeedback");
+                return null;
+            }
+        }
+        else
+        {
+            //RemoveFocus();
+            SetMousePosition();
+            mouseOverInteractableAndPlayerInRange = false;
+            return null;
+        }
+
+
+    }
+
+    /// <summary>
+    /// Handles the movement of the Player with a normalized vector2
+    /// </summary>
+    private void HandleMovement()
     {
         if (interruptMovement)
             return;
 
-        move = move.normalized * Time.deltaTime * speed;
+        // instantiate a vector2 direction and set it to zero
+        Vector2 directionOfMovement = Vector2.zero;
 
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        // for every button the player presses add that vector to the previously created vector2
+        if (Input.GetKey(KeybindManager.instance.Keybinds["RIGHT"]))
         {
-            if (!facingRight)
-            {
-                rigid.AddRelativeForce(move / 2);
-                return;
-            }
-            else if (facingRight)
-            {
-                rigid.AddRelativeForce(move);
-                return;
-            }
+            directionOfMovement += Vector2.right;
         }
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeybindManager.instance.Keybinds["LEFT"]))
         {
-            if (facingRight)
-            {
-                rigid.AddRelativeForce(move / 2);
-                return;
-            }
-            else if (!facingRight)
-            {
-                rigid.AddRelativeForce(move);
-                return;
-            }
+            directionOfMovement += Vector2.left;
         }
-        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeybindManager.instance.Keybinds["DOWN"]))
         {
-            rigid.AddRelativeForce(move);
-            return;
+            directionOfMovement += Vector2.down;
         }
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeybindManager.instance.Keybinds["UP"]))
         {
-            rigid.AddRelativeForce(move);
-            return;
+            directionOfMovement += Vector2.up;
         }
 
+        // once all buttons have been pressed normalize the vector2 and add force to it multiplied by speed
+        rigid.AddRelativeForce(directionOfMovement.normalized * speed * Time.deltaTime);
 
 
-        //// Sheathe weaponary
-        //if (Input.GetKeyDown(KeyCode.P))
+        // jump forward
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("calling ghost spawn");
+            var trail = GetSystem("thrustTrail");
+            trail.Play();
+            anim.SetTrigger("Thrust");
+
+            SpawnGhostImage(directionOfMovement);
+
+            // if you're standing still move towards mnouse instead
+            if (directionOfMovement == Vector2.zero)
+            {
+                Vector3 directionMouse = new Vector3(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y, 0f);
+                directionMouse.Normalize();
+                rigid.AddRelativeForce(directionMouse * thrustSpeed);
+                return;
+            }
+
+            // add a relative local force to the player rigidbody in the given direction.
+            rigid.AddRelativeForce(directionOfMovement * thrustSpeed);
+        }
+    }
+
+    private void HandleActionBarInput()
+    {
+        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION1"]))
+        {
+            UiManager.instance.ClickActionButton("ACTION1");
+        }
+        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION2"]))
+        {
+            UiManager.instance.ClickActionButton("ACTION2");
+        }
+        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION3"]))
+        {
+            UiManager.instance.ClickActionButton("ACTION3");
+        }
+
+        //foreach (string action in KeybindManager.instance.ActionBinds.Keys)
         //{
-        //    SheatheWeaponary();
+        //    Debug.Log("searching " + action);
+        //    if (Input.GetKeyDown(KeybindManager.instance.ActionBinds[action]))
+        //    {
+        //        Debug.Log("Pressing: " + KeybindManager.instance.ActionBinds[action].ToString());
+        //        UiManager.instance.ClickActionButton(action);
+        //    }
         //}
-        //if (Input.GetKeyDown(KeyCode.O))
-        //{
-        //    UnSheatheWeaponary();
-        //}
-
     }
 
     private void HandleCombatState()
     {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            //CombatTextManager.instance.FetchText(transform.position, gameObject.name);
-            PooledProjectilesController.instance.impDaggers.Clear();
-        }
         if (Input.GetKeyDown(KeyCode.T))
         {
             Debug.Log("calling loadscene");
             SceneManager.LoadSceneAsync(0);
             transform.position = new Vector2(-12f, 4);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            var tryMainHand = EquipFirstMatchingItemInBag(0, 3);
-            EquipFirstMatchingItemInBag(2, 4);
-            if (tryMainHand)
-            {
-                melee = true;
-                ranged = false;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+
+        if (Input.GetKeyDown(KeyCode.R))
         {
             var tryEquip = EquipFirstMatchingItemInBag(1, 3);
             if (tryEquip)
@@ -413,44 +621,6 @@ public class PlayerController : Interactable
             }
 
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            dialogue = !dialogue;
-        }
-
-        //if (ranged)
-        //{
-        //    stateText.text = "Ranged!";
-        //}
-        //else if (melee)
-        //{
-        //    stateText.text = "Melee!";
-        //}
-
-        // jump forward
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            var trail = GetSystem("thrustTrail");
-            trail.Play();
-            anim.SetTrigger("Thrust");
-
-            Vector3 direction = move;
-            direction.Normalize();
-            SpawnGhostImage(direction);
-
-            // if you're standing still move towards mnouse instead
-            if (move == Vector3.zero)
-            {
-                Vector3 directionMouse = new Vector3(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y, 0f);
-                directionMouse.Normalize();
-                rigid.AddRelativeForce(directionMouse * thrustSpeed);
-                return;
-            }
-
-            // add a relative local force to the player rigidbody in the given direction.
-            rigid.AddRelativeForce(direction * thrustSpeed);
-        }
-
     }
 
     private void SpawnGhostImage(Vector2 direction)
@@ -483,33 +653,40 @@ public class PlayerController : Interactable
         image.AddComponent<Fade>();
     } // commented
 
-    private static bool EquipFirstMatchingItemInBag(int type, int slot)
+    private static bool EquipFirstMatchingItemInBag(int type, int slotIndex)
     {
-        // for all items in your bag
-        for (int i = 0; i < Inventory.instance.itemsInBag.Count; i++)
+        //for all items in your bag
+        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
         {
-            // check to see if you have equipment in your bag
-            if (Inventory.instance.itemsInBag[i] is Equipment)
+            if (slot.MyItem is Equipment)
             {
-                // set tmp as the equipment found
-                Equipment tmp = (Equipment)Inventory.instance.itemsInBag[i];
+                Debug.Log("This Slots item is " + slot.MyItem.name);
 
-                // is tmp a Matching item?
-                if ((int)tmp.equipSlot == slot)
-                {
-                    // equip the first Matching item you find
-                    if ((int)tmp.equipType == type)
-                    {
-                        Inventory.instance.itemsInBag[i].Use();
-                        return true;
-                    }
-                }
             }
         }
+            //{
+                //// check to see if you have equipment in your bag
+                //if (InventoryScript.instance.sl is Equipment)
+                //{
+                //    // set tmp as the equipment found
+                //    Equipment tmp = (Equipment)Inventory.instance.itemsInBag[i];
+
+                //    // is tmp a Matching item?
+                //    if ((int)tmp.equipSlot == slot)
+                //    {
+                //        // equip the first Matching item you find
+                //        if ((int)tmp.equipType == type)
+                //        {
+                //            Inventory.instance.itemsInBag[i].Use();
+                //            return true;
+                //        }
+                //    }
+                //}
+            //}
         return false;
     }
 
-    private void CheckIfFacingCorrectDirection(float horizontal)
+    private void CheckIfFacingCorrectDirection()
     {
         float distanceFromFrontToMouse, distanceFromBackToMouse;
         CheckDistancesToMouse(out distanceFromFrontToMouse, out distanceFromBackToMouse);
@@ -526,19 +703,14 @@ public class PlayerController : Interactable
         if (isDead)
             return;
         ////////////////////////////////////
-        //Gather obects not to tbe flipped//
+        //Gather obects not to be flipped///
         ////////////////////////////////////
 
-        Transform tmp = selector.transform;
         CanvasGroup healthImage = healthGroup;
 
-        Vector3 pos = tmp.position;
         Vector3 healthPos = healthImage.gameObject.transform.position;
 
-        tmp.SetParent(null);
         healthImage.transform.SetParent(null);
-
-
 
         ////////////////////////////////////
         //////////Flip the objects//////////
@@ -551,93 +723,43 @@ public class PlayerController : Interactable
 
         transform.localScale = theScale;
 
-        tmp.SetParent(transform);
-        tmp.position = pos;
-
         healthImage.transform.SetParent(transform);
         healthImage.transform.position = healthPos;
     }
 
-    private Interactable ClickFeedback()
+    //void SetFocus(Interactable newFocus)
+    //{
+    //    if (newFocus != focus)
+    //    {
+    //        if (focus != null)
+    //        {
+    //            focus.OnDeFocused();
+    //        }
+    //        focus = newFocus;
+    //    }
+    //    newFocus.OnFocused(gameObject.transform);
+    //}
+
+    //void RemoveFocus()
+    //{
+    //    if (focus != null)
+    //    {
+    //        focus.OnDeFocused();
+    //    }
+    //    focus = null;
+    //}
+
+    public void KnockBack(float amount)
     {
-        Vector3 screenNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
-        Vector3 screenFar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
+        interruptMovement = true;
 
-        Vector3 farPoint = Camera.main.ScreenToWorldPoint(screenFar);
-        Vector3 nearPoint = Camera.main.ScreenToWorldPoint(screenNear);
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(nearPoint, farPoint - nearPoint, out hit))
+        if (facingRight)
         {
-            Interactable interactable = hit.collider.GetComponentInParent<Interactable>();
-
-            if (interactable == null)
-            {
-                mouseOverInteractableAndPlayerInRange = false;
-                return null;
-            }
-
-            if (interactable != null)
-            {
-
-
-                // check if player is close enough to interact with the interactable
-                float distanceFromInteractable = Vector2.Distance(hit.collider.gameObject.transform.position, transform.position);
-
-                Debug.Log(distanceFromInteractable + "   " + interactable.radius);
-
-                if (distanceFromInteractable < interactable.radius)
-                {
-                    mouseOverInteractableAndPlayerInRange = true;
-                    return interactable;
-                }
-
-                mouseOverInteractableAndPlayerInRange = false;
-                return null;
-            }
-            else
-            {
-                Debug.LogWarning("something wrong with the clickFeedback");
-                return null;
-            }
-        }
-        else
-        {
-            RemoveFocus();
-            SetMousePosition();
-            mouseOverInteractableAndPlayerInRange = false;
-            return null;
+            rigid.AddRelativeForce(Vector2.left * amount);
+            return;
         }
 
-
-    }
-
-    void SetFocus(Interactable newFocus)
-    {
-        if (newFocus != focus)
-        {
-            if (focus != null)
-            {
-                focus.OnDeFocused();
-            }
-            focus = newFocus;
-        }
-        newFocus.OnFocused(gameObject.transform);
-    }
-
-    void RemoveFocus()
-    {
-        if (focus != null)
-        {
-            focus.OnDeFocused();
-        }
-        focus = null;
-    }
-
-    public void KnockBack()
-    {
-        
+        rigid.AddRelativeForce(Vector2.right * amount);
     }
 
     public void OnCastComplete()
@@ -671,35 +793,46 @@ public class PlayerController : Interactable
         // addforce force to the projectiles rigidbody in that direction.
         projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
        
-
     }
 
     public void OnStrikeComplete()
     {
-        Debug.Log(equip.visibleGear.Length);
-
         if (equip.visibleGear[3].sprite == null)
             return;
 
         SoundManager.instance.PlayCombatSound("bladeSwing");
 
-        // Determine the correct angle to turn to the projectile
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        //create layer masks for the player
+        int enemyLayer = 11;
+        var enemyLayerMask = 1 << enemyLayer;
 
-        GameObject projectile = pooledArrows.GetPooledSword();
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(meleeStartPoint.position, 0.7f, enemyLayerMask);
 
-        var projectileScript = projectile.GetComponent<Projectile>();
-        projectileScript.MakeProjectileReady();
+        if (colliders.Length != 0)
+        {
+            foreach (Collider2D enemy in colliders)
+            {
+                if (enemy.gameObject.transform.parent.GetComponent<EnemyStats>() != null)
+                {
+                    if (!enemy.gameObject.transform.parent.GetComponent<EnemyAI>().isDead)
+                    {
 
-        projectile.transform.position = transform.position;
-        projectile.transform.rotation = Quaternion.identity;
-        projectile.transform.localScale = new Vector3(1, 1, 1);
+                        // play the impact particles that belongs to this enemy
+                        ParticleSystemHolder.instance.PlayImpactEffect(enemy.transform.parent.name + "_impact", enemy.transform.position);
+
+                        if (maxChargedHit)
+                        {
+                            enemy.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue() * 2);
+                            return;
+                        }
+                        enemy.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue());
+
+                    }
+                }
+            }
+        }
 
 
-        projectile.transform.Rotate(0, 0, angle, Space.World);
-        // addforce force to the projectiles rigidbody in that direction.
-        projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
-        
     }
 
     private void CheckDistancesToMouse(out float distanceFromFrontToMouse, out float distanceFromBackToMouse)
@@ -736,17 +869,21 @@ public class PlayerController : Interactable
         return mousePosition;
     } // commented
 
+    /// <summary>
+    /// Make sures all references are set for the player
+    /// </summary>
     private void InitializePlayerGameObject()
     {
         // Set all necessary references
         rigid = gameObject.GetComponent<Rigidbody2D>();
         playerStat = GetComponent<PlayerStats>();
         anim = GetComponent<Animator>();
-        gameDetails = GameDetails.instance;
         equip = EquipmentManager.instance;
         m_Plane = GameDetails.instance.m_Plane;
         pooledArrows = PooledProjectilesController.instance;
         cameraControl = CameraController.instance;
+        healthGroup = transform.Find("Health").GetComponent<CanvasGroup>();
+        healthBar = transform.Find("Health").transform.Find("Slider").GetComponent<Slider>();
 
         // set the lookat on the camera controller to be the playerObject.
         cameraControl.lookAt = this.gameObject;
@@ -765,7 +902,7 @@ public class PlayerController : Interactable
         {
             cameraControl.lookAt = this.gameObject;
         }
-    } // commented
+    }
 
     private ParticleSystem GetSystem(string systemName)
     {
@@ -790,34 +927,12 @@ public class PlayerController : Interactable
         Gizmos.color = Color.yellow;
         // set the size of the gizmo ( this one relates to the range at which the player will consider enemies to be "in range")
         Gizmos.DrawWireSphere(transform.position, 25);
-    } // commented
 
-    public void SetMouseQuadrant(CoordinateDirection newDir)
-    {
-        // set the mouseQuadrant to be the same as the paramter that has been passed in from the
-        // HitDirectionDetection Script to let the player know in which of the 4 quadrants the mouse is.
-        dir = newDir;
+        Gizmos.DrawWireSphere(meleeStartPoint.position, 0.5f);
     } // commented
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // if you're not in an indoor zone
-        if (!SceneManager.GetActiveScene().name.EndsWith("_indoor"))
-        {
-            // turn off your bodyLight
-            bodyLight.SetActive(false);
-        }
-
-        // if you ARE in a indoor zone
-        else if (SceneManager.GetActiveScene().name.EndsWith("_indoor"))
-        {
-            // turn off your bodyLight
-            bodyLight.SetActive(true);
-
-        }
-
-        miniMap.SetActive(false);
-
     }
 
     private void OnDisable()
@@ -826,25 +941,94 @@ public class PlayerController : Interactable
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    //private void SheatheWeaponary()
-    //{
-    //    Color c = new Color32(255, 255, 255, 0);
-    //    equip.visibleGear[3].color = c;
-    //    equip.visibleGear[4].color = c;
+    public void OnRiposte()
+    {
 
-    //    weaponsGone = true;
-    //}
+        int enemyLayer = 11;
+        var enemyLayerMask = 1 << enemyLayer;
 
-    //private void UnSheatheWeaponary()
-    //{
-    //    Color c = new Color32(255, 255, 255, 255);
-    //    equip.visibleGear[3].color = c;
-    //    equip.visibleGear[4].color = c;
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(meleeStartPoint.position, 0.7f, enemyLayerMask);
 
-    //    weaponsGone = false;
-    //}
+        if (colliders.Length != 0)
+        {
+            foreach (Collider2D enemy in colliders)
+            {
+                if (enemy.gameObject.transform.parent.GetComponent<EnemyAI>() != null)
+                {
+                    // create a direction vector from Hit position of the mouse and the projectiles original position
+                    Vector2 direction = new Vector2(enemy.transform.position.x - transform.position.x, enemy.transform.position.y - transform.position.y);
+                    direction.Normalize();
 
-    // checks the distance from the front of the player to the mouse and back of the player to the mouse and returns both values
+
+                    if (!enemy.gameObject.transform.parent.GetComponent<EnemyAI>().isDead)
+                    {
+                        SoundManager.instance.PlayCombatSound("shieldriposte");
+                        enemy.gameObject.transform.parent.GetComponent<EnemyAI>().Knockback(direction);
+                        enemy.gameObject.transform.parent.GetComponent<EnemyAI>().Stunned();
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Temporarily turns on the ability to riposte an attack
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator Riposte()
+    {
+        ripostePossible = true;
+
+        // TODO warn Player that riposte is available
+        var text = CombatTextManager.instance.FetchText(transform.position);
+        var textScript = text.GetComponent<CombatText>();
+        textScript.White("Riposte!", transform.position);
+
+        yield return new WaitForSeconds(riposteTime);
+
+        ripostePossible = false;
+    }
+
+    /// <summary>
+    /// Temporarily opens a window called "timedBlock" for use in combat system
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator TimedBlockInitialize()
+    {
+        timedBlock = true;
+
+        yield return new WaitForSeconds(blockTime);
+
+        timedBlock = false;
+    }
+
+    /// <summary>
+    /// Checks to see if player is holding in the hit key
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator CheckForHeldStrike()
+    {
+        // coroutine is running
+        heldStrikeCoroutinePlaying = true;
+
+        // set a bool to true at the start of the routine
+        largeStrike = true;
+
+        // wait for 0.3 seconds
+        yield return new WaitForSeconds(0.3f);
+
+        // if the boolean is still true (gets set to false if the button is released)
+        if (largeStrike)
+        {
+            // then set the animation state to true
+            largeStrikeAnimationReady = true;
+            // set the animation of the weapon above their head
+            anim.SetBool("StrikeHold", true);
+        }
+
+        // let the script know the routine is done running
+        heldStrikeCoroutinePlaying = false;
+    }
 
 }
 

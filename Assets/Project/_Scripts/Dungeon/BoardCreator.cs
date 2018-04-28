@@ -15,6 +15,8 @@ public class BoardCreator : MonoBehaviour
     public int chanceOfChestPerRoom;
     public int chanceOfBetterChestPerRoom;
 
+
+    public float chanceOfVariantFloorTiles;
     public int columns = 100;                                 // The number of columns on the board (how wide it will be).
     public int rows = 100;                                    // The number of rows on the board (how tall it will be).
     public IntRange numRooms = new IntRange(15, 20);         // The range of the number of rooms there can be.
@@ -24,7 +26,8 @@ public class BoardCreator : MonoBehaviour
 
     public IntRange numEnemy = new IntRange(0, 4);           // The range of enemies rooms can have.
 
-    public GameObject[] floorTiles;                           // An array of floor tile prefabs.
+    public GameObject normalFloorTile;                        // the normal floor tile that should be present in a majority of situations
+    public GameObject[] variantFloorTiles;                    // An array of floor tile prefabs that vary in graphic from the normal one
     public GameObject[] BlackArea;                            // An array of sprites that mask the non relevant areas.
     public GameObject[] colliderWalls;                        // An Array of walls that have colliders
     public GameObject[] outerWallTiles;                       // An array of outer wall tile prefabs.
@@ -38,6 +41,7 @@ public class BoardCreator : MonoBehaviour
     public GameObject entranceTorch;
     public GameObject chestLowerTier;
     public GameObject chestHigherTier;
+    public GameObject floorGrid;
 
     public Camera cam;
 
@@ -49,7 +53,6 @@ public class BoardCreator : MonoBehaviour
     private GameObject outterWallHolder;
 
     private Vector2 goalPos;
-    private Vector2 mapPos;
 
     public CreateGraph aStarGridCreator;
 
@@ -143,11 +146,6 @@ public class BoardCreator : MonoBehaviour
         else if (tmp.tag == "Goal")
         {
             goalPos = pos;
-        }
-
-        else if (tmp.tag == "Map")
-        {
-            mapPos = pos;
         }
     }
 
@@ -588,8 +586,24 @@ public class BoardCreator : MonoBehaviour
                 if (tiles[i][j] == TileType.Floor)
                 {
                     // ... instantiate a floor tile for it.
-                    InstantiateFromArrayFloor(floorTiles, i, j);
-                    //Debug.Log("there are " + (int)tiles[i][j] + " floor tiles");
+
+                    float rand = UnityEngine.Random.Range(0, 100);
+
+                    if (rand <= chanceOfVariantFloorTiles)
+                    {
+                        InstantiateFromArrayFloor(variantFloorTiles, i, j);
+                    }
+                    else
+                    {
+                        // The position to be instantiated at is based on the coordinates.
+                        Vector3 position = new Vector3(i, j, 0f);
+
+                        // Create an instance of the prefab from the random index of the array.
+                        GameObject tileInstance = Instantiate(normalFloorTile, position, Quaternion.identity) as GameObject;
+
+                        // Set the tile's parent to the board holder.
+                        tileInstance.transform.parent = boardHolder.transform;
+                    }
                 }
 
                 // If the tile type is Black area...

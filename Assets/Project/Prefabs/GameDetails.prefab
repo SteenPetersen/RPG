@@ -4546,7 +4546,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 1.8990347
+  orthographic size: 1.8950785
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -4582,7 +4582,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.8
+  orthographic size: 0.79833335
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -4870,6 +4870,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114699295278761592}
   removeButton: {fileID: 114427675113650846}
+  item: {fileID: 0}
 --- !u!114 &114000429479364972
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4978,6 +4979,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114859000172511776}
   removeButton: {fileID: 114623154647977122}
+  item: {fileID: 0}
 --- !u!114 &114009049962901284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5452,6 +5454,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114784344690807382}
   removeButton: {fileID: 114340948110388774}
+  item: {fileID: 0}
 --- !u!114 &114053231589939636
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5540,6 +5543,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114313037219751794}
   removeButton: {fileID: 114373973631208376}
+  item: {fileID: 0}
 --- !u!114 &114068247682384938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5682,8 +5686,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114343295289047332}
-  removeButton: {fileID: 114611098768310306}
+  MyIcon: {fileID: 0}
   slotId: 10
 --- !u!114 &114077934859380700
 MonoBehaviour:
@@ -5904,6 +5907,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114078107552432416}
   removeButton: {fileID: 114490897163801886}
+  item: {fileID: 0}
 --- !u!114 &114091258656102882
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6153,8 +6157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114989438058851632}
-  removeButton: {fileID: 114885345302603740}
+  MyIcon: {fileID: 0}
   slotId: 2
 --- !u!114 &114105261215916106
 MonoBehaviour:
@@ -6273,8 +6276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114148252680746804}
-  removeButton: {fileID: 114476265208148572}
+  MyIcon: {fileID: 0}
   slotId: 11
 --- !u!114 &114120525054760284
 MonoBehaviour:
@@ -6289,6 +6291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114072170912881424}
   removeButton: {fileID: 114033399722455838}
+  item: {fileID: 0}
 --- !u!114 &114129369563106766
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6377,6 +6380,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114749818178074240}
   removeButton: {fileID: 114593842440314364}
+  item: {fileID: 0}
 --- !u!114 &114135324257553100
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6667,6 +6671,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114150741072836698}
   removeButton: {fileID: 114801543588127220}
+  item: {fileID: 0}
 --- !u!114 &114150723735390214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6678,8 +6683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114313037219751794}
-  removeButton: {fileID: 114373973631208376}
+  MyIcon: {fileID: 0}
   slotId: 9
 --- !u!114 &114150741072836698
 MonoBehaviour:
@@ -6721,6 +6725,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114587061801688470}
   removeButton: {fileID: 114974164105653276}
+  item: {fileID: 0}
 --- !u!114 &114154718844909208
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6973,6 +6978,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114181983391941478}
   removeButton: {fileID: 114635079993162884}
+  item: {fileID: 0}
 --- !u!114 &114179560813382782
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7090,8 +7096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114784344690807382}
-  removeButton: {fileID: 114340948110388774}
+  MyIcon: {fileID: 0}
   slotId: 7
 --- !u!114 &114194095435326188
 MonoBehaviour:
@@ -7106,6 +7111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114342087177335022}
   removeButton: {fileID: 114466781434903806}
+  item: {fileID: 0}
 --- !u!114 &114194401372495438
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7516,6 +7522,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114094035728419458}
   removeButton: {fileID: 114185153583476274}
+  item: {fileID: 0}
 --- !u!114 &114252458746446298
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7626,6 +7633,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114891988951086600}
   removeButton: {fileID: 114228692433771546}
+  item: {fileID: 0}
 --- !u!114 &114259886321997150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7639,6 +7647,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114129369563106766}
   removeButton: {fileID: 114653939032037332}
+  item: {fileID: 0}
 --- !u!114 &114263552306686504
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7787,6 +7796,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114670127981876458}
   removeButton: {fileID: 114173138787406322}
+  item: {fileID: 0}
 --- !u!114 &114281127085650432
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7964,8 +7974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114979194742611446}
-  removeButton: {fileID: 114947581722727830}
+  MyIcon: {fileID: 0}
   slotId: 0
 --- !u!114 &114289760601371470
 MonoBehaviour:
@@ -8177,8 +8186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114573401444545058}
-  removeButton: {fileID: 114068247682384938}
+  MyIcon: {fileID: 0}
   slotId: 4
 --- !u!114 &114313037219751794
 MonoBehaviour:
@@ -8625,6 +8633,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114159998426891682}
   removeButton: {fileID: 114870912961028708}
+  item: {fileID: 0}
 --- !u!114 &114348261275099302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8666,6 +8675,8 @@ MonoBehaviour:
   itemsParent: {fileID: 224957711705271350}
   BagUI: {fileID: 1467339104046188}
   inventoryCam: {fileID: 1842271940594510}
+  inventory: {fileID: 0}
+  slots: []
 --- !u!114 &114353820762261638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8816,6 +8827,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114429492732855816}
   removeButton: {fileID: 114789809481503808}
+  item: {fileID: 0}
 --- !u!114 &114369032884918058
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9012,8 +9024,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114931691168063016}
-  removeButton: {fileID: 114605894056853338}
+  MyIcon: {fileID: 0}
   slotId: 1
 --- !u!114 &114383179857938778
 MonoBehaviour:
@@ -9889,6 +9900,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114373711922306186}
   removeButton: {fileID: 114617612580527304}
+  item: {fileID: 0}
 --- !u!114 &114466781434903806
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10066,6 +10078,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114096971450849224}
   removeButton: {fileID: 114716332918113040}
+  item: {fileID: 0}
 --- !u!114 &114481528658839856
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10077,8 +10090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114699295278761592}
-  removeButton: {fileID: 114427675113650846}
+  MyIcon: {fileID: 0}
   slotId: 5
 --- !u!114 &114482674401313042
 MonoBehaviour:
@@ -10145,6 +10157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114252813100855772}
   removeButton: {fileID: 114734823044315154}
+  item: {fileID: 0}
 --- !u!114 &114485053320127790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10351,6 +10364,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114861409072262966}
   removeButton: {fileID: 114434779345512864}
+  item: {fileID: 0}
 --- !u!114 &114508728545598964
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10510,6 +10524,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114333142583421786}
   removeButton: {fileID: 114454149429939242}
+  item: {fileID: 0}
 --- !u!114 &114529105956699644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10637,6 +10652,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114476571852107988}
   removeButton: {fileID: 114886901427642674}
+  item: {fileID: 0}
 --- !u!114 &114545038795220534
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10650,6 +10666,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114880090387881670}
   removeButton: {fileID: 114606782396763132}
+  item: {fileID: 0}
 --- !u!114 &114545315859428052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11301,6 +11318,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114148252680746804}
   removeButton: {fileID: 114476265208148572}
+  item: {fileID: 0}
 --- !u!114 &114606782396763132
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11366,6 +11384,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114268427053705950}
   removeButton: {fileID: 114582212007859586}
+  item: {fileID: 0}
 --- !u!114 &114611098768310306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11431,6 +11450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114283019445340394}
   removeButton: {fileID: 114884481466837352}
+  item: {fileID: 0}
 --- !u!114 &114616858739763552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11749,7 +11769,10 @@ MonoBehaviour:
   levelup: {fileID: 0}
   deathsound: {fileID: 0}
   bomb: {fileID: 0}
+  shieldblock: {fileID: 0}
+  shieldriposte: {fileID: 0}
   lootdrop: {fileID: 0}
+  purchase: {fileID: 0}
   chestopen: {fileID: 0}
   chestclose: {fileID: 0}
   audioSrc: {fileID: 0}
@@ -12082,6 +12105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114929011408609686}
   removeButton: {fileID: 114879744449845610}
+  item: {fileID: 0}
 --- !u!114 &114659921474776206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12475,6 +12499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114679997857741046}
   removeButton: {fileID: 114715302561714928}
+  item: {fileID: 0}
 --- !u!114 &114697993713669052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12487,6 +12512,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ImpBlood: {fileID: 198723816214596072, guid: 2989660ab4e96fb429035a9434bf3f8a, type: 2}
+  stunWords: []
+  critWords: []
 --- !u!114 &114699007980935124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12554,6 +12581,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114830985906911878}
   removeButton: {fileID: 114944532994581854}
+  item: {fileID: 0}
 --- !u!114 &114704746873346240
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12775,6 +12803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114042775508379708}
   removeButton: {fileID: 114836152720756422}
+  item: {fileID: 0}
 --- !u!114 &114719654143394954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13083,8 +13112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114342087177335022}
-  removeButton: {fileID: 114466781434903806}
+  MyIcon: {fileID: 0}
   slotId: 6
 --- !u!114 &114746058566746594
 MonoBehaviour:
@@ -13205,6 +13233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114343295289047332}
   removeButton: {fileID: 114611098768310306}
+  item: {fileID: 0}
 --- !u!114 &114762096901556460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13297,6 +13326,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114494581618032108}
   removeButton: {fileID: 114031899119854500}
+  item: {fileID: 0}
 --- !u!114 &114776996188565752
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13364,6 +13394,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114369032884918058}
   removeButton: {fileID: 114143436795116250}
+  item: {fileID: 0}
 --- !u!114 &114789809481503808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13665,6 +13696,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114573401444545058}
   removeButton: {fileID: 114068247682384938}
+  item: {fileID: 0}
 --- !u!114 &114829460890586088
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13678,6 +13710,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114395245720948514}
   removeButton: {fileID: 114305315405048774}
+  item: {fileID: 0}
 --- !u!114 &114830908386577262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13951,8 +13984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114252813100855772}
-  removeButton: {fileID: 114734823044315154}
+  MyIcon: {fileID: 0}
   slotId: 12
 --- !u!114 &114858384216549642
 MonoBehaviour:
@@ -14297,8 +14329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114094035728419458}
-  removeButton: {fileID: 114185153583476274}
+  MyIcon: {fileID: 0}
   slotId: 3
 --- !u!114 &114882542197863456
 MonoBehaviour:
@@ -14729,6 +14760,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114079800521753388}
   removeButton: {fileID: 114924510506494634}
+  item: {fileID: 0}
 --- !u!114 &114906897424654714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14769,6 +14801,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114016573711148160}
   removeButton: {fileID: 114034189742209926}
+  item: {fileID: 0}
 --- !u!114 &114922680659403370
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15006,6 +15039,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114931691168063016}
   removeButton: {fileID: 114605894056853338}
+  item: {fileID: 0}
 --- !u!114 &114947581722727830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15139,6 +15173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114194401372495438}
   removeButton: {fileID: 114482674401313042}
+  item: {fileID: 0}
 --- !u!114 &114962010754133704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15150,8 +15185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b5f07c92d1a14d8bde47e683c4de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 114494581618032108}
-  removeButton: {fileID: 114031899119854500}
+  MyIcon: {fileID: 0}
   slotId: 8
 --- !u!114 &114967372327272356
 MonoBehaviour:
@@ -15193,6 +15227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114148398082209626}
   removeButton: {fileID: 114746058566746594}
+  item: {fileID: 0}
 --- !u!114 &114971086579393492
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15207,7 +15242,6 @@ MonoBehaviour:
   dialogueNPCIsStandingOnTheRight: {x: 0, y: -9, z: -6.3}
   dialogueNPCIsStandingOnTheLeft: {x: 1.86, y: -9, z: -6.3}
   dialogueCamera: {fileID: 0}
-  sunLight: {fileID: 108807669963910864}
   fadeToBlack: {fileID: 114666093297855654}
   fadeSpeed: 0.01
   playerFeedbackSystem: {fileID: 0}
@@ -15230,7 +15264,7 @@ MonoBehaviour:
   - {fileID: 1154410413141084, guid: cfb0b57782ab78a40b53e7c4d2aad1db, type: 2}
   - {fileID: 1939266952197240, guid: 34d0269fb6b197c4db6738f952a8ba5f, type: 2}
   - {fileID: 1939266952197240, guid: 44cacd91ad95fd84486ad7130ba42c60, type: 2}
-  - {fileID: 1003413813164730, guid: f3d9dad5702fc0548b571dfb343ae722, type: 2}
+  - {fileID: 0}
   - {fileID: 0}
   player: {fileID: 0}
 --- !u!114 &114974164105653276
@@ -15325,6 +15359,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114533910887405654}
   removeButton: {fileID: 114887757378058168}
+  item: {fileID: 0}
 --- !u!114 &114982213971257870
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15361,6 +15396,7 @@ MonoBehaviour:
   - {fileID: 114077293691388770}
   - {fileID: 114117033256297506}
   - {fileID: 114852607976292672}
+  weaponGlowSlot: {fileID: 0}
   currentEquipment:
   - {fileID: 0}
   - {fileID: 0}
@@ -15467,6 +15503,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 114274117166308110}
   removeButton: {fileID: 114622987648213340}
+  item: {fileID: 0}
 --- !u!114 &114994879576165472
 MonoBehaviour:
   m_ObjectHideFlags: 1

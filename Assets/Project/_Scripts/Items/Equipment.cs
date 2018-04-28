@@ -2,16 +2,34 @@
 using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "New Equipment", menuName = "Inventory/Equipment")]
-public class Equipment : Item {
+public class Equipment : Item, IUseable {
 
     public EquipmentSlot equipSlot;
     public EquipmentType equipType;
     public Sprite characterVisibleSprite;
 
+    [SerializeField] Sprite glowEffect;
+
     public int armorModifier;
     public int damageModifier;
 
     public int rangedProjectile;
+
+    public Sprite MyGlowSprite
+    {
+        get
+        {
+            return glowEffect;
+        }
+    }
+
+    public new Sprite MyIcon
+    {
+        get
+        {
+            return icon;
+        }
+    }
 
     public override void Use()
     {
@@ -22,7 +40,7 @@ public class Equipment : Item {
             //remove it from inventory if it managed to get equipped
             if (equipIt)
             {
-                RemoveFromInventory();
+                Remove();
             }
         }
     }

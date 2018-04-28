@@ -20,7 +20,7 @@ public class HitDirectionDetection : MonoBehaviour {
         mouseAbove = true;
         if (player != null)
         {
-            player.SetMouseQuadrant(dir);
+            //player.SetMouseQuadrant(dir);
 
         }
     }

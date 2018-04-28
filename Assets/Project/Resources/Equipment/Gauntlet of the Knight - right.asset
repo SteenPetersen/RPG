@@ -13,7 +13,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Gauntlet of the Knight - right
   icon: {fileID: 21300000, guid: dd47d319692876d46a0a44e39e5cfa5e, type: 3}
+  sellValue: 15
+  buyValue: 100
   isDefaultItem: 0
+  typeOfEquipment: 0
+  stackSize: 0
+  MySlot: {fileID: 0}
   equipSlot: 8
   equipType: 2
   characterVisibleSprite: {fileID: 21300020, guid: 76db9d444e46de4459e2e2c2e4bd669d,
