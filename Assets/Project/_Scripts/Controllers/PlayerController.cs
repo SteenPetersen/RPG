@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     GameObject skeleton;
     Vector2 mousePosition;
     EventSystem eventSys;
-    float thrustSpeed = 0.1f;                  
+    float thrustSpeed = 0.5f;                  
 
     Rigidbody2D rigid;
     CameraController cameraControl;
@@ -93,11 +93,10 @@ public class PlayerController : MonoBehaviour
 
     #endregion Public Variables
 
-    #region Logic inside player Gameobject
     public Transform back;
-    [HideInInspector] public CanvasGroup healthGroup;
-    [HideInInspector] public Slider healthBar;
-    #endregion
+    public Image healthBar;
+    public Image staminaBar;
+    float currentSta;
 
     #region projectiles
     PooledProjectilesController pooledArrows;
@@ -121,7 +120,9 @@ public class PlayerController : MonoBehaviour
     public bool blocking;
     #endregion
 
-    private bool mouseOverInteractableAndPlayerInRange;
+    [SerializeField] private bool mouseOverInteractableAndPlayerInRange;
+    [SerializeField] ParticleSystem weaponCharged;
+    bool weaponChargeReady;
 
     private void OnEnable()
     {
@@ -144,13 +145,27 @@ public class PlayerController : MonoBehaviour
         HandleActionBarInput();
         HandleAnimation();
 
-        CheckForInteractable();
         CheckIfFacingCorrectDirection();
         HandleMovement();
 
+        if (staminaBar.fillAmount != playerStat.CalculateHealth(playerStat.MyCurrentStamina, playerStat.MyMaxStamina))
+        {
+            LerpStaminaBar();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        //Must happen in fixed update so all computers charge weapon at same speed
         if (largeStrikeAnimationReady)
         {
             ChargeHit();
+
+            if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98 && !weaponChargeReady)
+            {
+                weaponChargeReady = true;
+                weaponCharged.Play();
+            }
         }
     }
 
@@ -206,7 +221,7 @@ public class PlayerController : MonoBehaviour
         // while you have enemies in the area
         while (enemiesInRange)
         {
-            Debug.Log("calling Coroutine");
+            //Debug.Log("calling Coroutine");
 
             // run through all the enemies in the list
             for (int i = 0; i < enemies.Count; i++)
@@ -261,6 +276,7 @@ public class PlayerController : MonoBehaviour
 
                         if (inter != null)
                         {
+                            Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
                             inter.Interact();
                             return;
                         }
@@ -291,6 +307,8 @@ public class PlayerController : MonoBehaviour
                         Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
                         tmp.a = 0;
                         EquipmentManager.instance.weaponGlowSlot.color = tmp;
+                        weaponChargeReady = false;
+                        weaponCharged.Stop();
 
                         return;
                     }
@@ -371,11 +389,26 @@ public class PlayerController : MonoBehaviour
             // if the player hits the left mouse button
             if (Input.GetMouseButton(0))
             {
+                bool canHit = CheckIfPlayerMayHit();
+
                 // if player is not allowed to hit the stop the code from running further
-                if (mouseOverInteractableAndPlayerInRange)
+                if (!canHit)
                 {
-                    //SetFocus(currentInteractable);
-                    return;
+                    Vendor vendor = CheckForVendor();
+                    Interactable inter = CheckForInteractable();
+
+                    if (inter != null)
+                    {
+                        Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
+                        inter.Interact();
+                        return;
+                    }
+
+                    if (vendor != null)
+                    {
+                        vendor.Interact();
+                        return;
+                    }
                 }
 
                 // if player is allowed to hit then animate the shooting
@@ -392,9 +425,8 @@ public class PlayerController : MonoBehaviour
     {
         if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
         {
-            Debug.Log("!");
             Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-            tmp.a += 0.006f;
+            tmp.a += 0.009f;
             EquipmentManager.instance.weaponGlowSlot.color = tmp;
         }
     }
@@ -493,7 +525,7 @@ public class PlayerController : MonoBehaviour
 
                 //Debug.Log(distanceFromInteractable + "   " + interactable.radius);
 
-                if (distanceFromInteractable < interactable.radius)
+                if (distanceFromInteractable < interactable.MyRadius)
                 {
                     mouseOverInteractableAndPlayerInRange = true;
                     return interactable;
@@ -510,7 +542,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            //RemoveFocus();
             SetMousePosition();
             mouseOverInteractableAndPlayerInRange = false;
             return null;
@@ -555,25 +586,41 @@ public class PlayerController : MonoBehaviour
         // jump forward
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("calling ghost spawn");
-            var trail = GetSystem("thrustTrail");
-            trail.Play();
-            anim.SetTrigger("Thrust");
-
-            SpawnGhostImage(directionOfMovement);
-
-            // if you're standing still move towards mnouse instead
-            if (directionOfMovement == Vector2.zero)
+            if (playerStat.MyCurrentStamina >= 50)
             {
-                Vector3 directionMouse = new Vector3(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y, 0f);
-                directionMouse.Normalize();
-                rigid.AddRelativeForce(directionMouse * thrustSpeed);
-                return;
+                playerStat.MyCurrentStamina -= 50;
+
+                Debug.Log("calling ghost spawn");
+                var trail = GetSystem("thrustTrail");
+                trail.Play();
+                anim.SetTrigger("Thrust");
+
+                SpawnGhostImage(directionOfMovement);
+
+                // if you're standing still move towards mnouse instead
+                if (directionOfMovement == Vector2.zero)
+                {
+                    Vector3 directionMouse = new Vector3(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y, 0f);
+                    directionMouse.Normalize();
+                    rigid.AddRelativeForce(directionMouse * thrustSpeed);
+                    return;
+                }
+
+                // add a relative local force to the player rigidbody in the given direction.
+                rigid.AddRelativeForce(directionOfMovement * thrustSpeed);
             }
 
-            // add a relative local force to the player rigidbody in the given direction.
-            rigid.AddRelativeForce(directionOfMovement * thrustSpeed);
         }
+    }
+
+    /// <summary>
+    /// Lerps the stamina Bar between its before cost and after values
+    /// </summary>
+    private void LerpStaminaBar()
+    {
+        staminaBar.fillAmount = Mathf.Lerp(staminaBar.fillAmount, 
+            playerStat.CalculateHealth(playerStat.MyCurrentStamina, playerStat.MyMaxStamina), 
+            Time.deltaTime * 8);
     }
 
     private void HandleActionBarInput()
@@ -706,11 +753,11 @@ public class PlayerController : MonoBehaviour
         //Gather obects not to be flipped///
         ////////////////////////////////////
 
-        CanvasGroup healthImage = healthGroup;
+        //CanvasGroup healthImage = healthGroup;
 
-        Vector3 healthPos = healthImage.gameObject.transform.position;
+        //Vector3 healthPos = healthImage.gameObject.transform.position;
 
-        healthImage.transform.SetParent(null);
+        //healthImage.transform.SetParent(null);
 
         ////////////////////////////////////
         //////////Flip the objects//////////
@@ -723,31 +770,9 @@ public class PlayerController : MonoBehaviour
 
         transform.localScale = theScale;
 
-        healthImage.transform.SetParent(transform);
-        healthImage.transform.position = healthPos;
+        //healthImage.transform.SetParent(transform);
+        //healthImage.transform.position = healthPos;
     }
-
-    //void SetFocus(Interactable newFocus)
-    //{
-    //    if (newFocus != focus)
-    //    {
-    //        if (focus != null)
-    //        {
-    //            focus.OnDeFocused();
-    //        }
-    //        focus = newFocus;
-    //    }
-    //    newFocus.OnFocused(gameObject.transform);
-    //}
-
-    //void RemoveFocus()
-    //{
-    //    if (focus != null)
-    //    {
-    //        focus.OnDeFocused();
-    //    }
-    //    focus = null;
-    //}
 
     public void KnockBack(float amount)
     {
@@ -792,7 +817,8 @@ public class PlayerController : MonoBehaviour
 
         // addforce force to the projectiles rigidbody in that direction.
         projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
-       
+
+        GameDetails.arrowsFired++;
     }
 
     public void OnStrikeComplete()
@@ -816,22 +842,21 @@ public class PlayerController : MonoBehaviour
                 {
                     if (!enemy.gameObject.transform.parent.GetComponent<EnemyAI>().isDead)
                     {
-
                         // play the impact particles that belongs to this enemy
                         ParticleSystemHolder.instance.PlayImpactEffect(enemy.transform.parent.name + "_impact", enemy.transform.position);
 
                         if (maxChargedHit)
                         {
                             enemy.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue() * 2);
+                            GameDetails.fullChargeHits += 1;
                             return;
                         }
                         enemy.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue());
-
+                        GameDetails.hits += 1;
                     }
                 }
             }
         }
-
 
     }
 
@@ -882,8 +907,6 @@ public class PlayerController : MonoBehaviour
         m_Plane = GameDetails.instance.m_Plane;
         pooledArrows = PooledProjectilesController.instance;
         cameraControl = CameraController.instance;
-        healthGroup = transform.Find("Health").GetComponent<CanvasGroup>();
-        healthBar = transform.Find("Health").transform.Find("Slider").GetComponent<Slider>();
 
         // set the lookat on the camera controller to be the playerObject.
         cameraControl.lookAt = this.gameObject;
@@ -963,6 +986,7 @@ public class PlayerController : MonoBehaviour
                     if (!enemy.gameObject.transform.parent.GetComponent<EnemyAI>().isDead)
                     {
                         SoundManager.instance.PlayCombatSound("shieldriposte");
+                        GameDetails.ripostes += 1;
                         enemy.gameObject.transform.parent.GetComponent<EnemyAI>().Knockback(direction);
                         enemy.gameObject.transform.parent.GetComponent<EnemyAI>().Stunned();
                     }

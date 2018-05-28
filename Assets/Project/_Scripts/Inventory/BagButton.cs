@@ -22,13 +22,13 @@ public class BagButton : MonoBehaviour, IPointerClickHandler {
         {
             if (value != null)
             {
-                Debug.Log("Setting sprite to full");
+                //Debug.Log("Setting sprite to full");
 
                 GetComponent<Image>().sprite = full;
             }
             else
             {
-                Debug.Log("Setting sprite to Empty");
+                //Debug.Log("Setting sprite to Empty");
 
                 GetComponent<Image>().sprite = empty;
             }
@@ -36,10 +36,16 @@ public class BagButton : MonoBehaviour, IPointerClickHandler {
         }
     }
 
+    /// <summary>
+    /// determines what happens when the bagbutton is clicked
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerClick(PointerEventData eventData)
     {
+
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+            // if you grabbed the bag from somewhere in your inventory
             if (InventoryScript.instance.FromSlot != null && HandScript.instance.MyMoveable != null && HandScript.instance.MyMoveable is Bag)
             {
                 // if we have a bag equipped already
@@ -49,20 +55,64 @@ public class BagButton : MonoBehaviour, IPointerClickHandler {
                 }
                 else
                 {
+                    // make a new replica bag
                     Bag tmp = (Bag)HandScript.instance.MyMoveable;
-                    tmp.MyBagButton = this; // make it be equipped on a specific slot in the bagbar
+
+                    // set the replica bag to be allocated to this slot
+                    tmp.MyBagButton = this;
+
                     tmp.Use();
+
                     MyBag = tmp;
+
                     HandScript.instance.Drop();
+
                     InventoryScript.instance.FromSlot = null;
                 }
             }
+
+            // if you are just changing the bags positions on the bagbar
+            if (InventoryScript.instance.FromSlot == null && HandScript.instance.MyMoveable != null && HandScript.instance.MyMoveable is Bag)
+            {
+                // if we have a bag equipped already
+                if (MyBag != null)
+                {
+                    InventoryScript.instance.SwapBags(MyBag, HandScript.instance.MyMoveable as Bag);
+                }
+                else
+                {
+                    // make a new replica bag
+                    Bag tmp = (Bag)HandScript.instance.MyMoveable;
+
+                    if (tmp.MyBagButton.MyBag.MyBagScript.isOpen)
+                    {
+                        tmp.MyBagButton.MyBag.MyBagScript.OpenClose();
+                    }
+
+                    tmp.MyBagButton.RemoveBag();
+
+                    tmp.MyBagButton = this;
+
+                    tmp.Use();
+
+                    MyBag = tmp;
+
+                    HandScript.instance.Drop();
+
+                    InventoryScript.instance.FromSlot = null;
+                }
+            }
+
             else if (Input.GetKey(KeyCode.LeftShift))
             {
-                HandScript.instance.TakeMoveable(MyBag);
+                if (HandScript.instance.MyMoveable == null)
+                {
+                    HandScript.instance.TakeMoveable(MyBag);
+                }
             }
 
         }
+
         else if (bag != null)
         {
             bag.MyBagScript.OpenClose();

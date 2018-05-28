@@ -200,6 +200,8 @@ MonoBehaviour:
   icon: {fileID: 114747952358575586}
   itemName: {fileID: 114289797166766758}
   sellPrice: {fileID: 114518971193285926}
+  item: {fileID: 0}
+  isDefaultStock: 0
 --- !u!114 &114289797166766758
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -226,7 +228,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 7
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0

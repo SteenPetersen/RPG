@@ -117,7 +117,6 @@ public class EquipedItemSlot : MonoBehaviour
 
     }
 
-
     private void OnDisable()
     {
         //Debug.Log("Called OnDisabled on EquipedItemSlot");

@@ -18,6 +18,7 @@ public class ParticleSystemHolder : MonoBehaviour {
     }
 
     public ParticleSystem ImpBlood;
+    public ParticleSystem bombExplosion;
     public GameObject[] stunWords;
     public GameObject[] critWords;
 

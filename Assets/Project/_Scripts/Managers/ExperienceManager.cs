@@ -102,7 +102,6 @@ public class ExperienceManager : MonoBehaviour {
         float value = 0;
 
         value = (level * level + level + 3) * 6;
-        Debug.Log(value);
 
         return value;
     }

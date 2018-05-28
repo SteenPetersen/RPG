@@ -4,12 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class Vendor : MonoBehaviour {
+public class Vendor : MonoBehaviour
+{
 
     [SerializeField]
     VendorType vendorType;
-
-    bool vendorWindowOpen;
 
     public float radius;
 
@@ -40,7 +39,8 @@ public class Vendor : MonoBehaviour {
         }
     }
 
-    void Start () {
+    void Start()
+    {
 
         vendorUi = GameObject.Find("VendorUi");
         vendorWindow = vendorUi.GetComponentInParent<CanvasGroup>();
@@ -49,15 +49,15 @@ public class Vendor : MonoBehaviour {
 
     private void Update()
     {
-        if (vendorWindowOpen)
+        if (VendorManager.instance.vendorWindowOpen)
         {
-            float distance = Vector2.Distance(PlayerController.instance.transform.position, transform.position);
+            float distance = Vector2.Distance(PlayerController.instance.transform.position, 
+                                              VendorWindow.instance.MyVendor.transform.position);
 
             // if the player moves away from the vendor then close the window
             if (distance > radius * 4)
             {
                 OpenClose();
-                vendorWindowOpen = false;
             }
         }
     }
@@ -68,10 +68,8 @@ public class Vendor : MonoBehaviour {
     /// </summary>
     public void Interact()
     {
-        if (!vendorWindowOpen)
+        if (!VendorManager.instance.vendorWindowOpen)
         {
-            vendorWindowOpen = true;
-
             Debug.Log("Player just clicked me");
 
             int count = 1;
@@ -118,7 +116,7 @@ public class Vendor : MonoBehaviour {
             }
 
             OpenClose();
-            
+
         }
     }
 
@@ -129,6 +127,7 @@ public class Vendor : MonoBehaviour {
     {
         // if the vendor UI menu's alpha is above zero set it to zero, else set it to 1
         vendorWindow.alpha = vendorWindow.alpha > 0 ? 0 : 1;
+
         // make sure you can block raycasts
         vendorWindow.blocksRaycasts = vendorWindow.blocksRaycasts == true ? false : true;
 

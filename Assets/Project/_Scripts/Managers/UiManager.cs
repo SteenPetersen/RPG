@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UiManager : MonoBehaviour {
 
@@ -56,24 +57,30 @@ public class UiManager : MonoBehaviour {
             PlayerStats.instance.TakeDamage(10);
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            SceneManager.LoadSceneAsync(3);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             OpenCloseMenu();
         }
 
         if (Input.GetButtonDown("Inventory"))
         {
-            if (!PlayerController.instance.facingRight)
+            if (!PlayerController.instance.dialogue)
             {
-                PlayerController.instance.FlipPlayer();
+                if (!PlayerController.instance.facingRight)
+                {
+                    PlayerController.instance.FlipPlayer();
+                }
+
+                GameDetails.instance.paused = GameDetails.instance.paused == true ? false : true;
+                inventoryCam.SetActive(!inventoryCam.activeSelf);
+                equipmentWindow.SetActive(!equipmentWindow.activeSelf);
             }
-
-            GameDetails.instance.paused = GameDetails.instance.paused == true ? false : true;
-            inventoryCam.SetActive(!inventoryCam.activeSelf);
-            equipmentWindow.SetActive(!equipmentWindow.activeSelf);
-
         }
-
     }
 
     /// <summary>

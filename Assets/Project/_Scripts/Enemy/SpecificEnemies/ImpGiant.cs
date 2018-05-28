@@ -5,17 +5,39 @@ using Pathfinding;
 
 public class ImpGiant : EnemyAI {
 
+    /// <summary>
+    /// Phase in which the boss is during the fight
+    /// </summary>
+    [SerializeField] int phase;
+
+    /// <summary>
+    /// Radius in which the bombs ultimate resting position can be placed
+    /// </summary>
+    [SerializeField] float bombRadius;
+
+    public GameObject bossBomb;
+
     [Header("Giant Specific variables")]
-    public GameObject novaCannon;
-    public GameObject FireBalls;
     public float novaRotationSpeed; // speed at which fireball launcher rotates around boss. this relates directly to how many fireballs are launched
     public float fireDelay;
 
-    [HideInInspector]
-    public bool dialogueFinished;  // so boss doesnt start fighting before dialogue is finished
+    [HideInInspector] public bool dialogueFinished;  // so boss doesnt start fighting before dialogue is finished
+
+    /// <summary>
+    /// Needs to be accessed by the boom from the fireNova in order to alter them
+    /// </summary>
+    public bool magicShieldUp, stunned;
+
+    /// <summary>
+    /// Needs to be accessed by the boom from the fireNova in order to disactivate it
+    /// </summary>
+    public ParticleSystem magicShield;
+
+    [SerializeField] GameObject FireCircle;
 
     protected override void Start()
     {
+        InitializeEnemy();
         setter = GetComponent<AIDestinationSetter>();
         playerObj = PlayerController.instance.gameObject.transform;
     }
@@ -24,44 +46,27 @@ public class ImpGiant : EnemyAI {
     {
         if (dialogueFinished)
         {
+            if (!magicShieldUp && !pausingMovement)
+            {
+                magicShield.Play();
+                myStats.shielded = true;
+                magicShieldUp = true;
+            }
+
             timer -= Time.deltaTime;
-
-            novaCannon.transform.Rotate(0, 0, novaRotationSpeed);
-
-            DisplayHealth();
 
             if (isDead)
             {
-                setter.ai.canMove = false;
-                GetComponent<Rigidbody2D>().isKinematic = true;
-                setter.ai.destination = tr.position;
-                setter.targetASTAR = null;
-                setter.enabled = false;
-
                 EnemyHolder.instance.bossIsAlive = false;
-
-
                 return;
             }
 
             base.Update();
 
-
-            if (Mathf.Approximately(velocity.x, 0) && Mathf.Approximately(velocity.y, 0) && moving)
-            {
-                //Debug.Log("stopping");
-                anim.SetBool("Walk", false);
-                moving = false;
-            }
-            else if (velocity.x > 0.03 || velocity.y > 0.03 && !moving)
-            {
-                // Debug.Log("moving");
-                anim.SetBool("Walk", true);
-                moving = true;
-            }
-
             if (timer < 0 && haveAggro)
             {
+                SpreadBombs(3);
+
                 Debug.Log("summon");
                 anim.SetTrigger("Summon");
 
@@ -71,10 +76,51 @@ public class ImpGiant : EnemyAI {
         }
     }
 
+    /// <summary>
+    /// Disables Boss monsters magic shield
+    /// </summary>
+    public void DisableMagicShield()
+    {
+        magicShield.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        myStats.shielded = false;
+        magicShieldUp = false;
+    }
+
+    /// <summary>
+    /// Casts the heatseeking fire circle
+    /// </summary>
     public override void CastFireCircle()
     {
-        GameObject i = Instantiate(FireBalls, null);
+        GameObject i = Instantiate(FireCircle, null);
         i.gameObject.transform.position = playerObj.transform.position;
+    }
+
+    /// <summary>
+    /// Boss scatters a certain amount of bombs randomly around himself
+    /// </summary>
+    void SpreadBombs(int amountOfBombs)
+    {
+        // determine position of boss
+        Vector2 bossPosition = transform.position;
+
+        for (int i = 0; i < amountOfBombs; i++)
+        {
+            // determine positions bombs will stop
+            Vector2 pos = bossPosition + UnityEngine.Random.insideUnitCircle * bombRadius;
+
+            // spawn bombs at boss position
+            GameObject tmp = Instantiate(bossBomb, bossPosition, Quaternion.identity);
+
+            // Identify the script on the bomb
+            LerpToPosition script = tmp.GetComponent<LerpToPosition>();
+
+            // send bombs from boss position to stop position
+            script.SetDestination(pos);
+        }
+        
+
+        // play bomb sounds
+        // SoundManager.instance.PlayUiSound("lootdrop");
     }
 
     public override void DetermineAggro(Vector3 pos)

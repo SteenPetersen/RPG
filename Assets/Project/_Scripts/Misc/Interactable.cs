@@ -1,71 +1,31 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Interactable : MonoBehaviour {
+public abstract class Interactable : MonoBehaviour {
 
-    public float radius;
-    public string objectName;
+    [SerializeField] protected float radius;
+    [SerializeField] protected string objectName;
+    protected bool hasInteracted;
+    protected Transform player;
 
-    [HideInInspector]
-    public GameDetails gameDetails;
+    public float MyRadius
+    {
+        get { return radius; }
+    }
 
-    [HideInInspector]
-    public bool isFocus, hasInteracted = false;
-
-    public Transform player;
-    [Tooltip("avoid complications during flipping - feed the 3D selector")]
-    public GameObject selector;
-
-    #region Health
-    [SerializeField]
-    public CanvasGroup healthGroup;
-    public Slider healthbar;
-
-    #endregion
-
-    [HideInInspector]
-    public PlayerController playercontrol;
-
+    /// <summary>
+    /// Allow other scripts to interact with this abstract class
+    /// </summary>
     public virtual void Interact()
     {
         // this method is meant to be overwritten
         Debug.Log("interacting with " + gameObject.name);
     }
 
-    public virtual void Follow()
-    {
-
-    }
-
-    private void OnDrawGizmosSelected()
+    protected void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, radius);
     }
-
-    public void OnFocused(Transform playerTransform)
-    {
-        isFocus = true;
-        player = playerTransform;
-        hasInteracted = false;
-    }
-
-    public void OnDeFocused()
-    {
-        isFocus = false;
-        player = null;
-        hasInteracted = false;
-    }
-
-    public float CalculateHealth(float currentHealth, float maxHealth)
-    {
-        return currentHealth / maxHealth;
-    }
-
-    public virtual void AdvanceSpeech()
-    {
-
-    }
-
 
 }

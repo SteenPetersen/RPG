@@ -7,26 +7,19 @@ public class ImpGiantDialogue : DialogueNPC {
     bool hasTalkedToGiant = false;
     ImpGiant combatScript;
 
-    private void Start()
-    {
-        GameDetails.instance.fadeToBlack.enabled = true;
-        dialogueAvailable = GetComponentInChildren<ParticleSystem>();
-        gameDetails = GameDetails.instance;
-        playerControl = PlayerController.instance;
-        cam = CameraController.instance;
 
+
+    protected override void Start()
+    {
+        base.Start();
+
+
+        GameDetails.instance.fadeToBlack.enabled = true;
 
         // make a reference to the combat "main" script
         combatScript = GetComponent<ImpGiant>();
-
-        if (textFile != null)
-        {
-            textLines = (textFile.text.Split('#'));
-        }
-
-        Debug.Log(GameDetails.instance.fadeToBlack.color.a);
     }
-    // Update is called once per frame
+
     void Update () {
 
         if (!hasTalkedToGiant)
@@ -37,21 +30,20 @@ public class ImpGiantDialogue : DialogueNPC {
             }
         }
 
-
-
         if (GameDetails.instance.fadeToBlack.color.a <= 0.02)
         {
             if (!currentlyInteractingWithPlayer && !hasTalkedToGiant)
             {
-                player = PlayerController.instance.gameObject.transform;
                 base.Interact();
             }
         }
 
 
-        if (currentlyInteractingWithPlayer)
+        if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
         {
+            currentParagraphIncrement = currentParagraph + 1;
             speechText.text = textLines[currentParagraph];
+            SoundManager.instance.PlayDialogueSound(gameObject.name);
         }
     }
 
@@ -59,7 +51,8 @@ public class ImpGiantDialogue : DialogueNPC {
     {
         base.AdvanceSpeech();
     }
-    public override void CloseDialogue()
+
+    protected override void CloseDialogue()
     {
         base.CloseDialogue();
         combatScript.dialogueFinished = true;

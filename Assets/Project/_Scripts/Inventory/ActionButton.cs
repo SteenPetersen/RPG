@@ -98,8 +98,23 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
         {
             useables = InventoryScript.instance.GetUseables(useable, item);
             count = useables.Count;
-            InventoryScript.instance.FromSlot.MyIcon.color = Color.white;
-            InventoryScript.instance.FromSlot = null;
+            // if your trying to equip from the equipment slots
+            if (InventoryScript.instance.FromSlot == null)
+            {
+                return;
+            }
+            else
+            {
+                // if your trying to drag a weapon, armor or ranged
+                if ((int)item.typeOfEquipment <= 2)
+                {
+                    return;
+                }
+                
+                InventoryScript.instance.FromSlot.MyIcon.color = Color.white;
+                InventoryScript.instance.FromSlot = null;
+            }
+
         }
         else
         {

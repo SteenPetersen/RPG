@@ -15,14 +15,14 @@ public class RangedAI : EnemyAI {
 
 	protected override void Start () {
 
+        base.Start();
+
         maxSpeed = UnityEngine.Random.Range(maxSpeed - 1, maxSpeed + 1);
         distanceToLook = UnityEngine.Random.Range(distanceToLook - 2, distanceToLook + 2);
         meleeDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
         castingDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
 
-        setter = GetComponent<AIDestinationSetter>();
-        playerObj = PlayerController.instance.gameObject.transform;
-
+        projectileLaunchPoint = child.transform.Find("ProjectileLaunchPoint");
     }
 
     protected override void Update () {
@@ -43,9 +43,7 @@ public class RangedAI : EnemyAI {
         castingTimer -= Time.deltaTime;
 
 
-        var thePlayerIsDead = checkifPlayerIsDead();
-
-        if (thePlayerIsDead)
+        if (PlayerController.instance.isDead)
             return;
 
         if (isDead)
@@ -183,7 +181,7 @@ public class RangedAI : EnemyAI {
             var projectileScript = projectile.GetComponent<enemy_Projectile>();
             projectileScript.MakeProjectileReady();
 
-            projectile.transform.position = effectPoint.transform.position;
+            projectile.transform.position = projectileLaunchPoint.transform.position;
             projectile.transform.rotation = Quaternion.identity;
 
             projectile.transform.Rotate(0, 0, angle, Space.World);

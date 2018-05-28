@@ -10,57 +10,62 @@ public class EnemyAI : AIPath
 {
 
     #region Health
-    [SerializeField]
-    public CanvasGroup healthGroup;
-    public Slider healthbar;
+    [HideInInspector] public CanvasGroup healthGroup;
+    [HideInInspector] public Slider healthbar;
 
     #endregion
 
-    public AIDestinationSetter setter;
+    [HideInInspector] public AIDestinationSetter setter;
 
-    //[HideInInspector]
-    public bool isDead, inRange, haveAggro, pausingMovement, displayingHealth, alert, inMeleeRange;
-    [HideInInspector]
-    public bool facingRight = true;
-    public Transform playerObj;
-    public Animator anim;
+    [HideInInspector] public bool isDead, inRange, haveAggro, pausingMovement, displayingHealth, alert, inMeleeRange;
+    [HideInInspector] public bool facingRight = true;
+    [HideInInspector] public Transform playerObj;
+
+    [Tooltip("Tier of this enemy, used to determine the loot it drops")]
     public int tier;
+    
+    [HideInInspector] public bool moving;
 
-    [HideInInspector]
-    public bool moving;
+    /// <summary>
+    /// Needs to be accessed in order to call animation from outside
+    /// </summary>
+    [HideInInspector] public Animator anim;
 
-    public GameObject child;  // used to check if collison detected is self or not
-    public Collider2D myCollider;
-    public CharacterStats myStats;
+    /// <summary>
+    /// Must be fed in as the name of this object can vary from monster to monster
+    /// Used to check if collison detected is self or not
+    /// </summary>
+    public GameObject child;
 
-    public Transform effectPoint;
+
+    /// <summary>
+    /// Some monsters require access to this collider
+    /// </summary>
+    [HideInInspector] public Collider2D myCollider;
+
+    [HideInInspector] public EnemyStats myStats;
+
+    [HideInInspector] public Transform projectileLaunchPoint;
+
     [Tooltip("The sprite holders that will become populated when this enemy is hit by a projectile")]
     public GameObject[] woundGraphics;
 
-    [HideInInspector]
-    public int PlayerProjectileHits;
-    public Transform ArrowHolder;
+    [Header("Unique Variables")]
+    public float distanceToLook; 
+    public float meleeRange, force, projectileSpeed, experienceGain, meleeDelay, timer, meleeHitRange;
 
-    [Header("Unique Variable")]
-    public float distanceToLook, meleeRange, force, projectileSpeed, experienceGain, meleeDelay, timer, meleeHitRange;
-    [Header("Unique Variable")]
-    public GameObject strikeGraphic;
-    [Header("Unique Variable")]
-    public ParticleSystem specialExplosion;
-
-    //[HideInInspector]
-    public Transform skeleton;
-
-
-
+    [HideInInspector] public Transform skeleton;
 
     protected override void Start()
     {
         base.Start();
 
+        InitializeEnemy();
+
         maxSpeed = UnityEngine.Random.Range(maxSpeed - 1, maxSpeed + 1);
         distanceToLook = UnityEngine.Random.Range(distanceToLook - 2, distanceToLook + 2);
         meleeDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
+        
 
         setter = GetComponent<AIDestinationSetter>();
         playerObj = PlayerController.instance.gameObject.transform;
@@ -81,11 +86,7 @@ public class EnemyAI : AIPath
 
         timer -= Time.deltaTime;
 
-
-
-        var thePlayerIsDead = checkifPlayerIsDead();
-
-        if (thePlayerIsDead)
+        if (PlayerController.instance.isDead)
             return;
 
 
@@ -133,16 +134,6 @@ public class EnemyAI : AIPath
 
     }
 
-    public virtual bool checkifPlayerIsDead()
-    {
-        if (PlayerController.instance.isDead)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public virtual void CheckIfEnemyIsOnAList()
     {
         string scene = SceneManager.GetActiveScene().name;
@@ -151,11 +142,6 @@ public class EnemyAI : AIPath
         {
             EnemyHolder.instance.enemies.Remove(gameObject);
         }
-    }
-
-    public void WalkToShooterPosition(Vector2 pos)
-    {
-        setter.ai.destination = pos;
     }
 
     public virtual void DetermineAggro(Vector3 pos)
@@ -187,6 +173,10 @@ public class EnemyAI : AIPath
                 if (!haveAggro)
                 {
                     //Debug.Log("I see you!");
+                    Debug.Log(setter);
+                    Debug.Log(setter.targetASTAR);
+                    Debug.Log(PlayerController.instance.transform);
+
                     setter.targetASTAR = PlayerController.instance.transform;
                     haveAggro = true;
                 }
@@ -209,6 +199,9 @@ public class EnemyAI : AIPath
 
     }
 
+    /// <summary>
+    /// used to make enemies attack at a large distance
+    /// </summary>
     public virtual void HyperAlert()
     {
         if (!alert)
@@ -218,6 +211,9 @@ public class EnemyAI : AIPath
         }
     }
 
+    /// <summary>
+    /// used to guarantee that the enemy will always face the target
+    /// </summary>
     public virtual void FaceTarget()
     {
         float distanceFromObjectToTarget = Vector3.Distance(CameraController.instance.measurementTransform.position, playerObj.position);
@@ -229,6 +225,9 @@ public class EnemyAI : AIPath
         }
     }
 
+    /// <summary>
+    /// Flips the enemy
+    /// </summary>
     public virtual void Flip()
     {
         if (isDead)
@@ -293,11 +292,6 @@ public class EnemyAI : AIPath
             inMeleeRange = false;
         }
     }
-
-    //IEnumerator MeleeHitTheTarget()
-    //{
-    //    anim.SetTrigger("Hit1");
-    //}
 
     public virtual void OnStrikeComplete()
     {
@@ -417,6 +411,19 @@ public class EnemyAI : AIPath
     }
 
     /// <summary>
+    /// Sets all necessary references so that the editor can be cleaner
+    /// </summary>
+    public virtual void InitializeEnemy()
+    {
+        myCollider = child.GetComponent<BoxCollider2D>();
+        myStats = GetComponent<EnemyStats>();
+        anim = child.GetComponent<Animator>();
+        healthGroup = child.transform.Find("HealthCanvas").GetComponent<CanvasGroup>();
+        healthbar = child.transform.Find("HealthCanvas").transform.Find("Slider").GetComponent<Slider>();
+        skeleton = child.transform.Find("Skeleton");
+    }
+
+    /// <summary>
     /// Temporarily stuns the enemy
     /// </summary>
     public virtual void Stunned()
@@ -438,11 +445,13 @@ public class EnemyAI : AIPath
 
         // unstun the monster after a given time
         StartCoroutine(UnStun(go));
-
-
-
     }
 
+    /// <summary>
+    /// unstuns the enemy after a predetermined amount of time
+    /// </summary>
+    /// <param name="go"></param>
+    /// <returns></returns>
     public virtual IEnumerator UnStun(GameObject go)
     {
         yield return new WaitForSeconds(2f);

@@ -8,7 +8,14 @@ public class PlayerStats : CharacterStats {
     public Animator anim;
     public PlayerController playerControl;
 
+    float maxStamina;
+    float currentStamina;
+
     public float exp;
+
+    [SerializeField] float regen;
+    [SerializeField] float staminaRegen;
+
 
     public Stat Agi;
     public Stat Str;
@@ -27,6 +34,24 @@ public class PlayerStats : CharacterStats {
     GameObject statHolder;
 
     public static PlayerStats instance;
+
+    public float MyRegen
+    {
+        get { return regen; }
+        set { regen = value; }
+    }
+
+    public float MyCurrentStamina
+    {
+        get { return currentStamina; }
+
+        set { currentStamina = Mathf.Clamp(value, 0, MyMaxStamina); }
+    }
+
+    public float MyMaxStamina
+    {
+        get { return maxStamina; }
+    }
 
     private void Awake()
     {
@@ -48,6 +73,7 @@ public class PlayerStats : CharacterStats {
 
         UpdateStats();
         currentHealth = maxHealth;
+        currentStamina = maxStamina;
 
 
         statHolder = GameObject.Find("UiCanvas").transform.Find("EquipmentWindow").transform.Find("Stats").gameObject;
@@ -65,16 +91,6 @@ public class PlayerStats : CharacterStats {
 
     private void Update()
     {
-        if (currentHealth == maxHealth)
-        {
-            RemoveHealthBar();
-        }
-
-        if (currentHealth < 0)
-        {
-            RemoveHealthBar();
-        }
-
         if (playerControl == null)
         {
             playerControl = PlayerController.instance;
@@ -92,7 +108,6 @@ public class PlayerStats : CharacterStats {
 
     private void OnEquipmentChanged(Equipment newItem, Equipment oldItem)
     {
-
         if (oldItem != null)
         {
             armor.RemoveModifier(oldItem.armorModifier);
@@ -110,7 +125,6 @@ public class PlayerStats : CharacterStats {
     {
         base.Die();
         // kill the player in some way
-        RemoveHealthBar();
         playerControl.speed = 0;
         playerControl.isDead = true;
         SoundManager.instance.PlayUiSound("deathsound");
@@ -161,6 +175,7 @@ public class PlayerStats : CharacterStats {
             SoundManager.instance.PlayCombatSound("shieldblock");
             playerControl.KnockBack(0.005f);
             StartCoroutine(returnMovement());
+            GameDetails.blocks += 1;
 
             var blockText = CombatTextManager.instance.FetchText(transform.position);
             var blockTextScript = blockText.GetComponent<CombatText>();
@@ -169,26 +184,31 @@ public class PlayerStats : CharacterStats {
             blockText.gameObject.SetActive(true);
         }
 
-        if (playerControl.healthGroup.alpha == 0)
-        {
-            playerControl.healthGroup.alpha = 1f;
-        }
-
-        playerControl.healthBar.value = CalculateHealth(currentHealth, maxHealth);
+        playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
     }
 
     public override bool Heal(int healthIncrease)
     {
         bool tmp = base.Heal(healthIncrease);
 
-        playerControl.healthBar.value = CalculateHealth(currentHealth, maxHealth);
+        playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
 
         return tmp;
     }
 
-    void RemoveHealthBar()
+    public void Regen()
     {
-        playerControl.healthGroup.alpha -= 0.02f;
+        // health
+        currentHealth += regen;
+        playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
+
+        // stamina
+        MyCurrentStamina += staminaRegen;
+        //playerControl.staminaBar.fillAmount = CalculateStamina(currentStamina, maxStamina);
+
+        playerControl.staminaBar.fillAmount = Mathf.Lerp(playerControl.staminaBar.fillAmount,
+            CalculateHealth(currentStamina, maxStamina),
+            Time.deltaTime * 8);
     }
 
     public void LevelUpStats()
@@ -202,16 +222,39 @@ public class PlayerStats : CharacterStats {
         currentHealth = maxHealth;
     }
 
+    /// <summary>
+    /// Updates the stats, used at Start() and when leveling up
+    /// </summary>
     public void UpdateStats()
     {
         maxHealth = 100 + ExperienceManager.instance.level + (Sta.GetValue() * 10);
+        maxStamina = 100;
         damage.SetValue(Str.GetValue());
         armor.SetValue(Agi.GetValue());
     }
 
+    /// <summary>
+    /// returns the float value of division between maximum health and current health
+    /// This value will always be a value between 0 and 1
+    /// </summary>
+    /// <param name="currentHealth"></param>
+    /// <param name="maxHealth"></param>
+    /// <returns></returns>
     public float CalculateHealth(float currentHealth, float maxHealth)
     {
         return currentHealth / maxHealth;
+    }
+
+    /// <summary>
+    /// returns the float value of division between maximum Stamina and current Stamina
+    /// This value will always be a value between 0 and 1
+    /// </summary>
+    /// <param name="currentHealth"></param>
+    /// <param name="maxHealth"></param>
+    /// <returns></returns>
+    public float CalculateStamina(float currentStamina, float maxStamina)
+    {
+        return currentStamina / maxStamina;
     }
 
     private void OnDisable()

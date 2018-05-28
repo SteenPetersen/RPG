@@ -39,7 +39,7 @@
       <div class="overlay"></div>
         <div class="container">
             <p class="social"><a href="https://twitter.com/Pixlrelm" title="" class="twitter"><i class="fa fa-twitter"></i></a></p>
-            <h1 style="font-family:'Pixl'; text-align:center; margin-bottom:0px; position:relative; color: #77c3bf">Welcome to Pixlrelm</h1>
+            <h1 style="font-family:'Pixl'; text-align:center; margin-bottom:0px; position:relative; color: white">Welcome to Pixlrelm</h1>
             <script>
                 var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Builds.json", { onProgress: UnityProgress });
             </script>
@@ -53,10 +53,10 @@
 
             <div class="mailing-list" style="padding-top:40px;">
 
-                <h4 style="font-family:'Pixl'; position:relative; color: #77c3bf">Follow my progress on Twitter @Pixlrelm for more information</h4>
-                <h5 style="font-family:'Pixl'; position:relative; color: #77c3bf">Contact me directly at info@pixlrelm.com</h5>
+                <h4 style="font-family:'Pixl'; position:relative; color: white">Follow my progress on Twitter @Pixlrelm for more information</h4>
+                <h5 style="font-family:'Pixl'; position:relative; color: white">Contact me directly at info@pixlrelm.com</h5>
 
-                <h7 style="font-family:'Pixl'; position:relative; color: #77c3bf">&copy; 2018 Pixlrelm.com</h7>
+                <h7 style="font-family:'Pixl'; position:relative; color: white">&copy; 2018 Pixlrelm.com</h7>
                 <!--<div class="row">
                 <form class="form-inline">
                     <div class="form-group">
@@ -75,6 +75,46 @@
 
                     <div class="collapse" id="collapseExample">
                         <div class="card card-body" style="color: #77c3bf">
+
+                            <br />
+                            <br />
+
+
+                            V 0.0.0.10
+
+                            <br />
+                            - Implemented a first attempt at a tutorial scenario that will lead the player on their journey.<br />
+                            - Fixed Reyliths and Bentos' pants being on a wrong layer<br />
+                            - Fixed a null reference error when trying to place equipped items in the action bar.<br />
+                            - Fixed the possibility of putting armor and weapons in the action bars, it shouldnt be possible - may change later if clickies are implemented.<br />
+                            - Fixed the vendors so they now have a "close" button on them<br />
+                            - fixed a bug that allowed players to Save after getting items from a quest, reload and get items again unlimited times.<br />
+                            - Made it impossible to enter dungeon for now as main focus is to test the tutorial. Player is given a notification when trying to enter.<br />
+
+                            <br />
+                            <br />
+
+                            V 0.0.0.9
+
+                            <br />
+                            - More work on updated combat system, player can now stun Impranged and imp monsters.<br />
+                            - made animations for stun<br />
+                            - made particle effects and logic for stun ( will be reworked when Im confident its work properly )<br />
+                            - Massive changes to inventory both graphically and in its implementation<br />
+                            - Implemented bags and bag slots and made them work together with the inventory and equipment of the character<br />
+                            - Massive changes to how Items work and it is now much simpler to create items for the future<br />
+                            - Implemented action bars that can be used to hotkey items such as potions for quick use<br />
+                            - Made a potion vendor along with a house for the potion vendor to stand in, this is the first of many house and vendors that the world will hold.<br />
+                            - Added a currency system to the game so player can get money and buy and sell from the vendors.<br />
+                            - redid Playermovement shouldnt be noticable to the player but is alot more effective and leaves less space for bugs<br />
+                            - Minor fix to chests so they work in a similar way as everything else<br />
+                            - Some refactoring, since there are so many manager now they have all been placed under the managers Gameobject for ease of navigation in the editor<br />
+                            - some small fixes to trees with rendering layers<br />
+                            - Editted algorithm that instantiates floor tiles inside dungeons to make it easier to change and set from inspector.<br />
+                            - Major refactoring of the playerController code to make it a lot more manageable, made all variables private unless absolutely necessary to do otherwise<br />
+                            - Rework of ripostes, Player now has to time their block in order to be allowed to riposte<br />
+                            - Player can now charge Attacks and the weapon will glow to illustrate the effect.<br />
+
 
                             <br />
                             <br />

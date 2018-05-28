@@ -1,21 +1,56 @@
-Hello and well met traveller! welcome... to Pixlrelm!
-Allow me to introduce myself. My name is Durir, and I 
-have lived in Pixlrelm my entire life. And although I 
-am a two dimension character, you will find...
-I am anything but... 
-#This world is developing <get it?> and is still in 
-it's infancy. In order to make your mark on its 
-progress. Please forward all feedback to 
-info@pixlrelm.com or to Twitter @Pixlrelm. 
-#You can move about using W,S,A,D and aim at things 
-with your mouse. if you find something hard to see or 
-your line of sight is somehow hindered. Press and hold 
-E or Q in order to set the view as you see fit. 'Click'
-things that you wish to interact with... or that you 
-wish to hit. Aim projectiles with your mouse.
-Not now... I'm still talking... pay attention.
-#You can also Press 'I' to check out your inventory
-so that you can equip and unequip items by interacting
-with them.
-#Come back to me later, and perhaps I will have more
-information for you.
+Good morrow! I see you're up and about, and I am sure 
+Reylith already had her words with you. She finds 
+herself in such a hurry that she barely has time to 
+look around. 
+#The war she speaks of may very well happen - but 
+she thinks with the sharpest item in her arsenal 
+and her hurry could very well be her downfall... 
+I assuredly hope not.
+#I did however promise her that I would help, and you 
+will play a pivotal role in my assistance. Your abscence 
+from the battlefield has possibly made you slow, So I 
+would like to start by just making sure you have all your 
+wits about you.
+#Remember you can Move ('W','S','A','D'), adjust 
+your view ('Q','E'), slash or shoot your bow 
+(left mouse button) and block (right mouse button) 
+if you have a shield. And if you find yourself in harms way. 
+Dogde (Spacebar). If you feel like any of these keys 
+are placed wrong they can always be changed from the 
+keybind menu ('Tab') to anything that you feel more comfortable with.
+#In order to keep track of your items and all the things 
+that you pick up throughout your travels you have an 
+inventory ('I') and bags ('B'). You can click and drag 
+things in your bag to your action bar or to your inventory 
+if the item is equippable. You can also just right click an 
+equippable or consumable item to equip/use them.
+#Speaking of which, here are the item I promised Reylith I would  
+give you. You cannot open your Inventory during a conversation. 
+Right click the items from your bag to equip them.
+#Equip the sword and shield I gave you and we can continue 
+talking.
+#When you're wearing a shield you have the ability to "Block" 
+('hold right mouse'). This allows you to withstand a great deal 
+more damage but also stops you from attacking. A well timed 
+block will give you the ability to stun an enemy with a riposte, 
+but be quick!
+#You can charge your strikes by holding in the left mouse button. 
+if the sword becomes fully charged ('watch for glow and effect') 
+you will deal significantly more damage. You can combine charging 
+with a combo of hits to optimize your damage output.
+#I hope you paid attention because I'm going to release the chains 
+holding this imp here and I'd like to see that you can handle yourself. 
+If you time the block just before he hits you, you can riposte him 
+by pressing the 'left mouse button' directly after the block. 
+be quick!
+
+Show me a block, hit, riposte and a fully charged hit!
+#Good job! I think you're ready to go and talk to Bentos, 
+He will teach you a bit about archery. There will be many 
+situations in which staying away from monsters is a good idea. 
+Make haste young one!
+#I have no more to tell you right now! You need to learn about 
+ranged attacks and then we can start to get a handle on our situation 
+here.
+#Ok, good it seems you still know your way around a weapon, that is 
+going to come in handy. <End of Conversation>

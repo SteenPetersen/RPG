@@ -7,6 +7,7 @@ public class SceneControl : MonoBehaviour {
     [SerializeField]
     public static int dungeonLevel;
     public int dungeonFloorCount;
+    [SerializeField] GameObject reylith;
 
     private void OnEnable()
     {
@@ -29,6 +30,14 @@ public class SceneControl : MonoBehaviour {
         {
             var spawn = GameObject.Find("PlayerSpawnPosition");
             PlayerController.instance.gameObject.transform.position = spawn.transform.position;
+        }
+        if (scene.name == "main")
+        {
+            if (StoryManager.stage == 0)
+            {
+                Vector3 pos = new Vector3(-22.75f, -15f, 0);
+                Instantiate(reylith, pos, Quaternion.identity);
+            }
         }
 
         dungeonFloorCount = dungeonLevel;

@@ -9,21 +9,6 @@ public class ItemPickup : Interactable {
 
     bool showBagsFullText = true;
 
-    private void Update()
-    {
-        if (isFocus && !hasInteracted)
-        {
-            //Debug.Log(gameDetails.player.name);
-            float distance = Vector3.Distance(player.transform.position, transform.position);
-
-            if (distance <= radius)
-            {
-                Interact();
-            }
-            hasInteracted = true;
-        }
-    }
-
     public override void Interact()
     {
         base.Interact();
@@ -35,7 +20,6 @@ public class ItemPickup : Interactable {
     {
         if (!hasInteracted)
         {
-            Debug.Log("Picking up " + item.name);
             SoundManager.instance.PlayInventorySound(gameObject.name + "_pickup");
             bool wasPickedUp = InventoryScript.instance.AddItem(item);
 
@@ -56,11 +40,12 @@ public class ItemPickup : Interactable {
 
             }
         }
-
-        // Add to inventory
-
     }
 
+    /// <summary>
+    /// Let the player know that the bags are full
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator BagsFull()
     {
         showBagsFullText = false;

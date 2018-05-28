@@ -50,8 +50,6 @@ public class VendorManager : MonoBehaviour {
         // potion
         if (vendorType == VendorType.Potion)
         {
-            Debug.Log("Potion Vendor is requesting goods");
-
             foreach (Item item in potion)
             {
                 items.Add(item);
@@ -61,7 +59,7 @@ public class VendorManager : MonoBehaviour {
         // weapon
         if (vendorType == VendorType.Weapon)
         {
-            Debug.Log("Potion Vendor is requesting goods");
+            //Debug.Log("Potion Vendor is requesting goods");
 
             foreach (Item item in weapon)
             {
@@ -91,7 +89,6 @@ public class VendorManager : MonoBehaviour {
             }
         }
 
-        Debug.Log("return a list of items " + items[0]);
         return items;
     }
 

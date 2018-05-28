@@ -18,11 +18,14 @@ MonoBehaviour:
   isDefaultItem: 0
   typeOfEquipment: 0
   stackSize: 0
+  title: 
+  quality: 0
   MySlot: {fileID: 0}
   equipSlot: 3
   equipType: 0
   characterVisibleSprite: {fileID: 21300006, guid: 76db9d444e46de4459e2e2c2e4bd669d,
     type: 3}
+  glowEffect: {fileID: 21300030, guid: 30824b27f078229439b31c9d06d4683f, type: 3}
   armorModifier: 0
   damageModifier: 3
   rangedProjectile: 0

@@ -327,7 +327,7 @@ public class InventoryScript : MonoBehaviour {
     }
 
     /// <summary>
-    /// Opens and closed Bags
+    /// Opens and closes Bags
     /// </summary>
     public void OpenClose()
     {

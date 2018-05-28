@@ -51,9 +51,8 @@ public class VendorWindow : MonoBehaviour {
         }
     }
 
-    private void Update()
+    public void CloseWindow()
     {
-
+        vendor.OpenClose();
     }
-
 }

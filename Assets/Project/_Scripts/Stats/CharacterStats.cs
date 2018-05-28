@@ -5,8 +5,6 @@ public class CharacterStats : MonoBehaviour {
     public float maxHealth = 100;
     public float currentHealth { get; set; }
 
-    public float regenRate;
-
     public Stat damage;
     public Stat armor;
 
@@ -26,16 +24,6 @@ public class CharacterStats : MonoBehaviour {
         // Die in some way this method is meant to be overwritten
         //Debug.Log(transform.name + "died");
     }
-
-    public virtual void Regenerate()
-    {
-        if (currentHealth < maxHealth)
-        {
-            Debug.Log("regen started");
-            //currentHealth += 1 * 
-        }
-    }
-
 
     /// <summary>
     /// Create a damage variance so that the results of hitting are not so similar

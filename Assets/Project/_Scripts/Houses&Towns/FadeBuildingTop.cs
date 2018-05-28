@@ -15,6 +15,7 @@ public class FadeBuildingTop : MonoBehaviour {
     public Material fadeableMat;
     public Material nonFadeableMat;
 
+    [SerializeField] ParticleSystem particles;
 
     public GameObject topOfBuilding;
     public PolygonCollider2D col;
@@ -51,6 +52,11 @@ public class FadeBuildingTop : MonoBehaviour {
                 startTimeSet = false;
                 faded = true;
             }
+
+            if (particles != null)
+            {
+                particles.Stop();
+            }
         }
 
         else if (!playerInside && faded)
@@ -73,6 +79,11 @@ public class FadeBuildingTop : MonoBehaviour {
                 startTimeSet = false;
                 faded = false;
                 gameObject.GetComponent<MeshRenderer>().material = nonFadeableMat;
+            }
+
+            if (particles != null)
+            {
+                particles.Play();
             }
         }
     }

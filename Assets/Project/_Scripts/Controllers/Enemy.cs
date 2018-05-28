@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-    /* handles interactions with enemies */
-
 [RequireComponent(typeof(CharacterStats))]
 public class Enemy : Interactable {
 
@@ -16,8 +14,6 @@ public class Enemy : Interactable {
 
 	void Awake () {
         myStats = GetComponent<CharacterStats>();
-        gameDetails = GameDetails.instance;
-
     }
 
     public override void Interact()

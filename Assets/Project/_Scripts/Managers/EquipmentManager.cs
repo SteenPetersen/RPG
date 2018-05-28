@@ -78,28 +78,10 @@ public class EquipmentManager : MonoBehaviour {
                 var oldOffhand = currentEquipment[4];
                 oldItem = currentEquipment[3];
 
+                // if there is space for the item in the inventory
                 if (inventory.MyEmptySlotCount >= 2)
                 {
-                    // add the two items that the player was holding to the inventory
-                    inventory.AddItem(oldItem);
-                    inventory.AddItem(oldOffhand);
-
-                    //equip at offhand slot is null
-                    currentEquipment[4] = null;
-
-                    // set the sprite of the slot to the start sprite of the game
-                    visibleGear[4].sprite = startGraphics[4];
-
-                    // remove that item from the list of currently equipped gear.
-                    ClearEquippedGear(4);
-
-                    // update the array of currently equipped items with the new Item
-
-                    UpdateEquipmentSlot(newItem, slotIndex);
-
-                    onEquipmentChanged(newItem, oldItem);
-
-                    onEquipmentChanged(null, oldOffhand);
+                    PlaceItemsInInventory(newItem, slotIndex, oldItem, oldOffhand);
                 }
 
                 else if (inventory.MyEmptySlotCount <= 1)
@@ -135,6 +117,19 @@ public class EquipmentManager : MonoBehaviour {
 
             return true;
 
+        }
+
+        // if its a shield
+        if (slotIndex == 4 && (int)newItem.equipType == 2)
+        {
+            // check if a bow is equipped
+            if (currentEquipment[3] != null)
+            {
+                if ((int)currentEquipment[3].equipType == 1)
+                {
+                    return false;
+                }
+            }
         }
 
         //if its not a bow but you have an item in that position
@@ -174,6 +169,30 @@ public class EquipmentManager : MonoBehaviour {
         UpdateEquipmentSlot(newItem, slotIndex);
         return true;
 
+    }
+
+    private void PlaceItemsInInventory(Equipment newItem, int slotIndex, Equipment oldItem, Equipment oldOffhand)
+    {
+        // add the two items that the player was holding to the inventory
+        inventory.AddItem(oldItem);
+        inventory.AddItem(oldOffhand);
+
+        //equip at offhand slot is null
+        currentEquipment[4] = null;
+
+        // set the sprite of the slot to the start sprite of the game
+        visibleGear[4].sprite = startGraphics[4];
+
+        // remove that item from the list of currently equipped gear.
+        ClearEquippedGear(4);
+
+        // update the array of currently equipped items with the new Item
+
+        UpdateEquipmentSlot(newItem, slotIndex);
+
+        onEquipmentChanged(newItem, oldItem);
+
+        onEquipmentChanged(null, oldOffhand);
     }
 
     /// <summary>
@@ -290,7 +309,7 @@ public class EquipmentManager : MonoBehaviour {
             // remove that item from the list of currently equipped gear.
             ClearEquippedGear(slotIndex);
 
-            // if the items if the main hand item.
+            // if the item is the main hand item.
             if (slotIndex == 3)
             {
                 player.melee = true;

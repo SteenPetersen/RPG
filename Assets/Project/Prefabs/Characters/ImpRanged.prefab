@@ -234,22 +234,7 @@ GameObject:
   - component: {fileID: 114920448886117006}
   - component: {fileID: 225475735547662044}
   m_Layer: 11
-  m_Name: Canvas
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1594349624035014
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4995302522441180}
-  m_Layer: 11
-  m_Name: ArrowHolder
+  m_Name: HealthCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -264,7 +249,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4229970173443236}
   m_Layer: 11
-  m_Name: EffectPoint
+  m_Name: ProjectileLaunchPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -373,21 +358,6 @@ GameObject:
   m_Layer: 11
   m_Name: Imp_A*
   m_TagString: Enemy
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1767789796349742
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4765008110341824}
-  m_Layer: 11
-  m_Name: LaunchPoint
-  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -764,7 +734,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1721059457416130}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.6485195, y: -1.2156773, z: 0}
+  m_LocalPosition: {x: -13.874552, y: -14.66929, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4820424459523668}
@@ -811,19 +781,6 @@ Transform:
   m_Father: {fileID: 4082786511731036}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4765008110341824
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1767789796349742}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.102, y: 0.2509999, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4820424459523668}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4820424459523668
 Transform:
   m_ObjectHideFlags: 1
@@ -836,9 +793,7 @@ Transform:
   m_Children:
   - {fileID: 4375850212807304}
   - {fileID: 4229970173443236}
-  - {fileID: 4765008110341824}
   - {fileID: 224601568280395960}
-  - {fileID: 4995302522441180}
   m_Father: {fileID: 4574218465960098}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -871,19 +826,6 @@ Transform:
   m_Father: {fileID: 4443759412596400}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.03}
---- !u!4 &4995302522441180
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1594349624035014}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4820424459523668}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &50897355738461184
 Rigidbody2D:
   serializedVersion: 4
@@ -983,7 +925,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 65
-  regenRate: 0
   damage:
     baseValue: 0
   armor:
@@ -1247,20 +1188,18 @@ MonoBehaviour:
   inMeleeRange: 0
   facingRight: 1
   playerObj: {fileID: 0}
-  anim: {fileID: 95534425876073922}
   tier: 0
   moving: 0
+  anim: {fileID: 95534425876073922}
   child: {fileID: 1751329420212078}
   myCollider: {fileID: 0}
   myStats: {fileID: 114032440156580086}
-  effectPoint: {fileID: 4229970173443236}
+  projectileLaunchPoint: {fileID: 0}
   woundGraphics:
   - {fileID: 1694614925483870}
   - {fileID: 1381746266806274}
   - {fileID: 1892692341445356}
   - {fileID: 1054694208518060}
-  PlayerProjectileHits: 0
-  ArrowHolder: {fileID: 4995302522441180}
   distanceToLook: 8
   meleeRange: 2
   force: 450
@@ -12486,7 +12425,7 @@ RectTransform:
   m_Children:
   - {fileID: 224840618440119982}
   m_Father: {fileID: 4820424459523668}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

@@ -12,7 +12,6 @@ public class Fade : MonoBehaviour
 
     bool shouldFade = true;
 
-    // Use this for initialization
     void Start()
     {
         startColor = GetComponent<SpriteRenderer>().material.color;
@@ -21,13 +20,15 @@ public class Fade : MonoBehaviour
 
         for (int childIndex = 0; childIndex < gameObject.transform.childCount; childIndex++)
         {
-            Transform child = gameObject.transform.GetChild(childIndex);
+            if (gameObject.transform.GetChild(childIndex).GetComponent<SpriteRenderer>() != null)
+            {
+                Transform child = gameObject.transform.GetChild(childIndex);
 
-            child.gameObject.AddComponent<Fade>();
+                child.gameObject.AddComponent<Fade>();
+            }
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         FadeStart();

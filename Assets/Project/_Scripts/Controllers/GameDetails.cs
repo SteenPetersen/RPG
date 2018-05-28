@@ -52,19 +52,25 @@ public class GameDetails : MonoBehaviour {
     // used for deathScreen statistics
     public static int enemiesKilled;
     public static int dungeonFloorsExplored;
+    public static int ripostes;
+    public static int blocks;
+    public static int hits;
+    public static int fullChargeHits;
+    public static int arrowsFired;
 
-    public Image fadeToBlack;
+
+
+    /// <summary>
+    /// Accessed by DungeonLevelLoadLogic in order to fade the screen when loading another level
+    /// </summary>
     public float fadeSpeed;
-
-    public ParticleSystem playerFeedbackSystem;
-    public Text playerFeedbackText;
+    public Image fadeToBlack;
 
     public ParticleSystem gameSaved;
 
     public int stage;
     public int kingSpeech;
     public bool paused, loadingScene;
-    [SerializeField]
     public GameObject[] generalObjects;
 
     public Plane m_Plane = new Plane(Vector3.forward, Vector3.zero);
@@ -72,6 +78,9 @@ public class GameDetails : MonoBehaviour {
     public GameObject player;
     PlayerStats playerStats;
     float normalSpeed = 0.8f;
+
+    // Tick event timer
+    [SerializeField] float tickTime, tickTimer;
 
     private void OnEnable()
     {
@@ -117,6 +126,28 @@ public class GameDetails : MonoBehaviour {
             DeathSequence();
         }
 
+        if (!PlayerController.instance.isDead)
+        {
+            tickTimer += Time.deltaTime;
+
+            if (tickTimer > tickTime)
+            {
+                tickTimer = 0;
+                TickEvent();
+            }
+        }
+
+    }
+
+    private void TickEvent()
+    {
+        Debug.Log("tick event");
+
+        if (PlayerStats.instance.currentHealth < PlayerStats.instance.maxHealth ||
+            PlayerStats.instance.MyCurrentStamina < PlayerStats.instance.MyMaxStamina)
+        {
+            PlayerStats.instance.Regen();
+        }
     }
 
     private void DeathSequence()
@@ -180,8 +211,10 @@ public class GameDetails : MonoBehaviour {
 
 
 
-        data.stage = stage;
-        data.kingSpeech = kingSpeech;
+        data.stage = StoryManager.stage;
+        data.givenItems = StoryManager.givenItems;
+        data.tutorialConversation = StoryManager.tutorialConversation;
+
 
         // bags
         data.amountOfBags = AmountOfBags();
@@ -246,8 +279,9 @@ public class GameDetails : MonoBehaviour {
             ExperienceManager.instance.AddExpFromLoadedGame(data.experience);
 
 
-            stage = data.stage;
-            kingSpeech = data.kingSpeech;
+            StoryManager.stage = data.stage;
+            StoryManager.givenItems = data.givenItems;
+            StoryManager.tutorialConversation = data.tutorialConversation;
 
             // bags
             LoadBags(data.amountOfBags, data.amountOfSlotsPerBag);
@@ -449,7 +483,7 @@ public class GameDetails : MonoBehaviour {
 
         foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
         {
-            Debug.Log("running through slot " + count + " there are: " + amountOfitemsPerSlot[count] + "items in this slot. And the item is :" + itemInSlot[count]);
+            //Debug.Log("running through slot " + count + " there are: " + amountOfitemsPerSlot[count] + "items in this slot. And the item is :" + itemInSlot[count]);
             if (amountOfitemsPerSlot[count] == 0)
             {
                 count++;
@@ -457,10 +491,10 @@ public class GameDetails : MonoBehaviour {
             }
             else if (amountOfitemsPerSlot[count] == 1)
             {
-                Debug.Log("inside 1 slot function");
+                //Debug.Log("inside 1 slot function");
                 if (Resources.Load("Equipment/" + itemInSlot[count]) != null)
                 {
-                    Debug.Log("inside resource test");
+                    //Debug.Log("inside resource test");
                     var tmpEquip = Instantiate(Resources.Load("Equipment/" + itemInSlot[count], typeof(Equipment))) as Equipment;
                     slot.AddItem(tmpEquip);
                 }
@@ -609,8 +643,9 @@ class PlayerData
 
 
     // Progress
-    public int kingSpeech;
     public int stage;
+    public int givenItems;
+    public int tutorialConversation;
 
 
     // currently equipped bags

@@ -31,9 +31,7 @@ public class ImpBomber : EnemyAI {
 
         DisplayHealth();
 
-        var thePlayerIsDead = checkifPlayerIsDead();
-
-        if (thePlayerIsDead)
+        if (PlayerController.instance.isDead)
             return;
 
         if (isDead)

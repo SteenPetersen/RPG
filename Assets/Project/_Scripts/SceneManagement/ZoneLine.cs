@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ZoneLine : MonoBehaviour {
 
@@ -10,7 +11,14 @@ public class ZoneLine : MonoBehaviour {
     {
         if (col.tag == "Player")
         {
-            StartCoroutine(FadeOUt());
+            if (StoryManager.quest1 < 3)
+            {
+                StoryManager.instance.NotifyPlayer("You are not ready yet!");
+            }
+            else
+            {
+                StartCoroutine(FadeOUt());
+            }
         }
     }
 

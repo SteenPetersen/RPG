@@ -97,6 +97,18 @@ public class CombatText : MonoBehaviour {
         StartCoroutine(FadeOut());
     }
 
+    public void Purple(string damage, Vector3 position)
+    {
+        gameObject.SetActive(true);
+        textObject.text = damage;
+        gameObject.transform.position = position;
+        textObject.color = new Color32(164, 29, 178, 255);
+        gameObject.GetComponent<Outline>().effectColor = new Color32(129, 18, 141, 255);
+        gameObject.transform.localScale = new Vector3(1, 1, 1);
+        startAlpha = GetComponent<Text>().color.a;
+        StartCoroutine(FadeOut());
+    }
+
     private void MakeTextInactive()
     {
         gameObject.SetActive(false);

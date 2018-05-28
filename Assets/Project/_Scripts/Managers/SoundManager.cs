@@ -9,8 +9,9 @@ public class SoundManager : MonoBehaviour {
     public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow, 
                      bladeSwing, impBossHit, impBossDeath, impSwing, impHit, impHit1, impDeath, impDeath1, playerHurt, playerHurt1,
                      impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, potionInteract, potionPickup, fireBurst, firebuildup,
-                     levelup, deathsound, bomb, shieldblock, shieldriposte,
-                     lootdrop, purchase, chestopen, chestclose;
+                     levelup, deathsound, bomb, shieldblock, shieldriposte, crit,
+                     lootdrop, purchase, chestopen, chestclose,
+                     demontalk1, demontalk2, demontalk3;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -42,6 +43,7 @@ public class SoundManager : MonoBehaviour {
         fireballimpact3 = Resources.Load<AudioClip>("Sound/" + "Imp_Fireball_impact3");
         bomb = Resources.Load<AudioClip>("Sound/" + "bomb");
 
+        crit = Resources.Load<AudioClip>("Sound/" + "crit");
 
         impactWood = Resources.Load<AudioClip>("Sound/" + "impact_wood");
         impactStone = Resources.Load<AudioClip>("Sound/" + "impact_stone");
@@ -55,6 +57,9 @@ public class SoundManager : MonoBehaviour {
         impDeath1 = Resources.Load<AudioClip>("Sound/" + "short_death_monster_imp_1");
 
 
+        demontalk1 = Resources.Load<AudioClip>("Sound/" + "demontalk1");
+        demontalk2 = Resources.Load<AudioClip>("Sound/" + "demontalk2");
+        demontalk3 = Resources.Load<AudioClip>("Sound/" + "demontalk3");
         impBossHit = Resources.Load<AudioClip>("Sound/" + "imp_boss_hit");
         impBossDeath = Resources.Load<AudioClip>("Sound/" + "imp_boss_death");
         fireBurst = Resources.Load<AudioClip>("Sound/" + "fire_burst");
@@ -244,6 +249,9 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(bomb);
                 break;
 
+            case "crit":
+                audioSrc.PlayOneShot(crit);
+                break;
 
         }
     }
@@ -307,6 +315,29 @@ public class SoundManager : MonoBehaviour {
                 break;
 
 
+        }
+    }
+
+    public void PlayDialogueSound(string clip)
+    {
+        switch (clip)
+        {
+            case "ImpGiant":
+            case "ImpGiant(Clone)":
+                int rnd = UnityEngine.Random.Range(0, 2);
+                switch (rnd)
+                {
+                    case 0:
+                        audioSrc.PlayOneShot(demontalk1);
+                        break;
+                    case 1:
+                        audioSrc.PlayOneShot(demontalk2);
+                        break;
+                    case 2:
+                        audioSrc.PlayOneShot(demontalk3);
+                        break;
+                }
+                break;
         }
     }
 }

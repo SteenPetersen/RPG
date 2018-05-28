@@ -1,67 +1,42 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogueNPC : Interactable {
+public abstract class DialogueNPC : Interactable {
 
-    //[HideInInspector]
-    public ParticleSystem dialogueAvailable;
-    //public Transform player;
-    [HideInInspector]
-    public PlayerController playerControl;
-    [HideInInspector]
-    public CameraController cam;
+    [HideInInspector] protected CameraController cam;
+    [SerializeField] protected bool currentlyInteractingWithPlayer;
 
-    public GameObject front;
-    public GameObject back;
+    [SerializeField] protected GameObject front;
+    [SerializeField] protected GameObject back;
 
-    public GameObject dialogueProper;
+    protected GameObject dialogueUi;
 
-    [HideInInspector]
-    public bool currentlyInteractingWithPlayer;
+    [SerializeField] protected ParticleSystem dialogueAvailable;
+    [SerializeField] protected ParticleSystem speechEffect;
+
+    /// <summary>
+    /// an int used to make sure the text is only loaded once not every frame.
+    /// </summary>
+    [SerializeField] protected int currentParagraphIncrement;
 
     #region Text
-    public TextAsset textFile;
-    public string[] textLines;
-    public Text speechText;
-    public int currentParagraph;
+    [SerializeField] protected TextAsset textFile;
+    [SerializeField] protected string[] textLines;
+    [SerializeField] protected int currentParagraph;
+    protected Text speechText;
 
-    public Image speechBubble;
-    public Sprite bubbleRight;
-    public Sprite bubbleLeft;
-
-    //[HideInInspector]
-    public bool contentAvailable = true;
+    [SerializeField] protected bool contentAvailable = true;
     #endregion
 
-    void Start () {
-        dialogueAvailable = GetComponentInChildren<ParticleSystem>();
-        gameDetails = GameDetails.instance;
-        playerControl = PlayerController.instance;
-        cam = CameraController.instance;
+    protected virtual void Start () {
 
+        cam = CameraController.instance;
+        dialogueUi = StoryManager.instance.MyDialogueUi;
+        speechText = StoryManager.instance.MySpeechText;
 
         if (textFile != null)
         {
             textLines = (textFile.text.Split('#'));
-        }
-
-        if (player == null)
-        {
-            player = GameObject.Find("Player").gameObject.transform;
-        }
-    }
-
-    public virtual void InteractWithNPC()
-    {
-        if (isFocus && !hasInteracted)
-        {
-            float distance = Vector3.Distance(player.position, transform.position);
-
-            if (distance <= radius)
-            {
-                Interact();
-            }
-            hasInteracted = true;
         }
     }
 
@@ -71,36 +46,33 @@ public class DialogueNPC : Interactable {
 
         MakeNPCFacePlayer();
 
+        PlayerController.instance.anim.SetFloat("VelocityX", 0);
+        PlayerController.instance.anim.SetFloat("VelocityY", 0);
+
+        StoryManager.instance.MyCurrentDialogueNpc = this;
+
         currentlyInteractingWithPlayer = true;
 
-        if (dialogueAvailable != null)
-        {
-            dialogueAvailable.Stop();
-        }
+        PlayerController.instance.dialogue = true;
+       
+        GameDetails.instance.paused = true;
 
-        if (playercontrol != null)
-        {
-            playerControl.dialogue = true;
-        }
-
-        gameDetails.paused = true;
-
-        float distanceFromLeftToPlayer = Vector3.Distance(cam.measurementTransform.position, player.position);
+        float distanceFromLeftToPlayer = Vector3.Distance(cam.measurementTransform.position, PlayerController.instance.transform.position);
         float distanceFromLeftToNPC = Vector3.Distance(cam.measurementTransform.position, transform.position);
 
         if (distanceFromLeftToPlayer > distanceFromLeftToNPC)
         {
-            gameDetails.dialogueCamera.transform.localPosition = gameDetails.dialogueNPCIsStandingOnTheLeft;
-            dialogueProper.SetActive(true);
-            speechBubble.sprite = bubbleRight;
+            GameDetails.instance.dialogueCamera.transform.localPosition = GameDetails.instance.dialogueNPCIsStandingOnTheLeft;
+            dialogueUi.SetActive(true);
+            StoryManager.instance.MySpeechBubble.sprite = StoryManager.instance.MyBubbleRight;
         }
 
         else if (distanceFromLeftToPlayer < distanceFromLeftToNPC)
         {
-            gameDetails.dialogueCamera.transform.localPosition = gameDetails.dialogueNPCIsStandingOnTheRight;
-            speechBubble.sprite = bubbleLeft;
+            GameDetails.instance.dialogueCamera.transform.localPosition = GameDetails.instance.dialogueNPCIsStandingOnTheRight;
+            StoryManager.instance.MySpeechBubble.sprite = StoryManager.instance.MyBubbleLeft;
 
-            dialogueProper.SetActive(true);
+            dialogueUi.SetActive(true);
         }
 
         else
@@ -108,42 +80,69 @@ public class DialogueNPC : Interactable {
             Debug.LogWarning("something wrong with camera positions in dialogue, distances are being measured incorrectly");
         }
 
-        gameDetails.dialogueCamera.SetActive(!gameDetails.dialogueCamera.activeSelf);
+        GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
+
+
+        if (dialogueAvailable != null)
+        {
+            dialogueAvailable.Stop();
+        }
+
+        if (speechEffect != null)
+        {
+            speechEffect.Play();
+        }
 
     }
 
-    public void Flip()
+    protected void Flip()
     {
-        Transform tmp = selector.transform;
-
-        Vector3 pos = tmp.position;
-
-        tmp.SetParent(null);
-
         Vector3 theScale = transform.localScale;
+        Vector3 speechScale = speechEffect.transform.localScale;
 
         theScale.x *= -1;
+        speechScale.x *= -1;
 
         transform.localScale = theScale;
+        speechEffect.transform.localScale = speechScale;
 
-        tmp.SetParent(transform);
-        tmp.position = pos;
     }
 
-    public virtual void StopDialoguePrematurely()
+    protected void MakeNPCFacePlayer()
     {
-        CloseDialogue();
-        currentParagraph = 0;
+        Vector2 playerPos = PlayerController.instance.transform.position;
+
+        float frontPos = Vector3.Distance(front.transform.position, playerPos);
+        float backPos = Vector3.Distance(back.transform.position, playerPos);
+
+        if (frontPos > backPos)
+        {
+            Flip();
+        }
     }
 
-    public override void AdvanceSpeech()
+    protected virtual void CloseDialogue()
     {
-        base.AdvanceSpeech();
+        GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
+        dialogueUi.SetActive(false);
+        PlayerController.instance.dialogue = false;
+        GameDetails.instance.paused = false;
+        currentlyInteractingWithPlayer = false;
+        StoryManager.instance.MyCurrentDialogueNpc = null;
+    }
 
+    /// <summary>
+    /// Advances the speech in the speech bubble to the next section
+    /// This function is a method called by the UI when pressing the "continue" button
+    /// It will call this function on the dialogueManagers currentDialogueNPC
+    /// </summary>
+    public virtual void AdvanceSpeech()
+    {
         if (currentParagraph < textLines.Length - 1)
         {
             currentParagraph += 1;
         }
+
         // else if so it issues the if statement and leaves the text up until button is pressed again
         else if (currentParagraph == textLines.Length - 1)
         {
@@ -152,23 +151,17 @@ public class DialogueNPC : Interactable {
         }
     }
 
-    public virtual void CloseDialogue()
+    /// <summary>
+    /// Closes the dialogue Window and sets the 
+    /// dialogueManagers currentDialogueNPC to null as well as the currentParagraph to 0
+    /// This function is a method called by the UI when pressing the "Stop"/"X" button
+    /// It will call this function on the dialogueManagers currentDialogueNPC
+    /// </summary>
+    public virtual void StopDialoguePrematurely()
     {
-        gameDetails.dialogueCamera.SetActive(!gameDetails.dialogueCamera.activeSelf);
-        dialogueProper.SetActive(false);
-        playerControl.dialogue = false;
-        gameDetails.paused = false;
-        currentlyInteractingWithPlayer = false;
+        CloseDialogue();
+        currentParagraph = 0;
+        currentParagraphIncrement = 0;
     }
 
-    public void MakeNPCFacePlayer()
-    {
-        float frontPos = Vector3.Distance(front.transform.position, player.position);
-        float backPos = Vector3.Distance(back.transform.position, player.position);
-
-        if (frontPos > backPos)
-        {
-            Flip();
-        }
-    }
 }
