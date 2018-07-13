@@ -11,7 +11,7 @@ public class PickUpMap : MonoBehaviour {
 
         if (coll.gameObject.tag == "Player")
         {
-            var game = GameDetails.instance.transform;
+            var game = GameDetails._instance.transform;
             miniMap = game.Find("Minimap").gameObject;
 
             miniMap.SetActive(true);

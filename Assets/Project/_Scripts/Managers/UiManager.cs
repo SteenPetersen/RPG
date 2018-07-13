@@ -76,7 +76,7 @@ public class UiManager : MonoBehaviour {
                     PlayerController.instance.FlipPlayer();
                 }
 
-                GameDetails.instance.paused = GameDetails.instance.paused == true ? false : true;
+                GameDetails._instance.paused = GameDetails._instance.paused == true ? false : true;
                 inventoryCam.SetActive(!inventoryCam.activeSelf);
                 equipmentWindow.SetActive(!equipmentWindow.activeSelf);
             }
@@ -122,7 +122,7 @@ public class UiManager : MonoBehaviour {
         keybindMenu.blocksRaycasts = keybindMenu.blocksRaycasts == true ? false : true;
 
         // Tell the gamedetails to pause the game
-        GameDetails.instance.paused = GameDetails.instance.paused == true ? false : true;
+        GameDetails._instance.paused = GameDetails._instance.paused == true ? false : true;
     }
 
     /// <summary>
@@ -134,6 +134,12 @@ public class UiManager : MonoBehaviour {
     {
         // check the array to see if the name of the key is in the array. If it is then grab it's text child
         Text tmp = Array.Find(keybindButtons, x => x.name == key).GetComponentInChildren<Text>();
+
+        if (code.ToString().Contains("Alpha"))
+        {
+            tmp.text = code.ToString().Replace("Alpha", string.Empty);
+            return;
+        }
 
         // update said text with the correct text
         tmp.text = code.ToString();

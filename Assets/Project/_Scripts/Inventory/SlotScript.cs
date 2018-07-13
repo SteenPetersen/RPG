@@ -244,8 +244,8 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            // if the vendor window is currently open
-            if (VendorManager.instance.vendorWindowOpen && !IsEmpty)
+            // if the vendor window is currently open And your done with tutorial (else player can sell needed items to the vendors)
+            if (VendorManager.instance.vendorWindowOpen && !IsEmpty && StoryManager.tutorialConversation >= 9)
             {
                 // sell this item
                 VendorManager.instance.Sell(MyItem.sellValue, MyItem);

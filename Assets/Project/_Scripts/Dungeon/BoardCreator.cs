@@ -26,7 +26,7 @@ public class BoardCreator : MonoBehaviour
 
     public IntRange numEnemy = new IntRange(0, 4);           // The range of enemies rooms can have.
 
-    public GameObject normalFloorTile;                        // the normal floor tile that should be present in a majority of situations
+    public GameObject[] normalFloorTiles;                        // the normal floor tile that should be present in a majority of situations
     public GameObject[] variantFloorTiles;                    // An array of floor tile prefabs that vary in graphic from the normal one
     public GameObject[] BlackArea;                            // An array of sprites that mask the non relevant areas.
     public GameObject[] colliderWalls;                        // An Array of walls that have colliders
@@ -149,6 +149,12 @@ public class BoardCreator : MonoBehaviour
         }
     }
 
+    public void CreateDungeonGraph()
+    {
+        Debug.Log("calling for the creation of a gríd");
+        aStarGridCreator.AiGridPath(columns, rows, 0.5f, 1, false);
+    }
+
     void SetTilesValuesForRooms()
     {
         // Go through all the rooms...
@@ -165,7 +171,7 @@ public class BoardCreator : MonoBehaviour
                 for (int k = 0; k < currentRoom.roomHeight; k++)
                 {
                     int yCoord = currentRoom.yPos + k;
-                    Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  room number is:   " + i + "  k is  " + k);
+                    //Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  room number is:   " + i + "  k is  " + k);
 
 
                     // Make the left wall have colliders
@@ -595,11 +601,14 @@ public class BoardCreator : MonoBehaviour
                     }
                     else
                     {
+                        // Create a random index for the array.
+                        int randomIndex = UnityEngine.Random.Range(0, normalFloorTiles.Length);
+
                         // The position to be instantiated at is based on the coordinates.
                         Vector3 position = new Vector3(i, j, 0f);
 
                         // Create an instance of the prefab from the random index of the array.
-                        GameObject tileInstance = Instantiate(normalFloorTile, position, Quaternion.identity) as GameObject;
+                        GameObject tileInstance = Instantiate(normalFloorTiles[randomIndex], position, Quaternion.identity) as GameObject;
 
                         // Set the tile's parent to the board holder.
                         tileInstance.transform.parent = boardHolder.transform;
@@ -689,7 +698,7 @@ public class BoardCreator : MonoBehaviour
         Vector3 position = new Vector3(xCoord, yCoord, 0f);
 
         // Create an instance of the prefab from the random index of the array.
-        GameObject tileInstance = Instantiate(prefabs[randomIndex], position, Quaternion.identity) as GameObject;
+        GameObject tileInstance = Instantiate(prefabs[randomIndex], position, RandomizeFacingDirectionOfObject()) as GameObject;
 
         // Set the tile's parent to the board holder.
         tileInstance.transform.parent = boardHolder.transform;
@@ -704,12 +713,37 @@ public class BoardCreator : MonoBehaviour
         Vector3 position = new Vector3(xCoord, yCoord, -0.5f);
 
         // Create an instance of the prefab from the random index of the array.
-        GameObject tileInstance = Instantiate(prefabs[randomIndex], position, Quaternion.identity) as GameObject;
-
-        //tileInstance.GetComponent<Renderer>().material.color = new Color(0.5f, 1, 1); //C#
+        GameObject wallInstance = Instantiate(prefabs[randomIndex], position, RandomizeFacingDirectionOfObject()) as GameObject;
 
         // Set the tile's parent to the board holder.
-        tileInstance.transform.parent = outterWallHolder.transform;
+        wallInstance.transform.parent = outterWallHolder.transform;
+    }
+
+    private static Quaternion RandomizeFacingDirectionOfObject()
+    {
+        // randomize between 4 possible faces
+        int randomFace = UnityEngine.Random.Range(0, 4);
+
+        Quaternion spawnRotation;
+
+        if (randomFace == 1)
+        {
+            spawnRotation = Quaternion.identity;
+        }
+        else if (randomFace == 2)
+        {
+            spawnRotation = Quaternion.Euler(0, 0, 90);
+        }
+        else if (randomFace == 3)
+        {
+            spawnRotation = Quaternion.Euler(0, 0, 180);
+        }
+        else
+        {
+            spawnRotation = Quaternion.Euler(0, 0, 270);
+        }
+
+        return spawnRotation;
     }
 
     void InstantiateFromArrayDarkness(GameObject[] prefabs, float xCoord, float yCoord)

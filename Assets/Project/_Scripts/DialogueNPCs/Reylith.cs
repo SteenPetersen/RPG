@@ -12,11 +12,13 @@ public class Reylith : DialogueNPC {
     [SerializeField] bool conversationDone;
     GameObject skeleton;
     bool fading;
+    [SerializeField] BoatMovement boat;
 
     protected override void Start()
     {
         base.Start();
-        dungeonEntrance = GameObject.Find("dungeonEntrance").transform;
+        dungeonEntrance = GameObject.Find("BoatLocation").transform;
+        boat = GameObject.Find("Boat").GetComponent<BoatMovement>();
         skeleton = transform.Find("logic").transform.Find("Skeleton").gameObject;
     }
 
@@ -43,7 +45,7 @@ public class Reylith : DialogueNPC {
                 {
                     speechEffect.Stop();
                     StoryManager.stage = 1;
-                    GameDetails.instance.Save();
+                    GameDetails._instance.Save();
                     conversationDone = true;
                 }
 
@@ -78,14 +80,22 @@ public class Reylith : DialogueNPC {
     }
 
     /// <summary>
-    /// Fades out Reylith used to fade her out incase 
-    /// people load a game where she is already gone
+    /// Fades out Reylith 
     /// </summary>
     public void FadeOut()
     {
         skeleton.AddComponent<Fade>();
         fading = true;
         Destroy(gameObject, 3);
+    }
+
+    /// <summary>
+    /// sets the boat to start sailing just before the 
+    /// reylith gameObject is destroyed
+    /// </summary>
+    private void OnDestroy()
+    {
+        boat.readyToSail = true;
     }
 
     /// <summary>

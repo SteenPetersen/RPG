@@ -6,10 +6,28 @@ using UnityEngine.UI;
 
 public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
 
-    public IUseable MyUseable { get; set; }
+    public IUseable MyUseable
+    {
+        get; set;
+    }
 
     [SerializeField]
     private Text stackSize;
+
+    private Item buttonItem;
+
+    public string SaveItemData
+    {
+        get
+        {
+            if (buttonItem != null)
+            {
+                return buttonItem.name;
+            }
+
+            return string.Empty;
+        }
+    }
 
     private Stack<IUseable> useables = new Stack<IUseable>();
 
@@ -57,11 +75,6 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
         InventoryScript.instance.itemCountChangedEvent += new ItemCountChanged(UpdateItemCount);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     /// <summary>
     /// executed when the action button is clicked
     /// </summary>
@@ -98,6 +111,9 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
         {
             useables = InventoryScript.instance.GetUseables(useable, item);
             count = useables.Count;
+
+            buttonItem = item;
+
             // if your trying to equip from the equipment slots
             if (InventoryScript.instance.FromSlot == null)
             {
@@ -122,6 +138,32 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
         }
 
         UpdateVisual();
+    }
+
+    /// <summary>
+    /// This method is used when loading a game so we can update the visuals
+    /// to whgatever the player had when logging off
+    /// </summary>
+    public void LoadGameUseable(IUseable useable, Item item)
+    {
+        if (useable is Item)
+        {
+            useables = InventoryScript.instance.GetUseables(useable, item);
+            count = useables.Count;
+            buttonItem = item;
+        }
+        else
+        {
+            this.MyUseable = useable;
+        }
+
+        MyIcon.sprite = item.MyIcon;
+        MyIcon.color = Color.white;
+
+        if (count > 1)
+        {
+            UiManager.instance.UpdateStackSize(this);
+        }
     }
 
     private void UpdateVisual()

@@ -21,7 +21,10 @@ public class Durir : DialogueNPC {
         {
             if (!currentlyInteractingWithPlayer)
             {
-                speechEffect.Stop();
+                if (speechEffect.isPlaying)
+                {
+                    speechEffect.Stop();
+                }
 
                 if (!dialogueAvailable.isPlaying)
                 {
@@ -47,7 +50,10 @@ public class Durir : DialogueNPC {
         {
             if (!currentlyInteractingWithPlayer)
             {
-                speechEffect.Stop();
+                if (speechEffect.isPlaying)
+                {
+                    speechEffect.Stop();
+                }
 
                 if (!dialogueAvailable.isPlaying)
                 {
@@ -64,6 +70,29 @@ public class Durir : DialogueNPC {
             }
         }
 
+        if (StoryManager.stage == 4)
+        {
+            if (!currentlyInteractingWithPlayer)
+            {
+                if (speechEffect.isPlaying)
+                {
+                    speechEffect.Stop();
+                }
+
+                if (!dialogueAvailable.isPlaying)
+                {
+                    if (contentAvailable)
+                    {
+                        dialogueAvailable.Play();
+
+                        if (!col.enabled)
+                        {
+                            col.enabled = true;
+                        }
+                    }
+                }
+            }
+        }
 
         ConversationProgress();
 
@@ -77,128 +106,170 @@ public class Durir : DialogueNPC {
         // if player is currently talking to this NPC
         if (StoryManager.instance.MyCurrentDialogueNpc == this)
         {
-            if (StoryManager.stage == 1)
+            #region tutorial conversation
+            if (StoryManager.questLine == 0)
             {
-                if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
+                if (StoryManager.stage == 1)
                 {
-                    // intro text and up until player is handed sword and shield
-                    if (StoryManager.tutorialConversation == 0)
+                    if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
                     {
-                        if (currentParagraph == 5 && StoryManager.givenItems < 1)
+                        // intro text and up until player is handed sword and shield
+                        if (StoryManager.tutorialConversation == 0)
                         {
-                            foreach (Item item in swordAndShield)
+                            if (currentParagraph == 5 && StoryManager.givenItems < 1)
                             {
-                                InventoryScript.instance.AddItem(item);
+                                foreach (Item item in swordAndShield)
+                                {
+                                    InventoryScript.instance.AddItem(item);
+                                }
+
+                                bool closedBag = InventoryScript.instance.MyBags.Find(x => !x.MyBagScript.isOpen);
+
+                                if (closedBag)
+                                {
+                                    InventoryScript.instance.OpenClose();
+                                }
+
+                                StoryManager.givenItems = 1;
                             }
 
-                            bool closedBag = InventoryScript.instance.MyBags.Find(x => !x.MyBagScript.isOpen);
-
-                            if (closedBag)
+                            if (currentParagraph == 6)
                             {
-                                InventoryScript.instance.OpenClose();
+                                StoryManager.tutorialConversation = 1;
+                            }
+                        }
+
+                        // making sure player has equipped sword and shield
+                        if (StoryManager.tutorialConversation == 1)
+                        {
+                            if (EquipmentManager.instance.currentEquipment[3] == null ||
+                                EquipmentManager.instance.currentEquipment[4] == null)
+                            {
+                                contentAvailable = false;
+                                currentParagraph = 6;
+                            }
+                            else
+                            {
+                                contentAvailable = true;
+                                StoryManager.tutorialConversation = 2;
+                                currentParagraph = 7;
+                            }
+                        }
+
+                        // finish the sword and shield info
+                        if (StoryManager.tutorialConversation == 2)
+                        {
+                            if (currentParagraph == 9)
+                            {
+                                StoryManager.tutorialConversation = 3;
+                            }
+                        }
+
+                        // Introduce player to hitting a target.
+                        if (StoryManager.tutorialConversation == 3)
+                        {
+                            if (GameDetails.ripostes == 0 ||
+                            GameDetails.blocks == 0 ||
+                            GameDetails.hits == 0 ||
+                            GameDetails.fullChargeHits == 0)
+                            {
+                                contentAvailable = false;
+                                currentParagraph = 9;
                             }
 
-                            StoryManager.givenItems = 1;
+                            else if (GameDetails.ripostes > 0 &&
+                            GameDetails.blocks > 0 &&
+                            GameDetails.hits > 0 &&
+                            GameDetails.fullChargeHits > 0)
+                            {
+                                contentAvailable = true;
+                                currentParagraph = 10;
+                                StoryManager.tutorialConversation = 4;
+                            }
+
                         }
 
-                        if (currentParagraph == 6)
-                        {
-                            StoryManager.tutorialConversation = 1;
-                        }
-                    }
 
-                    // making sure player has equipped sword and shield
-                    if (StoryManager.tutorialConversation == 1)
-                    {
-                        if (EquipmentManager.instance.currentEquipment[3] == null ||
-                            EquipmentManager.instance.currentEquipment[4] == null)
+                        if (StoryManager.tutorialConversation == 4)
                         {
-                            contentAvailable = false;
-                            currentParagraph = 6;
+                            if (currentParagraph == 11)
+                            {
+                                StoryManager.tutorialConversation = 5;
+                            }
                         }
-                        else
-                        {
-                            contentAvailable = true;
-                            StoryManager.tutorialConversation = 2;
-                            currentParagraph = 7;
-                        }
-                    }
 
-                    // finish the sword and shield info
-                    if (StoryManager.tutorialConversation == 2)
-                    {
-                        if (currentParagraph == 9)
-                        {
-                            StoryManager.tutorialConversation = 3;
-                        }
-                    }
-
-                    // Introduce player to hitting a target.
-                    if (StoryManager.tutorialConversation == 3)
-                    {
-                        if (GameDetails.ripostes == 0 ||
-                        GameDetails.blocks == 0 ||
-                        GameDetails.hits == 0 ||
-                        GameDetails.fullChargeHits == 0)
+                        // Done with conversation
+                        if (StoryManager.tutorialConversation == 5)
                         {
                             contentAvailable = false;
-                            currentParagraph = 9;
+                            currentParagraph = 11;
+                            StoryManager.stage = 2;
+                            GameDetails._instance.Save();
                         }
 
-                        else if (GameDetails.ripostes > 0 &&
-                        GameDetails.blocks > 0 &&
-                        GameDetails.hits > 0 &&
-                        GameDetails.fullChargeHits > 0)
+                        currentParagraphIncrement = currentParagraph + 1;
+                        speechText.text = textLines[currentParagraph];
+
+                    }
+
+
+                }
+
+                if (StoryManager.stage == 3)
+                {
+                    if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
+                    {
+                        if (StoryManager.questLine == 0)
                         {
                             contentAvailable = true;
-                            currentParagraph = 10;
-                            StoryManager.tutorialConversation = 4;
+                            currentParagraph = 12;
+                            // analytics
+                            ReportEndOfConversation(gameObject.name);
+                            StoryManager.questLine = 1;
+                            StoryManager.stage = 4;
+                            GameDetails._instance.Save();
                         }
-
-                    }
-
-
-                    if (StoryManager.tutorialConversation == 4)
-                    {
-                        if (currentParagraph == 11)
-                        {
-                            StoryManager.tutorialConversation = 5;
-                        }
-                    }
-
-                    // Done with conversation
-                    if (StoryManager.tutorialConversation == 5)
-                    {
-                        contentAvailable = false;
-                        currentParagraph = 11;
-                        StoryManager.stage = 2;
-                        GameDetails.instance.Save();
                     }
 
                     currentParagraphIncrement = currentParagraph + 1;
                     speechText.text = textLines[currentParagraph];
-
                 }
-
-
             }
 
-            if (StoryManager.stage == 3)
+            #endregion tutorial conversation
+
+            #region storyLine Start
+
+            if (StoryManager.questLine == 1)
             {
                 if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
                 {
-                    if (StoryManager.quest1 == 0)
+                    if (StoryManager.stage == 4)
                     {
-                        contentAvailable = true;
-                        currentParagraph = 12;
-                        // analytics
-                        ReportEndOfConversation(gameObject.name);
+                        currentParagraph = 13;
+                        StoryManager.stage = 5;
                     }
-                }
 
-                currentParagraphIncrement = currentParagraph + 1;
-                speechText.text = textLines[currentParagraph];
+                    if (currentParagraph == 20)
+                    {
+                        StoryManager.questLine = 2;
+                        StoryManager.stage = 6;
+                        GameDetails._instance.Save();
+                    }
+
+                    //Debug.Log("current paragraph = " + currentParagraph);
+
+                    currentParagraphIncrement = currentParagraph + 1;
+                    speechText.text = textLines[currentParagraph];
+                }
             }
+
+            if (StoryManager.questLine == 2)
+            {
+                currentParagraph = 20;
+            }
+
+            #endregion storyLine Start
         }
 
         // if he is not currently talking to him
@@ -215,16 +286,13 @@ public class Durir : DialogueNPC {
                 }
             }
 
-            // if he has finishedf talking to bentos and has not yet talked to durir
-            if (StoryManager.stage == 3 && StoryManager.quest1 == 0)
+            // if he has finished talking to bentos and has not yet talked to durir
+            if (StoryManager.stage == 3 && StoryManager.questLine == 0)
             {
                 contentAvailable = true;
             }
 
         }
-
-
-
     }
 
     public override void AdvanceSpeech()
@@ -249,7 +317,7 @@ public class Durir : DialogueNPC {
 
     public void ReportEndOfConversation(string npcName)
     {
-        AnalyticsEvent.Custom("Reached end of conversation", new Dictionary<string, object>
+        Analytics.CustomEvent("Reached end of conversation", new Dictionary<string, object>
     {
         { "npc_name", npcName },
         { "time_elapsed", Time.timeSinceLevelLoad }

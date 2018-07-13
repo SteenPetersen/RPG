@@ -45,7 +45,10 @@ public class KeybindManager : MonoBehaviour {
 
         BindKey("ACTION1", KeyCode.Alpha1);
         BindKey("ACTION2", KeyCode.Alpha2);
+
         BindKey("ACTION3", KeyCode.Alpha3);
+        BindKey("ACTION4", KeyCode.Alpha4);
+        BindKey("ACTION5", KeyCode.Alpha5);
 
         BindKey("CAMERACW", KeyCode.E);
         BindKey("CAMERACCW", KeyCode.Q);
@@ -69,7 +72,7 @@ public class KeybindManager : MonoBehaviour {
             currentDictionary = ActionBinds;
         }
 
-        // if the key contains the letters ACT then it is actually an action the player wants to swap
+        // if the key contains the letters CAMERA then it is actually the camera the player wants to swap
         if (key.Contains("CAMERA"))
         {
             // set the current dictionary to be the action dictionary instead

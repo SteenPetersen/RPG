@@ -149,53 +149,57 @@ public class EnemyAI : AIPath
         if (inRange || isDead || pausingMovement)
             return;
 
-        Debug.Log("calling DetermineAggro");
-
-        //create layer masks for the player and the obstacles ending a finalmask combining both
-        int playerLayer = 10;
-        int obstacleLayer = 13;
-        var playerlayerMask = 1 << playerLayer;
-        var obstacleLayerMask = 1 << obstacleLayer;
-        var finalMask = playerlayerMask | obstacleLayerMask;
-
-        // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, (pos - transform.position), distanceToLook, finalMask);
-
-        var drawdirection = (pos - transform.position).normalized;
-        Debug.DrawRay(transform.position, (pos - transform.position), Color.cyan);
-        Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
-
-        // if the ray hits the player then aggro him
-        if (hit.transform != null)
+        if (Vector3.Distance(playerObj.transform.position, gameObject.transform.position) < distanceToLook)
         {
-            if (hit.transform.name == "Player")
-            {
-                if (!haveAggro)
-                {
-                    //Debug.Log("I see you!");
-                    Debug.Log(setter);
-                    Debug.Log(setter.targetASTAR);
-                    Debug.Log(PlayerController.instance.transform);
+            Debug.Log("calling DetermineAggro");
 
-                    setter.targetASTAR = PlayerController.instance.transform;
-                    haveAggro = true;
+            //create layer masks for the player and the obstacles ending a finalmask combining both
+            int playerLayer = 10;
+            int obstacleLayer = 13;
+            var playerlayerMask = 1 << playerLayer;
+            var obstacleLayerMask = 1 << obstacleLayer;
+            var finalMask = playerlayerMask | obstacleLayerMask;
+
+            // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, (pos - transform.position), distanceToLook, finalMask);
+
+            var drawdirection = (pos - transform.position).normalized;
+            Debug.DrawRay(transform.position, (pos - transform.position), Color.cyan);
+            Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
+
+            // if the ray hits the player then aggro him
+            if (hit.transform != null)
+            {
+                if (hit.transform.name == "Player")
+                {
+                    if (!haveAggro)
+                    {
+                        //Debug.Log("I see you!");
+                        Debug.Log(setter);
+                        Debug.Log(setter.targetASTAR);
+                        Debug.Log(PlayerController.instance.transform);
+
+                        setter.targetASTAR = PlayerController.instance.transform;
+                        haveAggro = true;
+                    }
+                }
+                else if (haveAggro && hit.transform.name != "Player")
+                {
+                    haveAggro = false;
+                    setter.targetASTAR = null;
+                    //Debug.LogWarning("Lost Line of sight to the player");
+                    return;
                 }
             }
-            else if (haveAggro && hit.transform.name != "Player")
+            else if (hit.transform == null)
             {
                 haveAggro = false;
                 setter.targetASTAR = null;
-                //Debug.LogWarning("Lost Line of sight to the player");
+                //Debug.LogWarning("Ran out of my distance");
                 return;
             }
         }
-        else if (hit.transform == null)
-        {
-            haveAggro = false;
-            setter.targetASTAR = null;
-            //Debug.LogWarning("Ran out of my distance");
-            return;
-        }
+
 
     }
 

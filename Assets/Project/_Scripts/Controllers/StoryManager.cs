@@ -14,7 +14,7 @@ public class StoryManager : MonoBehaviour {
     public static int reylithIntro;
     [SerializeField] public static int stage;
     public static int tutorialConversation;
-    public static int quest1;
+    public static int questLine;
 
     /// <summary>
     /// necessary to ensure that player cannot save 
@@ -54,6 +54,10 @@ public class StoryManager : MonoBehaviour {
     }
 
 
+    /// <summary>
+    /// Used to make sure the StoryManager always knows 
+    /// what NPC the player is interacting with
+    /// </summary>
     public DialogueNPC MyCurrentDialogueNpc
     {
         get { return currentDialogueNpc; }

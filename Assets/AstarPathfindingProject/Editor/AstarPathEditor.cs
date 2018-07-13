@@ -1368,8 +1368,8 @@ namespace Pathfinding {
 			try {
 				var lastMessageTime = Time.realtimeSinceStartup;
 				foreach (var p in AstarPath.active.ScanAsync()) {
-					// Displaying the progress bar is pretty slow, so don't do it too often
-					if (Time.realtimeSinceStartup - lastMessageTime > 0.2f) {
+                    // Displaying the progress bar is pretty slow, so don't do it too often
+                    if (Time.realtimeSinceStartup - lastMessageTime > 0.2f) {
 						// Display a progress bar of the scan
 						UnityEditor.EditorUtility.DisplayProgressBar("Scanning", p.description, p.progress);
 						lastMessageTime = Time.realtimeSinceStartup;

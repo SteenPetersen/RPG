@@ -364,6 +364,22 @@ public class InventoryScript : MonoBehaviour {
         return useables;
     }
 
+    public Item FindItemInInventory(string itemName)
+    {
+        foreach (Bag bag in bags)
+        {
+            foreach (SlotScript slot in bag.MyBagScript.MySlots)
+            {
+                if (!slot.IsEmpty && slot.MyItem.name == itemName)
+                {
+                    return slot.MyItem;
+                }
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// returns a list of all slots currently available
     /// </summary>

@@ -5,7 +5,8 @@ using UnityEngine;
 public class Bentos : DialogueNPC {
 
     SphereCollider col;
-    [SerializeField] Item bow, pants;
+    [SerializeField] Item bow;
+    [SerializeField] Item pants;
     [SerializeField] bool bowGiven, pantsGiven;
 
     protected override void Start()
@@ -124,7 +125,7 @@ public class Bentos : DialogueNPC {
                 {
                     currentParagraph = 6;
                     StoryManager.stage = 3;
-                    GameDetails.instance.Save();
+                    GameDetails._instance.Save();
                 }
 
 

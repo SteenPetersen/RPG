@@ -129,7 +129,7 @@ public class PlayerStats : CharacterStats {
         playerControl.isDead = true;
         SoundManager.instance.PlayUiSound("deathsound");
         anim.SetTrigger("Dead");
-        GameDetails.instance.KillPlayer();
+        GameDetails._instance.KillPlayer();
     }
 
     public override void TakeDamage(int damage)
@@ -220,6 +220,8 @@ public class PlayerStats : CharacterStats {
         UpdateStats();
 
         currentHealth = maxHealth;
+
+        playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
     }
 
     /// <summary>

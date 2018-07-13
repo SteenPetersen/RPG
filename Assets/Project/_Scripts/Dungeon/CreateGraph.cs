@@ -1,6 +1,4 @@
 ﻿using Pathfinding;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CreateGraph : MonoBehaviour {
@@ -13,7 +11,7 @@ public class CreateGraph : MonoBehaviour {
 
     private void Start()
     {
-        AiGridPath(d, w, node, diameter, cutCorners);
+        //AiGridPath(d, w, node, diameter, cutCorners);
     }
 
     public void AiGridPath(int depth, int width, float nodeSize, float diameter, bool cutCorners)
@@ -55,5 +53,10 @@ public class CreateGraph : MonoBehaviour {
         
         // Scans all graphs, do not call gg.Scan(), that is an internal method
         AstarPath.active.Scan();
+
+        // this is used to start the coroutine that only renders stuff close to the player
+        // has to be called after the final scan so the grid knows where to draw the entire dungeon
+        DrawDistanceActivator.instance.StartCoroutine("Check");
+        Debug.Log("Scan is now complete");
     }
 }

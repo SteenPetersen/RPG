@@ -17,7 +17,8 @@ public class ParticleSystemHolder : MonoBehaviour {
         }
     }
 
-    public ParticleSystem ImpBlood;
+    public ParticleSystem impBlood;
+    public ParticleSystem redBlood;
     public ParticleSystem bombExplosion;
     public GameObject[] stunWords;
     public GameObject[] critWords;
@@ -28,7 +29,12 @@ public class ParticleSystemHolder : MonoBehaviour {
     {
         if (clip.StartsWith("Imp") && clip.EndsWith("_impact"))
         {
-            Instantiate(ImpBlood, pos, Quaternion.identity);
+            Instantiate(impBlood, pos, Quaternion.identity);
+        }
+
+        else if (clip == "player")
+        {
+            Instantiate(redBlood, pos, Quaternion.identity);
         }
     }
 

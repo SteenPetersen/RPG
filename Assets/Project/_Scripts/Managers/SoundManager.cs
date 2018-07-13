@@ -11,7 +11,8 @@ public class SoundManager : MonoBehaviour {
                      impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, potionInteract, potionPickup, fireBurst, firebuildup,
                      levelup, deathsound, bomb, shieldblock, shieldriposte, crit,
                      lootdrop, purchase, chestopen, chestclose,
-                     demontalk1, demontalk2, demontalk3;
+                     demontalk1, demontalk2, demontalk3,
+                     spikeTrapFire, spikeTrapReset;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -76,6 +77,11 @@ public class SoundManager : MonoBehaviour {
         purchase = Resources.Load<AudioClip>("Sound/" + "purchase");
         chestopen = Resources.Load<AudioClip>("Sound/" + "chestopen");
         chestclose = Resources.Load<AudioClip>("Sound/" + "chestclose");
+
+        // environment
+        spikeTrapFire = Resources.Load<AudioClip>("Sound/" + "spike_trap_fire");
+        spikeTrapReset = Resources.Load<AudioClip>("Sound/" + "spike_trap_reset");
+
 
         audioSrc = GetComponent<AudioSource>();
     }
@@ -338,6 +344,29 @@ public class SoundManager : MonoBehaviour {
                         break;
                 }
                 break;
+        }
+    }
+
+    public void PlayEnvironmentSound(string clip)
+    {
+        switch (clip)
+        {
+            case "spike_trap_fire":
+                //int rand = Random.Range(1, 3);
+                //if (rand == 1)
+                //{
+                    //audioSrc.PlayOneShot(playerHurt);
+                    //break;
+                //}
+                audioSrc.PlayOneShot(spikeTrapFire);
+                break;
+
+            case "spike_trap_reset":
+                audioSrc.PlayOneShot(spikeTrapReset);
+                break;
+
+  
+
         }
     }
 }

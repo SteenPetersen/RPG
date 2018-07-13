@@ -130,7 +130,7 @@ public class Room
         int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
         int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
 
-        Debug.Log(goalX + " " + goalY);
+        //Debug.Log(goalX + " " + goalY);
 
         Vector2 pos = new Vector2(goalX, goalY);
 

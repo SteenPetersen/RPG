@@ -10,6 +10,7 @@ TagManager:
   - Goal
   - Map
   - Keybind
+  - PlayerSkeleton
   layers:
   - Default
   - TransparentFX

@@ -26,7 +26,7 @@ public class DeathScene : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        var allCanvas = GameDetails.instance.gameObject.GetComponentsInChildren<Canvas>();
+        var allCanvas = GameDetails._instance.gameObject.GetComponentsInChildren<Canvas>();
 
         foreach (Canvas i in allCanvas)
         {
@@ -49,6 +49,6 @@ public class DeathScene : MonoBehaviour {
 
     public void Continue()
     {
-        GameDetails.instance.Load();
+        GameDetails._instance.Load();
     }
 }

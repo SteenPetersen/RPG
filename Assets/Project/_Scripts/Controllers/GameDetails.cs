@@ -18,22 +18,24 @@ public class GameDetails : MonoBehaviour {
 
     Canvas[] ui;
 
+
     #region Singleton
-    public static GameDetails instance;
+    public static GameDetails _instance;
+
+    public static GameDetails Instance { get { return _instance; } }
 
     private void Awake()
     {
-        if (instance != null && instance != this)
+        if (_instance != null && _instance != this)
         {
             Destroy(this.gameObject);
             return;
         }
         else
         {
-            instance = this;
-        }
+            _instance = this;
+        } 
 
-        SceneManager.sceneLoaded += OnSceneLoaded;
         DontDestroyOnLoad(this.gameObject);
     }
     #endregion
@@ -45,6 +47,7 @@ public class GameDetails : MonoBehaviour {
     public GameObject dialogueCamera;
 
     #endregion
+
 
     // statics
     public static int dungeonLevel;
@@ -74,6 +77,11 @@ public class GameDetails : MonoBehaviour {
     public GameObject[] generalObjects;
 
     public Plane m_Plane = new Plane(Vector3.forward, Vector3.zero);
+
+    public ActionButton actionbar1;
+    public ActionButton actionbar2;
+    public ActionButton actionbar3;
+
 
     public GameObject player;
     PlayerStats playerStats;
@@ -106,7 +114,9 @@ public class GameDetails : MonoBehaviour {
 
         ui = gameObject.transform.GetComponentsInChildren<Canvas>();
 
-        StartCoroutine(enableUi());
+        // references to action bars
+
+        //StartCoroutine(enableUi());
     }
 
     void Update()
@@ -210,7 +220,7 @@ public class GameDetails : MonoBehaviour {
         data.Armor = playerStats.armor.GetBaseValue();
 
 
-
+        data.questLine = StoryManager.questLine;
         data.stage = StoryManager.stage;
         data.givenItems = StoryManager.givenItems;
         data.tutorialConversation = StoryManager.tutorialConversation;
@@ -227,6 +237,24 @@ public class GameDetails : MonoBehaviour {
         data.amountOfStackableItemsPerSlot = AmountOfStackableItemsPerSlot();
         data.itemsInTheSlot = ItemsInTheSlot();
 
+        // currency
+        data.gold = CurrencyManager.wealth;
+
+        // action bars
+        //Debug.Log(actionbar2.MyUseable.ToString());
+
+        if (actionbar1.SaveItemData != string.Empty)
+        {
+            data.actionbar1 = actionbar1.SaveItemData;
+        }
+        if (actionbar2.SaveItemData != string.Empty)
+        {
+            data.actionbar2 = actionbar2.SaveItemData;
+        }
+        if (actionbar3.SaveItemData != string.Empty)
+        {
+            data.actionbar3 = actionbar3.SaveItemData;
+        }
 
         data.zone = SceneManager.GetActiveScene().buildIndex;
         data.locationX = player.transform.position.x;
@@ -278,7 +306,7 @@ public class GameDetails : MonoBehaviour {
 
             ExperienceManager.instance.AddExpFromLoadedGame(data.experience);
 
-
+            StoryManager.questLine = data.questLine;
             StoryManager.stage = data.stage;
             StoryManager.givenItems = data.givenItems;
             StoryManager.tutorialConversation = data.tutorialConversation;
@@ -291,6 +319,26 @@ public class GameDetails : MonoBehaviour {
 
             // items in bags
             LoadAllItemsInBags(data.itemsInTheSlot, data.amountOfStackableItemsPerSlot);
+
+            // currency
+            CurrencyManager.wealth = data.gold;
+
+            // action bars
+            Item tmp = InventoryScript.instance.FindItemInInventory(data.actionbar1);
+            if (tmp != null)
+            {
+                actionbar1.LoadGameUseable(tmp as IUseable, tmp);
+            }
+            tmp = InventoryScript.instance.FindItemInInventory(data.actionbar2);
+            if (tmp != null)
+            {
+                actionbar2.LoadGameUseable(tmp as IUseable, tmp);
+            }
+            tmp = InventoryScript.instance.FindItemInInventory(data.actionbar3);
+            if (tmp != null)
+            {
+                actionbar3.LoadGameUseable(tmp as IUseable, tmp);
+            }
 
             SceneManager.LoadScene(data.zone);
             player.transform.position = new Vector2(data.locationX, data.locationY);
@@ -591,7 +639,14 @@ public class GameDetails : MonoBehaviour {
         // in case there are enemies nearby when a Load happens clear all enemies from the list
         PlayerController.instance.enemies.Clear();
 
-        StartCoroutine(enableUi());
+        var m_Scene = SceneManager.GetActiveScene();
+
+        if (m_Scene.name != "Loading")
+        {
+            StartCoroutine(enableUi());
+            Debug.Log("being called inside OnSceneLoaded");
+        }
+
 
     }
 
@@ -599,20 +654,14 @@ public class GameDetails : MonoBehaviour {
     {
         yield return new WaitForSeconds(1.5f);
 
-        //Debug.Log(ui.Length + "enabling ui");
-
-
         StartCoroutine(UnFade());
         loadingScene = false;
-
+        Debug.Log("being called inside enableUI");
     }
 
     IEnumerator UnFade()
     {
-        if (AstarPath.active != null)
-        {
-            AstarPath.active.Scan();
-        }
+
 
         while (fadeToBlack.color.a >= 0.02)
         {
@@ -622,7 +671,20 @@ public class GameDetails : MonoBehaviour {
             yield return new WaitForSeconds(0.01f);
         }
 
-        yield return null;
+        if (AstarPath.active != null)
+        {
+            var m_Scene = SceneManager.GetActiveScene();
+
+            if (m_Scene.name.Contains("_indoor"))
+            {
+                Debug.Log("calling boardcreator method");
+                BoardCreator.instance.CreateDungeonGraph();
+                StopCoroutine("UnFade");
+            }
+
+            Debug.Log("being called inside UnFade");
+            //AstarPath.active.Scan();
+        }
     }
 }
 
@@ -644,6 +706,7 @@ class PlayerData
 
     // Progress
     public int stage;
+    public int questLine;
     public int givenItems;
     public int tutorialConversation;
 
@@ -658,6 +721,14 @@ class PlayerData
     // Items in Bag
     public List<int> amountOfStackableItemsPerSlot;
     public List<string> itemsInTheSlot;
+
+    // currency
+    public int gold;
+
+    // Action Bars
+    public string actionbar1;
+    public string actionbar2;
+    public string actionbar3;
 
     // zone information
     public int zone;

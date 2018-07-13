@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour
     public bool blocking;
     #endregion
 
-    [SerializeField] private bool mouseOverInteractableAndPlayerInRange;
+    //[SerializeField] private bool mouseOverInteractableAndPlayerInRange;
     [SerializeField] ParticleSystem weaponCharged;
     bool weaponChargeReady;
 
@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (isDead || GameDetails.instance.paused || dialogue)
+        if (isDead || GameDetails._instance.paused || dialogue)
             return;
 
         HandleAggro();
@@ -465,7 +465,7 @@ public class PlayerController : MonoBehaviour
 
             if (vendor == null)
             {
-                mouseOverInteractableAndPlayerInRange = false;
+                //mouseOverInteractableAndPlayerInRange = false;
                 return null;
             }
 
@@ -476,7 +476,7 @@ public class PlayerController : MonoBehaviour
 
                 if (distanceFromInteractable < vendor.radius)
                 {
-                    mouseOverInteractableAndPlayerInRange = true;
+                    //mouseOverInteractableAndPlayerInRange = true;
                     return vendor;
                 }
 
@@ -514,7 +514,7 @@ public class PlayerController : MonoBehaviour
 
             if (interactable == null)
             {
-                mouseOverInteractableAndPlayerInRange = false;
+                //mouseOverInteractableAndPlayerInRange = false;
                 return null;
             }
 
@@ -527,11 +527,11 @@ public class PlayerController : MonoBehaviour
 
                 if (distanceFromInteractable < interactable.MyRadius)
                 {
-                    mouseOverInteractableAndPlayerInRange = true;
+                    //mouseOverInteractableAndPlayerInRange = true;
                     return interactable;
                 }
 
-                mouseOverInteractableAndPlayerInRange = false;
+                //mouseOverInteractableAndPlayerInRange = false;
                 return null;
             }
             else
@@ -543,7 +543,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             SetMousePosition();
-            mouseOverInteractableAndPlayerInRange = false;
+            //mouseOverInteractableAndPlayerInRange = false;
             return null;
         }
 
@@ -625,15 +625,15 @@ public class PlayerController : MonoBehaviour
 
     private void HandleActionBarInput()
     {
-        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION1"]))
+        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION3"]))
         {
             UiManager.instance.ClickActionButton("ACTION1");
         }
-        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION2"]))
+        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION4"]))
         {
             UiManager.instance.ClickActionButton("ACTION2");
         }
-        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION3"]))
+        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION5"]))
         {
             UiManager.instance.ClickActionButton("ACTION3");
         }
@@ -658,15 +658,15 @@ public class PlayerController : MonoBehaviour
             transform.position = new Vector2(-12f, 4);
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION1"])) // ACTION1 is trying to use Melee
         {
-            var tryEquip = EquipFirstMatchingItemInBag(1, 3);
-            if (tryEquip)
-            {
-                melee = false;
-                ranged = true;
-            }
+            EquipFirstMatchingItemInBag(0,3);
+            EquipFirstMatchingItemInBag(2,4);
+        }
 
+        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION2"])) // ACTION2 is trying to use Ranged
+        {
+            EquipFirstMatchingItemInBag(1,3);
         }
     }
 
@@ -700,6 +700,13 @@ public class PlayerController : MonoBehaviour
         image.AddComponent<Fade>();
     } // commented
 
+    /// <summary>
+    /// Looks through Inventory and checks for an item 
+    /// that matches the Parameters passed to this function
+    /// </summary>
+    /// <param name="type">Type of item to look for "EquipmentType" Enum located on Equipment script</param>
+    /// <param name="slotIndex">Slot that the item fits "EquipmentSlot" Enum located on Equipment script</param>
+    /// <returns></returns>
     private static bool EquipFirstMatchingItemInBag(int type, int slotIndex)
     {
         //for all items in your bag
@@ -707,8 +714,13 @@ public class PlayerController : MonoBehaviour
         {
             if (slot.MyItem is Equipment)
             {
-                Debug.Log("This Slots item is " + slot.MyItem.name);
+                //Debug.Log("This Slots item is " + slot.MyItem.name + " and its type of equipment is " + slot.MyItem.typeOfEquipment);
+                Equipment tmp = slot.MyItem as Equipment;
 
+                if ((int)tmp.equipType == type && (int)tmp.equipSlot == slotIndex)
+                {
+                    slot.MyItem.Use();
+                }
             }
         }
             //{
@@ -904,7 +916,7 @@ public class PlayerController : MonoBehaviour
         playerStat = GetComponent<PlayerStats>();
         anim = GetComponent<Animator>();
         equip = EquipmentManager.instance;
-        m_Plane = GameDetails.instance.m_Plane;
+        m_Plane = GameDetails._instance.m_Plane;
         pooledArrows = PooledProjectilesController.instance;
         cameraControl = CameraController.instance;
 

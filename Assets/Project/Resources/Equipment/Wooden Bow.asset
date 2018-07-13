@@ -16,13 +16,16 @@ MonoBehaviour:
   sellValue: 15
   buyValue: 100
   isDefaultItem: 0
-  typeOfEquipment: 0
+  typeOfEquipment: 1
   stackSize: 0
+  title: 
+  quality: 0
   MySlot: {fileID: 0}
   equipSlot: 3
   equipType: 1
   characterVisibleSprite: {fileID: 21300006, guid: ef9674fc30a0bdd469fbc8d64035232b,
     type: 3}
+  glowEffect: {fileID: 0}
   armorModifier: 0
-  damageModifier: 3
+  damageModifier: 13
   rangedProjectile: 1

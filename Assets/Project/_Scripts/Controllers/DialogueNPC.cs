@@ -55,21 +55,21 @@ public abstract class DialogueNPC : Interactable {
 
         PlayerController.instance.dialogue = true;
        
-        GameDetails.instance.paused = true;
+        GameDetails._instance.paused = true;
 
         float distanceFromLeftToPlayer = Vector3.Distance(cam.measurementTransform.position, PlayerController.instance.transform.position);
         float distanceFromLeftToNPC = Vector3.Distance(cam.measurementTransform.position, transform.position);
 
         if (distanceFromLeftToPlayer > distanceFromLeftToNPC)
         {
-            GameDetails.instance.dialogueCamera.transform.localPosition = GameDetails.instance.dialogueNPCIsStandingOnTheLeft;
+            GameDetails._instance.dialogueCamera.transform.localPosition = GameDetails._instance.dialogueNPCIsStandingOnTheLeft;
             dialogueUi.SetActive(true);
             StoryManager.instance.MySpeechBubble.sprite = StoryManager.instance.MyBubbleRight;
         }
 
         else if (distanceFromLeftToPlayer < distanceFromLeftToNPC)
         {
-            GameDetails.instance.dialogueCamera.transform.localPosition = GameDetails.instance.dialogueNPCIsStandingOnTheRight;
+            GameDetails._instance.dialogueCamera.transform.localPosition = GameDetails._instance.dialogueNPCIsStandingOnTheRight;
             StoryManager.instance.MySpeechBubble.sprite = StoryManager.instance.MyBubbleLeft;
 
             dialogueUi.SetActive(true);
@@ -80,7 +80,7 @@ public abstract class DialogueNPC : Interactable {
             Debug.LogWarning("something wrong with camera positions in dialogue, distances are being measured incorrectly");
         }
 
-        GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
+        GameDetails._instance.dialogueCamera.SetActive(!GameDetails._instance.dialogueCamera.activeSelf);
 
 
         if (dialogueAvailable != null)
@@ -123,12 +123,13 @@ public abstract class DialogueNPC : Interactable {
 
     protected virtual void CloseDialogue()
     {
-        GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
+        GameDetails._instance.dialogueCamera.SetActive(!GameDetails._instance.dialogueCamera.activeSelf);
         dialogueUi.SetActive(false);
         PlayerController.instance.dialogue = false;
-        GameDetails.instance.paused = false;
+        GameDetails._instance.paused = false;
         currentlyInteractingWithPlayer = false;
         StoryManager.instance.MyCurrentDialogueNpc = null;
+        speechEffect.Stop();
     }
 
     /// <summary>

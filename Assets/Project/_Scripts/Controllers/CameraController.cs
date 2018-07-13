@@ -63,7 +63,7 @@ public class CameraController : MonoBehaviour {
     void UpdateCameraPosition()
     {
 
-        if (GameDetails.instance.paused)
+        if (GameDetails._instance.paused)
             return;
 
         if (Input.GetKey(KeybindManager.instance.CameraBinds["CAMERACCW"]))

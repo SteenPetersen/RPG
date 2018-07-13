@@ -26,11 +26,11 @@ public class DungeonLevelLoadLogic : MonoBehaviour {
 
     IEnumerator FadeOUt()
     {
-        while (GameDetails.instance.fadeToBlack.color.a <= 0.98)
+        while (GameDetails._instance.fadeToBlack.color.a <= 0.98)
         {
-            GameDetails.instance.fadeToBlack.enabled = true;
-            GameDetails.instance.fadeToBlack.color = new Color(0, 0, 0, GameDetails.instance.fadeSpeed);
-            GameDetails.instance.fadeSpeed += 0.02f;
+            GameDetails._instance.fadeToBlack.enabled = true;
+            GameDetails._instance.fadeToBlack.color = new Color(0, 0, 0, GameDetails._instance.fadeSpeed);
+            GameDetails._instance.fadeSpeed += 0.02f;
             yield return new WaitForSeconds(0.01f);
         }
 
