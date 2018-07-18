@@ -56,7 +56,7 @@ public class CreateGraph : MonoBehaviour {
 
         // this is used to start the coroutine that only renders stuff close to the player
         // has to be called after the final scan so the grid knows where to draw the entire dungeon
-        DrawDistanceActivator.instance.StartCoroutine("Check");
+        
         Debug.Log("Scan is now complete");
     }
 }

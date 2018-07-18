@@ -4283,6 +4283,7 @@ MonoBehaviour:
   anim: {fileID: 0}
   damagePercent: 50
   range: 0.52
+  enemiesInRange: []
 --- !u!114 &114716152671090326
 MonoBehaviour:
   m_ObjectHideFlags: 1

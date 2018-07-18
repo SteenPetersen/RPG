@@ -151,7 +151,7 @@ public class BoardCreator : MonoBehaviour
 
     public void CreateDungeonGraph()
     {
-        Debug.Log("calling for the creation of a gríd");
+        Debug.Log("calling for the creation of a grid");
         aStarGridCreator.AiGridPath(columns, rows, 0.5f, 1, false);
     }
 

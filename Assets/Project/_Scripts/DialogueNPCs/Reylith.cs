@@ -7,18 +7,16 @@ public class Reylith : DialogueNPC {
 
     [SerializeField] AIDestinationSetter setter;
     [SerializeField] Animator anim;
-    Transform dungeonEntrance;
+    Transform boatLocation;
     [SerializeField] int progress;
     [SerializeField] bool conversationDone;
     GameObject skeleton;
     bool fading;
-    [SerializeField] BoatMovement boat;
 
     protected override void Start()
     {
         base.Start();
-        dungeonEntrance = GameObject.Find("BoatLocation").transform;
-        boat = GameObject.Find("Boat").GetComponent<BoatMovement>();
+        boatLocation = GameObject.Find("BoatLocation").transform;
         skeleton = transform.Find("logic").transform.Find("Skeleton").gameObject;
     }
 
@@ -53,11 +51,11 @@ public class Reylith : DialogueNPC {
                 if (setter.targetASTAR == null)
                 {
                     Debug.Log("Out of content");
-                    setter.targetASTAR = dungeonEntrance;
+                    setter.targetASTAR = boatLocation;
                     anim.SetBool("run", true);
 
-                    float frontPos = Vector3.Distance(front.transform.position, dungeonEntrance.transform.position);
-                    float backPos = Vector3.Distance(back.transform.position, dungeonEntrance.transform.position);
+                    float frontPos = Vector3.Distance(front.transform.position, boatLocation.transform.position);
+                    float backPos = Vector3.Distance(back.transform.position, boatLocation.transform.position);
 
                     if (frontPos > backPos)
                     {
@@ -67,7 +65,7 @@ public class Reylith : DialogueNPC {
             }
 
 
-            if (transform.position == dungeonEntrance.transform.position)
+            if (transform.position == boatLocation.transform.position)
             {
                 if (!fading)
                 {
@@ -95,7 +93,10 @@ public class Reylith : DialogueNPC {
     /// </summary>
     private void OnDestroy()
     {
-        boat.readyToSail = true;
+        if (conversationDone)
+        {
+            GameObject.Find("Boat").GetComponent<BoatMovement>().readyToSail = true;
+        }
     }
 
     /// <summary>

@@ -33,7 +33,7 @@ public class Room
         //xPos = Mathf.RoundToInt((columns / 2f) - (roomWidth / 2f));
         //yPos = Mathf.RoundToInt((rows / 2f) - (roomHeight / 2f));
 
-        Debug.Log(xPos + " " + yPos);
+        //Debug.Log(xPos + " " + yPos);
 
         Vector3 playerPos = new Vector3(xPos + (roomWidth / 2), yPos + (roomHeight / 2), 0);
         BoardCreator.instance.player.transform.position = playerPos;
@@ -256,7 +256,7 @@ public class Room
         int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
         int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
 
-        Debug.Log(goalX + " " + goalY);
+        Debug.Log("Goal is Placed at position X " + goalX + " and Y " + goalY);
 
         Vector2 pos = new Vector2(goalX, goalY);
 
@@ -268,10 +268,10 @@ public class Room
         int mapX = UnityEngine.Random.Range(xPos, xPos + (roomWidth / 2));
         int mapY = UnityEngine.Random.Range(yPos, yPos + (roomHeight / 2));
 
-        Debug.Log(mapX + " " + mapY);
+        Debug.Log("Map is Placed at position X " + mapX + " and Y " + mapY);
 
         Vector2 pos = new Vector2(mapX, mapY);
 
-        BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.map);
+        //BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.map);
     }
 }

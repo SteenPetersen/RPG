@@ -74,15 +74,7 @@ public class Projectile : MonoBehaviour {
                     // play the impact particles that belongs to this enemy
                     ParticleSystemHolder.instance.PlayImpactEffect(col.transform.parent.name + "_impact", transform.position);
 
-                    // stop the projectile from moving any further
-                    rigid.isKinematic = true;
-                    rigid.velocity = Vector2.zero;
-
-                    // disable the projectile collider so it cannot hit anything else
-                    myCollider.enabled = false;
-
-                    // make the arrow invisible
-                    projectileSpriteRenderer.enabled = false;
+  
 
                     // if this projectile is not a sword
                     if ((int)projectileType == 0)
@@ -105,8 +97,31 @@ public class Projectile : MonoBehaviour {
                         script.Knockback(dir);
                     }
 
-                    // make the enemy take the damage
-                    targetStatsScript.TakeDamage(playerStats.damage.GetValue());
+
+                    // if this is NOT a max charged hit
+                    if (!PlayerController.instance.maxChargedHit)
+                    {
+                        // stop the projectile from moving any further
+                        rigid.isKinematic = true;
+                        rigid.velocity = Vector2.zero;
+
+                        // disable the projectile collider so it cannot hit anything else
+                        myCollider.enabled = false;
+
+                        // make the arrow invisible
+                        projectileSpriteRenderer.enabled = false;
+
+                        // make the enemy take the damage
+                        targetStatsScript.TakeDamage(playerStats.damage.GetValue());
+                    }
+
+                    // if it is a charged hit let the arrow penetrate all enemies
+                    else if (PlayerController.instance.maxChargedHit)
+                    {
+                        // make the enemy take the damage
+                        targetStatsScript.TakeDamage(playerStats.damage.GetValue());
+                    }
+
                 }
             }
         }
@@ -127,12 +142,27 @@ public class Projectile : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Prepares the projectile to be fired
+    /// This method can be optimized
+    /// </summary>
     public void MakeProjectileReady()
     {
+        // check if this projectile has a chargedParticles effect attached to it and destroy it if it does
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).name == "ChargedShotParticles(Clone)")
+            {
+                Destroy(transform.GetChild(i).gameObject);
+            }
+        }
+
         myCollider.enabled = true;
         rigid.isKinematic = false;
         gameObject.SetActive(true);
         projectileSpriteRenderer.enabled = true;
+
+
     }
 
     private void OnDisable()

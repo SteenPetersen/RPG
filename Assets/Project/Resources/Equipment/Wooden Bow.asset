@@ -25,7 +25,7 @@ MonoBehaviour:
   equipType: 1
   characterVisibleSprite: {fileID: 21300006, guid: ef9674fc30a0bdd469fbc8d64035232b,
     type: 3}
-  glowEffect: {fileID: 0}
+  glowEffect: {fileID: 21300000, guid: 0b4fe2e04c887994bb640085bf02fe60, type: 3}
   armorModifier: 0
   damageModifier: 13
   rangedProjectile: 1

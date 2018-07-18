@@ -14,6 +14,7 @@ public class TutorialImp : EnemyAI {
 
         if (StoryManager.tutorialConversation == 3)
         {
+            Debug.Log("running update " + StoryManager.tutorialConversation);
             if (GameDetails.ripostes == 0 ||
                 GameDetails.blocks == 0 ||
                 GameDetails.hits == 0 ||

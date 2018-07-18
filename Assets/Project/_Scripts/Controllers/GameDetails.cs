@@ -151,7 +151,7 @@ public class GameDetails : MonoBehaviour {
 
     private void TickEvent()
     {
-        Debug.Log("tick event");
+        //Debug.Log("tick event");
 
         if (PlayerStats.instance.currentHealth < PlayerStats.instance.maxHealth ||
             PlayerStats.instance.MyCurrentStamina < PlayerStats.instance.MyMaxStamina)
@@ -661,8 +661,6 @@ public class GameDetails : MonoBehaviour {
 
     IEnumerator UnFade()
     {
-
-
         while (fadeToBlack.color.a >= 0.02)
         {
             fadeToBlack.enabled = true;
@@ -680,9 +678,10 @@ public class GameDetails : MonoBehaviour {
                 Debug.Log("calling boardcreator method");
                 BoardCreator.instance.CreateDungeonGraph();
                 StopCoroutine("UnFade");
+                Debug.Log("Ending Coroutine on GameDetails, board should now be created and have 2D grid.");
+                DrawDistanceActivator.instance.StartCoroutine("Check");
             }
 
-            Debug.Log("being called inside UnFade");
             //AstarPath.active.Scan();
         }
     }

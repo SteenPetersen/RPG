@@ -38,8 +38,9 @@
       </video>
       <div class="overlay"></div>
         <div class="container">
-            <p class="social"><a href="https://twitter.com/Pixlrelm" title="" class="twitter"><i class="fa fa-twitter"></i></a></p>
-            <h1 style="font-family:'Pixl'; text-align:center; margin-bottom:0px; position:relative; color: white">Welcome to Pixlrelm</h1>
+            <p class="social"><a href="https://twitter.com/Pixlrelm" target="_blank" title="" class="twitter"><i class="fa fa-twitter"></i></a></p>
+            <h6 style="font-family:'Pixl'; text-align:center; margin-bottom:0px; position:relative; color: white">Welcome to</h6>
+            <h1 style="font-family:'Pixl'; text-align:center; margin-bottom:0px; margin-top:0px;position:relative; color: white">Pixlrelm</h1>
             <script>
                 var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Builds.json", { onProgress: UnityProgress });
             </script>
@@ -53,10 +54,10 @@
 
             <div class="mailing-list" style="padding-top:40px;">
 
-                <h4 style="font-family:'Pixl'; position:relative; color: white">Follow my progress on Twitter @Pixlrelm for more information</h4>
-                <h5 style="font-family:'Pixl'; position:relative; color: white">Contact me directly at info@pixlrelm.com</h5>
+                <h4 style="font-family: Verdana; position:relative; color: white">Follow my progress on Twitter @Pixlrelm for more information</h4>
+                <h5 style="font-family: Verdana; position:relative; color: white">Contact me directly at info@pixlrelm.com</h5>
 
-                <h7 style="font-family:'Pixl'; position:relative; color: white">&copy; 2018 Pixlrelm.com</h7>
+                <h7 style="font-family:Verdana; position:relative; color: white">&copy; 2018 Pixlrelm.com</h7>
                 <!--<div class="row">
                 <form class="form-inline">
                     <div class="form-group">
@@ -74,7 +75,39 @@
                     </a>
 
                     <div class="collapse" id="collapseExample">
-                        <div class="card card-body" style="color: #77c3bf">
+                        <div class="card card-body" style="color:white">
+                            <!--#77c3bf-->
+                            <br />
+                            <br />
+
+
+                            V 0.0.0.11
+
+                            <br />
+                            Story<br />
+                            ------<br />
+                            - more detail in durirs story which leads the player on<br />
+                            - Reylith now goes onto a boat to make more sense for the story<br />
+                            <br />
+                            Action bars<br />
+                            -----------<br />
+                            - After a player places something in the action bar (Potion for example) it will now be at that same place when loading a game.<br />
+                            <br />
+                            Vendors<br />
+                            -------<br />
+                            - Vendors will not buy the starter gear from the player anymore unless the player is far enough through the tutorial to not get stuck<br />
+                            <br />
+                            Dungeons<br />
+                            --------<br />
+                            - Huge revamp to how dungeons are loaded which has not only made it faster to load but also made it render in a more optimal way. should be a considerable increase in fps<br />
+                            - tiles are now only rendered on a need-to-render basis. I want to test this new system versus the built in frustrum culling.<br />
+                            - Added traps to dungeons<br />
+                            - Made the first dungeon seem more cave-like (WIP)<br />
+                            - rewrite of the A' path finding grid code to make sure grid don't get generated multiple times and to make sure the scene isn't scanned more than necessary<br />
+                            <br />
+                            Player<br />
+                            ------<br />
+                            Players can now press 1 or 2 to quickly switch between melee and ranged combat<br />
 
                             <br />
                             <br />

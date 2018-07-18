@@ -220,7 +220,7 @@ public class EquipmentManager : MonoBehaviour {
         // update the array of equipment with the new items
         currentEquipment[slotIndex] = newItem;
 
-        Debug.Log(slotIndex);
+        //Debug.Log(slotIndex);
 
         // instantiate a sprite corresponding to the new items visiblesprite
         Sprite newSprite = Instantiate(newItem.characterVisibleSprite) as Sprite;

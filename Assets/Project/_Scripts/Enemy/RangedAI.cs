@@ -143,7 +143,7 @@ public class RangedAI : EnemyAI {
                 {
                     if (hits[i].transform.name == "Player")
                     {
-                        Debug.Log("Player is still in range");
+                        //Debug.Log("Player is still in range");
                         return;
                     }
                 }

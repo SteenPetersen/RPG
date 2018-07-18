@@ -37,7 +37,7 @@ public class EquipedItemSlot : MonoBehaviour
 
         SoundManager.instance.PlayInventorySound("AddItem");
 
-        Debug.Log("adding item to equipment slot");
+        //Debug.Log("adding item to equipment slot");
 
         MyIcon.sprite = MyEquipment.icon;
         MyIcon.enabled = true;

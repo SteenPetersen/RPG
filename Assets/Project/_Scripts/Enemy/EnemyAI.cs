@@ -151,7 +151,7 @@ public class EnemyAI : AIPath
 
         if (Vector3.Distance(playerObj.transform.position, gameObject.transform.position) < distanceToLook)
         {
-            Debug.Log("calling DetermineAggro");
+            //Debug.Log("calling DetermineAggro");
 
             //create layer masks for the player and the obstacles ending a finalmask combining both
             int playerLayer = 10;

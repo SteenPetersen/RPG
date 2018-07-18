@@ -104,7 +104,7 @@ public class PooledProjectilesController : MonoBehaviour {
                     }
                 }
 
-                Debug.Log("Creating an enemy projectile!");
+                //Debug.Log("Creating an enemy projectile!");
 
                 GameObject obj = Instantiate(projectile) as GameObject;
                 impFireballs.Add(obj);

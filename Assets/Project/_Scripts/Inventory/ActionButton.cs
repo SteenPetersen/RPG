@@ -11,8 +11,7 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
         get; set;
     }
 
-    [SerializeField]
-    private Text stackSize;
+    [SerializeField] private Text stackSize;
 
     private Item buttonItem;
 
@@ -162,7 +161,7 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
 
         if (count > 1)
         {
-            UiManager.instance.UpdateStackSize(this);
+            UpdateStackSize();
         }
     }
 
@@ -171,24 +170,57 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
         MyIcon.sprite = HandScript.instance.Put().MyIcon;
         MyIcon.color = Color.white;
 
-        if (count > 1)
-        {
-            UiManager.instance.UpdateStackSize(this);
-        }
+        UpdateStackSize();
+
     }
 
+    /// <summary>
+    /// Updates the count text on the UI element for the action button depending on what happens in the bags.
+    /// this method is a delegate and listens to ItemCountChangedEvent on the inventory script
+    /// </summary>
+    /// <param name="item"></param>
     public void UpdateItemCount(Item item)
     {
         if (item is IUseable && useables.Count > 0)
         {
-            if (useables.Peek().GetType() == item.GetType())
+            string input = useables.Peek().ToString().Substring(0, useables.Peek().ToString().IndexOf("("));
+
+            if (useables.Peek().GetType() == item.GetType() && item.name == input)
             {
                 useables = InventoryScript.instance.GetUseables(item as IUseable, item);
 
                 count = useables.Count;
 
-                UiManager.instance.UpdateStackSize(this);
+                UpdateStackSize();
             }
+        }
+    }
+
+    /// <summary>
+    /// Updates the text in the UI showing how many, if more than 1, 
+    /// of the item we have in our bags
+    /// </summary>
+    public void UpdateStackSize()
+    {
+        // if the items are stacking
+        if (MyCount > 1)
+        {
+            MyStackText.text = MyCount.ToString();
+            MyStackText.color = Color.white;
+            MyIcon.color = Color.white;
+        }
+        // when there is only 1 item dont display text
+        else
+        {
+            MyStackText.color = new Color(0, 0, 0, 0);
+            MyIcon.color = Color.white;
+        }
+
+        // if the slot has nothing in it
+        if (MyCount == 0)
+        {
+            MyIcon.color = new Color(0, 0, 0, 0);
+            MyStackText.color = new Color(0, 0, 0, 0);
         }
     }
 }

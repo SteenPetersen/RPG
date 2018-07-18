@@ -38,6 +38,7 @@ public class DrawDistanceActivator : MonoBehaviour {
     {
         cullableObjects = new List<CullableObject>();
         player = GameObject.Find("Player");
+        StopCoroutine("Check");
     }
 
     void OnDisable()

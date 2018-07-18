@@ -12,8 +12,10 @@ public class PlayerController : MonoBehaviour
     // located on Gamemanager since monsters also need access to it.
     Plane m_Plane;
     [SerializeField] bool ripostePossible, enemiesInRange, lineOfSightRoutineActivated, largeStrike, largeStrikeAnimationReady, 
-                          heldStrikeCoroutinePlaying, maxChargedHit;
+                          heldStrikeCoroutinePlaying, chargedShot;
     [SerializeField] float riposteTime, chargeTime, blockTime = 0;
+
+    public bool maxChargedHit;
 
     Vector3 prevPosition;
     Vector3 move;
@@ -122,6 +124,7 @@ public class PlayerController : MonoBehaviour
 
     //[SerializeField] private bool mouseOverInteractableAndPlayerInRange;
     [SerializeField] ParticleSystem weaponCharged;
+    [SerializeField] ParticleSystem bowCharged;
     bool weaponChargeReady;
 
     private void OnEnable()
@@ -166,6 +169,27 @@ public class PlayerController : MonoBehaviour
                 weaponChargeReady = true;
                 weaponCharged.Play();
             }
+        }
+
+        if (chargedShot)
+        {
+            ChargeBowShot();
+
+            if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98 && !weaponChargeReady)
+            {
+                weaponChargeReady = true;
+                bowCharged.Play();
+            }
+        }
+    }
+
+    private void ChargeBowShot()
+    {
+        if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
+        {
+            Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+            tmp.a += 0.009f;
+            EquipmentManager.instance.weaponGlowSlot.color = tmp;
         }
     }
 
@@ -372,6 +396,8 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
+
+
             if (ripostePossible)
             {
                 if (Input.GetMouseButtonDown(0))
@@ -386,8 +412,18 @@ public class PlayerController : MonoBehaviour
         // if the player is in a ranged state
         else if (ranged)
         {
+            if (Input.GetMouseButton(1))
+            {
+
+            }
+
+            if (!Input.GetMouseButton(1))
+            {
+               
+            }
+
             // if the player hits the left mouse button
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 bool canHit = CheckIfPlayerMayHit();
 
@@ -412,7 +448,47 @@ public class PlayerController : MonoBehaviour
                 }
 
                 // if player is allowed to hit then animate the shooting
-                anim.SetTrigger("ShootRanged");
+
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                largeStrike = false;
+
+                // make sure maxChargedHit is set to false for every attempt at hitting 
+                // only set it to true if its true for this particular hit
+                maxChargedHit = false;
+
+                // check if player was trying to to do a charged hit
+                if (chargedShot)
+                {
+                    anim.SetBool("ChargedShot", false);
+                    chargedShot = false;
+
+                    if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
+                    {
+                        Debug.Log("Maximum Hit");
+                        maxChargedHit = true;
+                    }
+
+                    Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+                    tmp.a = 0;
+                    EquipmentManager.instance.weaponGlowSlot.color = tmp;
+                    weaponChargeReady = false;
+                    bowCharged.Stop();
+
+                    return;
+                }
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                // start checking if player wants to hold button in
+                if (!heldStrikeCoroutinePlaying && !chargedShot)
+                {
+                    Debug.Log("Starting coroutine");
+                    StartCoroutine(CheckForHeldStrike());
+                }
             }
         }
 
@@ -812,7 +888,7 @@ public class PlayerController : MonoBehaviour
         Vector2 direction = new Vector2(mousePosition.x - startPos.x, mousePosition.y - startPos.y);
         direction.Normalize();
 
-        // Determine the correct angle to turn to the projectile
+        // Determine the correct angle to turn the projectile
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         GameObject projectile = pooledArrows.GetPooledArrow();
@@ -826,6 +902,66 @@ public class PlayerController : MonoBehaviour
 
 
         projectile.transform.Rotate(0, 0, angle, Space.World);
+
+        if (maxChargedHit) 
+        {
+            var dist = Vector2.Distance(mousePosition, startPos);
+
+            float deviation = (dist / 100) * 10;
+
+            //----------------------------------------------------------------
+
+            // create a direction vector from Hit position of the mouse and the projectiles original position
+            Vector2 direction1 = new Vector2((mousePosition.x - deviation) - startPos.x, mousePosition.y - startPos.y);
+            direction1.Normalize();
+
+            // Determine the correct angle to turn the projectile
+            float angle1 = Mathf.Atan2(direction.y, direction.x - deviation) * Mathf.Rad2Deg;
+
+            GameObject projectile1 = pooledArrows.GetPooledArrow();
+
+            var projectileScript1 = projectile1.GetComponent<Projectile>();
+            projectileScript1.MakeProjectileReady();
+
+            projectile1.transform.position = projectilePoint.transform.position;
+            projectile1.transform.rotation = Quaternion.identity;
+            projectile1.transform.localScale = new Vector3(1, 1, 1);
+
+            projectile1.transform.Rotate(0, 0, angle, Space.World);
+
+            //----------------------------------------------------------------
+
+            // create a direction vector from Hit position of the mouse and the projectiles original position
+            Vector2 direction2 = new Vector2(mousePosition.x - startPos.x, (mousePosition.y - deviation) - startPos.y);
+            direction2.Normalize();
+
+            // Determine the correct angle to turn the projectile
+            float angle2 = Mathf.Atan2(direction.y - deviation, direction.x) * Mathf.Rad2Deg;
+
+            GameObject projectile2 = pooledArrows.GetPooledArrow();
+
+            var projectileScript2 = projectile2.GetComponent<Projectile>();
+            projectileScript2.MakeProjectileReady();
+
+            projectile2.transform.position = projectilePoint.transform.position;
+            projectile2.transform.rotation = Quaternion.identity;
+            projectile2.transform.localScale = new Vector3(1, 1, 1);
+
+            projectile2.transform.Rotate(0, 0, angle, Space.World);
+
+            // addforce force to the projectiles rigidbody in that direction.
+            projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+            projectile1.GetComponent<Rigidbody2D>().AddForce(direction1 * projectileSpeed);
+            projectile2.GetComponent<Rigidbody2D>().AddForce(direction2 * projectileSpeed);
+
+            GameObject particles = Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile.transform);
+            GameObject particles1 = Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile1.transform);
+            GameObject particles2 = Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile2.transform);
+
+            GameDetails.arrowsFired++;
+
+            return;
+        }
 
         // addforce force to the projectiles rigidbody in that direction.
         projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
@@ -1056,10 +1192,33 @@ public class PlayerController : MonoBehaviour
         // if the boolean is still true (gets set to false if the button is released)
         if (largeStrike)
         {
-            // then set the animation state to true
-            largeStrikeAnimationReady = true;
-            // set the animation of the weapon above their head
-            anim.SetBool("StrikeHold", true);
+            if (melee)
+            {
+                // then set the animation state to true
+                largeStrikeAnimationReady = true;
+                // set the animation of the weapon above their head
+                anim.SetBool("StrikeHold", true);
+            }
+            else if (ranged)
+            {
+                chargedShot = true;
+
+                anim.SetBool("ChargedShot", true);
+            }
+
+        }
+
+        else
+        {
+            if (melee)
+            {
+
+            }
+
+            else if (ranged)
+            {
+                anim.SetTrigger("ShootRanged");
+            }
         }
 
         // let the script know the routine is done running

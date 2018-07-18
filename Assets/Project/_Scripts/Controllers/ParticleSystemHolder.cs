@@ -20,6 +20,9 @@ public class ParticleSystemHolder : MonoBehaviour {
     public ParticleSystem impBlood;
     public ParticleSystem redBlood;
     public ParticleSystem bombExplosion;
+
+    public GameObject ChargedBowShot;
+
     public GameObject[] stunWords;
     public GameObject[] critWords;
 
@@ -62,7 +65,7 @@ public class ParticleSystemHolder : MonoBehaviour {
     {
         int rnd = UnityEngine.Random.Range(0, stunWords.Length);
 
-        Debug.Log(rnd);
+        //Debug.Log(rnd);
 
         switch (rnd)
         {
