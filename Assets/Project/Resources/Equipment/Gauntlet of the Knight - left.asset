@@ -18,11 +18,14 @@ MonoBehaviour:
   isDefaultItem: 0
   typeOfEquipment: 0
   stackSize: 0
+  title: Gauntlet of the Knight - left
+  quality: 0
   MySlot: {fileID: 0}
   equipSlot: 7
   equipType: 2
   characterVisibleSprite: {fileID: 21300004, guid: 76db9d444e46de4459e2e2c2e4bd669d,
     type: 3}
+  glowEffect: {fileID: 0}
   armorModifier: 3
   damageModifier: 0
   rangedProjectile: 0

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
+public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPointerEnterHandler, IPointerExitHandler
 {
     /// <summary>
     /// A stack for all the items in this slot
@@ -363,6 +363,18 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
         UiManager.instance.UpdateStackSize(this);
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        // show tooltip
+        if (!IsEmpty)
+        {
+            UiManager.instance.ShowToolTip(transform.position, MyItem);
+        }
+    }
 
-
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        // hide tooltip
+        UiManager.instance.HideToolTip();
+    }
 }

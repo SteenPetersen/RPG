@@ -18,5 +18,7 @@ MonoBehaviour:
   isDefaultItem: 0
   typeOfEquipment: 5
   stackSize: 5
+  title: Small Health Potion
+  quality: 0
   MySlot: {fileID: 0}
   health: 20

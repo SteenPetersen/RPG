@@ -9,10 +9,9 @@ public class UiManager : MonoBehaviour {
 
     public static UiManager instance;
 
-    [SerializeField]
     public GameObject inventoryCam;
-    [SerializeField]
-    private GameObject equipmentWindow;
+
+    [SerializeField] private GameObject equipmentWindow;
 
     private void Awake()
     {
@@ -26,25 +25,20 @@ public class UiManager : MonoBehaviour {
             instance = this;
         }
 
+        toolTipText = toolTip.GetComponentInChildren<Text>();
         keybindButtons = GameObject.FindGameObjectsWithTag("Keybind");
     }
 
-    [SerializeField]
-    private ActionButton[] actionButtons;
+    [SerializeField] private ActionButton[] actionButtons;
 
-    [SerializeField]
-    private CanvasGroup keybindMenu;
+    [SerializeField] private CanvasGroup keybindMenu;
 
-    [SerializeField]
-    private GameObject[] keybindButtons;
+    [SerializeField] private GameObject[] keybindButtons;
 
-    // Use this for initialization
-    void Start ()
-    {
-        //SetUseable(actionButtons[0], )
-    }
+    [SerializeField] GameObject toolTip;
 
-    // Update is called once per frame
+    Text toolTipText;
+
     void Update () {
 
         if (Input.GetKeyDown(KeyCode.B))
@@ -150,11 +144,25 @@ public class UiManager : MonoBehaviour {
         Array.Find(actionButtons, x => x.gameObject.name == buttonName).MyButton.onClick.Invoke();
     }
 
-    public void SetUseable(ActionButton btn, IUseable useable)
+    /// <summary>
+    /// Handles showing the tooltip whenever a mouse is 
+    /// hovered over an item that requires a tooltip
+    /// </summary>
+    public void ShowToolTip(Vector3 pos, IDescribable description, float size = 1)
     {
-        //btn.MyButton.image.sprite = useable.MyIcon;
-        //btn.MyButton.image.color = Color.white;
-        //btn.MyUseable = useable;
+        toolTip.SetActive(true);
+        toolTip.transform.position = pos;
+        toolTipText.text = description.GetDescription();
+        toolTip.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
+    }
+
+    /// <summary>
+    /// Handles hiding the tooltip whenever the mouse
+    /// is no longer over an element that requires it
+    /// </summary>
+    public void HideToolTip()
+    {
+        toolTip.SetActive(false);
     }
 
 

@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
+public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPointerEnterHandler, IPointerExitHandler
+{
 
     public IUseable MyUseable
     {
@@ -222,5 +223,22 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable {
             MyIcon.color = new Color(0, 0, 0, 0);
             MyStackText.color = new Color(0, 0, 0, 0);
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (MyUseable != null)
+        {
+           UiManager.instance.ShowToolTip(transform.position, buttonItem);
+        }
+        else if (useables.Count > 0)
+        {
+            UiManager.instance.ShowToolTip(transform.position, buttonItem);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        UiManager.instance.HideToolTip();
     }
 }

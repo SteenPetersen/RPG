@@ -18,7 +18,8 @@ MonoBehaviour:
   isDefaultItem: 0
   typeOfEquipment: 0
   stackSize: 0
-  title: 
-  quality: 0
+  title: Bag
+  quality: 1
   MySlot: {fileID: 0}
+  slots: 0
   bagPrefab: {fileID: 1756539173553674, guid: 4826b1167fc987d4e9bd19e33193567c, type: 2}

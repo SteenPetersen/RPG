@@ -18,11 +18,14 @@ MonoBehaviour:
   isDefaultItem: 0
   typeOfEquipment: 0
   stackSize: 0
+  title: Sword of the Slayer
+  quality: 0
   MySlot: {fileID: 0}
   equipSlot: 3
   equipType: 0
   characterVisibleSprite: {fileID: 21300014, guid: acae1970b99901349bfe9bdb70da463c,
     type: 3}
+  glowEffect: {fileID: 0}
   armorModifier: 0
   damageModifier: 5
   rangedProjectile: 0

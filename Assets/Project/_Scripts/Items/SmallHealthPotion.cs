@@ -19,4 +19,9 @@ public class SmallHealthPotion : Item, IUseable {
             PlayerStats.instance.Heal(health);
         }
     }
+
+    public override string GetDescription()
+    {
+        return base.GetDescription() + string.Format("\nUse: Restores <color=#00ff00ff>{0}</color> health", health);
+    }
 }

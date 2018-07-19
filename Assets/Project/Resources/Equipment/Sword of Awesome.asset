@@ -18,7 +18,7 @@ MonoBehaviour:
   isDefaultItem: 0
   typeOfEquipment: 0
   stackSize: 0
-  title: 
+  title: Sword of Awesome
   quality: 0
   MySlot: {fileID: 0}
   equipSlot: 3

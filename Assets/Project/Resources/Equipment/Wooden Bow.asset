@@ -18,7 +18,7 @@ MonoBehaviour:
   isDefaultItem: 0
   typeOfEquipment: 1
   stackSize: 0
-  title: 
+  title: Wooden Bow
   quality: 0
   MySlot: {fileID: 0}
   equipSlot: 3

@@ -10169,6 +10169,7 @@ MonoBehaviour:
   - {fileID: 114782948180685812}
   keybindMenu: {fileID: 225657409305505504}
   keybindButtons: []
+  toolTip: {fileID: 0}
 --- !u!114 &114750220290548064
 MonoBehaviour:
   m_ObjectHideFlags: 1

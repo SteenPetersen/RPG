@@ -467,7 +467,6 @@ public class PlayerController : MonoBehaviour
 
                     if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
                     {
-                        Debug.Log("Maximum Hit");
                         maxChargedHit = true;
                     }
 
@@ -486,7 +485,6 @@ public class PlayerController : MonoBehaviour
                 // start checking if player wants to hold button in
                 if (!heldStrikeCoroutinePlaying && !chargedShot)
                 {
-                    Debug.Log("Starting coroutine");
                     StartCoroutine(CheckForHeldStrike());
                 }
             }

@@ -45,6 +45,11 @@ public class Equipment : Item, IUseable {
         }
     }
 
+    public override string GetDescription()
+    {
+        return base.GetDescription() + string.Format("\nDamage: {0}\nArmor: {1}", damageModifier, armorModifier);
+    }
+
 
 }
 

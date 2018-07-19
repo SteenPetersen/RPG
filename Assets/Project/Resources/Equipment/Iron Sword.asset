@@ -18,8 +18,8 @@ MonoBehaviour:
   isDefaultItem: 0
   typeOfEquipment: 0
   stackSize: 0
-  title: 
-  quality: 0
+  title: Iron Sword
+  quality: 1
   MySlot: {fileID: 0}
   equipSlot: 3
   equipType: 0

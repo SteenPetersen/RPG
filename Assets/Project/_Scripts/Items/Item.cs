@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
-public abstract class Item : ScriptableObject, IMoveable {
+public abstract class Item : ScriptableObject, IMoveable, IDescribable {
 
     new public string name = "New Item";
     public Sprite icon;
@@ -13,14 +13,11 @@ public abstract class Item : ScriptableObject, IMoveable {
 
     public EquipmentType typeOfEquipment;
 
-    [SerializeField]
-    private int stackSize;
+    [SerializeField] private int stackSize;
 
-    [SerializeField]
-    private string title;
+    [SerializeField] private string title;
 
-    [SerializeField]
-    private Quality quality;
+    [SerializeField] private Quality quality;
 
     public SlotScript MySlot;
 
