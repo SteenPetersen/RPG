@@ -56,7 +56,7 @@ public class Bag : Item {
         }
     }
 
-    public override string GetDescription()
+    public override string GetDescription(bool showSaleValue = true)
     {
         return base.GetDescription() + string.Format("\n{0} Slot Bag", slots);
     }

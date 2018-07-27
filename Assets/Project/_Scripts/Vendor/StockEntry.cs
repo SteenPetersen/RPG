@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class StockEntry : MonoBehaviour, IPointerClickHandler {
+public class StockEntry : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+{
 
     [SerializeField]
     Image icon;
@@ -96,5 +97,15 @@ public class StockEntry : MonoBehaviour, IPointerClickHandler {
         {
             Debug.Log(name + " Game Object Left Clicked!");
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        UiManager.instance.ShowToolTip(transform.position, MyItem, false);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        UiManager.instance.HideToolTip();
     }
 }

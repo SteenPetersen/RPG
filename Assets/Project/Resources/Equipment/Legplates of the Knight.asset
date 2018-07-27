@@ -15,7 +15,6 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 8470528f8f78bc24bac7a3c5f33945a8, type: 3}
   sellValue: 15
   buyValue: 100
-  isDefaultItem: 0
   typeOfEquipment: 0
   stackSize: 0
   title: Legplates of the Knight
@@ -23,9 +22,14 @@ MonoBehaviour:
   MySlot: {fileID: 0}
   equipSlot: 2
   equipType: 2
+  armorType: 0
   characterVisibleSprite: {fileID: 21300000, guid: 76db9d444e46de4459e2e2c2e4bd669d,
     type: 3}
   glowEffect: {fileID: 0}
   armorModifier: 3
   damageModifier: 0
+  sta: 0
+  agi: 0
+  str: 0
   rangedProjectile: 0
+  graphicId: 0

@@ -57,6 +57,8 @@ public class EquipmentManager : MonoBehaviour {
 
     public bool Equip (Equipment newItem)
     {
+        Debug.Log("calling equip");
+
         // find slotIndex of the new item.
         int slotIndex = (int)newItem.equipSlot;
 
@@ -69,7 +71,7 @@ public class EquipmentManager : MonoBehaviour {
         // instantiate oldItem
         Equipment oldItem = null;
 
-        // if its a bow
+        // if newItem is a bow
         if (slotIndex == 3 && (int)newItem.equipType == 1)
         {
             // is there something in offhand?
@@ -108,15 +110,13 @@ public class EquipmentManager : MonoBehaviour {
                         return false;
                     }
                 }
-                else if (currentEquipment[3] == null)
-                {
-                    UpdateEquipmentSlot(newItem, slotIndex);
-                }
+
+                //else if (currentEquipment[3] == null)
+                //{
+                //    UpdateEquipmentSlot(newItem, slotIndex);
+                //}
 
             }
-
-            return true;
-
         }
 
         // if its a shield
@@ -133,7 +133,7 @@ public class EquipmentManager : MonoBehaviour {
         }
 
         //if its not a bow but you have an item in that position
-        else if (currentEquipment[slotIndex] != null)
+        if (currentEquipment[slotIndex] != null && (int)newItem.equipType != 1)
         {
             // is the item in that position a bow?
             if ((int)currentEquipment[slotIndex].equipType == 1)
@@ -148,14 +148,12 @@ public class EquipmentManager : MonoBehaviour {
             {
                 inventory.AddItem(oldItem);
                 UpdateEquipmentSlot(newItem, slotIndex);
-                onEquipmentChanged(newItem, oldItem);
+                //onEquipmentChanged(newItem, oldItem);
             }
             else if (inventory.MyEmptySlotCount == 0)
             {
                 return false;
             }
-
-            return true;
         }
 
         // invoke the callback for change of equipment
@@ -164,9 +162,9 @@ public class EquipmentManager : MonoBehaviour {
             onEquipmentChanged.Invoke(newItem, oldItem);
         }
 
-
         inventoryEquipment[slotIndex].AddItem(newItem);
         UpdateEquipmentSlot(newItem, slotIndex);
+        Debug.Log("finished calling equip");
         return true;
 
     }
@@ -190,9 +188,9 @@ public class EquipmentManager : MonoBehaviour {
 
         UpdateEquipmentSlot(newItem, slotIndex);
 
-        onEquipmentChanged(newItem, oldItem);
+        //onEquipmentChanged(newItem, oldItem);
 
-        onEquipmentChanged(null, oldOffhand);
+        //onEquipmentChanged(null, oldOffhand);
     }
 
     /// <summary>
@@ -223,10 +221,10 @@ public class EquipmentManager : MonoBehaviour {
         //Debug.Log(slotIndex);
 
         // instantiate a sprite corresponding to the new items visiblesprite
-        Sprite newSprite = Instantiate(newItem.characterVisibleSprite) as Sprite;
+        //Sprite newSprite = Instantiate(newItem.characterVisibleSprite) as Sprite;
 
         // update the sprite of the equipmentSlots with the new sprite
-        visibleGear[slotIndex].sprite = newSprite;
+        visibleGear[slotIndex].sprite = newItem.characterVisibleSprite;
 
         // Make sure all slots have the correct Icon and that they know what item they are holding
         UpdateSlots();
@@ -456,7 +454,7 @@ public class EquipmentManager : MonoBehaviour {
         //find the type of projectile
         GameObject newProjectile = listOfProjectiles.GetProjectile(projectileType);
 
-        Debug.Log("Pooling Arrows");
+        //Debug.Log("Pooling Arrows");
 
         if (currentEquipment[4] != null)
         {

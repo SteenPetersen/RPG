@@ -62,6 +62,10 @@ public class EnemyAI : AIPath
 
         InitializeEnemy();
 
+        int percentageToAdd = ExperienceManager.instance.level * 20;
+
+        myStats.maxHealth = myStats.maxHealth + percentageToAdd;
+        myStats.currentHealth = myStats.maxHealth;
         maxSpeed = UnityEngine.Random.Range(maxSpeed - 1, maxSpeed + 1);
         distanceToLook = UnityEngine.Random.Range(distanceToLook - 2, distanceToLook + 2);
         meleeDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);

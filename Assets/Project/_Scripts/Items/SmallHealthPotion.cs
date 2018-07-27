@@ -20,7 +20,7 @@ public class SmallHealthPotion : Item, IUseable {
         }
     }
 
-    public override string GetDescription()
+    public override string GetDescription(bool showSaleValue = true)
     {
         return base.GetDescription() + string.Format("\nUse: Restores <color=#00ff00ff>{0}</color> health", health);
     }

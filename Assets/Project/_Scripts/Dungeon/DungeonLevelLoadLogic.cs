@@ -6,13 +6,10 @@ using UnityEngine.SceneManagement;
 public class DungeonLevelLoadLogic : MonoBehaviour {
 
     int level;
-
-    [SerializeField] int maximumFloorCount;
-    int floorCount;
+    [SerializeField] int ZoneToLoad;
 
     private void Start()
     {
-        floorCount = UnityEngine.Random.Range(0, maximumFloorCount);
         level = SceneControl.dungeonLevel;
     }
 
@@ -37,14 +34,8 @@ public class DungeonLevelLoadLogic : MonoBehaviour {
         // add to statistics
         GameDetails.dungeonFloorsExplored++;
 
-        int ZoneToLoad = 1;
-
-        if (level > 1000)
-        {
-            // set the camera correctly so we can know the outset of the player when zoning in if not it can be hard to determine how dialogue looks.
-            CameraController.instance.transform.rotation = Quaternion.Euler(0, 0, 0);
-            ZoneToLoad = 3;
-        }
+        // set the camera correctly so we can know the outset of the player when zoning in if not it can be hard to determine how dialogue looks.
+        CameraController.instance.transform.rotation = Quaternion.Euler(0, 0, 0);
 
         SceneManager.LoadSceneAsync(ZoneToLoad);
         yield return null;

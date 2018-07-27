@@ -85,7 +85,7 @@ public class GameDetails : MonoBehaviour {
 
     public GameObject player;
     PlayerStats playerStats;
-    float normalSpeed = 0.8f;
+    float normalSpeed = 1.6f;
 
     // Tick event timer
     [SerializeField] float tickTime, tickTimer;
@@ -147,6 +147,25 @@ public class GameDetails : MonoBehaviour {
             }
         }
 
+        if (Input.GetKey(KeyCode.M))
+        {
+            StartCoroutine(FadeOUt());
+        }
+
+    }
+
+    IEnumerator FadeOUt()
+    {
+        while (GameDetails._instance.fadeToBlack.color.a <= 0.98)
+        {
+            GameDetails._instance.fadeToBlack.enabled = true;
+            GameDetails._instance.fadeToBlack.color = new Color(0, 0, 0, GameDetails._instance.fadeSpeed);
+            GameDetails._instance.fadeSpeed += 0.02f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        SceneManager.LoadSceneAsync(2);
+        yield return null;
     }
 
     private void TickEvent()
@@ -235,7 +254,7 @@ public class GameDetails : MonoBehaviour {
 
         // Items in bags
         data.amountOfStackableItemsPerSlot = AmountOfStackableItemsPerSlot();
-        data.itemsInTheSlot = ItemsInTheSlot();
+        data.itemsInTheSlot = GetItemsInBagToSave();
 
         // currency
         data.gold = CurrencyManager.wealth;
@@ -443,40 +462,157 @@ public class GameDetails : MonoBehaviour {
     #endregion Bags
 
     #region Equipped items
-    List<string> GetEquippedItemsToSave()
+    List<ItemData> GetEquippedItemsToSave()
     {
-        List<string> items = new List<string>();
+        List<ItemData> items = new List<ItemData>();
 
         for (int i = 0; i < EquipmentManager.instance.currentEquipment.Count; i++)
         {
             if (EquipmentManager.instance.currentEquipment[i] == null)
             {
-                items.Add(string.Empty);
+                items.Add(null);
             }
 
             if (EquipmentManager.instance.currentEquipment[i] != null)
             {
-                items.Add(EquipmentManager.instance.currentEquipment[i].name);
+                if (Resources.Load("Equipment/" + EquipmentManager.instance.currentEquipment[i].name) != null)
+                {
+                    //Equipment t = Instantiate(Resources.Load("Equipment/" + item.name, typeof(Equipment))) as Equipment;
+                    //tmp.Add(t);
+
+                    ItemData defaultItem = new ItemData();
+                    defaultItem.name = EquipmentManager.instance.currentEquipment[i].name;
+                    Debug.Log("Saving a default item " + defaultItem.name);
+                    items.Add(defaultItem);
+                    continue;
+                }
+
+                Equipment current = EquipmentManager.instance.currentEquipment[i];
+                ItemData tmp = new ItemData();
+
+                tmp.name = current.name;
+                tmp.title = current.GetTitle();
+                tmp.graphicId = current.graphicId;
+
+                tmp.type = current.equipType;
+                tmp.slot = current.equipSlot;
+                tmp.quality = current.MyQuality;
+                tmp.armorType = current.armorType;
+
+                if (current.armorType == ArmorType.Leather)
+                {
+                    Debug.LogWarning("WTF " + current.name);
+                }
+
+                tmp.dmgMod = current.damageModifier;
+                tmp.armorMod = current.armorModifier;
+                tmp.sta = current.sta;
+                tmp.str = current.str;
+                tmp.agi = current.agi;
+                tmp.rangedProjectile = current.rangedProjectile;
+                tmp.sellValue = current.sellValue;
+                tmp.buyValue = current.buyValue;
+
+                items.Add(tmp);
             }
         }
         
         return items;
     }
 
-    void LoadEquippedItems(List<string> items)
+    List<ItemData> GetItemsInBagToSave()
+    {
+        List<ItemData> itemInSlot = new List<ItemData>();
+
+        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
+        {
+            if (slot.IsEmpty)
+            {
+                itemInSlot.Add(null);
+            }
+            else if (slot.MyCount > 0)
+            {
+                Item current = slot.MyItems.Peek();
+                ItemData tmp = new ItemData();
+
+                if (current is Equipment)
+                {
+                    Debug.Log("Item found is equipment therefore storing as equipment");
+
+                    if (Resources.Load("Equipment/" + current.name) != null)
+                    {
+                        //Equipment t = Instantiate(Resources.Load("Equipment/" + item.name, typeof(Equipment))) as Equipment;
+                        //tmp.Add(t);
+
+                        ItemData defaultItem = new ItemData();
+                        defaultItem.name = current.name;
+                        Debug.Log("Saving a default item " + defaultItem.name);
+                        itemInSlot.Add(defaultItem);
+                        continue;
+                    }
+
+                    Equipment equip = slot.MyItems.Peek() as Equipment;
+                    tmp.name = equip.name;
+                    tmp.title = equip.GetTitle();
+                    tmp.graphicId = equip.graphicId;
+
+                    tmp.type = equip.equipType;
+                    tmp.slot = equip.equipSlot;
+                    tmp.quality = equip.MyQuality;
+                    tmp.armorType = equip.armorType;
+
+                    tmp.dmgMod = equip.damageModifier;
+                    tmp.armorMod = equip.armorModifier;
+                    tmp.sta = equip.sta;
+                    tmp.str = equip.str;
+                    tmp.agi = equip.agi;
+                    tmp.rangedProjectile = equip.rangedProjectile;
+                    tmp.sellValue = equip.sellValue;
+                    tmp.buyValue = equip.buyValue;
+
+                }
+
+                else
+                {
+                    Debug.Log("Item is NOT equipment");
+                    tmp.name = current.name;
+                    tmp.title = current.GetTitle();
+                }
+
+                itemInSlot.Add(tmp);
+
+            }
+
+        }
+
+        return itemInSlot;
+    }
+
+    void LoadEquippedItems(List<ItemData> items)
     {
         List<Equipment> tmp = new List<Equipment>(EquipmentManager.instance.currentEquipment.Count);
 
         foreach (var item in items)
         {
-            if (item == string.Empty)
+            if (item == null)
             {
                 tmp.Add(null);
             }
             else
             {
-                var tmpEquip = Instantiate(Resources.Load("Equipment/" + item, typeof(Equipment))) as Equipment;
-                tmp.Add(tmpEquip);
+                if (Resources.Load("Equipment/" + item.name) != null)
+                {
+                    Equipment t = Instantiate(Resources.Load("Equipment/" + item.name, typeof(Equipment))) as Equipment;
+                    tmp.Add(t);
+                }
+                else if (Resources.Load("Equipment/" + item.name) == null)
+                {
+                    Debug.Log("inside LoadEquippedItems " + item.name + " armor type " + item.armorType);
+
+                    Equipment tmpEquip = EquipmentGenerator._instance.CreateLoadedItem(item);
+                    tmp.Add(tmpEquip);
+                }
+
             }
         }
 
@@ -489,43 +625,7 @@ public class GameDetails : MonoBehaviour {
         }
     }
 
-    #endregion Equipped items
-
-    #region Items In Bags
-
-    List<string> ItemsInTheSlot()
-    {
-        List<string> itemInSlot = new List<string>();
-
-        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
-        {
-            if (slot.IsEmpty)
-            {
-                itemInSlot.Add(string.Empty);
-            }
-            else if (slot.MyCount > 0)
-            {
-                itemInSlot.Add(slot.MyItems.Peek().name);
-            }
-
-        }
-
-        return itemInSlot;
-    }
-
-    List<int> AmountOfStackableItemsPerSlot()
-    {
-        List<int> itemsPerSlot = new List<int>();
-
-        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
-        {
-            itemsPerSlot.Add(slot.MyCount);
-        }
-
-        return itemsPerSlot;
-    }
-
-    void LoadAllItemsInBags(List<string> itemInSlot, List<int> amountOfitemsPerSlot)
+    void LoadAllItemsInBags(List<ItemData> itemInSlot, List<int> amountOfitemsPerSlot)
     {
         int count = 0;
 
@@ -539,33 +639,53 @@ public class GameDetails : MonoBehaviour {
             }
             else if (amountOfitemsPerSlot[count] == 1)
             {
-                //Debug.Log("inside 1 slot function");
-                if (Resources.Load("Equipment/" + itemInSlot[count]) != null)
+                if (Resources.Load("Equipment/" + itemInSlot[count].name) != null)
                 {
-                    //Debug.Log("inside resource test");
-                    var tmpEquip = Instantiate(Resources.Load("Equipment/" + itemInSlot[count], typeof(Equipment))) as Equipment;
+                    var tmpEquip = Instantiate(Resources.Load("Equipment/" + itemInSlot[count].name, typeof(Equipment))) as Equipment;
                     slot.AddItem(tmpEquip);
                 }
-                else if (Resources.Load("Equipment/" + itemInSlot[count]) == null)
+                else if (Resources.Load("Equipment/" + itemInSlot[count].name) == null)
                 {
-                    var tmpItem = Instantiate(Resources.Load("Items/" + itemInSlot[count], typeof(Item))) as Item;
+                    var tmpItem = EquipmentGenerator._instance.CreateLoadedItem(itemInSlot[count]);
                     slot.AddItem(tmpItem);
                 }
                 count++;
             }
+            // if there is more than 1 item in the slot then it is not a generated item therefore look 
+            // in the resources for the item with the name we saved it under.
             else if (amountOfitemsPerSlot[count] > 1)
             {
                 for (int i = 0; i < amountOfitemsPerSlot[count]; i++)
                 {
-                    var tmpItem = Instantiate(Resources.Load("Items/" + itemInSlot[count], typeof(Item))) as Item;
+                    var tmpItem = Instantiate(Resources.Load("Items/" + itemInSlot[count].name, typeof(Item))) as Item;
                     slot.AddItem(tmpItem);
                 }
                 count++;
             }
             UiManager.instance.UpdateStackSize(slot);
         }
-        
+
     }
+
+
+    #endregion Equipped items
+
+    #region Items In Bags
+
+
+
+    List<int> AmountOfStackableItemsPerSlot()
+    {
+        List<int> itemsPerSlot = new List<int>();
+
+        foreach (SlotScript slot in InventoryScript.instance.GetAllSlots())
+        {
+            itemsPerSlot.Add(slot.MyCount);
+        }
+
+        return itemsPerSlot;
+    }
+
 
     #endregion Items In Bags
 
@@ -715,11 +835,11 @@ class PlayerData
     public List<int> amountOfSlotsPerBag;
 
     // Currently equipped Items
-    public List<string> equippedItems;
+    public List<ItemData> equippedItems;
 
     // Items in Bag
     public List<int> amountOfStackableItemsPerSlot;
-    public List<string> itemsInTheSlot;
+    public List<ItemData> itemsInTheSlot;
 
     // currency
     public int gold;
@@ -734,4 +854,26 @@ class PlayerData
     public float locationX;
     public float locationY;
 
+}
+
+[Serializable]
+public class ItemData
+{
+    public string title;
+    public string name;
+    public int graphicId;
+
+    public EquipmentType type;
+    public EquipmentSlot slot;
+    public Quality quality;
+    public ArmorType armorType;
+
+    public int dmgMod;
+    public int armorMod;
+    public int sta;
+    public int str;
+    public int agi;
+    public int rangedProjectile;
+    public int sellValue;
+    public int buyValue;
 }

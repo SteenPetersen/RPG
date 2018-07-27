@@ -15,7 +15,6 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: ed64ef43783820945940c40b53222e46, type: 3}
   sellValue: 15
   buyValue: 100
-  isDefaultItem: 0
   typeOfEquipment: 2
   stackSize: 0
   title: Wooden Buckler
@@ -23,9 +22,14 @@ MonoBehaviour:
   MySlot: {fileID: 0}
   equipSlot: 4
   equipType: 2
+  armorType: 0
   characterVisibleSprite: {fileID: 21300004, guid: b44bd656a2d810c42b3e851bf5511c08,
     type: 3}
   glowEffect: {fileID: 0}
   armorModifier: 1
   damageModifier: 0
+  sta: 0
+  agi: 0
+  str: 0
   rangedProjectile: 0
+  graphicId: 0

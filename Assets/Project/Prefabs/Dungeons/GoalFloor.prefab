@@ -78,6 +78,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c58f8b46d6a98f6439490e864a95b71d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ZoneToLoad: 1
 --- !u!212 &212224631805075818
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -91,6 +92,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:

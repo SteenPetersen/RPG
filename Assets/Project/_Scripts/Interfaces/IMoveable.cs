@@ -5,6 +5,7 @@ public interface IMoveable
     Sprite MyIcon
     {
         get;
+        set;
     }
 
 }

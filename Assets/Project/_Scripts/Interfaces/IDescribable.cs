@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IDescribable
 {
-    string GetDescription();
+    string GetTitle();
+    string GetDescription(bool showSaleValue=true);
 
 }

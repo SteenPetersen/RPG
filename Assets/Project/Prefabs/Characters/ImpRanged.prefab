@@ -1160,7 +1160,7 @@ MonoBehaviour:
   repathRate: 0.5
   canSearch: 1
   canMove: 1
-  maxSpeed: 3
+  maxSpeed: 6
   gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
     serializedVersion: 2
@@ -1203,7 +1203,7 @@ MonoBehaviour:
   distanceToLook: 8
   meleeRange: 2
   force: 450
-  projectileSpeed: 200
+  projectileSpeed: 450
   experienceGain: 6
   meleeDelay: 3
   timer: 0

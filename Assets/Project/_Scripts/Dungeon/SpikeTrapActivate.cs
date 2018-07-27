@@ -36,7 +36,7 @@ public class SpikeTrapActivate : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (!fired && rend.isVisible)
+        if (!fired)
         {
             if (col.tag == "Player")
             {
@@ -48,7 +48,7 @@ public class SpikeTrapActivate : MonoBehaviour {
                 }
             }
 
-            if (col.tag == "Enemy")
+            if (col.tag == "Enemy" && PlayerController.instance.enemies.Contains(col.gameObject))
             {
                 enemiesInRange.Add(col.transform.parent.gameObject);
                 anim.SetBool("Fire", true);

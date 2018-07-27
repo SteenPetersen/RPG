@@ -57,7 +57,7 @@ public class EnemyStats : CharacterStats {
 
 
         // Give Player experience
-        playerExp.AddExp(enemyAI.experienceGain);
+        playerExp.AddExp(enemyAI.experienceGain, enemyAI.tier);
         // TODO something fancy with combattext or something
 
         // Add death animation

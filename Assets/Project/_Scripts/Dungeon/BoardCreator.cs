@@ -45,6 +45,8 @@ public class BoardCreator : MonoBehaviour
 
     public Camera cam;
 
+    bool spaceForBossRoom = true;
+
     private TileType[][] tiles;                               // A jagged array of tile types representing the board, like a grid.
     private Room[] rooms;                                     // All the rooms that are created for this board.
     private Corridor[] corridors;                             // All the corridors that connect the rooms.
@@ -95,6 +97,7 @@ public class BoardCreator : MonoBehaviour
         // Create the first room and corridor.
         rooms[0] = new Room();
         corridors[0] = new Corridor();
+
         // Setup the first room, there is no previous corridor so we do not use one.
         rooms[0].SetupRoom(roomWidth, roomHeight, columns, rows);
 
@@ -109,15 +112,17 @@ public class BoardCreator : MonoBehaviour
             // Setup the room based on the previous corridor.
             rooms[i].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[i - 1], numEnemy);
 
+            // check if its the middle room
             if (i == rooms.Length / 2)
             {
                 rooms[i].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[i - 1], numEnemy, true);
             }
 
+            // check if its the last room
             if (i == corridors.Length)
             {
                 // Setup the last room
-                rooms[i].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[i - 1], numEnemy, 1);
+                Debug.Log("Skipping creation of last room");
             }
 
             // If we haven't reached the end of the corridors array...
@@ -129,7 +134,6 @@ public class BoardCreator : MonoBehaviour
                 // Setup the corridor based on the room that was just created.
                 corridors[i].SetupCorridor(rooms[i], corridorLength, roomWidth, roomHeight, columns, rows, false);
             }
-
         }
 
     }
@@ -162,64 +166,87 @@ public class BoardCreator : MonoBehaviour
         {
             Room currentRoom = rooms[i];
 
-            // ... and for each room go through it's width.
-            for (int j = 0; j < currentRoom.roomWidth; j++)
+            if (!currentRoom.round)
             {
-                int xCoord = currentRoom.xPos + j;
-
-                //// For each horizontal tile, go up vertically through the room's height.
-                for (int k = 0; k < currentRoom.roomHeight; k++)
+                // ... and for each room go through it's width.
+                for (int j = 0; j < currentRoom.roomWidth; j++)
                 {
-                    int yCoord = currentRoom.yPos + k;
-                    //Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  room number is:   " + i + "  k is  " + k);
+                    int xCoord = currentRoom.xPos + j;
 
-
-                    // Make the left wall have colliders
-                    if (xCoord == currentRoom.xPos)
+                    //// For each horizontal tile, go up vertically through the room's height.
+                    for (int k = 0; k < currentRoom.roomHeight; k++)
                     {
-                        if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
-                        {
-                            tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
-                        }
-                        if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
-                        {
-                            tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
-                        }
+                        int yCoord = currentRoom.yPos + k;
+                        //Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  room number is:   " + i + "  k is  " + k);
 
-                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
+
+                        // Make the left wall have colliders
+                        if (xCoord == currentRoom.xPos)
                         {
+                            if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                            }
                             if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
                             {
                                 tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
                             }
 
-                            if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                            if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
                             {
-                                tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
+                                if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+                                {
+                                    tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
+                                }
+
+                                if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                                {
+                                    tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
+                                }
                             }
-                        }
-                        
 
-                    }
 
-                    // Make the Right wall have colliders
-                    if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1)
-                    {
-                        if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
-                        {
-                            tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
                         }
 
-                        if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                        // Make the Right wall have colliders
+                        if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1)
                         {
-                            tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
-                        }
+                            if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                            }
 
-                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
-                        {
                             if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
                             {
                                 tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
+                            }
+
+                            if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
+                            {
+                                if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                                {
+                                    tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
+                                }
+
+                                if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
+                                {
+                                    tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
+                                }
+                            }
+
+                        }
+
+                        // Make the Top wall have colliders
+                        if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
+                        {
+                            if (tiles[xCoord][yCoord + 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord][yCoord + 1] = TileType.ColliderWall;
+                            }
+
+                            if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
                             }
 
                             if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
@@ -228,49 +255,145 @@ public class BoardCreator : MonoBehaviour
                             }
                         }
 
+                        // Make the Bottom wall have colliders
+                        if (yCoord == currentRoom.yPos)
+                        {
+                            if (tiles[xCoord][yCoord - 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
+                            }
+
+                            if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                            }
+
+                            if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
+                            {
+                                tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                            }
+                        }
+
+                        // The coordinates in the jagged array are based on the room's position and it's width and height.
+                        tiles[xCoord][yCoord] = TileType.Floor;
                     }
-
-                    // Make the Top wall have colliders
-                    if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
-                    {
-                        if (tiles[xCoord][yCoord + 1] == TileType.BlackArea)
-                        {
-                            tiles[xCoord][yCoord + 1] = TileType.ColliderWall;
-                        }
-
-                        if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
-                        {
-                            tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
-                        }
-
-                        if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
-                        {
-                            tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
-                        }
-                    }
-
-                    // Make the Bottom wall have colliders
-                    if (yCoord == currentRoom.yPos)
-                    {
-                        if (tiles[xCoord][yCoord - 1] == TileType.BlackArea)
-                        {
-                            tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
-                        }
-
-                        if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
-                        {
-                            tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
-                        }
-
-                        if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
-                        {
-                            tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
-                        }
-                    }
-
-                    // The coordinates in the jagged array are based on the room's position and it's width and height.
-                     tiles[xCoord][yCoord] = TileType.Floor;
                 }
+            }
+
+            if (currentRoom.round)
+            {
+                CreateBossRoom(currentRoom);
+            }
+
+            if (i == rooms.Length - 2)
+            {
+                // check if the area is clear
+
+                // grab the last corridor
+                Corridor c = corridors[corridors.Length - 1];
+
+                // Find out where you should start your search from depending on the directionality of the corridor...
+                if (c.direction == Direction.North)
+                {
+                    int xPos = c.EndPositionX - 12;
+                    int yPos = c.EndPositionY;
+
+                    int xSmall = 0;
+                    int xLarge = 25;
+                    int ySmall = 0;
+                    int yLarge = 20;
+
+                    // if there is space on the board for a boss room
+                    if (xPos > 0 && yPos > 0 && (xPos + 26) < columns && (yPos + 26) < rows)
+                    {
+                        Debug.LogWarning("I have passed sanity check going for the check method call: first test ( > 200 ): " + (c.EndPositionY - 26) + " Second test: ( > 0 ) " + xPos + " third test: ( < " + columns + " ) " + (xPos + 26));
+
+                        CheckIfAreaIsClear(xPos, yPos, xSmall, xLarge, ySmall, yLarge);
+                    }
+                    else
+                    {
+                        spaceForBossRoom = false;
+                    }
+                }
+
+                else if (c.direction == Direction.East)
+                {
+                    int xPos = c.EndPositionX;
+                    int yPos = c.EndPositionY - 12;
+
+                    int xSmall = 5;
+                    int xLarge = 25;
+                    int ySmall = 0;
+                    int yLarge = 25;
+
+                    if (xPos > 0 && yPos > 0 && (xPos + 26) < columns && (yPos + 26) < rows)
+                    {
+
+                        Debug.LogWarning("I have passed sanity check going for the check method call: first test ( > 200 ): " + (c.EndPositionX - 26) + " Second test: ( > 0 ) " + yPos + " third test: ( < " + rows + " ) " + yPos);
+
+                        CheckIfAreaIsClear(xPos, yPos, xSmall, xLarge, ySmall, yLarge);
+                    }
+                    else
+                    {
+                        spaceForBossRoom = false;
+                    }
+                }
+
+                else if (c.direction == Direction.South)
+                {
+                    int xPos = c.EndPositionX - 12;
+                    int yPos = c.EndPositionY - 25;
+
+                    int xSmall = 0;
+                    int xLarge = 25;
+                    int ySmall = 5;
+                    int yLarge = 25;
+
+                    if (xPos > 0 && yPos > 0 && (xPos + 26) < columns && (yPos + 26) < rows)
+                    {
+
+                        Debug.LogWarning("I have passed sanity check going for the check method call: first test ( > 0 ): " + (c.EndPositionY - 26) + " Second test: ( > 0 ) " + xPos + " third test: ( < " + columns + " ) " + xPos);
+
+                        CheckIfAreaIsClear(xPos, yPos, xSmall, xLarge, ySmall, yLarge);
+
+                    }
+                    else
+                    {
+                        spaceForBossRoom = false;
+                    }
+                }
+
+                else if (c.direction == Direction.West)
+                {
+                    int xPos = c.EndPositionX - 25;
+                    int yPos = c.EndPositionY - 12;
+
+                    int xSmall = 0;
+                    int xLarge = 20;
+                    int ySmall = 0;
+                    int yLarge = 25;
+
+                    if (xPos > 0 && yPos > 0 && (xPos + 26) < columns && (yPos + 26) < rows)
+                    {
+                        
+                        Debug.LogWarning("I have passed sanity check going for the check method call: first test ( > 0 ): " + (c.EndPositionX - 26) + " Second test: ( > 0 ) " + yPos + " third test: ( < " + rows + " ) " + xPos);
+
+                        CheckIfAreaIsClear(xPos, yPos, xSmall, xLarge, ySmall, yLarge);
+
+                    }
+                    else
+                    {
+                        spaceForBossRoom = false;
+                    }
+                }
+
+                if (spaceForBossRoom)
+                {
+                    Debug.LogWarning("There will be a boss room");
+                }
+
+                rooms[rooms.Length - 1].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[corridors.Length - 1], numEnemy, 1, spaceForBossRoom);
+
             }
 
             if (i == rooms.Length - 1)
@@ -279,7 +402,1853 @@ public class BoardCreator : MonoBehaviour
                 int y = (int)goalPos.y;
                 tiles[x][y] = TileType.Goal;
             }
+        }
+    }
 
+    /// <summary>
+    /// Runs through an area the size of the bossroom and checks to see if all tiletypes
+    /// are blackarea, in which case it allows for a boss room to be built
+    /// </summary>
+    /// <param name="xPos">Starting Position of the check on the X Axis</param>
+    /// <param name="yPos">Starting Position of the check on the Y Axis</param>
+    private void CheckIfAreaIsClear(int xPos, int yPos , int xSmall , int xLarge, int ySmall, int yLarge)
+    {
+        Debug.Log("Checking area");
+
+        for (int x = xSmall; x <= xLarge; x += 2)
+        {
+            int xcoord = xPos + x;
+
+            for (int y = ySmall; y <= yLarge; y += 2)
+            {
+                int ycoord = yPos + y;
+
+                Debug.Log("tile type at this spot is " + tiles[xcoord][ycoord]);
+
+                if (tiles[xcoord][ycoord] != TileType.BlackArea)
+                {
+                    spaceForBossRoom = false;
+                    Debug.Log("Found a non blackarea tile, stopping loop and I will not spawn a boos room");
+                    return;
+                }
+            }
+        }
+
+        if (spaceForBossRoom)
+        {
+            Debug.LogWarning("Area Clear");
+        }
+    }
+
+    void CreateBossRoom(Room currentRoom)
+    {
+        int currentTile = 0;
+
+        if (corridors[corridors.Length - 1].direction == Direction.North)
+        {
+            for (int j = 0; j < currentRoom.roomWidth; j++)
+            {
+                int xCoord = currentRoom.xPos + j;
+
+                //// For each horizontal tile, go up vertically through the room's height.
+                for (int k = 0; k < currentRoom.roomHeight; k++)
+                {
+                    int yCoord = currentRoom.yPos + k;
+
+                    if (currentTile >= 6 && currentTile <= 18)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    //------- section 2
+
+                    else if (currentTile >= 29 && currentTile <= 30)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 31 && currentTile <= 43)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 44 && currentTile <= 45)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 3
+
+                    else if (currentTile >= 52 && currentTile <= 53)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 54 && currentTile <= 70)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 71 && currentTile <= 72)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 4
+
+                    else if (currentTile == 76)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 77 && currentTile <= 97)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 98)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 5
+                    else if (currentTile == 101)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 102 && currentTile <= 122)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 123)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 6
+                    else if (currentTile == 125)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 126 && currentTile <= 148)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 149)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 7
+                    else if (currentTile == 150)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 151 && currentTile <= 173)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 174)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 8
+                    else if (currentTile == 175)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 176 && currentTile <= 198)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 199)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 9
+                    else if (currentTile == 200)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 201 && currentTile <= 223)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 224)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 10
+                    else if (currentTile == 225)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 226 && currentTile <= 248)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 249)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 11
+                    else if (currentTile == 250)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 251 && currentTile <= 273)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 274)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 12
+                    else if (currentTile == 275)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 276 && currentTile <= 298)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 299)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 13
+                    else if (currentTile == 300)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 301 && currentTile <= 323)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 324)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 14
+                    else if (currentTile == 325)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 326 && currentTile <= 348)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 349)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 15
+                    else if (currentTile == 350)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 351 && currentTile <= 373)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 374)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 16
+                    else if (currentTile == 375)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 376 && currentTile <= 398)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 399)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 17
+                    else if (currentTile == 400)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 401 && currentTile <= 423)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 424)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 18
+                    else if (currentTile == 425)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 426 && currentTile <= 448)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 449)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 19
+                    else if (currentTile == 450)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 451 && currentTile <= 473)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 474)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 20
+                    else if (currentTile == 475)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 476 && currentTile <= 498)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 499)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 21
+                    else if (currentTile == 501)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 502 && currentTile <= 522)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 523)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 22
+                    else if (currentTile == 526)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 527 && currentTile <= 547)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 548)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 23
+                    else if (currentTile >= 552 && currentTile <= 553)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 554 && currentTile <= 570)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 571 && currentTile <= 572)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 24
+                    else if (currentTile >= 579 && currentTile <= 580)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 581 && currentTile <= 593)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 594 && currentTile <= 595)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 25
+                    else if (currentTile >= 606 && currentTile <= 618)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    // The coordinates in the jagged array are based on the room's position and it's width and height.
+                    //tiles[xCoord][yCoord] = TileType.Floor;
+                    currentTile++;
+                }
+            }
+        }
+
+        else if (corridors[corridors.Length - 1].direction == Direction.East)
+        {
+            for (int j = 0; j < currentRoom.roomWidth; j++)
+            {
+                int xCoord = currentRoom.xPos + j;
+
+                //// For each horizontal tile, go up vertically through the room's height.
+                for (int k = 0; k < currentRoom.roomHeight; k++)
+                {
+                    int yCoord = currentRoom.yPos + k;
+
+                    if (currentTile >= 6 && currentTile <= 10)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 13 && currentTile <= 18)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    //------- section 2
+
+                    else if (currentTile >= 29 && currentTile <= 30)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 31 && currentTile <= 43)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 44 && currentTile <= 45)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 3
+
+                    else if (currentTile >= 52 && currentTile <= 53)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 54 && currentTile <= 70)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 71 && currentTile <= 72)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 4
+
+                    else if (currentTile == 76)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 77 && currentTile <= 97)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 98)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 5
+                    else if (currentTile == 101)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 102 && currentTile <= 122)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 123)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 6
+                    else if (currentTile == 125)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 126 && currentTile <= 148)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 149)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 7
+                    else if (currentTile == 150)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 151 && currentTile <= 173)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 174)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 8
+                    else if (currentTile == 175)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 176 && currentTile <= 198)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 199)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 9
+                    else if (currentTile == 200)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 201 && currentTile <= 223)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 224)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 10
+                    else if (currentTile == 225)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 226 && currentTile <= 248)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 249)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 11
+                    else if (currentTile == 250)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 251 && currentTile <= 273)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 274)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 12
+                    else if (currentTile == 275)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 276 && currentTile <= 298)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 299)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 13
+                    else if (currentTile == 300)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 301 && currentTile <= 323)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 324)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 14
+                    else if (currentTile == 325)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 326 && currentTile <= 348)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 349)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 15
+                    else if (currentTile == 350)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 351 && currentTile <= 373)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 374)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 16
+                    else if (currentTile == 375)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 376 && currentTile <= 398)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 399)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 17
+                    else if (currentTile == 400)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 401 && currentTile <= 423)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 424)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 18
+                    else if (currentTile == 425)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 426 && currentTile <= 448)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 449)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 19
+                    else if (currentTile == 450)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 451 && currentTile <= 473)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 474)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 20
+                    else if (currentTile == 475)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 476 && currentTile <= 498)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 499)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 21
+                    else if (currentTile == 501)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 502 && currentTile <= 522)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 523)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 22
+                    else if (currentTile == 526)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 527 && currentTile <= 547)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 548)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 23
+                    else if (currentTile >= 552 && currentTile <= 553)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 554 && currentTile <= 570)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 571 && currentTile <= 572)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 24
+                    else if (currentTile >= 579 && currentTile <= 580)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 581 && currentTile <= 593)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 594 && currentTile <= 595)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 25
+                    else if (currentTile >= 606 && currentTile <= 618)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    // The coordinates in the jagged array are based on the room's position and it's width and height.
+                    //tiles[xCoord][yCoord] = TileType.Floor;
+                    currentTile++;
+                }
+            }
+        }
+
+        else if (corridors[corridors.Length - 1].direction == Direction.South)
+        {
+            for (int j = 0; j < currentRoom.roomWidth; j++)
+            {
+                int xCoord = currentRoom.xPos + j;
+
+                //// For each horizontal tile, go up vertically through the room's height.
+                for (int k = 0; k < currentRoom.roomHeight; k++)
+                {
+                    int yCoord = currentRoom.yPos + k;
+
+                    if (currentTile >= 6 && currentTile <= 18)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    //------- section 2
+
+                    else if (currentTile >= 29 && currentTile <= 30)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 31 && currentTile <= 43)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 44 && currentTile <= 45)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 3
+
+                    else if (currentTile >= 52 && currentTile <= 53)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 54 && currentTile <= 70)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 71 && currentTile <= 72)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 4
+
+                    else if (currentTile == 76)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 77 && currentTile <= 97)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 98)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 5
+                    else if (currentTile == 101)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 102 && currentTile <= 122)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 123)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 6
+                    else if (currentTile == 125)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 126 && currentTile <= 148)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 149)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 7
+                    else if (currentTile == 150)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 151 && currentTile <= 173)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 174)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 8
+                    else if (currentTile == 175)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 176 && currentTile <= 198)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 199)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 9
+                    else if (currentTile == 200)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 201 && currentTile <= 223)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 224)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 10
+                    else if (currentTile == 225)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 226 && currentTile <= 248)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 249)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 11
+                    else if (currentTile == 250)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 251 && currentTile <= 273)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 274)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 12
+                    else if (currentTile == 275)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 276 && currentTile <= 298)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 299)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 13
+                    else if (currentTile == 300)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 301 && currentTile <= 323)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 324)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    // -------- end section
+
+                    //------- section 14
+                    else if (currentTile == 325)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 326 && currentTile <= 348)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 349)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    // -------- end section
+
+                    //------- section 15
+                    else if (currentTile == 350)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 351 && currentTile <= 373)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 374)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 16
+                    else if (currentTile == 375)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 376 && currentTile <= 398)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 399)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 17
+                    else if (currentTile == 400)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 401 && currentTile <= 423)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 424)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 18
+                    else if (currentTile == 425)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 426 && currentTile <= 448)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 449)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 19
+                    else if (currentTile == 450)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 451 && currentTile <= 473)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 474)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 20
+                    else if (currentTile == 475)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 476 && currentTile <= 498)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 499)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 21
+                    else if (currentTile == 501)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 502 && currentTile <= 522)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 523)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 22
+                    else if (currentTile == 526)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 527 && currentTile <= 547)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 548)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 23
+                    else if (currentTile >= 552 && currentTile <= 553)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 554 && currentTile <= 570)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 571 && currentTile <= 572)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 24
+                    else if (currentTile >= 579 && currentTile <= 580)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 581 && currentTile <= 593)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 594 && currentTile <= 595)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 25
+                    else if (currentTile >= 606 && currentTile <= 618)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    // The coordinates in the jagged array are based on the room's position and it's width and height.
+                    //tiles[xCoord][yCoord] = TileType.Floor;
+                    currentTile++;
+                }
+            }
+        }
+
+        else if (corridors[corridors.Length - 1].direction == Direction.West)
+        {
+            for (int j = 0; j < currentRoom.roomWidth; j++)
+            {
+                int xCoord = currentRoom.xPos + j;
+
+                //// For each horizontal tile, go up vertically through the room's height.
+                for (int k = 0; k < currentRoom.roomHeight; k++)
+                {
+                    int yCoord = currentRoom.yPos + k;
+
+                    if (currentTile >= 6 && currentTile <= 18)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    //------- section 2
+
+                    else if (currentTile >= 29 && currentTile <= 30)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 31 && currentTile <= 43)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 44 && currentTile <= 45)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 3
+
+                    else if (currentTile >= 52 && currentTile <= 53)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 54 && currentTile <= 70)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 71 && currentTile <= 72)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 4
+
+                    else if (currentTile == 76)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 77 && currentTile <= 97)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 98)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 5
+                    else if (currentTile == 101)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 102 && currentTile <= 122)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 123)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 6
+                    else if (currentTile == 125)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 126 && currentTile <= 148)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 149)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 7
+                    else if (currentTile == 150)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 151 && currentTile <= 173)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 174)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 8
+                    else if (currentTile == 175)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 176 && currentTile <= 198)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 199)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 9
+                    else if (currentTile == 200)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 201 && currentTile <= 223)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 224)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 10
+                    else if (currentTile == 225)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 226 && currentTile <= 248)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 249)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 11
+                    else if (currentTile == 250)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 251 && currentTile <= 273)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 274)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 12
+                    else if (currentTile == 275)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 276 && currentTile <= 298)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 299)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 13
+                    else if (currentTile == 300)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 301 && currentTile <= 323)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 324)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 14
+                    else if (currentTile == 325)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 326 && currentTile <= 348)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 349)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 15
+                    else if (currentTile == 350)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 351 && currentTile <= 373)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 374)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 16
+                    else if (currentTile == 375)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 376 && currentTile <= 398)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 399)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 17
+                    else if (currentTile == 400)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 401 && currentTile <= 423)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 424)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 18
+                    else if (currentTile == 425)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 426 && currentTile <= 448)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 449)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 19
+                    else if (currentTile == 450)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 451 && currentTile <= 473)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 474)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 20
+                    else if (currentTile == 475)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 476 && currentTile <= 498)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 499)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 21
+                    else if (currentTile == 501)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 502 && currentTile <= 522)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 523)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 22
+                    else if (currentTile == 526)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 527 && currentTile <= 547)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile == 548)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 23
+                    else if (currentTile >= 552 && currentTile <= 553)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 554 && currentTile <= 570)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 571 && currentTile <= 572)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 24
+                    else if (currentTile >= 579 && currentTile <= 580)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 581 && currentTile <= 593)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 594 && currentTile <= 595)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    //------- section 25
+                    else if (currentTile >= 606 && currentTile <= 610)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    else if (currentTile >= 611 && currentTile <= 612)
+                    {
+                        tiles[xCoord][yCoord] = TileType.Floor;
+                    }
+
+                    else if (currentTile >= 613 && currentTile <= 618)
+                    {
+                        tiles[xCoord][yCoord] = TileType.ColliderWall;
+                    }
+
+                    // -------- end section
+
+                    // The coordinates in the jagged array are based on the room's position and it's width and height.
+                    //tiles[xCoord][yCoord] = TileType.Floor;
+                    currentTile++;
+                }
+            }
         }
     }
 
@@ -790,8 +2759,8 @@ public class BoardCreator : MonoBehaviour
 
             CreateRoomsAndCorridors();
 
-            SetTilesValuesForRooms();
             SetTilesValuesForCorridors();
+            SetTilesValuesForRooms();
 
             InstantiateTiles();
             InstantiateOuterWalls();

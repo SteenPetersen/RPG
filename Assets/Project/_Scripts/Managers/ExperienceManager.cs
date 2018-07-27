@@ -31,12 +31,14 @@ public class ExperienceManager : MonoBehaviour {
 
     bool isLerping;
     float lerpStartTime;
+    PlayerStats pStats;
 
     private void Start()
     {
         level = 1;
         experience = 0;
         experienceRequired = UpdateExperienceRequired();
+        pStats = PlayerController.instance.gameObject.GetComponent<PlayerStats>();
     }
 
     private void Update()
@@ -58,10 +60,10 @@ public class ExperienceManager : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            AddExp(10);
-        }
+        //if (Input.GetKeyDown(KeyCode.K))
+        //{
+        //    AddExp(10);
+        //}
     }
 
     void LevelUp()
@@ -75,10 +77,53 @@ public class ExperienceManager : MonoBehaviour {
 
         fillImage.fillAmount = 0;
 
-        PlayerController.instance.gameObject.GetComponent<PlayerStats>().LevelUpStats();
+        pStats.LevelUpStats();
     }
 
-    public void AddExp(float exp)
+    /// <summary>
+    /// Determine how much experience is given depending on 
+    /// enemy tier and player level
+    /// </summary>
+    /// <param name="exp"></param>
+    /// <param name="tier"></param>
+    public void AddExp(float exp, int tier)
+    {
+        switch (tier)
+        {
+            case 0:
+                if (level < 5)
+                {
+                    GrantExp(exp);
+                }
+                else
+                {
+                    GrantExp(exp / level);
+                }
+                break;
+            case 1:
+                if (level < 10)
+                {
+                    GrantExp(exp);
+                }
+                else
+                {
+                    GrantExp(exp / level);
+                }
+                break;
+            case 2:
+                if (level < 15)
+                {
+                    GrantExp(exp);
+                }
+                else
+                {
+                    GrantExp(exp / level);
+                }
+                break;
+        }
+    }
+
+    private void GrantExp(float exp)
     {
         experience += exp;
 

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class ItemPickup : Interactable
 {
-
     public Item item;
     public float chanceToDrop;
 
@@ -69,14 +68,13 @@ public class ItemPickup : Interactable
         showBagsFullText = true;
     }
 
-
     void OnMouseOver()
     {
         if (!mouseOver)
         {
             //If your mouse hovers over the GameObject with the script attached, output this message
             Debug.Log("Mouse is over GameObject.");
-            UiManager.instance.ShowToolTip(Camera.main.WorldToScreenPoint(transform.position), item, 0.7f);
+            UiManager.instance.ShowToolTip(Camera.main.WorldToScreenPoint(transform.position), item, true, 0.7f);
             mouseOver = true;
         }
 

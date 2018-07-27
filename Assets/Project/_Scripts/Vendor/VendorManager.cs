@@ -24,8 +24,6 @@ public class VendorManager : MonoBehaviour {
     [SerializeField]
     private List<Item> potion = new List<Item>();
     [SerializeField]
-    private List<Item> weapon = new List<Item>();
-    [SerializeField]
     private List<Item> armor = new List<Item>();
     [SerializeField]
     private List<Item> general = new List<Item>();
@@ -50,6 +48,8 @@ public class VendorManager : MonoBehaviour {
         // potion
         if (vendorType == VendorType.Potion)
         {
+            Debug.Log("Potion Vendor is requesting goods");
+
             foreach (Item item in potion)
             {
                 items.Add(item);
@@ -59,18 +59,20 @@ public class VendorManager : MonoBehaviour {
         // weapon
         if (vendorType == VendorType.Weapon)
         {
-            //Debug.Log("Potion Vendor is requesting goods");
+            Debug.Log("Weapon Vendor is requesting goods");
 
-            foreach (Item item in weapon)
+            int r = UnityEngine.Random.Range(0, 6);
+
+            for (int i = 0; i <= r; i++)
             {
-                items.Add(item);
+                items.Add(EquipmentGenerator._instance.CreateVendorEquipment());
             }
         }
 
         // armor
         if (vendorType == VendorType.Armor)
         {
-            Debug.Log("Potion Vendor is requesting goods");
+            Debug.Log("Armor Vendor is requesting goods");
 
             foreach (Item item in armor)
             {
@@ -81,7 +83,7 @@ public class VendorManager : MonoBehaviour {
         // general
         if (vendorType == VendorType.General)
         {
-            Debug.Log("Potion Vendor is requesting goods");
+            Debug.Log("General Vendor is requesting goods");
 
             foreach (Item item in general)
             {
@@ -90,18 +92,6 @@ public class VendorManager : MonoBehaviour {
         }
 
         return items;
-    }
-
-    private bool RandomSelection()
-    {
-        if (Random.value < 0.5f)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     /// <summary>

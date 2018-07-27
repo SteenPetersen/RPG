@@ -11,7 +11,19 @@ public class UiManager : MonoBehaviour {
 
     public GameObject inventoryCam;
 
+    [SerializeField] Transform toolTipLocation;
+
     [SerializeField] private GameObject equipmentWindow;
+
+    [SerializeField] private ActionButton[] actionButtons;
+
+    [SerializeField] private CanvasGroup keybindMenu;
+
+    [SerializeField] private GameObject[] keybindButtons;
+
+    [SerializeField] GameObject toolTip;
+
+    Text toolTipTitle, toolTipStats;
 
     private void Awake()
     {
@@ -25,19 +37,10 @@ public class UiManager : MonoBehaviour {
             instance = this;
         }
 
-        toolTipText = toolTip.GetComponentInChildren<Text>();
+        toolTipTitle = toolTip.transform.Find("Item_Title").GetComponent<Text>();
+        toolTipStats = toolTip.transform.Find("Item_Stats").GetComponent<Text>();
         keybindButtons = GameObject.FindGameObjectsWithTag("Keybind");
     }
-
-    [SerializeField] private ActionButton[] actionButtons;
-
-    [SerializeField] private CanvasGroup keybindMenu;
-
-    [SerializeField] private GameObject[] keybindButtons;
-
-    [SerializeField] GameObject toolTip;
-
-    Text toolTipText;
 
     void Update () {
 
@@ -53,7 +56,8 @@ public class UiManager : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            SceneManager.LoadSceneAsync(3);
+            //SceneManager.LoadSceneAsync(3);
+            EquipmentGenerator._instance.CreateDroppable(PlayerController.instance.transform.position);
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -73,6 +77,7 @@ public class UiManager : MonoBehaviour {
                 GameDetails._instance.paused = GameDetails._instance.paused == true ? false : true;
                 inventoryCam.SetActive(!inventoryCam.activeSelf);
                 equipmentWindow.SetActive(!equipmentWindow.activeSelf);
+                HideToolTip();
             }
         }
     }
@@ -148,11 +153,25 @@ public class UiManager : MonoBehaviour {
     /// Handles showing the tooltip whenever a mouse is 
     /// hovered over an item that requires a tooltip
     /// </summary>
-    public void ShowToolTip(Vector3 pos, IDescribable description, float size = 1)
+    public void ShowToolTip(Vector3 pos, IDescribable description, bool showSaleValue = true, float size = 1)
     {
         toolTip.SetActive(true);
         toolTip.transform.position = pos;
-        toolTipText.text = description.GetDescription();
+        toolTipTitle.text = description.GetTitle();
+        toolTipStats.text = description.GetDescription(showSaleValue);
+        toolTip.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
+    }
+
+
+    /// <summary>
+    /// Handles showing the tooltip when the equipment window is open
+    /// </summary>
+    public void ShowToolTipEquipmentView(IDescribable description, bool showSaleValue = true, float size = 1)
+    {
+        toolTip.SetActive(true);
+        toolTip.transform.position = toolTipLocation.position;
+        toolTipTitle.text = description.GetTitle();
+        toolTipStats.text = description.GetDescription(showSaleValue);
         toolTip.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
     }
 

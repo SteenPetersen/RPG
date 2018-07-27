@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class EquipedItemSlot : MonoBehaviour
+public class EquipedItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     EquipmentManager equipManager;
 
@@ -58,11 +58,6 @@ public class EquipedItemSlot : MonoBehaviour
         MyIcon.sprite = null;
         MyIcon.enabled = false;
     }
-
-    //public void OnRemoveButton()
-    //{
-    //    Inventory.instance.Remove(item);
-    //}
 
     public void UseItem()
     {
@@ -120,5 +115,20 @@ public class EquipedItemSlot : MonoBehaviour
     private void OnDisable()
     {
         //Debug.Log("Called OnDisabled on EquipedItemSlot");
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        // show tooltip
+        if (MyEquipment != null)
+        {
+            UiManager.instance.ShowToolTipEquipmentView(MyEquipment);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        // hide tooltip
+        UiManager.instance.HideToolTip();
     }
 }

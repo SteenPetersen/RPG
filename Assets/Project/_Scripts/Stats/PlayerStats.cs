@@ -16,6 +16,18 @@ public class PlayerStats : CharacterStats {
     [SerializeField] float regen;
     [SerializeField] float staminaRegen;
 
+    /// <summary>
+    /// used to stop regen when holding some sort of charge
+    /// </summary>
+    public bool chargeHeld;
+    public bool sprinting;
+    public bool cantRegen;
+
+    /// <summary>
+    /// True when players stamina bar is full
+    /// </summary>
+    public bool staminaFull;
+
 
     public Stat Agi;
     public Stat Str;
@@ -104,6 +116,11 @@ public class PlayerStats : CharacterStats {
         strn.text = "Strength: " + Str.GetValue().ToString();
         agil.text = "Agilty: " + Agi.GetValue().ToString();
         lvl.text = "Level: " + ExperienceManager.instance.level.ToString();
+
+        if (staminaFull && MyCurrentStamina < MyMaxStamina || !staminaFull && MyCurrentStamina >= MyMaxStamina)
+        {
+            staminaFull = !staminaFull;
+        }
     }
 
     private void OnEquipmentChanged(Equipment newItem, Equipment oldItem)
@@ -112,13 +129,21 @@ public class PlayerStats : CharacterStats {
         {
             armor.RemoveModifier(oldItem.armorModifier);
             damage.RemoveModifier(oldItem.damageModifier);
+            Sta.RemoveModifier(oldItem.sta);
+            Str.RemoveModifier(oldItem.str);
+            Agi.RemoveModifier(oldItem.agi);
         }
 
         if (newItem != null)
         {
             armor.AddModifier(newItem.armorModifier);
             damage.AddModifier(newItem.damageModifier);
+            Sta.AddModifier(newItem.sta);
+            Str.AddModifier(newItem.str);
+            Agi.AddModifier(newItem.agi);
         }
+
+        Debug.LogWarning("Equipment Changed");
     }
 
     public override void Die()
@@ -203,12 +228,11 @@ public class PlayerStats : CharacterStats {
         playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
 
         // stamina
-        MyCurrentStamina += staminaRegen;
-        //playerControl.staminaBar.fillAmount = CalculateStamina(currentStamina, maxStamina);
-
-        playerControl.staminaBar.fillAmount = Mathf.Lerp(playerControl.staminaBar.fillAmount,
-            CalculateHealth(currentStamina, maxStamina),
-            Time.deltaTime * 8);
+        if (!chargeHeld && !sprinting && !cantRegen)
+        {
+            MyCurrentStamina += staminaRegen;
+            LerpStaminaBar();
+        }
     }
 
     public void LevelUpStats()
@@ -259,11 +283,20 @@ public class PlayerStats : CharacterStats {
         return currentStamina / maxStamina;
     }
 
+    /// <summary>
+    /// Lerps the stamina Bar between its before cost and after values
+    /// </summary>
+    public void LerpStaminaBar()
+    {
+        playerControl.staminaBar.fillAmount = Mathf.Lerp(playerControl.staminaBar.fillAmount,
+        CalculateStamina(MyCurrentStamina, MyMaxStamina),
+        Time.deltaTime * 8);
+    }
+
     private void OnDisable()
     {
         EquipmentManager.instance.onEquipmentChanged -= OnEquipmentChanged;
     }
-
 
     // amount of time player is interupted when being hit by a boss projectile
     IEnumerator returnMovement()

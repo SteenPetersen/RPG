@@ -22,7 +22,6 @@ public class HandScript : MonoBehaviour {
         }
     }
 
-
     public IMoveable MyMoveable { get; set; }
 
     private Image icon;
@@ -44,10 +43,12 @@ public class HandScript : MonoBehaviour {
 
     public void TakeMoveable(IMoveable moveable)
     {
-        this.MyMoveable = moveable;
-        Debug.Log(MyMoveable.GetType().ToString());
-        icon.sprite = moveable.MyIcon;
-        icon.color = Color.white;
+        if (moveable != null)
+        {
+            this.MyMoveable = moveable;
+            icon.sprite = moveable.MyIcon;
+            icon.color = Color.white;
+        }
     }
 
     public void Drop()

@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     Vector3 prevPosition;
     Vector3 move;
+    [SerializeField] Light pointLight;
 
     #region Singleton
 
@@ -44,15 +45,27 @@ public class PlayerController : MonoBehaviour
     GameObject skeleton;
     Vector2 mousePosition;
     EventSystem eventSys;
-    float thrustSpeed = 0.5f;                  
+    float thrustSpeed = 0.5f;  
 
     Rigidbody2D rigid;
     CameraController cameraControl;
     PlayerStats playerStat;
     GameObject cameraHolder;
     ParticleSystem[] particles;
+    [SerializeField] ParticleSystem sprintTrail;
 
     #region Public Variables
+
+    /// <summary>
+    /// Accessed by the grass to turn it off when player leaves the sand and enters Grass
+    /// </summary>
+    public ParticleSystem footPrints;
+
+    /// <summary>
+    /// Accessed by the grass to turn it off when player leaves the sand and enters Grass
+    /// </summary>
+    public ParticleSystem sandTrail;
+
 
     /// <summary>
     /// playerstats needs reference to check if player can riposte or not
@@ -81,7 +94,7 @@ public class PlayerController : MonoBehaviour
     /// Speed of Character
     /// Needed for saving and Loading incase we make it possible for player to adjust this.
     /// </summary>
-    [HideInInspector] public float speed;
+    public float speed;
 
     /// <summary>
     /// needed on gamedetails for setting death animation etc
@@ -151,9 +164,9 @@ public class PlayerController : MonoBehaviour
         CheckIfFacingCorrectDirection();
         HandleMovement();
 
-        if (staminaBar.fillAmount != playerStat.CalculateHealth(playerStat.MyCurrentStamina, playerStat.MyMaxStamina))
+        if (staminaBar.fillAmount != playerStat.CalculateStamina(playerStat.MyCurrentStamina, playerStat.MyMaxStamina))
         {
-            LerpStaminaBar();
+            playerStat.LerpStaminaBar();
         }
     }
 
@@ -185,11 +198,37 @@ public class PlayerController : MonoBehaviour
 
     private void ChargeBowShot()
     {
-        if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
+        if (!playerStat.cantRegen)
+        {
+            playerStat.cantRegen = true;
+        }
+
+        // if you have full stamina you can start charging
+        if (playerStat.staminaFull || playerStat.chargeHeld)
+        {
+            if (!playerStat.chargeHeld)
+            {
+                playerStat.chargeHeld = true;
+            }
+
+            if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
+            {
+                Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+                tmp.a += 0.009f;
+                EquipmentManager.instance.weaponGlowSlot.color = tmp;
+            }
+            Debug.Log("charging bow");
+            playerStat.MyCurrentStamina -= 0.05f;
+        }
+
+        // if you run out of stamina you lose your charge
+        if (playerStat.MyCurrentStamina <= 0)
         {
             Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-            tmp.a += 0.009f;
+            tmp.a = 0;
             EquipmentManager.instance.weaponGlowSlot.color = tmp;
+            weaponChargeReady = false;
+            bowCharged.Stop();
         }
     }
 
@@ -238,32 +277,6 @@ public class PlayerController : MonoBehaviour
             // let the script know that you have activated the corutine so you dont keep calling it
             lineOfSightRoutineActivated = true;
         }
-    } // commented
-
-    IEnumerator LineOfSight()
-    {
-        // while you have enemies in the area
-        while (enemiesInRange)
-        {
-            //Debug.Log("calling Coroutine");
-
-            // run through all the enemies in the list
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                // if the enemy has an EnemyAI script
-                if (enemies[i].GetComponent<EnemyAI>() != null)
-                {
-                    // call the enemies DetermineAggro Method and have it check if it can see you or not.
-                    enemies[i].GetComponent<EnemyAI>().DetermineAggro(transform.position);
-                }
-            }
-
-            // when all enemies have been checked but there are still enemies in range wait for a moment
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        // if there are no enemies in range then let the HandleAggro function know that the coroutine is not running and it can be restarted.
-        lineOfSightRoutineActivated = false;
     } // commented
 
     private void HandleAnimation()
@@ -333,6 +346,7 @@ public class PlayerController : MonoBehaviour
                         EquipmentManager.instance.weaponGlowSlot.color = tmp;
                         weaponChargeReady = false;
                         weaponCharged.Stop();
+
 
                         return;
                     }
@@ -453,31 +467,76 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
             {
-                largeStrike = false;
-
-                // make sure maxChargedHit is set to false for every attempt at hitting 
-                // only set it to true if its true for this particular hit
-                maxChargedHit = false;
-
-                // check if player was trying to to do a charged hit
-                if (chargedShot)
+                if (playerStat.chargeHeld)
                 {
-                    anim.SetBool("ChargedShot", false);
-                    chargedShot = false;
+                    playerStat.chargeHeld = false;
+                }
 
-                    if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
+                if (playerStat.cantRegen)
+                {
+                    playerStat.cantRegen = false;
+                }
+
+                bool canHit = CheckIfPlayerMayHit();
+
+                // if player is not allowed to hit the stop the code from running further
+                if (!canHit)
+                {
+                    Vendor vendor = CheckForVendor();
+                    Interactable inter = CheckForInteractable();
+
+                    if (inter != null)
                     {
-                        maxChargedHit = true;
+                        Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
+                        inter.Interact();
+                        return;
                     }
 
-                    Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-                    tmp.a = 0;
-                    EquipmentManager.instance.weaponGlowSlot.color = tmp;
-                    weaponChargeReady = false;
-                    bowCharged.Stop();
-
-                    return;
+                    if (vendor != null)
+                    {
+                        vendor.Interact();
+                        return;
+                    }
                 }
+
+                else if (canHit)
+                {
+                    largeStrike = false;
+
+                    // make sure maxChargedHit is set to false for every attempt at hitting 
+                    // only set it to true if its true for this particular hit
+                    maxChargedHit = false;
+
+                    // check if player was trying to to do a charged hit
+                    if (chargedShot)
+                    {
+                        anim.SetBool("ChargedShot", false);
+                        chargedShot = false;
+
+                        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
+                        {
+                            maxChargedHit = true;
+                        }
+
+                        Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+                        tmp.a = 0;
+                        EquipmentManager.instance.weaponGlowSlot.color = tmp;
+                        weaponChargeReady = false;
+                        bowCharged.Stop();
+
+                        float percCost = (playerStat.MyMaxStamina / 100) * 25;
+
+                        playerStat.MyCurrentStamina -= percCost;
+
+                        if (playerStat.chargeHeld)
+                        {
+                            playerStat.chargeHeld = false;
+                        }
+
+                        return;
+                    }
+                }
+
             }
 
             if (Input.GetMouseButton(0))
@@ -493,15 +552,151 @@ public class PlayerController : MonoBehaviour
     } // commented
 
     /// <summary>
+    /// Handles the movement of the Player with a normalized vector2
+    /// </summary>
+    private void HandleMovement()
+    {
+        if (interruptMovement)
+            return;
+
+        // instantiate a vector2 direction and set it to zero
+        Vector2 directionOfMovement = Vector2.zero;
+
+        // for every button the player presses add that vector to the previously created vector2
+        if (Input.GetKey(KeybindManager.instance.Keybinds["RIGHT"]))
+        {
+            directionOfMovement += Vector2.right;
+        }
+        if (Input.GetKey(KeybindManager.instance.Keybinds["LEFT"]))
+        {
+            directionOfMovement += Vector2.left;
+        }
+        if (Input.GetKey(KeybindManager.instance.Keybinds["DOWN"]))
+        {
+            directionOfMovement += Vector2.down;
+        }
+        if (Input.GetKey(KeybindManager.instance.Keybinds["UP"]))
+        {
+            directionOfMovement += Vector2.up;
+        }
+
+        // once all buttons have been pressed normalize the vector2 and add force to it multiplied by speed
+        rigid.AddRelativeForce(directionOfMovement.normalized * speed * Time.deltaTime);
+
+
+        // Start sprinting
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (playerStat.MyCurrentStamina > 0)
+            {
+                if (!playerStat.sprinting)
+                {
+                    speed *= 2;
+                    sprintTrail.Play();
+                    anim.SetBool("Sprint", true);
+                    playerStat.sprinting = true;
+                }
+            }
+            else
+            {
+                if (playerStat.sprinting)
+                {
+                    speed *= 0.5f;
+                    sprintTrail.Stop();
+                    anim.SetBool("Sprint", false);
+                    playerStat.sprinting = false;
+                }
+            }
+
+            playerStat.MyCurrentStamina -= 0.22f;
+
+        }
+
+        // Stop sprinting
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            if (playerStat.sprinting)
+            {
+                speed *= 0.5f;
+                sprintTrail.Stop();
+                anim.SetBool("Sprint", false);
+                playerStat.sprinting = false;
+            }
+        }
+    }
+
+    private void HandleActionBarInput()
+    {
+        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION3"]))
+        {
+            UiManager.instance.ClickActionButton("ACTION1");
+        }
+        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION4"]))
+        {
+            UiManager.instance.ClickActionButton("ACTION2");
+        }
+        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION5"]))
+        {
+            UiManager.instance.ClickActionButton("ACTION3");
+        }
+
+        //foreach (string action in KeybindManager.instance.ActionBinds.Keys)
+        //{
+        //    Debug.Log("searching " + action);
+        //    if (Input.GetKeyDown(KeybindManager.instance.ActionBinds[action]))
+        //    {
+        //        Debug.Log("Pressing: " + KeybindManager.instance.ActionBinds[action].ToString());
+        //        UiManager.instance.ClickActionButton(action);
+        //    }
+        //}
+    }
+
+    private void HandleCombatState()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log("calling loadscene");
+            SceneManager.LoadSceneAsync(0);
+            transform.position = new Vector2(-12f, 4);
+        }
+
+        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION1"])) // ACTION1 is trying to use Melee
+        {
+            if (!melee)
+            {
+                EquipFirstMatchingItemInBag(0, 3);
+                EquipFirstMatchingItemInBag(2, 4);
+                melee = true;
+                ranged = false;
+            }
+
+        }
+
+        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION2"])) // ACTION2 is trying to use Ranged
+        {
+            if (!ranged)
+            {
+                EquipFirstMatchingItemInBag(1, 3);
+                ranged = true;
+                melee = false;
+            }
+        }
+    }
+
+
+    /// <summary>
     /// Determines the speed at which the players weapon charges a power hit
     /// </summary>
     private void ChargeHit()
     {
-        if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
+        if (melee)
         {
-            Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-            tmp.a += 0.009f;
-            EquipmentManager.instance.weaponGlowSlot.color = tmp;
+            if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
+            {
+                Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+                tmp.a += 0.009f;
+                EquipmentManager.instance.weaponGlowSlot.color = tmp;
+            }
         }
     }
 
@@ -624,126 +819,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// Handles the movement of the Player with a normalized vector2
-    /// </summary>
-    private void HandleMovement()
-    {
-        if (interruptMovement)
-            return;
-
-        // instantiate a vector2 direction and set it to zero
-        Vector2 directionOfMovement = Vector2.zero;
-
-        // for every button the player presses add that vector to the previously created vector2
-        if (Input.GetKey(KeybindManager.instance.Keybinds["RIGHT"]))
-        {
-            directionOfMovement += Vector2.right;
-        }
-        if (Input.GetKey(KeybindManager.instance.Keybinds["LEFT"]))
-        {
-            directionOfMovement += Vector2.left;
-        }
-        if (Input.GetKey(KeybindManager.instance.Keybinds["DOWN"]))
-        {
-            directionOfMovement += Vector2.down;
-        }
-        if (Input.GetKey(KeybindManager.instance.Keybinds["UP"]))
-        {
-            directionOfMovement += Vector2.up;
-        }
-
-        // once all buttons have been pressed normalize the vector2 and add force to it multiplied by speed
-        rigid.AddRelativeForce(directionOfMovement.normalized * speed * Time.deltaTime);
-
-
-        // jump forward
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (playerStat.MyCurrentStamina >= 50)
-            {
-                playerStat.MyCurrentStamina -= 50;
-
-                Debug.Log("calling ghost spawn");
-                var trail = GetSystem("thrustTrail");
-                trail.Play();
-                anim.SetTrigger("Thrust");
-
-                SpawnGhostImage(directionOfMovement);
-
-                // if you're standing still move towards mnouse instead
-                if (directionOfMovement == Vector2.zero)
-                {
-                    Vector3 directionMouse = new Vector3(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y, 0f);
-                    directionMouse.Normalize();
-                    rigid.AddRelativeForce(directionMouse * thrustSpeed);
-                    return;
-                }
-
-                // add a relative local force to the player rigidbody in the given direction.
-                rigid.AddRelativeForce(directionOfMovement * thrustSpeed);
-            }
-
-        }
-    }
-
-    /// <summary>
-    /// Lerps the stamina Bar between its before cost and after values
-    /// </summary>
-    private void LerpStaminaBar()
-    {
-        staminaBar.fillAmount = Mathf.Lerp(staminaBar.fillAmount, 
-            playerStat.CalculateHealth(playerStat.MyCurrentStamina, playerStat.MyMaxStamina), 
-            Time.deltaTime * 8);
-    }
-
-    private void HandleActionBarInput()
-    {
-        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION3"]))
-        {
-            UiManager.instance.ClickActionButton("ACTION1");
-        }
-        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION4"]))
-        {
-            UiManager.instance.ClickActionButton("ACTION2");
-        }
-        else if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION5"]))
-        {
-            UiManager.instance.ClickActionButton("ACTION3");
-        }
-
-        //foreach (string action in KeybindManager.instance.ActionBinds.Keys)
-        //{
-        //    Debug.Log("searching " + action);
-        //    if (Input.GetKeyDown(KeybindManager.instance.ActionBinds[action]))
-        //    {
-        //        Debug.Log("Pressing: " + KeybindManager.instance.ActionBinds[action].ToString());
-        //        UiManager.instance.ClickActionButton(action);
-        //    }
-        //}
-    }
-
-    private void HandleCombatState()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Debug.Log("calling loadscene");
-            SceneManager.LoadSceneAsync(0);
-            transform.position = new Vector2(-12f, 4);
-        }
-
-        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION1"])) // ACTION1 is trying to use Melee
-        {
-            EquipFirstMatchingItemInBag(0,3);
-            EquipFirstMatchingItemInBag(2,4);
-        }
-
-        if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION2"])) // ACTION2 is trying to use Ranged
-        {
-            EquipFirstMatchingItemInBag(1,3);
-        }
-    }
-
     private void SpawnGhostImage(Vector2 direction)
     {
         // set a vector2 Position that we can use to spawn the ghost at
@@ -794,28 +869,11 @@ public class PlayerController : MonoBehaviour
                 if ((int)tmp.equipType == type && (int)tmp.equipSlot == slotIndex)
                 {
                     slot.MyItem.Use();
+                    break;
                 }
             }
         }
-            //{
-                //// check to see if you have equipment in your bag
-                //if (InventoryScript.instance.sl is Equipment)
-                //{
-                //    // set tmp as the equipment found
-                //    Equipment tmp = (Equipment)Inventory.instance.itemsInBag[i];
 
-                //    // is tmp a Matching item?
-                //    if ((int)tmp.equipSlot == slot)
-                //    {
-                //        // equip the first Matching item you find
-                //        if ((int)tmp.equipType == type)
-                //        {
-                //            Inventory.instance.itemsInBag[i].Use();
-                //            return true;
-                //        }
-                //    }
-                //}
-            //}
         return false;
     }
 
@@ -914,7 +972,7 @@ public class PlayerController : MonoBehaviour
             direction1.Normalize();
 
             // Determine the correct angle to turn the projectile
-            float angle1 = Mathf.Atan2(direction.y, direction.x - deviation) * Mathf.Rad2Deg;
+            //float angle1 = Mathf.Atan2(direction.y, direction.x - deviation) * Mathf.Rad2Deg;
 
             GameObject projectile1 = pooledArrows.GetPooledArrow();
 
@@ -934,7 +992,7 @@ public class PlayerController : MonoBehaviour
             direction2.Normalize();
 
             // Determine the correct angle to turn the projectile
-            float angle2 = Mathf.Atan2(direction.y - deviation, direction.x) * Mathf.Rad2Deg;
+            //float angle2 = Mathf.Atan2(direction.y - deviation, direction.x) * Mathf.Rad2Deg;
 
             GameObject projectile2 = pooledArrows.GetPooledArrow();
 
@@ -952,9 +1010,9 @@ public class PlayerController : MonoBehaviour
             projectile1.GetComponent<Rigidbody2D>().AddForce(direction1 * projectileSpeed);
             projectile2.GetComponent<Rigidbody2D>().AddForce(direction2 * projectileSpeed);
 
-            GameObject particles = Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile.transform);
-            GameObject particles1 = Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile1.transform);
-            GameObject particles2 = Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile2.transform);
+            Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile.transform);
+            Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile1.transform);
+            Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile2.transform);
 
             GameDetails.arrowsFired++;
 
@@ -1102,6 +1160,18 @@ public class PlayerController : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (!scene.name.EndsWith("_indoor"))
+        {
+            Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 1;
+            pointLight.gameObject.SetActive(false);
+        }
+
+        else if (scene.name.EndsWith("_indoor"))
+        {
+            Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 0.43f;
+            pointLight.gameObject.SetActive(true);
+        }
+
     }
 
     private void OnDisable()
@@ -1222,6 +1292,36 @@ public class PlayerController : MonoBehaviour
         // let the script know the routine is done running
         heldStrikeCoroutinePlaying = false;
     }
+
+    /// <summary>
+    /// Determines if the enemies in range of the player can see
+    /// the player or not
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator LineOfSight()
+    {
+        // while you have enemies in the area
+        while (enemiesInRange)
+        {
+            // run through all the enemies in the list
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                // if the enemy has an EnemyAI script
+                if (enemies[i].GetComponent<EnemyAI>() != null)
+                {
+                    // call the enemies DetermineAggro Method and have it check if it can see you or not.
+                    enemies[i].GetComponent<EnemyAI>().DetermineAggro(transform.position);
+                }
+            }
+
+            // when all enemies have been checked but there are still enemies in range wait for a moment
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        // if there are no enemies in range then let the HandleAggro function know that the coroutine is not running and it can be restarted.
+        lineOfSightRoutineActivated = false;
+    } // commented
+
 
 }
 

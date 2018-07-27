@@ -38,29 +38,18 @@ public class LootController : MonoBehaviour {
     /// <param name="position">The position in which to spawn this item</param>
     public void EnemyLoot(int tier, Vector2 position)
     {
-        // see if anything dropped
-        bool loot = false;
-
         int lootCheck = UnityEngine.Random.Range(0, 100);
 
-        if (lootCheck < lootChance)
-        {
-            loot = true;
-        }
-
-
         // spawn loot at location
-        if (loot)
+        if (lootCheck < lootChance)
         {
             switch (tier)
             {
                 case 0:
-                    int rnd = UnityEngine.Random.Range(0, enemyTier0.Count);
-                    Instantiate(enemyTier0[rnd], position, Quaternion.identity);
+                    EquipmentGenerator._instance.CreateDroppable(position);
                     // play loot sound
                     SoundManager.instance.PlayUiSound("lootdrop");
                     // add to statistics
-                    loot = false;
                     break;
             }
         }
@@ -77,9 +66,7 @@ public class LootController : MonoBehaviour {
         switch (tier)
         {
             case 0:
-                int rnd = UnityEngine.Random.Range(0, enemyTier0.Count);
-                var go = enemyTier0[rnd];
-
+                var go = EquipmentGenerator._instance.CreateDroppable();
                 return go;
         }
 
