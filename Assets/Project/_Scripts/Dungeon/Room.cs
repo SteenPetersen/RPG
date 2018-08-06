@@ -10,14 +10,17 @@ public class Room
     public int roomHeight;                    // How many tiles high the room is.
     public Direction enteringCorridor;    // The direction of the corridor that is entering this room.
     public int enemyAmount;
+    public int destructablesAmount;
 
-    public List<Vector2> enemyPositions;
+    public List<TileLocation> middleFloorTilesInThisRoom = new List<TileLocation>();
+    public List<TileLocation> edgeFloorTilesOfThisRoom = new List<TileLocation>();
+
 
     public bool round; // testing round rooms
 
     // must be above 5 or the building of walla on the outside of rooms can overreach the tile borders 
     // and result in a null reference
-    public int buffer = 5;
+    public int buffer = 1;
 
     // This is used for the first room.  It does not have a Corridor parameter since there are no corridors yet.
     public void SetupRoom(IntRange widthRange, IntRange heightRange, int columns, int rows)
@@ -48,9 +51,8 @@ public class Room
         }
     }
 
-
     // This is an overload of the SetupRoom function and has a corridor parameter that represents the corridor entering the room.
-    public void SetupRoom(IntRange widthRange, IntRange heightRange, int columns, int rows, Corridor corridor, IntRange enemies, bool middle = false)
+    public void SetupRoom(IntRange widthRange, IntRange heightRange, int columns, int rows, Corridor corridor, IntRange enemies, IntRange destructables, bool middle = false)
     {
         // Set the entering corridor direction.
         enteringCorridor = corridor.direction;
@@ -61,6 +63,7 @@ public class Room
 
         //TODO add monster chance to drop
         enemyAmount = enemies.Random;
+        destructablesAmount = destructables.Random;
 
         switch (corridor.direction)
         {
@@ -78,7 +81,7 @@ public class Room
                 xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
 
                 // This must be clamped to ensure that the room doesn't go off the board.
-                xPos = Mathf.Clamp(xPos, buffer, (columns - BoardCreator.instance.roomWidth.m_Max) - buffer);
+                xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
                 break;
             case Direction.East:
                 roomWidth = Mathf.Clamp(roomWidth, 0, (columns - corridor.EndPositionX) - buffer);
@@ -93,7 +96,7 @@ public class Room
                 yPos = corridor.EndPositionY - roomHeight + 1;
 
                 xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
-                xPos = Mathf.Clamp(xPos, buffer, (columns - BoardCreator.instance.roomWidth.m_Max) - buffer);
+                xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
                 break;
             case Direction.West:
                 roomWidth = Mathf.Clamp(roomWidth, 0, corridor.EndPositionX - buffer);
@@ -105,10 +108,6 @@ public class Room
         }
 
         float chestRand = UnityEngine.Random.Range(0, 100);
-
-
-
-        CheckForEnemies();
 
         if (middle)
         {
@@ -145,7 +144,6 @@ public class Room
             BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.chestHigherTier);
         }
     }
-
 
     // This is a further overload only for the last room
     public void SetupRoom(IntRange widthRange, IntRange heightRange, int columns, int rows, Corridor corridor, IntRange enemies, int multiplier, bool bossRoom)
@@ -253,56 +251,7 @@ public class Room
 
         }
 
-        CheckForBossEnemies();
         SetGoalLocation();
-
-        RemoveAllEnemiesNearStartPoint();
-    }
-
-    private void RemoveAllEnemiesNearStartPoint()
-    {
-        // make a layerMask
-        int layerId = 11;
-        int enemyMask = 1 << layerId;
-
-        Collider2D[] killzone = Physics2D.OverlapCircleAll(BoardCreator.instance.player.transform.position, 10, enemyMask);
-
-        foreach (var enemy in killzone)
-        {
-            Debug.Log("Im a: " + enemy.transform.parent.gameObject.name);
-            UnityEngine.Object.Destroy(enemy.transform.parent.gameObject);
-        }
-    }
-
-    private void CheckForBossEnemies()
-    {
-        enemyPositions = new List<Vector2>();
-
-        int enemyXPos = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
-        int enemyYPos = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
-
-        Vector2 enemyVector = new Vector2(enemyXPos, enemyYPos);
-
-        enemyPositions.Add(enemyVector);
-        BoardCreator.instance.SpawnElement(enemyVector, BoardCreator.instance.boss);
-        
-    }
-
-    private void CheckForEnemies()
-    {
-        enemyPositions = new List<Vector2>();
-
-        for (int i = 0; i < enemyAmount; i++)
-        {
-            int enemyXPos = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
-            int enemyYPos = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
-
-            Vector2 enemyVector = new Vector2(enemyXPos, enemyYPos);
-
-            enemyPositions.Add(enemyVector);
-            int rand = UnityEngine.Random.Range(0, BoardCreator.instance.enemy.Length);
-            BoardCreator.instance.SpawnElement(enemyVector, BoardCreator.instance.enemy[rand]);
-        }
     }
 
     private void SetGoalLocation()
@@ -310,7 +259,7 @@ public class Room
         int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
         int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
 
-        Debug.Log("Goal is Placed at position X " + goalX + " and Y " + goalY);
+        //Debug.Log("Goal is Placed at position X " + goalX + " and Y " + goalY);
 
         Vector2 pos = new Vector2(goalX, goalY);
 
@@ -322,12 +271,14 @@ public class Room
         int mapX = UnityEngine.Random.Range(xPos, xPos + (roomWidth / 2));
         int mapY = UnityEngine.Random.Range(yPos, yPos + (roomHeight / 2));
 
-        Debug.Log("Map is Placed at position X " + mapX + " and Y " + mapY);
+        //Debug.Log("Map is Placed at position X " + mapX + " and Y " + mapY);
 
         //Vector2 pos = new Vector2(mapX, mapY);
 
         //BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.map);
     }
+
+
 
     //switch (corridor.direction)
     //    {

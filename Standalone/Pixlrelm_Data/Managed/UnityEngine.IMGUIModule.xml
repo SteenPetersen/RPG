@@ -4429,7 +4429,7 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
     </member>
     <member name="P:UnityEngine.GUIUtility.systemCopyBuffer">
       <summary>
-        <para>Get access to the system-wide pasteboard.</para>
+        <para>Get access to the system-wide clipboard.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.GUIUtility.GetControlID(UnityEngine.FocusType)">

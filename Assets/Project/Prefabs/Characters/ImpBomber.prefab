@@ -20,9 +20,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4253063698782672}
   - component: {fileID: 95748589874887278}
-  - component: {fileID: 114059967513420546}
   - component: {fileID: 114816923058061074}
   - component: {fileID: 61185821038570992}
+  - component: {fileID: 212330054689091898}
+  - component: {fileID: 114693918158526124}
   m_Layer: 11
   m_Name: Imp_A*
   m_TagString: Enemy
@@ -206,6 +207,21 @@ GameObject:
   - component: {fileID: 199099216310625650}
   m_Layer: 14
   m_Name: BloodOverFlow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1487079522376302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4623921424370868}
+  m_Layer: 27
+  m_Name: SpeechLocation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -506,12 +522,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1077856273101138}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.631578, y: -15.124815, z: 0}
+  m_LocalPosition: {x: -15.08707, y: -18.708609, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4253063698782672}
   - {fileID: 4645053008374072}
   - {fileID: 4558977551594470}
+  - {fileID: 4623921424370868}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -529,7 +546,7 @@ Transform:
   - {fileID: 4046330410695098}
   m_Father: {fileID: 4791306935806288}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -29.393002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 2.2669983}
 --- !u!4 &4137449179603434
 Transform:
   m_ObjectHideFlags: 1
@@ -570,7 +587,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4054165214282986}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 16.676}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.03}
 --- !u!4 &4334921480953858
 Transform:
   m_ObjectHideFlags: 1
@@ -624,6 +641,19 @@ Transform:
   m_Father: {fileID: 4077723416407088}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!4 &4623921424370868
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1487079522376302}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.304, y: 0.131, z: 0}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4077723416407088}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4634237125901148
 Transform:
   m_ObjectHideFlags: 1
@@ -637,7 +667,7 @@ Transform:
   - {fileID: 4960387954737210}
   m_Father: {fileID: 4791306935806288}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.6440735}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.03}
 --- !u!4 &4645053008374072
 Transform:
   m_ObjectHideFlags: 1
@@ -730,7 +760,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1070931184884298}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4375, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4054165214282986}
@@ -738,7 +768,7 @@ Transform:
   - {fileID: 4525088825072244}
   m_Father: {fileID: 4253063698782672}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.6772461}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4937861186959774
 Transform:
   m_ObjectHideFlags: 1
@@ -764,7 +794,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4634237125901148}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -195.51328}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.43884277}
 --- !u!50 &50435665834387404
 Rigidbody2D:
   serializedVersion: 4
@@ -797,7 +827,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.06533909, y: 0.35159183}
+  m_Offset: {x: 0.06533909, y: -0.04}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -853,18 +883,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114059967513420546
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1003868362128070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0df898f9eb487ed46a6a0e2e4585c358, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
 --- !u!114 &114268342440013346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -965,10 +983,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  repathRate: 0.5
+  repathRate: 0.1
   canSearch: 1
   canMove: 1
-  maxSpeed: 14
+  maxSpeed: 12
   gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
     serializedVersion: 2
@@ -978,14 +996,14 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   maxAcceleration: -2.5
   rotationSpeed: 360
-  slowdownDistance: 5
+  slowdownDistance: 3
   pickNextWaypointDist: 1.45
   endReachedDistance: 1.25
   alwaysDrawGizmos: 0
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
-  healthGroup: {fileID: 225449237258407216}
-  healthbar: {fileID: 114785750196982488}
+  healthbar: {fileID: 0}
+  speechLocation: {fileID: 1487079522376302}
   setter: {fileID: 114358393488409876}
   isDead: 0
   inRange: 0
@@ -996,13 +1014,13 @@ MonoBehaviour:
   inMeleeRange: 0
   facingRight: 1
   playerObj: {fileID: 0}
-  tier: 0
   moving: 0
   anim: {fileID: 95748589874887278}
-  child: {fileID: 1003868362128070}
   myCollider: {fileID: 61185821038570992}
   myStats: {fileID: 114861463840128380}
-  projectileLaunchPoint: {fileID: 0}
+  skeleton: {fileID: 0}
+  child: {fileID: 1003868362128070}
+  tier: 0
   woundGraphics:
   - {fileID: 1279665248493068}
   - {fileID: 1005607462214262}
@@ -1010,15 +1028,26 @@ MonoBehaviour:
   distanceToLook: 7
   meleeRange: 2
   force: 430
-  projectileSpeed: 0
   experienceGain: 4
   meleeDelay: 1
   timer: 1
   meleeHitRange: 0
-  skeleton: {fileID: 0}
   explosion: {fileID: 1056374588509000, guid: 51b68412f84aa1344a531b3764f3525f, type: 2}
   hasExploded: 0
   bombPos: {fileID: 4960387954737210}
+--- !u!114 &114693918158526124
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1003868362128070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54465b0f72d6293419422c3b005fc78e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  threshold: 0
+  interval: 2
 --- !u!114 &114708514358923930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10797,6 +10826,51 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!212 &212330054689091898
+SpriteRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1003868362128070}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_MaskInteraction: 0
 --- !u!212 &212353322405842342
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -11324,7 +11398,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

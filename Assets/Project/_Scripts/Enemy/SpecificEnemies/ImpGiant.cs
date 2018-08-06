@@ -115,7 +115,7 @@ public class ImpGiant : EnemyAI {
             LerpToPosition script = tmp.GetComponent<LerpToPosition>();
 
             // send bombs from boss position to stop position
-            script.SetDestination(pos);
+            script.SetStartAndDestination(bossPosition, pos, tmp);
         }
         
 

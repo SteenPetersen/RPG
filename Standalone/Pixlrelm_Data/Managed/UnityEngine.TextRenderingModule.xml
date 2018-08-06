@@ -11,7 +11,7 @@
     </member>
     <member name="P:UnityEngine.CharacterInfo.advance">
       <summary>
-        <para>The horizontal distance from the origin of this character to the origin of the next character.</para>
+        <para>The horizontal distance, rounded to the nearest integer, from the origin of this character to the origin of the next character.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.CharacterInfo.bearing">

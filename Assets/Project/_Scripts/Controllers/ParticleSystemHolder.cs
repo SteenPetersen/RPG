@@ -20,6 +20,7 @@ public class ParticleSystemHolder : MonoBehaviour {
     public ParticleSystem impBlood;
     public ParticleSystem redBlood;
     public ParticleSystem bombExplosion;
+    public ParticleSystem bossOneFireShield;
 
     public GameObject ChargedBowShot;
 

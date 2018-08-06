@@ -9,6 +9,8 @@ public class UiManager : MonoBehaviour {
 
     public static UiManager instance;
 
+    [SerializeField] GameObject box;
+
     public GameObject inventoryCam;
 
     [SerializeField] Transform toolTipLocation;
@@ -54,6 +56,11 @@ public class UiManager : MonoBehaviour {
             PlayerStats.instance.TakeDamage(10);
         }
 
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Instantiate(box, new Vector3(PlayerController.instance.transform.position.x, PlayerController.instance.transform.position.y, -0.25f), Quaternion.identity);
+        }
+
         if (Input.GetKeyDown(KeyCode.P))
         {
             //SceneManager.LoadSceneAsync(3);
@@ -67,6 +74,9 @@ public class UiManager : MonoBehaviour {
 
         if (Input.GetButtonDown("Inventory"))
         {
+            Debug.Log("stopping player walking");
+
+
             if (!PlayerController.instance.dialogue)
             {
                 if (!PlayerController.instance.facingRight)
@@ -74,6 +84,8 @@ public class UiManager : MonoBehaviour {
                     PlayerController.instance.FlipPlayer();
                 }
 
+                PlayerController.instance.anim.Rebind();
+                PlayerController.instance.anim.SetTrigger("ForceStopWalk");
                 GameDetails._instance.paused = GameDetails._instance.paused == true ? false : true;
                 inventoryCam.SetActive(!inventoryCam.activeSelf);
                 equipmentWindow.SetActive(!equipmentWindow.activeSelf);

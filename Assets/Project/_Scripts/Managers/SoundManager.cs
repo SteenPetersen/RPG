@@ -8,11 +8,14 @@ public class SoundManager : MonoBehaviour {
     [HideInInspector]
     public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow, 
                      bladeSwing, impBossHit, impBossDeath, impSwing, impHit, impHit1, impDeath, impDeath1, playerHurt, playerHurt1,
-                     impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, potionInteract, potionPickup, fireBurst, firebuildup,
+                     impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, firstBossPrepAoe, bigGreenFireball, bigGreenFireball1, bigGreenFireball2, bigGreenFireball3, 
+                     potionInteract, potionPickup, fireBurst, firebuildup,
                      levelup, deathsound, bomb, shieldblock, shieldriposte, crit,
                      lootdrop, purchase, chestopen, chestclose,
                      demontalk1, demontalk2, demontalk3,
-                     spikeTrapFire, spikeTrapReset;
+                     spikeTrapFire, spikeTrapReset,
+                     stoneWallOpen,
+                     impactBox, destroyBox;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -42,6 +45,11 @@ public class SoundManager : MonoBehaviour {
         fireballimpact1 = Resources.Load<AudioClip>("Sound/" + "Imp_Fireball_impact1");
         fireballimpact2 = Resources.Load<AudioClip>("Sound/" + "Imp_Fireball_impact2");
         fireballimpact3 = Resources.Load<AudioClip>("Sound/" + "Imp_Fireball_impact3");
+        bigGreenFireball = Resources.Load<AudioClip>("Sound/" + "big_green_fireball");
+        bigGreenFireball1 = Resources.Load<AudioClip>("Sound/" + "big_green_fireball_1");
+        bigGreenFireball2 = Resources.Load<AudioClip>("Sound/" + "big_green_fireball_2");
+        bigGreenFireball3 = Resources.Load<AudioClip>("Sound/" + "big_green_fireball_3");
+        firstBossPrepAoe = Resources.Load<AudioClip>("Sound/" + "first_boss_prep_aoe");
         bomb = Resources.Load<AudioClip>("Sound/" + "bomb");
 
         crit = Resources.Load<AudioClip>("Sound/" + "crit");
@@ -81,7 +89,10 @@ public class SoundManager : MonoBehaviour {
         // environment
         spikeTrapFire = Resources.Load<AudioClip>("Sound/" + "spike_trap_fire");
         spikeTrapReset = Resources.Load<AudioClip>("Sound/" + "spike_trap_reset");
+        impactBox = Resources.Load<AudioClip>("Sound/" + "impact_box");
+        destroyBox = Resources.Load<AudioClip>("Sound/" + "destroy_box");
 
+        stoneWallOpen = Resources.Load<AudioClip>("Sound/" + "stone_wall_open");
 
         audioSrc = GetComponent<AudioSource>();
     }
@@ -203,6 +214,31 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(impBossHit);
                 break;
 
+            case "FirstBoss_shot":
+            case "FirstBoss(Clone)_shot":
+                int randGreenFireball = Random.Range(1, 5);
+                if (randGreenFireball == 1)
+                {
+                    audioSrc.PlayOneShot(bigGreenFireball);
+                    break;
+                }
+                else if (randGreenFireball == 2)
+                {
+                    audioSrc.PlayOneShot(bigGreenFireball1);
+                    break;
+                }
+                else if (randGreenFireball == 3)
+                {
+                    audioSrc.PlayOneShot(bigGreenFireball2);
+                    break;
+                }
+                audioSrc.PlayOneShot(bigGreenFireball3);
+                break;
+
+            case "FirstBoss_prep":
+            case "FirstBoss(Clone)_prep":
+                audioSrc.PlayOneShot(firstBossPrepAoe);
+                break;
 
             case "ImpGiant_sound1":
             case "ImpGiant(Clone)_sound1":
@@ -365,7 +401,21 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(spikeTrapReset);
                 break;
 
-  
+            case "stone_wall_open":
+                audioSrc.PlayOneShot(stoneWallOpen);
+                break;
+
+
+            case "impact_box":
+                audioSrc.PlayOneShot(impactBox);
+                break;
+
+
+            case "destroy_box":
+                audioSrc.PlayOneShot(destroyBox);
+                break;
+
+
 
         }
     }

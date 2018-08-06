@@ -60,6 +60,7 @@ public class GameDetails : MonoBehaviour {
     public static int hits;
     public static int fullChargeHits;
     public static int arrowsFired;
+    public static int randomizedItemsDropped;
 
 
 
@@ -293,10 +294,10 @@ public class GameDetails : MonoBehaviour {
 
     public void Load()
     {
-        Debug.Log("load land");
+        //Debug.Log("load land");
         if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
         {
-            Debug.Log("found file");
+            //Debug.Log("found file");
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
             PlayerData data = (PlayerData)bf.Deserialize(file);
@@ -607,7 +608,7 @@ public class GameDetails : MonoBehaviour {
                 }
                 else if (Resources.Load("Equipment/" + item.name) == null)
                 {
-                    Debug.Log("inside LoadEquippedItems " + item.name + " armor type " + item.armorType);
+                    //Debug.Log("inside LoadEquippedItems " + item.name + " armor type " + item.armorType);
 
                     Equipment tmpEquip = EquipmentGenerator._instance.CreateLoadedItem(item);
                     tmp.Add(tmpEquip);
@@ -764,7 +765,7 @@ public class GameDetails : MonoBehaviour {
         if (m_Scene.name != "Loading")
         {
             StartCoroutine(enableUi());
-            Debug.Log("being called inside OnSceneLoaded");
+
         }
 
 
@@ -776,7 +777,7 @@ public class GameDetails : MonoBehaviour {
 
         StartCoroutine(UnFade());
         loadingScene = false;
-        Debug.Log("being called inside enableUI");
+        //Debug.Log("being called inside enableUI");
     }
 
     IEnumerator UnFade()
@@ -795,11 +796,12 @@ public class GameDetails : MonoBehaviour {
 
             if (m_Scene.name.Contains("_indoor"))
             {
-                Debug.Log("calling boardcreator method");
+                //Debug.Log("calling boardcreator method");
                 BoardCreator.instance.CreateDungeonGraph();
                 StopCoroutine("UnFade");
-                Debug.Log("Ending Coroutine on GameDetails, board should now be created and have 2D grid.");
+                //Debug.Log("Ending Coroutine on GameDetails, board should now be created and have 2D grid.");
                 DrawDistanceActivator.instance.StartCoroutine("Check");
+                BoardCreator.instance.SetDoors();
             }
 
             //AstarPath.active.Scan();

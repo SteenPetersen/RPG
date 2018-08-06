@@ -73,17 +73,16 @@ public class ItemPickup : Interactable
         if (!mouseOver)
         {
             //If your mouse hovers over the GameObject with the script attached, output this message
-            Debug.Log("Mouse is over GameObject.");
+            //Debug.Log("Mouse is over GameObject.");
             UiManager.instance.ShowToolTip(Camera.main.WorldToScreenPoint(transform.position), item, true, 0.7f);
             mouseOver = true;
         }
-
     }
 
     void OnMouseExit()
     {
         //The mouse is no longer hovering over the GameObject so output this message each frame
-        Debug.Log("Mouse is no longer on GameObject.");
+        //Debug.Log("Mouse is no longer on GameObject.");
         UiManager.instance.HideToolTip();
         mouseOver = false;
     }

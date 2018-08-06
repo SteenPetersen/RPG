@@ -91,7 +91,10 @@ public class StoryManager : MonoBehaviour {
 
     public void NotifyPlayer(string note)
     {
-        notice.text = note;
-        noticeAnimator.SetTrigger("notify");
+        if (!noticeAnimator.GetCurrentAnimatorStateInfo(0).IsName("notificationNotify"))
+        {
+            notice.text = note;
+            noticeAnimator.SetTrigger("notify");
+        }
     }
 }

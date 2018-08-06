@@ -5,12 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class DungeonLevelLoadLogic : MonoBehaviour {
 
-    int level;
+    //int level = 0;
     [SerializeField] int ZoneToLoad;
 
     private void Start()
     {
-        level = SceneControl.dungeonLevel;
+        //level = SceneControl.dungeonLevel;
     }
 
     private void OnTriggerEnter2D(Collider2D col)

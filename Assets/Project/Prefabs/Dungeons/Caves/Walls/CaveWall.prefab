@@ -23,7 +23,6 @@ GameObject:
   - component: {fileID: 23291370140354046}
   - component: {fileID: 33369609975701324}
   - component: {fileID: 114575094436943414}
-  - component: {fileID: 64321049758410732}
   m_Layer: 0
   m_Name: Icosphere (2)
   m_TagString: Untagged
@@ -43,7 +42,6 @@ GameObject:
   - component: {fileID: 23357509611991692}
   - component: {fileID: 33146196324980802}
   - component: {fileID: 114669960281119976}
-  - component: {fileID: 64225881777681892}
   m_Layer: 0
   m_Name: Icosphere (3)
   m_TagString: Untagged
@@ -63,7 +61,6 @@ GameObject:
   - component: {fileID: 23548850136570040}
   - component: {fileID: 33644977635593030}
   - component: {fileID: 114718032286657656}
-  - component: {fileID: 64768941744028468}
   m_Layer: 0
   m_Name: Icosphere (1)
   m_TagString: Untagged
@@ -83,7 +80,6 @@ GameObject:
   - component: {fileID: 23027211917502194}
   - component: {fileID: 33993069920464476}
   - component: {fileID: 114156727600763634}
-  - component: {fileID: 64203006364088264}
   m_Layer: 0
   m_Name: Icosphere
   m_TagString: Untagged
@@ -415,62 +411,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!64 &64203006364088264
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1823324961820698}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 0}
---- !u!64 &64225881777681892
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1232902267668316}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 0}
---- !u!64 &64321049758410732
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1166671908963712}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 0}
---- !u!64 &64768941744028468
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1743145657809960}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 0}
 --- !u!114 &114156727600763634
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -13,6 +13,7 @@ public class PooledProjectilesController : MonoBehaviour {
 
     public List<GameObject> impDaggers = new List<GameObject>();
     public List<GameObject> impFireballs = new List<GameObject>();
+    public List<GameObject> aoeFireballs = new List<GameObject>();
 
     public List<GameObject> pooledArrows = new List<GameObject>();
     public List<GameObject> pooledSwords = new List<GameObject>();
@@ -87,29 +88,63 @@ public class PooledProjectilesController : MonoBehaviour {
 
     public GameObject GetEnemyProjectile(string enemyName, GameObject projectile)
     {
+        if (enemyName.EndsWith("(Clone)"))
+        {
+            enemyName = enemyName.Remove(enemyName.Length - 7);
+        }
+
         switch (enemyName)
         {
-            case "ImpRanged(Clone)":
+            //case "ImpRanged(Clone)":
             case "ImpRanged":
+            case "FirstBoss":
+                //case "FirstBoss(Clone)":
 
-                if (impFireballs.Count != 0)
+                // if you're looking for an imp fireball
+                if (projectile.gameObject.name == "Imp_Fireball")
                 {
-                    for (int i = 0; i < impFireballs.Count; i++)
+                    if (impFireballs.Count != 0)
                     {
-                        if (!impFireballs[i].activeInHierarchy)
+                        for (int i = 0; i < impFireballs.Count; i++)
                         {
-                            impFireballs[i].transform.SetParent(projectileHolder);
-                            return impFireballs[i];
+                            if (!impFireballs[i].activeInHierarchy)
+                            {
+                                impFireballs[i].transform.SetParent(projectileHolder);
+                                return impFireballs[i];
+                            }
                         }
                     }
+
+
+                    GameObject obj = Instantiate(projectile) as GameObject;
+                    impFireballs.Add(obj);
+                    obj.transform.SetParent(projectileHolder);
+                    return obj;
                 }
 
-                //Debug.Log("Creating an enemy projectile!");
+                // otherwise you're looking for an aoe fireball
+                else
+                {
+                    if (aoeFireballs.Count != 0)
+                    {
+                        for (int i = 0; i < aoeFireballs.Count; i++)
+                        {
+                            if (!aoeFireballs[i].activeInHierarchy)
+                            {
+                                aoeFireballs[i].transform.SetParent(projectileHolder);
+                                return aoeFireballs[i];
+                            }
+                        }
+                    }
 
-                GameObject obj = Instantiate(projectile) as GameObject;
-                impFireballs.Add(obj);
-                obj.transform.SetParent(projectileHolder);
-                return obj;
+                    GameObject obj = Instantiate(projectile) as GameObject;
+                    aoeFireballs.Add(obj);
+                    obj.transform.SetParent(projectileHolder);
+                    return obj;
+                }
+
+
+
         }
 
 

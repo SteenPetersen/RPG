@@ -6,10 +6,12 @@ public class FollowLight : MonoBehaviour {
 
     public Transform target;
 
-
-    private void Start()
+    void Start()
     {
-        target = PlayerController.instance.gameObject.transform;
+        if (target == null)
+        {
+            target = PlayerController.instance.gameObject.transform;
+        }
     }
 
     // Update is called once per frame

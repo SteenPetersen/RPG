@@ -57,7 +57,7 @@ public class EquipmentManager : MonoBehaviour {
 
     public bool Equip (Equipment newItem)
     {
-        Debug.Log("calling equip");
+        //Debug.Log("calling equip");
 
         // find slotIndex of the new item.
         int slotIndex = (int)newItem.equipSlot;
@@ -164,7 +164,7 @@ public class EquipmentManager : MonoBehaviour {
 
         inventoryEquipment[slotIndex].AddItem(newItem);
         UpdateEquipmentSlot(newItem, slotIndex);
-        Debug.Log("finished calling equip");
+        //Debug.Log("finished calling equip");
         return true;
 
     }

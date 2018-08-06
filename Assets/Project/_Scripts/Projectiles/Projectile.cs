@@ -42,10 +42,10 @@ public class Projectile : MonoBehaviour {
 
     private void OnEnable()
     {
-        if (projectileType == ProjectileType.Sword)
-        {
-            Invoke("Invisible", 0.1f);
-        }
+        //if (projectileType == ProjectileType.Sword)
+        //{
+        //    Invoke("Invisible", 0.1f);
+        //}
         Invoke("Destroy", destroyAfter);
     }
 
@@ -137,6 +137,18 @@ public class Projectile : MonoBehaviour {
                 if (impact.name == "ArrowImpact")
                 {
                     impact.Play();
+                }
+            }
+
+            if (col.gameObject.GetComponent<Destructable>() != null)
+            {
+                Destructable des = col.gameObject.GetComponent<Destructable>();
+
+                des.Impact();
+
+                if (des.MyHealth < 0)
+                {
+                    Destroy();
                 }
             }
         }

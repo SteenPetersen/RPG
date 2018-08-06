@@ -7,160 +7,106 @@ using UnityEngine.SceneManagement;
 public class RangedAI : EnemyAI {
 
     [Header("Caster Variables")]
-    public GameObject myProjectile;
-    public float castingRange;
-    bool inCastingRange;
-    public float castingDelay;
-    public float castingTimer;
+    [SerializeField] GameObject myProjectile;
+    [SerializeField] float castingRange;
+    [SerializeField] float projectileSpeed = 0;
 
-	protected override void Start () {
+    [Tooltip("The value to which the timer shall be reset after casting")]
+    [SerializeField] float castingDelay;
+    [SerializeField] float castingTimer;
+
+
+    Transform projectileLaunchPoint;
+    bool inCastingRange;
+
+    protected override void Start () {
 
         base.Start();
-
-        maxSpeed = UnityEngine.Random.Range(maxSpeed - 1, maxSpeed + 1);
-        distanceToLook = UnityEngine.Random.Range(distanceToLook - 2, distanceToLook + 2);
-        meleeDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
-        castingDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
 
         projectileLaunchPoint = child.transform.Find("ProjectileLaunchPoint");
     }
 
     protected override void Update () {
 
-        DisplayHealth();
-
-        if (pausingMovement)
-        {
-            if (isDead)
-            {
-                anim.SetBool("Stunned", false);
-            }
-            timer = meleeDelay;
-            return;
-        }
-
-        timer -= Time.deltaTime;
-        castingTimer -= Time.deltaTime;
-
-
-        if (PlayerController.instance.isDead)
-            return;
-
-        if (isDead)
-        {
-            setter.ai.canMove = false;
-            GetComponent<Rigidbody2D>().isKinematic = true;
-            setter.ai.destination = tr.position;
-            setter.targetASTAR = null;
-            setter.enabled = false;
-
-            CheckIfEnemyIsOnAList();
-
-            return;
-        }
-
         base.Update();
 
-        CheckMeleeRange();
         CheckCastingRange();
 
-        if (Mathf.Approximately(velocity.x, 0) && Mathf.Approximately(velocity.y, 0) && moving)
-        {
-            //Debug.Log("stopping");
-            anim.SetBool("Walk", false);
-            moving = false;
-        }
-        else if (velocity.x > 0.03 || velocity.y > 0.03 && !moving)
-        {
-            // Debug.Log("moving");
-            anim.SetBool("Walk", true);
-            moving = true;
-        }
+        castingTimer -= Time.deltaTime;
 
         if (haveAggro)
         {
-            FaceTarget();
-
-            if (inMeleeRange && timer < 0)
-            {
-                anim.SetTrigger("hit1");
-                timer = meleeDelay;
-                castingTimer = castingDelay;
-            }
-
-            else if (inCastingRange && timer < 0)
+            if (inCastingRange && castingTimer < 0)
             {
                 anim.SetTrigger("Shoot");
                 castingTimer = castingDelay;
                 timer = meleeDelay;
             }
         }
-
     }
 
-    public override void DetermineAggro(Vector3 pos)
-    {
-        if (inRange || isDead || pausingMovement)
-            return;
+    //public override void DetermineAggro(Vector3 pos)
+    //{
+    //    if (inRange || isDead || pausingMovement)
+    //        return;
 
-        //Debug.Log("calling DetermineAggro");
+    //    //create layer masks for the player and the obstacles ending a finalmask combining both
+    //    int playerLayer = 10;
+    //    int obstacleLayer = 13;
+    //    var playerlayerMask = 1 << playerLayer;
+    //    var obstacleLayerMask = 1 << obstacleLayer;
+    //    var finalMask = playerlayerMask | obstacleLayerMask;
 
-        //create layer masks for the player and the obstacles ending a finalmask combining both
-        int playerLayer = 10;
-        int obstacleLayer = 13;
-        var playerlayerMask = 1 << playerLayer;
-        var obstacleLayerMask = 1 << obstacleLayer;
-        var finalMask = playerlayerMask | obstacleLayerMask;
+    //    // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
+    //    RaycastHit2D hit = Physics2D.Raycast(transform.position, (pos - transform.position), distanceToLook, finalMask);
 
-        // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, (pos - transform.position), distanceToLook, finalMask);
+    //    RaycastHit2D[] hits = Physics2D.RaycastAll(tr.position, (pos - transform.position), distanceToLook, finalMask);
 
-        RaycastHit2D[] hits = Physics2D.RaycastAll(tr.position, (pos - transform.position), distanceToLook, finalMask);
+    //    var drawdirection = (pos - transform.position).normalized;
+    //    Debug.DrawRay(transform.position, (pos - transform.position), Color.cyan);
+    //    Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
 
-        var drawdirection = (pos - transform.position).normalized;
-        Debug.DrawRay(transform.position, (pos - transform.position), Color.cyan);
-        Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
+    //    // if the ray hits something
+    //    if (hit.transform != null)
+    //    {
+    //        // is it the player?
+    //        if (hit.transform.name == "Player")
+    //        {
+    //            // if you've hit the player but don't have aggro
+    //            if (!haveAggro)
+    //            {
+    //                setter.targetASTAR = playerObj;
+    //                haveAggro = true;
+    //            }
+    //        }
 
-        // if the ray hits something
-        if (hit.transform != null)
-        {
-            // is it the player?
-            if (hit.transform.name == "Player")
-            {
-                // if you've hit the player but don't have aggro
-                if (!haveAggro)
-                {
-                    //Debug.Log("I see you!");
-                    setter.targetASTAR = playerObj;
-                    haveAggro = true;
-                }
-            }
+    //        // if you have aggro but what you're first Line of sight object is NOT the player
+    //        else if (haveAggro && hit.transform.name != "Player")
+    //        {
+    //            for (int i = 0; i < hits.Length; i++)
+    //            {
+    //                if (hits[i].transform.name == "Player")
+    //                {
+    //                    //Debug.Log("Player is still in range");
+    //                    return;
+    //                }
+    //            }
+    //            haveAggro = false;
+    //            setter.ai.destination = setter.targetASTAR.transform.position;
+    //            setter.targetASTAR = null;
+    //            //Debug.LogWarning("Lost Line of sight to the player");
+    //            return;
+    //        }
+    //    }
 
-            // if you have aggro but what you're first Line of sight object is NOT the player
-            else if (haveAggro && hit.transform.name != "Player")
-            {
-                for (int i = 0; i < hits.Length; i++)
-                {
-                    if (hits[i].transform.name == "Player")
-                    {
-                        //Debug.Log("Player is still in range");
-                        return;
-                    }
-                }
-                haveAggro = false;
-                setter.targetASTAR = null;
-                //Debug.LogWarning("Lost Line of sight to the player");
-                return;
-            }
-        }
-        else if (hit.transform == null)
-        {
-            haveAggro = false;
-            setter.targetASTAR = null;
-            //Debug.LogWarning("Ran out of my distance");
-            return;
-        }
-    }
+    //    else if (hit.transform == null)
+    //    {
+    //        haveAggro = false;
+    //        setter.targetASTAR = null;
+    //        //Debug.LogWarning("Ran out of my distance");
+    //        return;
+    //    }
+    //}
 
     public override void CheckMeleeRange()
     {
@@ -180,6 +126,11 @@ public class RangedAI : EnemyAI {
 
             var projectileScript = projectile.GetComponent<enemy_Projectile>();
             projectileScript.MakeProjectileReady();
+
+            if (projectileScript.particles != null)
+            {
+                projectileScript.particles.GetComponent<ParticleEffectOutlineCreator>().Go();
+            }
 
             projectile.transform.position = projectileLaunchPoint.transform.position;
             projectile.transform.rotation = Quaternion.identity;

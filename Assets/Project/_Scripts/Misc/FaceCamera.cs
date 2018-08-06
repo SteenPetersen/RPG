@@ -1,23 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FaceCamera : MonoBehaviour {
 
-    public Transform target;
+    [SerializeField] Transform target;
 
     void Start()
     {
-        target = GameObject.Find("MainCamera").GetComponent<Transform>();
+        target = Camera.main.transform;
     }
 
     void Update()
     {
+        transform.rotation = target.rotation;
+    }
 
-        if (target != null)
 
-            //transform.eulerAngles = new Vector3(target.rotation.x, 0, 0);
-
-        this.transform.rotation = Camera.main.transform.rotation;
+    void OnWillRenderObject()
+    {
+        if (!EnemyFaceCamera.FastApproximately(target.rotation.x, transform.rotation.x, 0.00001f))
+        {
+            transform.rotation = target.rotation;
+            Debug.Log("rendering Player");
+        }
     }
 }

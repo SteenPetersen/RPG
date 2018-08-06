@@ -42,7 +42,6 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    GameObject skeleton;
     Vector2 mousePosition;
     EventSystem eventSys;
     float thrustSpeed = 0.5f;  
@@ -156,7 +155,7 @@ public class PlayerController : MonoBehaviour
         if (isDead || GameDetails._instance.paused || dialogue)
             return;
 
-        HandleAggro();
+
         HandleCombatState();
         HandleActionBarInput();
         HandleAnimation();
@@ -167,6 +166,21 @@ public class PlayerController : MonoBehaviour
         if (staminaBar.fillAmount != playerStat.CalculateStamina(playerStat.MyCurrentStamina, playerStat.MyMaxStamina))
         {
             playerStat.LerpStaminaBar();
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log("calling loadscene");
+            SceneManager.LoadSceneAsync(0);
+            transform.position = new Vector2(-12f, 4);
+            DungeonManager dungeon = DungeonManager.Instance;
+            dungeon.playerHasBossKey = false;
+            dungeon.teleport = false;
+
+        }
+        if (Time.frameCount % 3 == 0)
+        {
+            HandleAggro();
         }
     }
 
@@ -251,7 +265,7 @@ public class PlayerController : MonoBehaviour
             foreach (var enemy in currentEnemiesInRange)
             {
                 // if the enemy is not already in the list and the enemy is not dead
-                if (!enemies.Contains(enemy.transform.parent.gameObject) && !enemy.transform.parent.gameObject.GetComponent<EnemyAI>().isDead)
+                if (!enemies.Contains(enemy.transform.parent.gameObject) && !enemy.transform.parent.GetComponent<EnemyAI>().isDead)
                 {
                     // add the enemy to the list / enemy gets removed from this list when dying or when out of range
                     enemies.Add(enemy.gameObject.transform.parent.gameObject);
@@ -313,7 +327,7 @@ public class PlayerController : MonoBehaviour
 
                         if (inter != null)
                         {
-                            Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
+                            //Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
                             inter.Interact();
                             return;
                         }
@@ -337,7 +351,7 @@ public class PlayerController : MonoBehaviour
 
                         if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
                         {
-                            Debug.Log("Maximum Hit");
+                            //Debug.Log("Maximum Hit");
                             maxChargedHit = true;
                         }
 
@@ -653,12 +667,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleCombatState()
     {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Debug.Log("calling loadscene");
-            SceneManager.LoadSceneAsync(0);
-            transform.position = new Vector2(-12f, 4);
-        }
+
 
         if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION1"])) // ACTION1 is trying to use Melee
         {
@@ -819,35 +828,35 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void SpawnGhostImage(Vector2 direction)
-    {
-        // set a vector2 Position that we can use to spawn the ghost at
-        Vector2 spawnPoint = new Vector2(transform.position.x, transform.position.y + 0.452f);
+    //private void SpawnGhostImage(Vector2 direction)
+    //{
+    //    // set a vector2 Position that we can use to spawn the ghost at
+    //    Vector2 spawnPoint = new Vector2(transform.position.x, transform.position.y + 0.452f);
 
-        // spawn the ghost at the aforementioned spawnpoint
-        var image = Instantiate(skeleton, spawnPoint, Quaternion.identity);
+    //    // spawn the ghost at the aforementioned spawnpoint
+    //    var image = Instantiate(skeleton, spawnPoint, Quaternion.identity);
 
-        // enable the collider on the skeleton
-        image.GetComponent<CircleCollider2D>().enabled = true;
+    //    // enable the collider on the skeleton
+    //    image.GetComponent<CircleCollider2D>().enabled = true;
 
-        // if player is not facing right flip the image
-        if (!facingRight)
-        {
-            image.transform.localScale = new Vector2(image.transform.localScale.x * -1, image.transform.localScale.y);
-        }
+    //    // if player is not facing right flip the image
+    //    if (!facingRight)
+    //    {
+    //        image.transform.localScale = new Vector2(image.transform.localScale.x * -1, image.transform.localScale.y);
+    //    }
 
-        // make a ref to the rigidbody on the ghost
-        var imageRigid = image.GetComponent<Rigidbody2D>();
+    //    // make a ref to the rigidbody on the ghost
+    //    var imageRigid = image.GetComponent<Rigidbody2D>();
 
-        // set the rigidbody to be dynamic
-        imageRigid.bodyType = RigidbodyType2D.Dynamic;
+    //    // set the rigidbody to be dynamic
+    //    imageRigid.bodyType = RigidbodyType2D.Dynamic;
 
-        // add a force to the ghost in the direction the player is moving
-        imageRigid.AddForce(direction * thrustSpeed / 1.5f);
+    //    // add a force to the ghost in the direction the player is moving
+    //    imageRigid.AddForce(direction * thrustSpeed / 1.5f);
 
-        // make sure the ghost as well as all its children fade away
-        image.AddComponent<Fade>();
-    } // commented
+    //    // make sure the ghost as well as all its children fade away
+    //    image.AddComponent<Fade>();
+    //} // commented
 
     /// <summary>
     /// Looks through Inventory and checks for an item 
@@ -906,6 +915,8 @@ public class PlayerController : MonoBehaviour
         ////////////////////////////////////
         //////////Flip the objects//////////
         ////////////////////////////////////
+
+
         Vector3 theScale = transform.localScale;
 
         theScale.x *= -1;
@@ -913,6 +924,8 @@ public class PlayerController : MonoBehaviour
         facingRight = !facingRight;
 
         transform.localScale = theScale;
+
+
 
         //healthImage.transform.SetParent(transform);
         //healthImage.transform.position = healthPos;
@@ -1036,32 +1049,47 @@ public class PlayerController : MonoBehaviour
         int enemyLayer = 11;
         var enemyLayerMask = 1 << enemyLayer;
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(meleeStartPoint.position, 0.7f, enemyLayerMask);
+        Collider2D[] enemyColliders = Physics2D.OverlapCircleAll(meleeStartPoint.position, 0.7f, enemyLayerMask);
 
-        if (colliders.Length != 0)
+        int destructableLayer = 19;
+        var destructableLayerMask = 1 << destructableLayer;
+
+        Collider2D[] destructableColliders = Physics2D.OverlapCircleAll(meleeStartPoint.position, 0.7f, destructableLayerMask);
+
+        if (enemyColliders.Length > 0)
         {
-            foreach (Collider2D enemy in colliders)
+            foreach (Collider2D target in enemyColliders)
             {
-                if (enemy.gameObject.transform.parent.GetComponent<EnemyStats>() != null)
+                if (target.gameObject.transform.parent.GetComponent<EnemyStats>() != null)
                 {
-                    if (!enemy.gameObject.transform.parent.GetComponent<EnemyAI>().isDead)
+                    if (!target.gameObject.transform.parent.GetComponent<EnemyAI>().isDead)
                     {
                         // play the impact particles that belongs to this enemy
-                        ParticleSystemHolder.instance.PlayImpactEffect(enemy.transform.parent.name + "_impact", enemy.transform.position);
+                        ParticleSystemHolder.instance.PlayImpactEffect(target.transform.parent.name + "_impact", target.transform.position);
 
                         if (maxChargedHit)
                         {
-                            enemy.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue() * 2);
+                            target.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue() * 2);
                             GameDetails.fullChargeHits += 1;
                             return;
                         }
-                        enemy.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue());
+                        target.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue());
                         GameDetails.hits += 1;
                     }
                 }
             }
         }
 
+        if (destructableColliders.Length > 0)
+        {
+            foreach (Collider2D target in destructableColliders)
+            {
+                if (target.gameObject.GetComponent<Destructable>() != null)
+                {
+                    target.gameObject.GetComponent<Destructable>().Impact();
+                }
+            }
+        }
     }
 
     private void CheckDistancesToMouse(out float distanceFromFrontToMouse, out float distanceFromBackToMouse)
@@ -1070,7 +1098,7 @@ public class PlayerController : MonoBehaviour
         mousePosition = SetMousePosition();
 
         // check the distance from the "front" gameobject on the player to the mouse
-        distanceFromFrontToMouse = Vector3.Distance(projectilePoint.transform.position, mousePosition);
+        distanceFromFrontToMouse = Vector3.Distance(back.parent.transform.position, mousePosition);
 
         // check the distance from the "back" gameobject on the player to the mouse
         distanceFromBackToMouse = Vector3.Distance(back.position, mousePosition);
@@ -1117,9 +1145,6 @@ public class PlayerController : MonoBehaviour
 
         // fetch all particleSystems that are children of this gameObject and place them in an array of particleSystems
         particles = GetComponentsInChildren<ParticleSystem>();
-
-        // Find the child GameObject called "Skeleton" and make a reference to it
-        skeleton = transform.Find("Skeleton").gameObject;
 
         // Find the object called "EventSystem" and make a reference to it
         eventSys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
@@ -1168,6 +1193,9 @@ public class PlayerController : MonoBehaviour
 
         else if (scene.name.EndsWith("_indoor"))
         {
+            DungeonManager.Instance.playerHasBossKey = false;
+            DungeonManager.Instance.bossKeyHasDropped = false;
+            DungeonManager.Instance.bossRoomAvailable = false;
             Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 0.43f;
             pointLight.gameObject.SetActive(true);
         }

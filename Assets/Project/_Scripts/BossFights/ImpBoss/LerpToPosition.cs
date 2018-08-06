@@ -7,42 +7,49 @@ public class LerpToPosition : MonoBehaviour {
     [SerializeField] float speed = .5f;
     [SerializeField] int damage;
     [SerializeField] float range;
+    [SerializeField] bool explosive;
 
-    Vector2 start;
-    Vector2 des;
+    Vector3 start;
+    Vector3 des;
     float fraction = 0;
     bool initialized, obstacleInTheWay;
     float timer;
-    SpriteRenderer mySprite;
-    ParticleSystem sparks;
+    [SerializeField] SpriteRenderer mySprite;
+    [SerializeField] ParticleSystem myParticles;
+
+
+    public Quaternion targetAngle;
+    private Quaternion currentAngle;
 
     void Start () {
-
-        start = new Vector2(transform.position.x, transform.position.y);
         timer = UnityEngine.Random.Range(2, 5);
-        mySprite = transform.Find("BossBomb").GetComponent<SpriteRenderer>();
-        sparks = transform.Find("Spark").GetComponent<ParticleSystem>();
-
-        Destroy(gameObject, 5.5f);
     }
 	
 	void Update () {
 
         if (initialized)
         {
-            timer -= Time.deltaTime;
-
             if (fraction < 1 && !obstacleInTheWay)
             {
                 CheckForObstacles();
+
+                targetAngle *= Quaternion.AngleAxis(3, Vector3.forward);
+
                 fraction += Time.deltaTime * speed;
-                transform.position = Vector2.Lerp(start, des, fraction);
+                transform.position = Vector3.Lerp(start, des, fraction);
+                transform.rotation = Quaternion.Lerp(currentAngle, targetAngle, fraction);
             }
 
-            if (timer < 0)
+            if (explosive)
             {
-                Explode();
+                timer -= Time.deltaTime;
+
+                if (timer < 0)
+                {
+                    Explode();
+                }
             }
+
         }
     }
 
@@ -50,9 +57,13 @@ public class LerpToPosition : MonoBehaviour {
     /// Set the destination at which this bomb will stop
     /// </summary>
     /// <param name="destination"></param>
-    public void SetDestination(Vector2 destination)
+    public void SetStartAndDestination(Vector3 startLoc, Vector3 destination, GameObject obj)
     {
+        currentAngle = obj.transform.rotation;
+        start = startLoc;
+        //Debug.Log(startLoc);
         des = destination;
+        //Debug.Log(des);
         initialized = true;
     }
 
@@ -62,7 +73,7 @@ public class LerpToPosition : MonoBehaviour {
     void Explode()
     {
         mySprite.enabled = false;
-        sparks.Stop();
+        myParticles.Stop();
 
         Instantiate(ParticleSystemHolder.instance.bombExplosion, transform.position, Quaternion.identity);
         SoundManager.instance.PlayCombatSound("bomb");
@@ -86,6 +97,8 @@ public class LerpToPosition : MonoBehaviour {
         }
 
         initialized = false;
+
+        Destroy(gameObject, 3);
     }
 
     /// <summary>

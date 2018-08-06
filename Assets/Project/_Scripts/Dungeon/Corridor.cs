@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 // Enum to specify the direction is heading.
 public enum Direction
@@ -14,6 +15,7 @@ public class Corridor
 
     public Direction direction;   // Which direction the corridor is heading from it's room.
 
+    public List<TileLocation> tilesInCorridor = new List<TileLocation>();
 
     // Get the end position of the corridor based on it's start position and which direction it's heading.
     public int EndPositionX

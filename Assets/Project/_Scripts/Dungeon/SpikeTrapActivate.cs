@@ -67,7 +67,7 @@ public class SpikeTrapActivate : MonoBehaviour {
     /// </summary>
     public void CheckIfPlayerWasDamaged()
     {
-        Debug.Log("Checking damage");
+        //Debug.Log("Checking damage");
 
         //create layer masks for the player
         int playerLayer = 10;
@@ -103,7 +103,7 @@ public class SpikeTrapActivate : MonoBehaviour {
 
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, range * 2, enemylayerMask);
 
-        Debug.Log("Firing the CheckIfEnemyWasDamaged() method, found " + hitColliders.Length + " enemies in range.");
+        //Debug.Log("Firing the CheckIfEnemyWasDamaged() method, found " + hitColliders.Length + " enemies in range.");
 
         foreach (Collider2D enemy in hitColliders)
         {

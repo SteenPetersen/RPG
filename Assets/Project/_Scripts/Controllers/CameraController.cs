@@ -18,8 +18,8 @@ public class CameraController : MonoBehaviour {
     }
     #endregion
 
-    float zValue, n;
-    public int renderAxisCase;
+    //float zValue, n;
+    //public int renderAxisCase;
 
     public GameObject lookAt;
     public float cameraRot;
@@ -29,8 +29,18 @@ public class CameraController : MonoBehaviour {
     public int fieldOfViewDungeon = 40;
 
 
-    public float test;
+    //public float test;
     Vector3 offSet;
+
+    public Quaternion rot
+    {
+        get
+        {
+            return cam.transform.rotation;
+            //TODO check if I still use this
+        }
+
+    }
 
 
     private void Start()
@@ -47,12 +57,12 @@ public class CameraController : MonoBehaviour {
             lookAt = GameObject.Find("Player");
         }
 
-        if (lookAt != null)
-        {
-            zValue = lookAt.transform.rotation.eulerAngles.z;
-            n = 360 + zValue * -1;
-            //DetermineRenderOrderAxis();
-        }
+        //if (lookAt != null)
+        //{
+        //    zValue = lookAt.transform.rotation.eulerAngles.z;
+        //    //n = 360 + zValue * -1;
+        //    //DetermineRenderOrderAxis();
+        //}
     }
 
     private void FixedUpdate()
@@ -74,62 +84,62 @@ public class CameraController : MonoBehaviour {
         {
             transform.Rotate(0, 0, -cameraRot * Time.deltaTime);
         }
-        if (lookAt != null)
-        {
-            Vector3 desiredPosition = lookAt.transform.position + offSet;
-            transform.position = desiredPosition;
-        }
+        //if (lookAt != null)
+        //{
+        //    Vector3 desiredPosition = lookAt.transform.position + offSet;
+        //    transform.position = desiredPosition;
+        //}
     }
 
-    public void DetermineRenderOrderAxis()
-    {
-        if (n >= 0 && n < 45)
-        {
-            renderAxisCase = 1;
+    //public void DetermineRenderOrderAxis()
+    //{
+    //    if (n >= 0 && n < 45)
+    //    {
+    //        renderAxisCase = 1;
 
-            GraphicsSettings.transparencySortAxis = new Vector3(0, 1, 0);
-        }
-        else if (n >= 45 && n < 90)
-        {
-            renderAxisCase = 2;
+    //        GraphicsSettings.transparencySortAxis = new Vector3(0, 1, 0);
+    //    }
+    //    else if (n >= 45 && n < 90)
+    //    {
+    //        renderAxisCase = 2;
 
-            GraphicsSettings.transparencySortAxis = new Vector3(0.5f, 0.5f, 0);
-        }
-        else if (n >= 90 && n < 135)
-        {
-            renderAxisCase = 3;
+    //        GraphicsSettings.transparencySortAxis = new Vector3(0.5f, 0.5f, 0);
+    //    }
+    //    else if (n >= 90 && n < 135)
+    //    {
+    //        renderAxisCase = 3;
 
-            GraphicsSettings.transparencySortAxis = new Vector3(1, -0.5f, 0);
-        }
-        else if (n >= 135 && n < 175)
-        {
-            renderAxisCase = 4;
+    //        GraphicsSettings.transparencySortAxis = new Vector3(1, -0.5f, 0);
+    //    }
+    //    else if (n >= 135 && n < 175)
+    //    {
+    //        renderAxisCase = 4;
 
-            GraphicsSettings.transparencySortAxis = new Vector3(0.5f, -1, 0);
-        }
-        else if (n >= 175 && n < 225)
-        {
-            renderAxisCase = 5;
+    //        GraphicsSettings.transparencySortAxis = new Vector3(0.5f, -1, 0);
+    //    }
+    //    else if (n >= 175 && n < 225)
+    //    {
+    //        renderAxisCase = 5;
 
-            GraphicsSettings.transparencySortAxis = new Vector3(0, -1, 0);
-        }
-        else if (n >= 225 && n < 270)
-        {
-            renderAxisCase = 6;
+    //        GraphicsSettings.transparencySortAxis = new Vector3(0, -1, 0);
+    //    }
+    //    else if (n >= 225 && n < 270)
+    //    {
+    //        renderAxisCase = 6;
 
-            GraphicsSettings.transparencySortAxis = new Vector3(-0.5f, -0.5f, 0);
-        }
-        else if (n >= 270 && n < 315)
-        {
-            renderAxisCase = 7;
+    //        GraphicsSettings.transparencySortAxis = new Vector3(-0.5f, -0.5f, 0);
+    //    }
+    //    else if (n >= 270 && n < 315)
+    //    {
+    //        renderAxisCase = 7;
 
-            GraphicsSettings.transparencySortAxis = new Vector3(-1, 0.5f, 0);
-        }
-        else if (n >= 315 && n < 360)
-        {
-            renderAxisCase = 8;
+    //        GraphicsSettings.transparencySortAxis = new Vector3(-1, 0.5f, 0);
+    //    }
+    //    else if (n >= 315 && n < 360)
+    //    {
+    //        renderAxisCase = 8;
 
-            GraphicsSettings.transparencySortAxis = new Vector3(-0.5f, 1, 0);
-        }
-    }
+    //        GraphicsSettings.transparencySortAxis = new Vector3(-0.5f, 1, 0);
+    //    }
+    //}
 }

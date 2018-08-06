@@ -30,5 +30,21 @@ public class ExplosionPlayerProximityChecker : MonoBehaviour {
                 }
             }
         }
+
+        int destructableLayer = 19;
+        var destructableLayerMask = 1 << destructableLayer;
+
+        Collider2D[] destructableColliders = Physics2D.OverlapCircleAll(transform.position, range, destructableLayerMask);
+
+        if (destructableColliders.Length > 0)
+        {
+            foreach (Collider2D target in destructableColliders)
+            {
+                if (target.gameObject.GetComponent<Destructable>() != null)
+                {
+                    target.gameObject.GetComponent<Destructable>().InstantDestroy();
+                }
+            }
+        }
     }
 }

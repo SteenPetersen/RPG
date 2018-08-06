@@ -46,4 +46,14 @@ public class ImpAnimationControl : MonoBehaviour {
     {
         ai.OnExplode();
     }
+
+    public void AoeCast()
+    {
+        ai.OnAoeCastComplete();
+    }
+
+    public void StartParticleOne()
+    {
+        ai.StartParticleOne();
+    }
 }

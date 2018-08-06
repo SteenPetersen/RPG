@@ -145,7 +145,7 @@ public class Chest : Interactable {
         {
             if (hit.collider.name == "Player")
             {
-                Debug.Log("Player is nearby!");
+                //Debug.Log("Player is nearby!");
                 return;
             }
         }

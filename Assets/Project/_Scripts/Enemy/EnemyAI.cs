@@ -10,20 +10,39 @@ public class EnemyAI : AIPath
 {
 
     #region Health
-    [HideInInspector] public CanvasGroup healthGroup;
-    [HideInInspector] public Slider healthbar;
-
+    CanvasGroup healthGroup;
+    public Slider healthbar;
     #endregion
 
+    #region HiddenVariables
+
+    [SerializeField] GameObject speechLocation;
+
+    /// <summary>
+    /// returns the transform that dictates where speech appears on an enemy.
+    /// </summary>
+    public Transform MySpeechLocation
+    {
+        get
+        {
+            return speechLocation.transform;
+        }
+    }
+
+    /// <summary>
+    /// The object that determines where the enemy is heading if anywhere at all must be public so all 
+    /// inherited classes can set their destinations.
+    /// </summary>
     [HideInInspector] public AIDestinationSetter setter;
 
-    [HideInInspector] public bool isDead, inRange, haveAggro, pausingMovement, displayingHealth, alert, inMeleeRange;
+    /*[HideInInspector]*/ public bool isDead, inRange, haveAggro, pausingMovement, displayingHealth, alert, inMeleeRange;
     [HideInInspector] public bool facingRight = true;
-    [HideInInspector] public Transform playerObj;
 
-    [Tooltip("Tier of this enemy, used to determine the loot it drops")]
-    public int tier;
+    [HideInInspector] public Transform playerObj;
     
+    /// <summary>
+    /// used to determine if the enemy is currently moving or not
+    /// </summary>
     [HideInInspector] public bool moving;
 
     /// <summary>
@@ -32,59 +51,52 @@ public class EnemyAI : AIPath
     [HideInInspector] public Animator anim;
 
     /// <summary>
-    /// Must be fed in as the name of this object can vary from monster to monster
-    /// Used to check if collison detected is self or not
-    /// </summary>
-    public GameObject child;
-
-
-    /// <summary>
     /// Some monsters require access to this collider
     /// </summary>
     [HideInInspector] public Collider2D myCollider;
 
     [HideInInspector] public EnemyStats myStats;
 
-    [HideInInspector] public Transform projectileLaunchPoint;
+    [HideInInspector] public Transform skeleton;
+    #endregion HiddenVariables
+
+    /// <summary>
+    /// Must be fed in as the name of this object can vary from monster to monster
+    /// Used to check if collison detected is self or not
+    /// </summary>
+    public GameObject child;
+
+    [Tooltip("Tier of this enemy, used to determine the loot it drops")]
+    public int tier;
 
     [Tooltip("The sprite holders that will become populated when this enemy is hit by a projectile")]
     public GameObject[] woundGraphics;
 
     [Header("Unique Variables")]
     public float distanceToLook; 
-    public float meleeRange, force, projectileSpeed, experienceGain, meleeDelay, timer, meleeHitRange;
-
-    [HideInInspector] public Transform skeleton;
+    public float meleeRange, force, experienceGain, meleeDelay, timer, meleeHitRange;
 
     protected override void Start()
     {
         base.Start();
 
         InitializeEnemy();
-
-        int percentageToAdd = ExperienceManager.instance.level * 20;
-
-        myStats.maxHealth = myStats.maxHealth + percentageToAdd;
-        myStats.currentHealth = myStats.maxHealth;
-        maxSpeed = UnityEngine.Random.Range(maxSpeed - 1, maxSpeed + 1);
-        distanceToLook = UnityEngine.Random.Range(distanceToLook - 2, distanceToLook + 2);
-        meleeDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
-        
-
-        setter = GetComponent<AIDestinationSetter>();
-        playerObj = PlayerController.instance.gameObject.transform;
+        IncreaseStatsBasedOnPlayerLevel();
     }
 
     protected override void Update()
     {
+        #region Determine if Enemy is allowed to move
         DisplayHealth();
 
+        // is this enemy stunned?
         if (pausingMovement)
         {
             if (isDead)
             {
                 anim.SetBool("Stunned", false);
             }
+            timer = meleeDelay;
             return;
         }
 
@@ -93,37 +105,22 @@ public class EnemyAI : AIPath
         if (PlayerController.instance.isDead)
             return;
 
-
         if (isDead)
         {
-            setter.ai.canMove = false;
-            GetComponent<Rigidbody2D>().isKinematic = true;
-            setter.ai.destination = tr.position;
-            setter.targetASTAR = null;
-            setter.enabled = false;
-
-
-            CheckIfEnemyIsOnAList();
+            //anim.SetBool("Walk", false);
+            anim.SetLayerWeight(anim.GetLayerIndex("Base Layer"), 0);
+            StopEnemyInItsTracks();
 
             return;
         }
+
+        #endregion Determine if Enemy is allowed to move
 
         base.Update();
 
         CheckMeleeRange();
 
-        if (Mathf.Approximately(velocity.x, 0) && Mathf.Approximately(velocity.y, 0) && moving)
-        {
-            //Debug.Log("stopping");
-            anim.SetBool("Walk", false);
-            moving = false;
-        }
-        else if (velocity.x > 0.03 || velocity.y > 0.03 && !moving)
-        {
-           // Debug.Log("moving");
-            anim.SetBool("Walk", true);
-            moving = true;
-        }
+        DetermineIfMoving();
 
         if (haveAggro)
         {
@@ -138,68 +135,108 @@ public class EnemyAI : AIPath
 
     }
 
-    public virtual void CheckIfEnemyIsOnAList()
+    private void DetermineIfMoving()
     {
-        string scene = SceneManager.GetActiveScene().name;
-
-        if (scene == "bossroom1")
+        if (Mathf.Approximately(velocity.x, 0) && Mathf.Approximately(velocity.y, 0) && moving)
         {
-            EnemyHolder.instance.enemies.Remove(gameObject);
+            anim.SetBool("Walk", false);
+            moving = false;
+        }
+        else if (velocity.x > 0.03 || velocity.y > 0.03 && !moving)
+        {
+            anim.SetBool("Walk", true);
+            moving = true;
         }
     }
 
-    public virtual void DetermineAggro(Vector3 pos)
+    private void StopEnemyInItsTracks()
+    {
+        setter.ai.canMove = false;
+        GetComponent<Rigidbody2D>().isKinematic = true;
+        setter.ai.destination = tr.position;
+        setter.targetASTAR = null;
+        setter.enabled = false;
+    }
+
+    /// <summary>
+    /// Increases this Monsters stats based on the players level
+    /// </summary>
+    public virtual void IncreaseStatsBasedOnPlayerLevel()
+    {
+        int percentageToAdd = ExperienceManager.instance.level * 20;
+
+        myStats.maxHealth = myStats.maxHealth + percentageToAdd;
+        myStats.currentHealth = myStats.maxHealth;
+        maxSpeed = UnityEngine.Random.Range(maxSpeed - 1, maxSpeed + 1);
+        distanceToLook = UnityEngine.Random.Range(distanceToLook - 2, distanceToLook + 2);
+        meleeDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
+    }
+
+    /// <summary>
+    /// Determines if the enemy can see the player by casting raycasts in the the players direction
+    /// If the rays hit walls the enemy will lose aggro
+    /// </summary>
+    /// <param name="playerPos"></param>
+    public virtual void DetermineAggro(Vector3 playerPos)
     {
         if (inRange || isDead || pausingMovement)
             return;
 
-        if (Vector3.Distance(playerObj.transform.position, gameObject.transform.position) < distanceToLook)
+        if (Vector3.Distance(playerPos, gameObject.transform.position) < distanceToLook)
         {
-            //Debug.Log("calling DetermineAggro");
-
             //create layer masks for the player and the obstacles ending a finalmask combining both
             int playerLayer = 10;
             int obstacleLayer = 13;
+            int destructableLayer = 19;
             var playerlayerMask = 1 << playerLayer;
             var obstacleLayerMask = 1 << obstacleLayer;
-            var finalMask = playerlayerMask | obstacleLayerMask;
+            var destructableLayerMask = 1 << destructableLayer;
+            var finalMask = playerlayerMask | obstacleLayerMask | destructableLayerMask;
 
             // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, (pos - transform.position), distanceToLook, finalMask);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, (playerPos - transform.position), distanceToLook, finalMask);
 
-            var drawdirection = (pos - transform.position).normalized;
-            Debug.DrawRay(transform.position, (pos - transform.position), Color.cyan);
+            var drawdirection = (playerPos - transform.position).normalized;
+            Debug.DrawRay(transform.position, (playerPos - transform.position), Color.cyan);
             Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
 
             // if the ray hits the player then aggro him
             if (hit.transform != null)
             {
-                if (hit.transform.name == "Player")
+                if (haveAggro)
                 {
-                    if (!haveAggro)
+                    if (hit.transform.gameObject.layer == obstacleLayer)
                     {
-                        //Debug.Log("I see you!");
-                        Debug.Log(setter);
-                        Debug.Log(setter.targetASTAR);
-                        Debug.Log(PlayerController.instance.transform);
+                        haveAggro = false;
+                        setter.targetASTAR = null;
+                        return;
+                    }
 
+                    else if (hit.transform.gameObject.layer == destructableLayer)
+                    {
+                        if (hit.transform.GetComponent<Destructable>().obstructVision)
+                        {
+                            haveAggro = false;
+                            setter.targetASTAR = null;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    if (hit.transform.name == "Player")
+                    {
                         setter.targetASTAR = PlayerController.instance.transform;
                         haveAggro = true;
                     }
                 }
-                else if (haveAggro && hit.transform.name != "Player")
-                {
-                    haveAggro = false;
-                    setter.targetASTAR = null;
-                    //Debug.LogWarning("Lost Line of sight to the player");
-                    return;
-                }
+               
             }
+
             else if (hit.transform == null)
             {
                 haveAggro = false;
                 setter.targetASTAR = null;
-                //Debug.LogWarning("Ran out of my distance");
                 return;
             }
         }
@@ -242,10 +279,13 @@ public class EnemyAI : AIPath
             return;
 
         Transform tmp = healthGroup.transform;
+        Transform speech = speechLocation.transform;
 
         Vector3 pos = tmp.position;
+        Vector3 speechPos = speech.position;
 
         tmp.SetParent(null);
+        speech.SetParent(null);
 
         Vector3 theScale = child.gameObject.transform.localScale;
 
@@ -256,6 +296,7 @@ public class EnemyAI : AIPath
         child.gameObject.transform.localScale = theScale;
 
         tmp.SetParent(child.transform);
+        speech.SetParent(child.transform);
 
         if (facingRight)
         {
@@ -267,6 +308,7 @@ public class EnemyAI : AIPath
         }
 
         tmp.position = pos;
+        speech.position = speechPos;
     }
 
     public virtual void CheckMeleeRange()
@@ -275,6 +317,8 @@ public class EnemyAI : AIPath
         int playerLayer = 10;
         var playerlayerMask = 1 << playerLayer;
 
+        Debug.Log("calling check melee range");
+
         if (setter.targetASTAR != null)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, (playerObj.position - transform.position), meleeRange, playerlayerMask);
@@ -282,12 +326,9 @@ public class EnemyAI : AIPath
 
             if (hit.collider != null)
             {
-                //Debug.Log(hit.collider.name);
-
                 if (hit.collider.name == "Player")
                 {
                     Debug.DrawRay(transform.position, (playerObj.position - transform.position), Color.green);
-                   // Debug.Log("reach target, in melee range");
                     inMeleeRange = true;
                     return;
                 }
@@ -319,7 +360,7 @@ public class EnemyAI : AIPath
                 {
                     if (hit.collider.name == "Player")
                     {
-                        Debug.Log("Hit the player");
+                        //Debug.Log("Hit the player");
                         if (hit.collider.transform.root.GetComponent<PlayerStats>() != null)
                         {
                             var statScript = hit.collider.transform.root.GetComponent<PlayerStats>();
@@ -331,11 +372,9 @@ public class EnemyAI : AIPath
         }
     }
 
-    public float CalculateHealth(float currentHealth, float maxHealth)
-    {
-        return currentHealth / maxHealth;
-    }
-
+    /// <summary>
+    /// Determines if the healthbar should be displayed or not
+    /// </summary>
     public virtual void DisplayHealth()
     {
         if (myStats.currentHealth < myStats.maxHealth && myStats.currentHealth > 0 && !displayingHealth)
@@ -376,21 +415,6 @@ public class EnemyAI : AIPath
         }
     }
 
-    public virtual void OnEnemyCastComplete()
-    {
-        // meant to be overriden
-    }
-
-    public virtual void CastFireCircle()
-    {
-        // meant to be overriden
-    }
-
-    public virtual void OnExplode()
-    {
-        // meant to be overriden
-    }
-
     public virtual void AggroFromDistance(int newLookDistance)
     {
         distanceToLook = newLookDistance;
@@ -429,6 +453,9 @@ public class EnemyAI : AIPath
         healthGroup = child.transform.Find("HealthCanvas").GetComponent<CanvasGroup>();
         healthbar = child.transform.Find("HealthCanvas").transform.Find("Slider").GetComponent<Slider>();
         skeleton = child.transform.Find("Skeleton");
+
+        setter = GetComponent<AIDestinationSetter>();
+        playerObj = PlayerController.instance.gameObject.transform;
     }
 
     /// <summary>
@@ -447,7 +474,7 @@ public class EnemyAI : AIPath
         // play the particle effect of being stunned
         Quaternion rot = new Quaternion(0, 0, 0, 0);
         var system = ParticleSystemHolder.instance.PlayerStunnedEffect();
-        var go = Instantiate(system, tr.position, rot, skeleton);
+        var go = Instantiate(system, tr.position, rot, tr);
         go.transform.localPosition = Vector3.zero;
 
 
@@ -469,4 +496,40 @@ public class EnemyAI : AIPath
         canMove = true;
         Destroy(go);
     }
+
+    /// <summary>
+    /// This is a section used to place virtual methods to make it easier for the 
+    /// the animator which resides on the child object to access Method calls by
+    /// simply speaking to the EnemAI script rather than determine which script belongs to it
+    /// </summary>
+
+    #region ImpAnimationControl Methods
+
+    public virtual void OnEnemyCastComplete()
+    {
+        //meant to be overwritten
+    }
+
+    public virtual void CastFireCircle()
+    {
+        //meant to be overwritten
+    }
+
+    public virtual void OnExplode()
+    {
+        //meant to be overwritten
+    }
+
+    public virtual void OnAoeCastComplete()
+    {
+        //meant to be overwritten
+    }
+
+    public virtual void StartParticleOne()
+    {
+        //meant to be overwritten
+    }
+
+
+    #endregion ImpAnimationControl Methods
 }

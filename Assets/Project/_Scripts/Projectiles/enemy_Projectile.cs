@@ -85,6 +85,11 @@ public class enemy_Projectile : MonoBehaviour {
                 lightEffect.SetActive(false);
             }
 
+            if (col.gameObject.GetComponent<Destructable>() != null)
+            {
+                col.gameObject.GetComponent<Destructable>().Impact();
+            }
+
         }
     }
 

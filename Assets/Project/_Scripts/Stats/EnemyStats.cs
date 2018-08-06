@@ -52,6 +52,24 @@ public class EnemyStats : CharacterStats {
             }
         }
 
+        if (DungeonManager.Instance != null)
+        {
+            DungeonManager dungeon = DungeonManager.Instance;
+
+            // If this enemy was died in a dungeon
+            if (dungeon.enemiesInDungeon.Contains(gameObject))
+            {
+                if (!dungeon.bossKeyHasDropped && DungeonManager.Instance.bossRoomAvailable)
+                {
+                    // check to see if it dropped the key
+                    LootController.instance.EnemyBossRoomKeyDrop(dungeon.enemiesInDungeon.Count, gameObject.transform.position);
+                }
+
+                //  then remove him from the dungeon list
+                dungeon.enemiesInDungeon.Remove(gameObject);
+            }
+        }
+
         // Add to statistics
         GameDetails.enemiesKilled++;
 
@@ -87,7 +105,7 @@ public class EnemyStats : CharacterStats {
             {
                 Quaternion rot = new Quaternion(0, 0, 0, 0);
                 var system = ParticleSystemHolder.instance.CritWord();
-                var go = Instantiate(system, transform.position, rot, enemyAI.skeleton);
+                var go = Instantiate(system, transform.position, rot, enemyAI.transform);
                 go.transform.localPosition = Vector3.zero;
                 SoundManager.instance.PlayCombatSound("crit");
                 int bonusDmg = Random.Range(0, newDmg / 2);
@@ -115,7 +133,7 @@ public class EnemyStats : CharacterStats {
                 SoundManager.instance.PlayCombatSound(gameObject.name);
             }
 
-            enemyAI.healthbar.value = enemyAI.CalculateHealth(currentHealth, maxHealth);
+            enemyAI.healthbar.value = CalculateHealth(currentHealth, maxHealth);
 
             // hit sound
             SoundManager.instance.PlayCombatSound(gameObject.name + "_hit");
@@ -130,5 +148,10 @@ public class EnemyStats : CharacterStats {
         shieldedText.transform.position = transform.position;
         shieldedText.gameObject.SetActive(true);
 
+    }
+
+    public float CalculateHealth(float currentHealth, float maxHealth)
+    {
+        return currentHealth / maxHealth;
     }
 }

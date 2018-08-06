@@ -143,7 +143,7 @@ public class PlayerStats : CharacterStats {
             Agi.AddModifier(newItem.agi);
         }
 
-        Debug.LogWarning("Equipment Changed");
+        //Debug.LogWarning("Equipment Changed");
     }
 
     public override void Die()

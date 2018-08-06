@@ -47,13 +47,43 @@ public class LootController : MonoBehaviour {
             {
                 case 0:
                     EquipmentGenerator._instance.CreateDroppable(position);
+                    
                     // play loot sound
                     SoundManager.instance.PlayUiSound("lootdrop");
-                    // add to statistics
+
+                    // Add to statistics
+                    GameDetails.randomizedItemsDropped++;
                     break;
             }
         }
 
+    }
+
+    /// <summary>
+    /// Guarantees that boss key can drop and increases the chance of it dropping depending
+    /// on the amount of enemies still in the dungeon
+    /// </summary>
+    /// <param name="amountOfEnemies">Amount of enemies in the dungeon</param>
+    /// <param name="pos">Position at which to instantiate the key if it drops</param>
+    public void EnemyBossRoomKeyDrop(int amountOfEnemies, Vector3 pos)
+    {
+        float p = new float();
+
+        if (amountOfEnemies > 0)
+        {
+            p = (100 / amountOfEnemies);
+        }
+
+        float n = UnityEngine.Random.Range(0, 100);
+
+        //Debug.LogWarning("Percent chance to drop key was " + p + " and random number was " + n + " amount of enemies was " + amountOfEnemies);
+
+        if (n < p)
+        {
+            Instantiate(DungeonManager.Instance.bossRoomKey, pos, Quaternion.identity);
+            DungeonManager.Instance.bossKeyHasDropped = true;
+            //Debug.LogWarning("Boss Key dropped!");
+        }
     }
 
     /// <summary>

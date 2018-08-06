@@ -17,85 +17,85 @@ public class Durir : DialogueNPC {
 
     void Update()
     {
-        if (StoryManager.stage == 1)
-        {
-            if (!currentlyInteractingWithPlayer)
+
+            if (StoryManager.stage == 1)
             {
-                if (speechEffect.isPlaying)
+                if (!currentlyInteractingWithPlayer)
                 {
-                    speechEffect.Stop();
-                }
-
-                if (!dialogueAvailable.isPlaying)
-                {
-                    if (contentAvailable)
+                    if (speechEffect.isPlaying)
                     {
-                        dialogueAvailable.Play();
+                        speechEffect.Stop();
+                    }
 
-                        if (!col.enabled)
+                    if (!dialogueAvailable.isPlaying)
+                    {
+                        if (contentAvailable)
                         {
-                            col.enabled = true;
+                            dialogueAvailable.Play();
+
+                            if (!col.enabled)
+                            {
+                                col.enabled = true;
+                            }
                         }
                     }
                 }
             }
-        }
 
-        if (StoryManager.stage== 2)
-        {
-            speechEffect.Stop();
-        }
-
-        if (StoryManager.stage == 3)
-        {
-            if (!currentlyInteractingWithPlayer)
+            if (StoryManager.stage == 2)
             {
-                if (speechEffect.isPlaying)
-                {
-                    speechEffect.Stop();
-                }
+                speechEffect.Stop();
+            }
 
-                if (!dialogueAvailable.isPlaying)
+            if (StoryManager.stage == 3)
+            {
+                if (!currentlyInteractingWithPlayer)
                 {
-                    if (contentAvailable)
+                    if (speechEffect.isPlaying)
                     {
-                        dialogueAvailable.Play();
+                        speechEffect.Stop();
+                    }
 
-                        if (!col.enabled)
+                    if (!dialogueAvailable.isPlaying)
+                    {
+                        if (contentAvailable)
                         {
-                            col.enabled = true;
+                            dialogueAvailable.Play();
+
+                            if (!col.enabled)
+                            {
+                                col.enabled = true;
+                            }
                         }
                     }
                 }
             }
-        }
 
-        if (StoryManager.stage == 4)
-        {
-            if (!currentlyInteractingWithPlayer)
+            if (StoryManager.stage == 4)
             {
-                if (speechEffect.isPlaying)
+                if (!currentlyInteractingWithPlayer)
                 {
-                    speechEffect.Stop();
-                }
-
-                if (!dialogueAvailable.isPlaying)
-                {
-                    if (contentAvailable)
+                    if (speechEffect.isPlaying)
                     {
-                        dialogueAvailable.Play();
+                        speechEffect.Stop();
+                    }
 
-                        if (!col.enabled)
+                    if (!dialogueAvailable.isPlaying)
+                    {
+                        if (contentAvailable)
                         {
-                            col.enabled = true;
+                            dialogueAvailable.Play();
+
+                            if (!col.enabled)
+                            {
+                                col.enabled = true;
+                            }
                         }
                     }
                 }
             }
-        }
 
-        ConversationProgress();
-
+            ConversationProgress();
     }
 
     /// <summary>

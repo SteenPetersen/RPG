@@ -44,7 +44,7 @@ public class LoadingLogic : MonoBehaviour {
 
         while (async.progress < 0.89f)
         {
-            Debug.Log(async.progress);
+            //Debug.Log(async.progress);
             yield return null;
         }
 

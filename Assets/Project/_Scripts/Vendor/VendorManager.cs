@@ -48,7 +48,7 @@ public class VendorManager : MonoBehaviour {
         // potion
         if (vendorType == VendorType.Potion)
         {
-            Debug.Log("Potion Vendor is requesting goods");
+           // Debug.Log("Potion Vendor is requesting goods");
 
             foreach (Item item in potion)
             {
@@ -59,7 +59,7 @@ public class VendorManager : MonoBehaviour {
         // weapon
         if (vendorType == VendorType.Weapon)
         {
-            Debug.Log("Weapon Vendor is requesting goods");
+            //Debug.Log("Weapon Vendor is requesting goods");
 
             int r = UnityEngine.Random.Range(0, 6);
 
@@ -72,7 +72,7 @@ public class VendorManager : MonoBehaviour {
         // armor
         if (vendorType == VendorType.Armor)
         {
-            Debug.Log("Armor Vendor is requesting goods");
+            //Debug.Log("Armor Vendor is requesting goods");
 
             foreach (Item item in armor)
             {
