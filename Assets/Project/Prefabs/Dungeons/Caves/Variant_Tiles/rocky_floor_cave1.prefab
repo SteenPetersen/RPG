@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4585670202424344}
   - component: {fileID: 212936332993430098}
   - component: {fileID: 114383639027482298}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: rocky_floor_cave1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 33153408672349588}
   - component: {fileID: 114910546945339710}
   - component: {fileID: 114379796993117414}
-  m_Layer: 0
+  m_Layer: 28
   m_Name: pb-MergedObject-2812308
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1922786578956618}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.58000183, y: -0.14075089, z: 0.10000014}
+  m_LocalPosition: {x: -0.58000183, y: -0.14075089, z: 0.75}
   m_LocalScale: {x: 2, y: 2, z: 4}
   m_Children: []
   m_Father: {fileID: 4585670202424344}
@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1424518680208970}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.459, y: -21.653625, z: -0.614}
+  m_LocalPosition: {x: -12.393459, y: -18.33, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.25}
   m_Children:
   - {fileID: 4156436120029716}
@@ -101,7 +101,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 2
+  m_SelectedEditorRenderState: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89

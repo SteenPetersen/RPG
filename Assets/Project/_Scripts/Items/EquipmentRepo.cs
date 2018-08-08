@@ -52,6 +52,8 @@ public class EquipmentRepo : MonoBehaviour {
     public List<ArmorGraphicSet> magicalArmorGuantright = new List<ArmorGraphicSet>();
     public List<ArmorGraphicSet> magicalArmorShoulder = new List<ArmorGraphicSet>();
 
+    public List<GameObject> teirOneArrows = new List<GameObject>();
+
     public ItemGraphicSet GetMeleeItemSet(int identification)
     {
         foreach (ItemGraphicSet item in swords)

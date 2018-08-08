@@ -750,7 +750,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1357078828559112}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.315, y: 0.239, z: 0}
   m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_Children: []
   m_Father: {fileID: 4574218465960098}
@@ -913,7 +913,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.06533909, y: -0.07}
+  m_Offset: {x: 0.06533909, y: -0.13194692}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -924,7 +924,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.17965508, y: 0.76390696}
+  m_Size: {x: 0.17965508, y: 0.8878008}
   m_EdgeRadius: 0
 --- !u!95 &95534425876073922
 Animator:
@@ -955,7 +955,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335e7911ae216954dae8d856ffee6b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 65
+  maxHealth: 45
   damage:
     baseValue: 0
   armor:
@@ -1196,6 +1196,8 @@ MonoBehaviour:
   whenCloseToDestination: 0
   healthbar: {fileID: 0}
   speechLocation: {fileID: 1357078828559112}
+  showGizmos: 0
+  interval: 3
   setter: {fileID: 114478968658878132}
   isDead: 0
   inRange: 0

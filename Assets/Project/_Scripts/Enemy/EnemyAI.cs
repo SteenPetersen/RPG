@@ -17,6 +17,9 @@ public class EnemyAI : AIPath
     #region HiddenVariables
 
     [SerializeField] GameObject speechLocation;
+    [SerializeField] bool showGizmos;
+    [Tooltip("the interval with which we check melee ranges (e.g 3 means every 3rd frame)")]
+    [SerializeField] int interval = 2;
 
     /// <summary>
     /// returns the transform that dictates where speech appears on an enemy.
@@ -118,12 +121,11 @@ public class EnemyAI : AIPath
 
         base.Update();
 
-        CheckMeleeRange();
-
         DetermineIfMoving();
 
         if (haveAggro)
         {
+            CheckMeleeRange();
             FaceTarget();
 
             if (inMeleeRange && timer < 0)
@@ -196,9 +198,12 @@ public class EnemyAI : AIPath
             // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
             RaycastHit2D hit = Physics2D.Raycast(transform.position, (playerPos - transform.position), distanceToLook, finalMask);
 
-            var drawdirection = (playerPos - transform.position).normalized;
-            Debug.DrawRay(transform.position, (playerPos - transform.position), Color.cyan);
-            Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
+            if (showGizmos)
+            {
+                var drawdirection = (playerPos - transform.position).normalized;
+                Debug.DrawRay(transform.position, (playerPos - transform.position), Color.cyan);
+                Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
+            }
 
             // if the ray hits the player then aggro him
             if (hit.transform != null)
@@ -313,33 +318,41 @@ public class EnemyAI : AIPath
 
     public virtual void CheckMeleeRange()
     {
-        //create layer masks for the player and the obstacles ending a finalmask combining both
-        int playerLayer = 10;
-        var playerlayerMask = 1 << playerLayer;
-
-        Debug.Log("calling check melee range");
-
-        if (setter.targetASTAR != null)
+        if (interval == 0)
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, (playerObj.position - transform.position), meleeRange, playerlayerMask);
-            var drawdirection = (playerObj.position - transform.position).normalized;
-
-            if (hit.collider != null)
-            {
-                if (hit.collider.name == "Player")
-                {
-                    Debug.DrawRay(transform.position, (playerObj.position - transform.position), Color.green);
-                    inMeleeRange = true;
-                    return;
-                }
-                else
-                {
-                    inMeleeRange = false;
-                }
-            }
-
-            inMeleeRange = false;
+            interval = 2;
         }
+        if (Time.frameCount % interval == 0)
+        {
+            //create layer masks for the player and the obstacles ending a finalmask combining both
+            int playerLayer = 10;
+            var playerlayerMask = 1 << playerLayer;
+
+            Debug.Log("calling check melee range");
+
+            if (setter.targetASTAR != null)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, (playerObj.position - transform.position), meleeRange, playerlayerMask);
+                var drawdirection = (playerObj.position - transform.position).normalized;
+
+                if (hit.collider != null)
+                {
+                    if (hit.collider.name == "Player")
+                    {
+                        Debug.DrawRay(transform.position, (playerObj.position - transform.position), Color.green);
+                        inMeleeRange = true;
+                        return;
+                    }
+                    else
+                    {
+                        inMeleeRange = false;
+                    }
+                }
+
+                inMeleeRange = false;
+            }
+        }
+
     }
 
     public virtual void OnStrikeComplete()

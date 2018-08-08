@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     // located on Gamemanager since monsters also need access to it.
     Plane m_Plane;
     [SerializeField] bool ripostePossible, enemiesInRange, lineOfSightRoutineActivated, largeStrike, largeStrikeAnimationReady, 
-                          heldStrikeCoroutinePlaying, chargedShot;
+                          heldStrikeCoroutinePlaying, chargedShot, autoFiring;
     [SerializeField] float riposteTime, chargeTime, blockTime = 0;
 
     public bool maxChargedHit;
@@ -37,14 +37,11 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        //cam = Camera.main;
-
     }
     #endregion
 
     Vector2 mousePosition;
     EventSystem eventSys;
-    float thrustSpeed = 0.5f;  
 
     Rigidbody2D rigid;
     CameraController cameraControl;
@@ -118,6 +115,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float projectileSpeed;
     [SerializeField] Transform meleeStartPoint;
     Vector2 direction;
+
+    /// <summary>
+    /// Used for when talents increase the level of 
+    /// projectile and therefore slightly increases speed
+    /// </summary>
+    public float MyProjectileSpeed
+    {
+        get
+        {
+            return projectileSpeed;
+        }
+        set
+        {
+            projectileSpeed = value;
+        }
+    }
     #endregion
 
     #region State/etc
@@ -138,6 +151,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] ParticleSystem weaponCharged;
     [SerializeField] ParticleSystem bowCharged;
     bool weaponChargeReady;
+
+
 
     private void OnEnable()
     {
@@ -436,22 +451,46 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-
         // if the player is in a ranged state
         else if (ranged)
         {
-            if (Input.GetMouseButton(1))
+            if (Input.GetMouseButtonDown(0))
             {
+                bool canHit = CheckIfPlayerMayHit();
 
+                if (!canHit)
+                {
+                    Vendor vendor = CheckForVendor();
+                    Interactable inter = CheckForInteractable();
+
+                    if (inter != null)
+                    {
+                        Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
+                        inter.Interact();
+                        return;
+                    }
+
+                    if (vendor != null)
+                    {
+                        vendor.Interact();
+                        return;
+                    }
+                }
+            }
+            if (Input.GetMouseButton(0))
+            {
+                autoFiring = true;
+                maxChargedHit = false;
+                anim.SetTrigger("ShootRanged");
             }
 
-            if (!Input.GetMouseButton(1))
+            if (Input.GetMouseButtonUp(0))
             {
-               
+                autoFiring = false;
             }
 
             // if the player hits the left mouse button
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(1))
             {
                 bool canHit = CheckIfPlayerMayHit();
 
@@ -479,7 +518,7 @@ public class PlayerController : MonoBehaviour
 
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(1))
             {
                 if (playerStat.chargeHeld)
                 {
@@ -491,6 +530,7 @@ public class PlayerController : MonoBehaviour
                     playerStat.cantRegen = false;
                 }
 
+                autoFiring = false;
                 bool canHit = CheckIfPlayerMayHit();
 
                 // if player is not allowed to hit the stop the code from running further
@@ -524,28 +564,7 @@ public class PlayerController : MonoBehaviour
                     // check if player was trying to to do a charged hit
                     if (chargedShot)
                     {
-                        anim.SetBool("ChargedShot", false);
-                        chargedShot = false;
-
-                        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
-                        {
-                            maxChargedHit = true;
-                        }
-
-                        Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-                        tmp.a = 0;
-                        EquipmentManager.instance.weaponGlowSlot.color = tmp;
-                        weaponChargeReady = false;
-                        bowCharged.Stop();
-
-                        float percCost = (playerStat.MyMaxStamina / 100) * 25;
-
-                        playerStat.MyCurrentStamina -= percCost;
-
-                        if (playerStat.chargeHeld)
-                        {
-                            playerStat.chargeHeld = false;
-                        }
+                        StopRangedChargeShotState();
 
                         return;
                     }
@@ -553,10 +572,10 @@ public class PlayerController : MonoBehaviour
 
             }
 
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(1))
             {
                 // start checking if player wants to hold button in
-                if (!heldStrikeCoroutinePlaying && !chargedShot)
+                if (!heldStrikeCoroutinePlaying && !chargedShot && playerStat.staminaFull && !autoFiring)
                 {
                     StartCoroutine(CheckForHeldStrike());
                 }
@@ -564,6 +583,44 @@ public class PlayerController : MonoBehaviour
         }
 
     } // commented
+
+    /// <summary>
+    /// Stops the state of charging the bow
+    /// </summary>
+    /// <param name="changeingState">In case we wish to change the state due to coming from the melee state and not because the player has fired his arrows</param>
+    private void StopRangedChargeShotState(bool changeingState = false)
+    {
+        if (!changeingState)
+        {
+            anim.SetBool("ChargedShot", false);
+        }
+        else if (changeingState)
+        {
+            anim.SetTrigger("abandonCharge");
+            anim.SetBool("ChargedShot", false);
+        }
+
+        chargedShot = false;
+
+        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98 && !changeingState)
+        {
+            maxChargedHit = true;
+            float percCost = (playerStat.MyMaxStamina / 100) * 25;
+            playerStat.MyCurrentStamina -= percCost;
+        }
+
+        Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+        tmp.a = 0;
+        EquipmentManager.instance.weaponGlowSlot.color = tmp;
+        weaponChargeReady = false;
+        bowCharged.Stop();
+
+
+        if (playerStat.chargeHeld)
+        {
+            playerStat.chargeHeld = false;
+        }
+    }
 
     /// <summary>
     /// Handles the movement of the Player with a normalized vector2
@@ -667,16 +724,17 @@ public class PlayerController : MonoBehaviour
 
     private void HandleCombatState()
     {
-
-
         if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION1"])) // ACTION1 is trying to use Melee
         {
             if (!melee)
             {
+                StopRangedChargeShotState(true);
+
                 EquipFirstMatchingItemInBag(0, 3);
                 EquipFirstMatchingItemInBag(2, 4);
                 melee = true;
                 ranged = false;
+                playerStat.cantRegen = false;
             }
 
         }
@@ -688,6 +746,7 @@ public class PlayerController : MonoBehaviour
                 EquipFirstMatchingItemInBag(1, 3);
                 ranged = true;
                 melee = false;
+                playerStat.cantRegen = false;
             }
         }
     }
@@ -827,36 +886,6 @@ public class PlayerController : MonoBehaviour
 
 
     }
-
-    //private void SpawnGhostImage(Vector2 direction)
-    //{
-    //    // set a vector2 Position that we can use to spawn the ghost at
-    //    Vector2 spawnPoint = new Vector2(transform.position.x, transform.position.y + 0.452f);
-
-    //    // spawn the ghost at the aforementioned spawnpoint
-    //    var image = Instantiate(skeleton, spawnPoint, Quaternion.identity);
-
-    //    // enable the collider on the skeleton
-    //    image.GetComponent<CircleCollider2D>().enabled = true;
-
-    //    // if player is not facing right flip the image
-    //    if (!facingRight)
-    //    {
-    //        image.transform.localScale = new Vector2(image.transform.localScale.x * -1, image.transform.localScale.y);
-    //    }
-
-    //    // make a ref to the rigidbody on the ghost
-    //    var imageRigid = image.GetComponent<Rigidbody2D>();
-
-    //    // set the rigidbody to be dynamic
-    //    imageRigid.bodyType = RigidbodyType2D.Dynamic;
-
-    //    // add a force to the ghost in the direction the player is moving
-    //    imageRigid.AddForce(direction * thrustSpeed / 1.5f);
-
-    //    // make sure the ghost as well as all its children fade away
-    //    image.AddComponent<Fade>();
-    //} // commented
 
     /// <summary>
     /// Looks through Inventory and checks for an item 

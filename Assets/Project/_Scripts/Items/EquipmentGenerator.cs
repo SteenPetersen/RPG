@@ -277,7 +277,7 @@ public class EquipmentGenerator : MonoBehaviour {
         currentCreation.MyTitle = currentName;
         currentCreation.name = currentName;
 
-        currentCreation.rangedProjectile = 0;
+        currentCreation.rangedProjectile = PlayerTalents.instance.MyProjectile;
     }
 
     /// <summary>

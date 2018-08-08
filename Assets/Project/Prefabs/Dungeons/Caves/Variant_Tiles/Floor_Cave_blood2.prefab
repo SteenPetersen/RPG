@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4225548073110530}
   - component: {fileID: 212220938547120456}
   - component: {fileID: 114609878680371830}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Floor_Cave_blood2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -95,14 +95,8 @@ public class PooledProjectilesController : MonoBehaviour {
 
         switch (enemyName)
         {
-            //case "ImpRanged(Clone)":
             case "ImpRanged":
-            case "FirstBoss":
-                //case "FirstBoss(Clone)":
 
-                // if you're looking for an imp fireball
-                if (projectile.gameObject.name == "Imp_Fireball")
-                {
                     if (impFireballs.Count != 0)
                     {
                         for (int i = 0; i < impFireballs.Count; i++)
@@ -120,11 +114,10 @@ public class PooledProjectilesController : MonoBehaviour {
                     impFireballs.Add(obj);
                     obj.transform.SetParent(projectileHolder);
                     return obj;
-                }
 
-                // otherwise you're looking for an aoe fireball
-                else
-                {
+
+            case "FirstBoss":
+
                     if (aoeFireballs.Count != 0)
                     {
                         for (int i = 0; i < aoeFireballs.Count; i++)
@@ -137,14 +130,10 @@ public class PooledProjectilesController : MonoBehaviour {
                         }
                     }
 
-                    GameObject obj = Instantiate(projectile) as GameObject;
-                    aoeFireballs.Add(obj);
-                    obj.transform.SetParent(projectileHolder);
-                    return obj;
-                }
-
-
-
+                    GameObject greenfireball = Instantiate(projectile) as GameObject;
+                    aoeFireballs.Add(greenfireball);
+                    greenfireball.transform.SetParent(projectileHolder);
+                    return greenfireball;
         }
 
 

@@ -1,24 +1,38 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FollowLight : MonoBehaviour {
 
-    public Transform target;
+    [SerializeField] bool player;
+    [SerializeField] Transform target;
 
-    void Start()
+    public Transform Target
     {
-        if (target == null)
+        get
         {
-            target = PlayerController.instance.gameObject.transform;
+            return target;
+        }
+
+        set
+        {
+            target = value;
         }
     }
 
-    // Update is called once per frame
-    void Update () {
+    void Start()
+    {
+        if (player)
+        {
+            Target = PlayerController.instance.gameObject.transform;
+        }
+    }
 
-        transform.position = target.position;
+    void Update ()
+    {
+        if (target != null)
+        {
+            transform.position = Target.position;
 
-	}
+        }
+    }
 
 }

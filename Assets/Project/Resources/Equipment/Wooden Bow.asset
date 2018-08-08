@@ -31,5 +31,5 @@ MonoBehaviour:
   sta: 0
   agi: 0
   str: 0
-  rangedProjectile: 1
+  rangedProjectile: 0
   graphicId: 0

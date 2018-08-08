@@ -11,6 +11,7 @@ TagManager:
   - Map
   - Keybind
   - PlayerSkeleton
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -40,7 +41,7 @@ TagManager:
   - Obstacles
   - 
   - A*
-  - 
+  - 3DBackgroundObjects
   - ProjectileCollision
   - PlayerProjectileCollisions
   - 3DSelectors

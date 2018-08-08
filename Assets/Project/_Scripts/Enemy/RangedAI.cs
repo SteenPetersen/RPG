@@ -108,13 +108,10 @@ public class RangedAI : EnemyAI {
     //    }
     //}
 
-    public override void CheckMeleeRange()
-    {
-        base.CheckMeleeRange();
-    }
-
     public override void OnEnemyCastComplete()
     {
+        Debug.Log("Starting OnEnemyCastComplete");
+
         if (setter.targetASTAR != null)
         {
             Vector2 direction = new Vector2(setter.targetASTAR.transform.position.x - transform.position.x, setter.targetASTAR.transform.position.y - transform.position.y);
@@ -139,6 +136,8 @@ public class RangedAI : EnemyAI {
 
             projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
         }
+
+        Debug.Log("Ending OnEnemyCastComplete");
 
     }
 

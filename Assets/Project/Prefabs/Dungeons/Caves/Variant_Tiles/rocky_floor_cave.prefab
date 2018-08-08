@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4968662798928660}
   - component: {fileID: 212892762202807750}
   - component: {fileID: 114347100886865784}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: rocky_floor_cave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 23102548178746650}
   - component: {fileID: 33780789302783008}
   - component: {fileID: 114895686979587110}
-  m_Layer: 0
+  m_Layer: 28
   m_Name: Icosphere (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 2
+  m_SelectedEditorRenderState: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89

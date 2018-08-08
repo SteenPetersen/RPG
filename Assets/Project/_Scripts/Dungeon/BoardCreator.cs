@@ -17,6 +17,7 @@ public class BoardCreator : MonoBehaviour
     public int chanceOfBetterChestPerRoom;
     public int percentageOfEnemiesInCorridors;
     public int obstructedCorridorMaxLength;
+    public int playerLevelToSpawnBossRoom = 5;
 
     public float chanceOfVariantFloorTiles;
     public int columns = 100;                                 // The number of columns on the board (how wide it will be).
@@ -567,7 +568,10 @@ public class BoardCreator : MonoBehaviour
     /// <param name="yPos">Starting Position of the check on the Y Axis</param>
     private void CheckIfAreaIsClear(int xPos, int yPos , int xSmall , int xLarge, int ySmall, int yLarge)
     {
-        //Debug.Log("Checking area");
+        if (ExperienceManager.instance.level >= playerLevelToSpawnBossRoom)
+        {
+            spaceForBossRoom = false;
+        }
 
         for (int x = xSmall; x <= xLarge; x += 2)
         {

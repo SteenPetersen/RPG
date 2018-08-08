@@ -148,6 +148,11 @@ public class EnemyStats : CharacterStats {
         shieldedText.transform.position = transform.position;
         shieldedText.gameObject.SetActive(true);
 
+        if (enemyAI.setter.targetASTAR == null)
+        {
+            enemyAI.setter.targetASTAR = PlayerController.instance.gameObject.transform;
+        }
+
     }
 
     public float CalculateHealth(float currentHealth, float maxHealth)

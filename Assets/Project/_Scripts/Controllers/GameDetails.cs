@@ -239,6 +239,9 @@ public class GameDetails : MonoBehaviour {
         data.Damage = playerStats.damage.GetBaseValue();
         data.Armor = playerStats.armor.GetBaseValue();
 
+        // Talents
+        data.projectile = PlayerTalents.instance.MyProjectile;
+
 
         data.questLine = StoryManager.questLine;
         data.stage = StoryManager.stage;
@@ -308,6 +311,8 @@ public class GameDetails : MonoBehaviour {
             DestroyAllNonDefaultBags();
             ExperienceManager.instance.experience = 0;
 
+            //Talents
+            PlayerTalents.instance.MyProjectile = data.projectile;
 
             // Load Stats
             PlayerController.instance.speed = normalSpeed;
@@ -830,6 +835,9 @@ class PlayerData
     public int questLine;
     public int givenItems;
     public int tutorialConversation;
+
+    // Talents
+    public int projectile = 0;
 
 
     // currently equipped bags

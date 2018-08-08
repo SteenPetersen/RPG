@@ -31,7 +31,10 @@ public class enemy_Projectile : MonoBehaviour {
 
     private void Destroy()
     {
-        sprite.enabled = false;
+        if (sprite != null)
+        {
+            sprite.enabled = false;
+        }
         transform.SetParent(projectileHolder);
     }
 
@@ -47,10 +50,16 @@ public class enemy_Projectile : MonoBehaviour {
             {
                 SoundManager.instance.PlayCombatSound(gameObject.name + "_impact");
                 stats.TakeDamage(damage);
-                sprite.enabled = false;
+
+                if (sprite != null)
+                {
+                    sprite.enabled = false;
+                }
+
                 myCollider.enabled = false;
                 rigid.velocity = Vector2.zero;
                 impact.Play();
+
                 if (particles != null)
                 {
                     particles.Stop();
@@ -98,7 +107,12 @@ public class enemy_Projectile : MonoBehaviour {
         myCollider.enabled = true;
         rigid.isKinematic = false;
         gameObject.SetActive(true);
-        sprite.enabled = true;
+
+        if (sprite != null)
+        {
+            sprite.enabled = true;
+        }
+
         impact = transform.Find("impact").GetComponent<ParticleSystem>();
         particles = transform.Find("particles").GetComponent<ParticleSystem>();
         wallImpact = transform.Find("wallimpact").GetComponent<ParticleSystem>();
@@ -107,6 +121,7 @@ public class enemy_Projectile : MonoBehaviour {
         {
             lightEffect.SetActive(true);
         }
+
     }
 
 

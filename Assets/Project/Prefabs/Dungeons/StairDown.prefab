@@ -23,12 +23,12 @@ GameObject:
   - component: {fileID: 65383908285021758}
   - component: {fileID: 23538692335790060}
   - component: {fileID: 114551271270771190}
-  m_Layer: 0
+  m_Layer: 28
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1545105768644710
 GameObject:
@@ -39,12 +39,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4258061146252226}
   - component: {fileID: 212169471602877934}
-  m_Layer: 0
+  m_Layer: 28
   m_Name: StairDown
   m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1640515085948186
 GameObject:
@@ -58,12 +58,12 @@ GameObject:
   - component: {fileID: 65499914997413216}
   - component: {fileID: 23645668152325310}
   - component: {fileID: 114898113562155134}
-  m_Layer: 0
+  m_Layer: 28
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1832351976155142
 GameObject:
@@ -77,12 +77,12 @@ GameObject:
   - component: {fileID: 65262177593691848}
   - component: {fileID: 23264869338423574}
   - component: {fileID: 114467652287643156}
-  m_Layer: 0
+  m_Layer: 28
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &4026161789535318
 Transform:
@@ -152,6 +152,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 57a7333d9449f0142a5010645f2144f1, type: 2}
   m_StaticBatchInfo:
@@ -186,6 +187,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 57a7333d9449f0142a5010645f2144f1, type: 2}
   m_StaticBatchInfo:
@@ -220,6 +222,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 57a7333d9449f0142a5010645f2144f1, type: 2}
   m_StaticBatchInfo:
@@ -344,6 +347,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:

@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4924132496764046}
   - component: {fileID: 212436438854472994}
   - component: {fileID: 114376628825912982}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Floor_Cave_Moss
   m_TagString: Untagged
   m_Icon: {fileID: 0}

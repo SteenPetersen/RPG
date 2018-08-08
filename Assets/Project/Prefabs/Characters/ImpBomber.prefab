@@ -667,7 +667,7 @@ Transform:
   - {fileID: 4960387954737210}
   m_Father: {fileID: 4791306935806288}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.03}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.6440735}
 --- !u!4 &4645053008374072
 Transform:
   m_ObjectHideFlags: 1
@@ -807,8 +807,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 2
-  m_AngularDrag: 2
+  m_LinearDrag: 34
+  m_AngularDrag: 34
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -1004,6 +1004,8 @@ MonoBehaviour:
   whenCloseToDestination: 0
   healthbar: {fileID: 0}
   speechLocation: {fileID: 1487079522376302}
+  showGizmos: 0
+  interval: 2
   setter: {fileID: 114358393488409876}
   isDead: 0
   inRange: 0
@@ -1187,7 +1189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335e7911ae216954dae8d856ffee6b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 65
+  maxHealth: 45
   damage:
     baseValue: 10
   armor:
@@ -11398,7 +11400,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

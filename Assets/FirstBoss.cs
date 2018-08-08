@@ -49,7 +49,7 @@ public class FirstBoss : EnemyAI
 
         if (GameObject.Find("BossFollowLight") != null)
         {
-            GameObject.Find("BossFollowLight").GetComponent<FollowLight>().target = this.transform;
+            GameObject.Find("BossFollowLight").GetComponent<FollowLight>().Target = this.transform;
         }
     }
 
@@ -182,11 +182,6 @@ public class FirstBoss : EnemyAI
                 return;
             }
         }
-    }
-
-    public override void CheckMeleeRange()
-    {
-        base.CheckMeleeRange();
     }
 
     public override void OnEnemyCastComplete()

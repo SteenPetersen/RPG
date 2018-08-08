@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4905789905709170}
   - component: {fileID: 212427501504344706}
   - component: {fileID: 114437758000034306}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Floor_Cave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
