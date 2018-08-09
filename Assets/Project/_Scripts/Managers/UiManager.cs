@@ -51,6 +51,11 @@ public class UiManager : MonoBehaviour {
             InventoryScript.instance.OpenClose();
         }
 
+        if (Input.GetKey(KeyCode.M))
+        {
+            GameDetails.Instance.StartCoroutine(GameDetails.Instance.FadeOUt());
+        }
+
         if (Input.GetKeyDown(KeyCode.O))
         {
             PlayerStats.instance.TakeDamage(10);

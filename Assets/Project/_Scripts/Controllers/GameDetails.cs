@@ -148,14 +148,11 @@ public class GameDetails : MonoBehaviour {
             }
         }
 
-        if (Input.GetKey(KeyCode.M))
-        {
-            StartCoroutine(FadeOUt());
-        }
+
 
     }
 
-    IEnumerator FadeOUt()
+    public IEnumerator FadeOUt()
     {
         while (GameDetails._instance.fadeToBlack.color.a <= 0.98)
         {
@@ -812,6 +809,8 @@ public class GameDetails : MonoBehaviour {
             //AstarPath.active.Scan();
         }
     }
+
+   
 }
 
 [Serializable]

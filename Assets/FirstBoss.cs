@@ -281,11 +281,11 @@ public class FirstBoss : EnemyAI
 
             if (myStats.currentHealth > (myStats.maxHealth / 2))
             {
-                WavesOfFire(direction);
+                FourDirectionalShot(direction, 4);
             }
             else
             {
-                FourDirectionalShot(direction, 4);
+                WavesOfFire(direction);
             }
 
             yield return new WaitForSeconds(timeBetweenAoe);

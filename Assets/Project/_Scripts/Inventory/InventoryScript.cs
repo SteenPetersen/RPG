@@ -172,8 +172,8 @@ public class InventoryScript : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.H))
         {
-            SmallHealthPotion potion = (SmallHealthPotion)Instantiate(itemListForDebugging[1]);
-            AddItem(potion);
+            Item potion = Instantiate(itemListForDebugging[1]);
+            bool test = AddItem(potion);
         }
     }
 
@@ -343,6 +343,12 @@ public class InventoryScript : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Returns the amount of items that match the parameter item
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public Stack<IUseable> GetUseables(IUseable type, Item item)
     {
         Stack<IUseable> useables = new Stack<IUseable>();
@@ -364,6 +370,11 @@ public class InventoryScript : MonoBehaviour {
         return useables;
     }
 
+    /// <summary>
+    /// Determines if the item passed in exists in the bags
+    /// </summary>
+    /// <param name="itemName"></param>
+    /// <returns></returns>
     public Item FindItemInInventory(string itemName)
     {
         foreach (Bag bag in bags)

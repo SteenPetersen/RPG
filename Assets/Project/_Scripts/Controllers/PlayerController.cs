@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     // located on Gamemanager since monsters also need access to it.
     Plane m_Plane;
     [SerializeField] bool ripostePossible, enemiesInRange, lineOfSightRoutineActivated, largeStrike, largeStrikeAnimationReady, 
-                          heldStrikeCoroutinePlaying, chargedShot, autoFiring;
+                          heldStrikeCoroutinePlaying, chargedShot, autoFiring, portal;
     [SerializeField] float riposteTime, chargeTime, blockTime = 0;
 
     public bool maxChargedHit;
@@ -131,6 +131,22 @@ public class PlayerController : MonoBehaviour
             projectileSpeed = value;
         }
     }
+
+    /// <summary>
+    /// Used by the Portals to stop the player from moving when he enters them.
+    /// </summary>
+    public bool Portal
+    {
+        get
+        {
+            return portal;
+        }
+
+        set
+        {
+            portal = value;
+        }
+    }
     #endregion
 
     #region State/etc
@@ -167,9 +183,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (isDead || GameDetails._instance.paused || dialogue)
+        if (isDead || GameDetails._instance.paused || dialogue || Portal)
             return;
-
 
         HandleCombatState();
         HandleActionBarInput();
@@ -183,16 +198,6 @@ public class PlayerController : MonoBehaviour
             playerStat.LerpStaminaBar();
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Debug.Log("calling loadscene");
-            SceneManager.LoadSceneAsync(0);
-            transform.position = new Vector2(-12f, 4);
-            DungeonManager dungeon = DungeonManager.Instance;
-            dungeon.playerHasBossKey = false;
-            dungeon.teleport = false;
-
-        }
         if (Time.frameCount % 3 == 0)
         {
             HandleAggro();
@@ -310,13 +315,14 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAnimation()
     {
-        // make sure that is players mouse is over the UI that the player doesnt start performing animations
-        if (eventSys.IsPointerOverGameObject())
-            return;
 
         // set the animation parameters of X and Y velocities to be equal to the absolute values of the parameters horizontal and vertical
         anim.SetFloat("VelocityX", Mathf.Abs(rigid.velocity.x));
         anim.SetFloat("VelocityY", Mathf.Abs(rigid.velocity.y));
+
+        // make sure that is players mouse is over the UI that the player doesnt start performing animations
+        if (eventSys.IsPointerOverGameObject())
+            return;
 
         // if the current state of the player is melee
         if (melee)
@@ -1214,6 +1220,12 @@ public class PlayerController : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (portal)
+        {
+            portal = false;
+            transform.Find("Skeleton").gameObject.SetActive(true);
+        }
+
         if (!scene.name.EndsWith("_indoor"))
         {
             Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 1;

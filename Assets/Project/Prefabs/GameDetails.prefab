@@ -3794,7 +3794,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1085842817211462}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.33, y: -18.225, z: -10}
+  m_LocalPosition: {x: -18.27, y: -18.225, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4604255163508626}
@@ -4155,7 +4155,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 2.0810256
+  orthographic size: 1.2897611
   m_Depth: 6
   m_CullingMask:
     serializedVersion: 2
@@ -4191,7 +4191,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.87666667
+  orthographic size: 0.81500006
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -4413,6 +4413,7 @@ MonoBehaviour:
   projectileList:
   - {fileID: 1001193493289250, guid: 47f2c6de8b475614280e896e5d5fd57c, type: 2}
   - {fileID: 1472819850106686, guid: 578b429524132c246a50e21af68545cc, type: 2}
+  - {fileID: 1083615850308900, guid: 92aac096cd7760a47ab0624e4fd7e16c, type: 2}
   arrowHitGraphics:
   - {fileID: 21300004, guid: 8f323ffb8b4457847846353a2b597cea, type: 3}
 --- !u!114 &114000889405747850
@@ -5372,7 +5373,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114403781247210042}
   m_HandleRect: {fileID: 224722115335201110}
   m_Direction: 2
-  m_Value: 0.00000015916677
+  m_Value: 0.00000021222237
   m_Size: 0.3706095
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5799,7 +5800,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -7964,7 +7965,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9566,6 +9567,8 @@ MonoBehaviour:
   stoneWallOpen: {fileID: 0}
   impactBox: {fileID: 0}
   destroyBox: {fileID: 0}
+  portalAppears: {fileID: 0}
+  enterPortal: {fileID: 0}
   audioSrc: {fileID: 0}
 --- !u!114 &114635843468031594
 MonoBehaviour:
@@ -9950,8 +9953,7 @@ MonoBehaviour:
   Arrow: {fileID: 1472819850106686, guid: 578b429524132c246a50e21af68545cc, type: 2}
   swordShot: {fileID: 1607739614312670, guid: cbe83c2af0c1b694192d16d95725614f, type: 2}
   impDagger: {fileID: 1437101887666078, guid: b41ce6e1fd7b7b74ca53ed760e78ea92, type: 2}
-  ImpBossProjectile: {fileID: 1787602705258232, guid: 8bb0e10880b891e47832c7dee6394f85,
-    type: 2}
+  ImpBossProjectile: {fileID: 0}
   pooledAmount: 8
   willGrow: 1
   impDaggers: []
@@ -10220,6 +10222,9 @@ MonoBehaviour:
   bombExplosion: {fileID: 198543558671926218, guid: 55589e0f66e192e4dbcb4d5132e59987,
     type: 2}
   bossOneFireShield: {fileID: 198169411683952716, guid: ad48fb49766c6e041950eb96545cd69d,
+    type: 2}
+  townPortal: {fileID: 1272434244660828, guid: d98e11f5ee41a5d4cab426c9ab034398, type: 2}
+  townPortalEnter: {fileID: 1758807585086052, guid: 36730c7703438a34f942f90128bd16d8,
     type: 2}
   ChargedBowShot: {fileID: 1255754474404892, guid: af5b97ee2621ce04fa4c453620b83805,
     type: 2}
@@ -12009,7 +12014,7 @@ MonoBehaviour:
   - {fileID: 114799847804779336}
   itemListForDebugging:
   - {fileID: 11400000, guid: 35d3c2e342dd673409353dc337579d45, type: 2}
-  - {fileID: 11400000, guid: adca14bb4ad1d104ebb3420a099c8037, type: 2}
+  - {fileID: 0}
 --- !u!114 &114907506718643892
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12100,9 +12105,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vendorWindowOpen: 0
   potion:
-  - {fileID: 11400000, guid: adca14bb4ad1d104ebb3420a099c8037, type: 2}
-  - {fileID: 11400000, guid: 08e9d21126a91644a95d2ad3bf1bbd87, type: 2}
-  - {fileID: 11400000, guid: 999df4bd5b215a04d93e20426c79e02f, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   armor: []
   general: []
 --- !u!114 &114917286655878074
@@ -19137,7 +19142,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000021584834, y: 287.5999}
+  m_AnchoredPosition: {x: 0.000021584834, y: 287.59988}
   m_SizeDelta: {x: 456.8, y: 913.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224080976581634028

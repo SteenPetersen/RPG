@@ -568,7 +568,7 @@ public class BoardCreator : MonoBehaviour
     /// <param name="yPos">Starting Position of the check on the Y Axis</param>
     private void CheckIfAreaIsClear(int xPos, int yPos , int xSmall , int xLarge, int ySmall, int yLarge)
     {
-        if (ExperienceManager.instance.level >= playerLevelToSpawnBossRoom)
+        if (ExperienceManager.instance.level < playerLevelToSpawnBossRoom)
         {
             spaceForBossRoom = false;
         }
@@ -3113,10 +3113,37 @@ public class BoardCreator : MonoBehaviour
 
                     int rand = UnityEngine.Random.Range(0, destructables.Length);
                     room.edgeFloorTilesOfThisRoom.Remove(spawnTile);
-                    SpawnElement(vec, destructables[rand], true);
+
+                    /// check to see if the area is clear of mobs.
+                    bool canSpawn = CheckArea(vec);
+
+                    if (canSpawn)
+                    {
+                        SpawnElement(vec, destructables[rand], true);
+                    }
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Checks the area around to see if there are any enemies
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    bool CheckArea(Vector3 pos)
+    {
+        int enemyLayer = 11;
+        var enemyLayerMask = 1 << enemyLayer;
+
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(pos, 1f, enemyLayerMask);
+
+        if (enemies.Length != 0)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     void SpawnObstructedCorridor()

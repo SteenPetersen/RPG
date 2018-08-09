@@ -6,5 +6,4 @@ public interface IDescribable
 {
     string GetTitle();
     string GetDescription(bool showSaleValue=true);
-
 }

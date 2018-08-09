@@ -19,4 +19,21 @@ public static class ExtMethods
         }
     }
 
+    public static Vector2 Rotate(this Vector2 vector, float degrees)
+    {
+         float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+         float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+         
+         float vectorX = vector.x;
+         float vectorY = vector.y;
+
+         vector.x = (cos * vectorX) - (sin * vectorY);
+         vector.y = (sin * vectorX) + (cos * vectorY);
+
+         return vector;
+    }
+
+
+
+
 }

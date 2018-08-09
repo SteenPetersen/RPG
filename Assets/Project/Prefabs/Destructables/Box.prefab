@@ -98,8 +98,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1386242392855948}
-  m_LocalRotation: {x: -0, y: -0, z: -0.004234779, w: 0.9999911}
-  m_LocalPosition: {x: -14.894, y: -15.055, z: -0.245}
+  m_LocalRotation: {x: 0, y: 0, z: 0.0042346907, w: -0.99999106}
+  m_LocalPosition: {x: -20.5, y: -13.5, z: -0.245}
   m_LocalScale: {x: 0.49999988, y: 0.49999988, z: 0.5}
   m_Children:
   - {fileID: 4171689319587380}
@@ -187,9 +187,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyed: 0
   shaking: 0
+  obstructVision: 0
   objInside: 0
+  canDropItems: 1
+  droppableItems:
+  - {fileID: 1392853231466582, guid: dd3f0c150f6468e44bc48105b4d98a6a, type: 2}
+  chanceToDrop: 5
+  damagedMat: {fileID: 0}
   shakeTime: 0.3
   decreaseShakeTiome: 0.2
+  MaxHealth: 0
   health: 149
   impact: {fileID: 198812214515146160}
   destroy: {fileID: 198279787308694138}

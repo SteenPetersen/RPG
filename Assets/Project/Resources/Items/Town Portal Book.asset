@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3578a3cad41a574a80dfc2dfe203c31, type: 3}
+  m_Name: Town Portal Book
+  m_EditorClassIdentifier: 
+  name: Town Portal Book
+  icon: {fileID: 21300002, guid: b9662a92751b2af418e8e09ad3aabc16, type: 3}
+  sellValue: 0
+  buyValue: 300
+  typeOfEquipment: 6
+  stackSize: 1
+  title: Town Portal Book
+  quality: 0
+  MySlot: {fileID: 0}
+  description: 'Use: Teleports the user out of a Dungeon'
+  clickParticles: {fileID: 0}

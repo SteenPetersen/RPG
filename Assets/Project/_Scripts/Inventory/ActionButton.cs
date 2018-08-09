@@ -85,10 +85,12 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
             if (MyUseable != null)
             {
                 MyUseable.Use();
+                Debug.Log("Use on the OnClick()");
             }
             if (useables != null && useables.Count > 0)
             {
                 useables.Peek().Use();
+                Debug.Log("Use on the OnClick() with Peek()");
             }
         }
 

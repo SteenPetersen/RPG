@@ -9,6 +9,7 @@ public class ItemPickup : Interactable
 {
     public Item item;
     public float chanceToDrop;
+    [SerializeField] Transform tooltipPosition;
 
     bool showBagsFullText = true;
 
@@ -21,12 +22,20 @@ public class ItemPickup : Interactable
         Pickup();
     }
 
+    void Update()
+    {
+        if (mouseOver)
+        {
+            ToolTipDisplay();
+        }
+    }
+
     private void Pickup()
     {
         if (!hasInteracted)
         {
             SoundManager.instance.PlayInventorySound(gameObject.name + "_pickup");
-            bool wasPickedUp = InventoryScript.instance.AddItem(item);
+            bool wasPickedUp = InventoryScript.instance.AddItem(Instantiate(item));
 
             if (wasPickedUp)
             {
@@ -38,6 +47,7 @@ public class ItemPickup : Interactable
 
                 UiManager.instance.HideToolTip();
                 mouseOver = false;
+                hasInteracted = true;
             }
             else if (!wasPickedUp)
             {
@@ -72,9 +82,6 @@ public class ItemPickup : Interactable
     {
         if (!mouseOver)
         {
-            //If your mouse hovers over the GameObject with the script attached, output this message
-            //Debug.Log("Mouse is over GameObject.");
-            UiManager.instance.ShowToolTip(Camera.main.WorldToScreenPoint(transform.position), item, true, 0.7f);
             mouseOver = true;
         }
     }
@@ -85,5 +92,16 @@ public class ItemPickup : Interactable
         //Debug.Log("Mouse is no longer on GameObject.");
         UiManager.instance.HideToolTip();
         mouseOver = false;
+    }
+
+    void ToolTipDisplay()
+    {
+        //If your mouse hovers over the GameObject with the script attached, output this message
+        if (tooltipPosition != null)
+        {
+            UiManager.instance.ShowToolTip(Camera.main.WorldToScreenPoint(tooltipPosition.position), item, true, 0.7f);
+            return;
+        }
+        UiManager.instance.ShowToolTip(Camera.main.WorldToScreenPoint(transform.position), item, true, 0.7f);
     }
 }

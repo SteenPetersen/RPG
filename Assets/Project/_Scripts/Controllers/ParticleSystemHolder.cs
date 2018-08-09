@@ -21,6 +21,8 @@ public class ParticleSystemHolder : MonoBehaviour {
     public ParticleSystem redBlood;
     public ParticleSystem bombExplosion;
     public ParticleSystem bossOneFireShield;
+    [SerializeField] GameObject townPortal;
+    [SerializeField] GameObject townPortalEnter;
 
     public GameObject ChargedBowShot;
 
@@ -28,7 +30,11 @@ public class ParticleSystemHolder : MonoBehaviour {
     public GameObject[] critWords;
 
 
-
+    /// <summary>
+    /// Plays an impact effect of a certain name at a certain location
+    /// </summary>
+    /// <param name="clip"></param>
+    /// <param name="pos"></param>
     public void PlayImpactEffect(string clip, Vector2 pos)
     {
         if (clip.StartsWith("Imp") && clip.EndsWith("_impact"))
@@ -39,6 +45,25 @@ public class ParticleSystemHolder : MonoBehaviour {
         else if (clip == "player")
         {
             Instantiate(redBlood, pos, Quaternion.identity);
+        }
+    }
+
+    public void PlaySpellEffect(Vector2 pos, string itemOrEffectName)
+    {
+        if (itemOrEffectName.EndsWith("(Clone)"))
+        {
+            itemOrEffectName = itemOrEffectName.Remove(itemOrEffectName.Length - 7);
+        }
+
+        switch (itemOrEffectName)
+        {
+            case "Town Portal Book":
+                Instantiate(townPortal, pos, Quaternion.identity);
+                break;
+            case "Town Portal":
+                Instantiate(townPortalEnter, pos, Quaternion.identity);
+                break;
+
         }
     }
 
@@ -65,8 +90,6 @@ public class ParticleSystemHolder : MonoBehaviour {
     public GameObject CritWord()
     {
         int rnd = UnityEngine.Random.Range(0, stunWords.Length);
-
-        //Debug.Log(rnd);
 
         switch (rnd)
         {

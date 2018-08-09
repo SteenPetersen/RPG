@@ -91,5 +91,5 @@ public class Equipment : Item, IUseable {
 }
 
 public enum EquipmentSlot { Head, Chest, Legs, MainHand, OffHand, FrontFoot, BackFoot, GauntletLeft, GauntletRight, Shoulder, Ring1, Ring2, Neck }
-public enum EquipmentType { Melee, Ranged, Armor, Key, Light, Potion}
+public enum EquipmentType { Melee, Ranged, Armor, Key, Light, Potion, SpellBook}
 public enum ArmorType { Leather, Metal, Magical}

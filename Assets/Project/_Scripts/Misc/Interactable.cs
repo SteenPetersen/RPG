@@ -4,9 +4,10 @@ using UnityEngine.UI;
 public abstract class Interactable : MonoBehaviour {
 
     [SerializeField] protected float radius;
-    [SerializeField] protected string objectName;
     protected bool hasInteracted;
     protected Transform player;
+
+    [SerializeField] bool drawGizmos;
 
     public float MyRadius
     {
@@ -19,13 +20,15 @@ public abstract class Interactable : MonoBehaviour {
     public virtual void Interact()
     {
         // this method is meant to be overwritten
-        //Debug.Log("interacting with " + gameObject.name);
     }
 
     protected void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, radius);
+        if (drawGizmos)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, radius);
+        }
     }
 
 }

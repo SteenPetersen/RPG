@@ -9,6 +9,13 @@ public class Destructable : MonoBehaviour {
 
     [Tooltip("Does this Destructable have anything inside")]
     [SerializeField] bool objInside;
+    [SerializeField] bool canDropItems;
+    [SerializeField] GameObject[] droppableItems;
+    [Tooltip("Items that may only drops once per dungeon, special keys, portal books etc")]
+    [SerializeField] string singularDropItem;
+
+    [SerializeField] int chanceToDrop;
+
     [SerializeField] Material damagedMat;
 
     [SerializeField] float shakeTime;
@@ -66,6 +73,30 @@ public class Destructable : MonoBehaviour {
                 int rand = UnityEngine.Random.Range(0, obj.Length);
                 Vector3 vec = new Vector3(transform.position.x, transform.position.y, 0);
                 Instantiate(obj[rand], vec, Quaternion.identity);
+            }
+
+            if (canDropItems)
+            {
+                int rand = UnityEngine.Random.Range(0, 100);
+
+                if (rand < chanceToDrop)
+                {
+                    rand = UnityEngine.Random.Range(0, droppableItems.Length);
+
+                    if (rand == 0)
+                    {
+                        var check = InventoryScript.instance.FindItemInInventory(singularDropItem);
+
+                        if (check == null)
+                        {
+                            Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
+                            return;
+                        }
+                    }
+
+                    Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
+
+                }
             }
         }
     }

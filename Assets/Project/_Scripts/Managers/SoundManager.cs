@@ -6,16 +6,17 @@ public class SoundManager : MonoBehaviour {
 
     public static SoundManager instance;
     [HideInInspector]
-    public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow, 
+    public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow,
                      bladeSwing, impBossHit, impBossDeath, impSwing, impHit, impHit1, impDeath, impDeath1, playerHurt, playerHurt1,
-                     impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, firstBossPrepAoe, bigGreenFireball, bigGreenFireball1, bigGreenFireball2, bigGreenFireball3, 
+                     impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, firstBossPrepAoe, bigGreenFireball, bigGreenFireball1, bigGreenFireball2, bigGreenFireball3,
                      potionInteract, potionPickup, fireBurst, firebuildup,
                      levelup, deathsound, bomb, shieldblock, shieldriposte, crit,
                      lootdrop, purchase, chestopen, chestclose,
                      demontalk1, demontalk2, demontalk3,
                      spikeTrapFire, spikeTrapReset,
                      stoneWallOpen,
-                     impactBox, destroyBox;
+                     impactBox, destroyBox,
+                     portalAppears, enterPortal;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -93,13 +94,11 @@ public class SoundManager : MonoBehaviour {
         destroyBox = Resources.Load<AudioClip>("Sound/" + "destroy_box");
 
         stoneWallOpen = Resources.Load<AudioClip>("Sound/" + "stone_wall_open");
+        portalAppears = Resources.Load<AudioClip>("Sound/" + "portal_appears");
+        enterPortal = Resources.Load<AudioClip>("Sound/" + "enter_portal");
 
         audioSrc = GetComponent<AudioSource>();
     }
-	
-	void Update () {
-		
-	}
 
     public void PlayCombatSound(string clip)
     {
@@ -413,6 +412,14 @@ public class SoundManager : MonoBehaviour {
 
             case "destroy_box":
                 audioSrc.PlayOneShot(destroyBox);
+                break;
+
+            case "portal_appears":
+                audioSrc.PlayOneShot(portalAppears);
+                break;
+
+            case "enter_portal":
+                audioSrc.PlayOneShot(enterPortal);
                 break;
 
 
