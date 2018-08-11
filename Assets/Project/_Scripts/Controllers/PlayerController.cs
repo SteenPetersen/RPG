@@ -17,6 +17,11 @@ public class PlayerController : MonoBehaviour
 
     public bool maxChargedHit;
 
+    /// <summary>
+    /// Used to stop Player from shooting and hitting when mousing over a vendor
+    /// </summary>
+    public bool mouseOverVendor;
+
     Vector3 prevPosition;
     Vector3 move;
     [SerializeField] Light pointLight;
@@ -155,6 +160,7 @@ public class PlayerController : MonoBehaviour
     public bool ranged, dialogue;   // is the player using ranged or in a dialogue? Player can still animate during pause due to unscaled time on his animator
 
     EquipmentManager equip;
+    DungeonManager dungeon;
     //bool weaponsGone = false;       // has the player unequipped his/her weapons
 
     //blockState
@@ -348,14 +354,25 @@ public class PlayerController : MonoBehaviour
 
                         if (inter != null)
                         {
-                            //Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
-                            inter.Interact();
+                            float distanceFromInteractable = Vector2.Distance(inter.gameObject.transform.position, transform.position);
+
+                            if (distanceFromInteractable < inter.MyRadius)
+                            {
+                                inter.Interact();
+                            }
+
                             return;
                         }
 
                         if (vendor != null)
                         {
-                            vendor.Interact();
+                            float distanceFromInteractable = Vector2.Distance(vendor.gameObject.transform.position, transform.position);
+
+                            if (distanceFromInteractable < vendor.radius)
+                            {
+                                vendor.Interact();
+                            }
+
                             return;
                         }
                     }
@@ -445,8 +462,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-
-
             if (ripostePossible)
             {
                 if (Input.GetMouseButtonDown(0))
@@ -460,6 +475,7 @@ public class PlayerController : MonoBehaviour
         // if the player is in a ranged state
         else if (ranged)
         {
+
             if (Input.GetMouseButtonDown(0))
             {
                 bool canHit = CheckIfPlayerMayHit();
@@ -471,23 +487,38 @@ public class PlayerController : MonoBehaviour
 
                     if (inter != null)
                     {
-                        Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
-                        inter.Interact();
+                        float distanceFromInteractable = Vector2.Distance(inter.gameObject.transform.position, transform.position);
+
+                        if (distanceFromInteractable < inter.MyRadius)
+                        {
+                            inter.Interact();
+                        }
+
                         return;
                     }
 
                     if (vendor != null)
                     {
-                        vendor.Interact();
+                        float distanceFromInteractable = Vector2.Distance(vendor.gameObject.transform.position, transform.position);
+
+                        if (distanceFromInteractable < vendor.radius)
+                        {
+                            vendor.Interact();
+                        }
+
                         return;
                     }
                 }
             }
+
             if (Input.GetMouseButton(0))
             {
-                autoFiring = true;
-                maxChargedHit = false;
-                anim.SetTrigger("ShootRanged");
+                if (!mouseOverVendor)
+                {
+                    autoFiring = true;
+                    maxChargedHit = false;
+                    anim.SetTrigger("ShootRanged");
+                }
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -508,14 +539,25 @@ public class PlayerController : MonoBehaviour
 
                     if (inter != null)
                     {
-                        Debug.Log("Player controller trying to interact with: " + inter.gameObject.name);
-                        inter.Interact();
+                        float distanceFromInteractable = Vector2.Distance(inter.gameObject.transform.position, transform.position);
+
+                        if (distanceFromInteractable < inter.MyRadius)
+                        {
+                            inter.Interact();
+                        }
+
                         return;
                     }
 
                     if (vendor != null)
                     {
-                        vendor.Interact();
+                        float distanceFromInteractable = Vector2.Distance(vendor.gameObject.transform.position, transform.position);
+
+                        if (distanceFromInteractable < vendor.radius)
+                        {
+                            vendor.Interact();
+                        }
+
                         return;
                     }
                 }
@@ -790,15 +832,15 @@ public class PlayerController : MonoBehaviour
 
         // otherwise let him hit
         return true;
-    } // commented
+    }
 
     private Vendor CheckForVendor()
     {
         Vector3 screenNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
         Vector3 screenFar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
 
-        Vector3 farPoint = Camera.main.ScreenToWorldPoint(screenFar);
         Vector3 nearPoint = Camera.main.ScreenToWorldPoint(screenNear);
+        Vector3 farPoint = Camera.main.ScreenToWorldPoint(screenFar);
 
         RaycastHit hit;
 
@@ -808,22 +850,15 @@ public class PlayerController : MonoBehaviour
 
             if (vendor == null)
             {
-                //mouseOverInteractableAndPlayerInRange = false;
                 return null;
             }
 
             if (vendor != null)
             {
-                // check if player is close enough to interact with the interactable
-                float distanceFromInteractable = Vector2.Distance(hit.collider.gameObject.transform.position, transform.position);
+                // Stop player from hitting 
 
-                if (distanceFromInteractable < vendor.radius)
-                {
-                    //mouseOverInteractableAndPlayerInRange = true;
-                    return vendor;
-                }
 
-                return null;
+                return vendor;
             }
             else
             {
@@ -841,6 +876,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Checks to see if the player hit an interactable witrh a mouse or not
+    /// if it did it retuirns the interactable
+    /// </summary>
+    /// <returns></returns>
     private Interactable CheckForInteractable()
     {
         Vector3 screenNear = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane);
@@ -857,40 +897,21 @@ public class PlayerController : MonoBehaviour
 
             if (interactable == null)
             {
-                //mouseOverInteractableAndPlayerInRange = false;
                 return null;
             }
 
-            if (interactable != null)
+            else if (interactable != null)
             {
-                // check if player is close enough to interact with the interactable
-                float distanceFromInteractable = Vector2.Distance(hit.collider.gameObject.transform.position, transform.position);
-
-                //Debug.Log(distanceFromInteractable + "   " + interactable.radius);
-
-                if (distanceFromInteractable < interactable.MyRadius)
-                {
-                    //mouseOverInteractableAndPlayerInRange = true;
-                    return interactable;
-                }
-
-                //mouseOverInteractableAndPlayerInRange = false;
-                return null;
+                return interactable;
             }
-            else
-            {
-                Debug.LogWarning("something wrong with the clickFeedback");
-                return null;
-            }
-        }
-        else
-        {
-            SetMousePosition();
-            //mouseOverInteractableAndPlayerInRange = false;
+
+
+            Debug.LogWarning("something wrong with the clickFeedback");
             return null;
         }
 
-
+        SetMousePosition();
+        return null;
     }
 
     /// <summary>
@@ -1171,6 +1192,7 @@ public class PlayerController : MonoBehaviour
         playerStat = GetComponent<PlayerStats>();
         anim = GetComponent<Animator>();
         equip = EquipmentManager.instance;
+        dungeon = DungeonManager.instance;
         m_Plane = GameDetails._instance.m_Plane;
         pooledArrows = PooledProjectilesController.instance;
         cameraControl = CameraController.instance;
@@ -1224,6 +1246,7 @@ public class PlayerController : MonoBehaviour
         {
             portal = false;
             transform.Find("Skeleton").gameObject.SetActive(true);
+            dungeon.townPortalDropped = false;
         }
 
         if (!scene.name.EndsWith("_indoor"))
@@ -1234,9 +1257,9 @@ public class PlayerController : MonoBehaviour
 
         else if (scene.name.EndsWith("_indoor"))
         {
-            DungeonManager.Instance.playerHasBossKey = false;
-            DungeonManager.Instance.bossKeyHasDropped = false;
-            DungeonManager.Instance.bossRoomAvailable = false;
+            dungeon.playerHasBossKey = false;
+            dungeon.bossKeyHasDropped = false;
+            dungeon.bossRoomAvailable = false;
             Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 0.43f;
             pointLight.gameObject.SetActive(true);
         }

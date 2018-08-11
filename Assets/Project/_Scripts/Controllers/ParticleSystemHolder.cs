@@ -48,7 +48,7 @@ public class ParticleSystemHolder : MonoBehaviour {
         }
     }
 
-    public void PlaySpellEffect(Vector2 pos, string itemOrEffectName)
+    public GameObject PlaySpellEffect(Vector2 pos, string itemOrEffectName)
     {
         if (itemOrEffectName.EndsWith("(Clone)"))
         {
@@ -58,13 +58,14 @@ public class ParticleSystemHolder : MonoBehaviour {
         switch (itemOrEffectName)
         {
             case "Town Portal Book":
-                Instantiate(townPortal, pos, Quaternion.identity);
-                break;
+                return Instantiate(townPortal, pos, Quaternion.identity);
+
             case "Town Portal":
-                Instantiate(townPortalEnter, pos, Quaternion.identity);
-                break;
+                return Instantiate(townPortalEnter, pos, Quaternion.identity);
 
         }
+
+        return null;
     }
 
     public GameObject PlayerStunnedEffect()

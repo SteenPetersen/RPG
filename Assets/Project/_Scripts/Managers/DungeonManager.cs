@@ -4,7 +4,7 @@ using UnityEngine;
 public class DungeonManager : MonoBehaviour {
 
     public static DungeonManager _instance;
-    public static DungeonManager Instance { get { return _instance; } }
+    public static DungeonManager instance { get { return _instance; } }
     private void Awake()
     {
         if (_instance != null && _instance != this)
@@ -21,6 +21,7 @@ public class DungeonManager : MonoBehaviour {
     public List<GameObject> enemiesInDungeon = new List<GameObject>();
     public GameObject bossRoomKey;  // accessed by the lootcontroller
     public GameObject chestKey;   // accessed by the lootcontroller
+    public bool townPortalDropped;
 
     public bool playerHasBossKey;
     public bool bossKeyHasDropped;

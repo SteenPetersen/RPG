@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public class Vendor : MonoBehaviour
 {
+    PlayerController player;
 
-    [SerializeField]
-    VendorType vendorType;
+    [SerializeField] VendorType vendorType;
 
     public float radius;
-
     GameObject vendorUi;
     CanvasGroup vendorWindow;
-    [SerializeField]
-    StockEntry stockEntry;
 
-    [SerializeField]
-    List<Item> defaultStock;
+    [SerializeField] StockEntry stockEntry;
 
-    [SerializeField]
-    List<Item> purchasedStock;
+    [SerializeField] List<Item> defaultStock;
+
+    [SerializeField] List<Item> purchasedStock;
 
     public List<Item> MyDefaultStock
     {
@@ -41,7 +35,7 @@ public class Vendor : MonoBehaviour
 
     void Start()
     {
-
+        player = PlayerController.instance;
         vendorUi = GameObject.Find("VendorUi");
         vendorWindow = vendorUi.GetComponentInParent<CanvasGroup>();
         defaultStock = VendorManager.instance.GetGoods(vendorType);
@@ -62,7 +56,6 @@ public class Vendor : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// Display the vendor window and show a stock entry for each item in stock
     /// </summary>
@@ -70,8 +63,6 @@ public class Vendor : MonoBehaviour
     {
         if (!VendorManager.instance.vendorWindowOpen)
         {
-            Debug.Log("Player just clicked me");
-
             int count = 1;
 
             // must delete everything everytime because we use the same window for all vendors.
@@ -158,5 +149,29 @@ public class Vendor : MonoBehaviour
     {
         Gizmos.color = Color.black;
         Gizmos.DrawWireSphere(transform.position, radius);
+    }
+
+    /// <summary>
+    /// Keeps tabs on when mouse is over the vendor 
+    /// to stop player from shooting etc
+    /// </summary>
+    void OnMouseOver()
+    {
+        if (!player.mouseOverVendor)
+        {
+            player.mouseOverVendor = true;
+        }
+    }
+
+    /// <summary>
+    /// keepos tabs on when mouse leaves vendor
+    /// to reallow player to shoot and hit etc
+    /// </summary>
+    void OnMouseExit()
+    {
+        if (player.mouseOverVendor)
+        {
+            player.mouseOverVendor = false;
+        }
     }
 }

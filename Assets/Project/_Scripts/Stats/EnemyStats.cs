@@ -52,14 +52,14 @@ public class EnemyStats : CharacterStats {
             }
         }
 
-        if (DungeonManager.Instance != null)
+        if (DungeonManager.instance != null)
         {
-            DungeonManager dungeon = DungeonManager.Instance;
+            DungeonManager dungeon = DungeonManager.instance;
 
             // If this enemy was died in a dungeon
             if (dungeon.enemiesInDungeon.Contains(gameObject))
             {
-                if (!dungeon.bossKeyHasDropped && DungeonManager.Instance.bossRoomAvailable)
+                if (!dungeon.bossKeyHasDropped && DungeonManager.instance.bossRoomAvailable)
                 {
                     // check to see if it dropped the key
                     LootController.instance.EnemyBossRoomKeyDrop(dungeon.enemiesInDungeon.Count, gameObject.transform.position);
@@ -147,12 +147,6 @@ public class EnemyStats : CharacterStats {
         shieldedTextScript.Purple(newDmg.ToString(), transform.position);
         shieldedText.transform.position = transform.position;
         shieldedText.gameObject.SetActive(true);
-
-        if (enemyAI.setter.targetASTAR == null)
-        {
-            enemyAI.setter.targetASTAR = PlayerController.instance.gameObject.transform;
-        }
-
     }
 
     public float CalculateHealth(float currentHealth, float maxHealth)

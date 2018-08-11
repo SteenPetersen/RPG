@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class Destructable : MonoBehaviour {
@@ -10,9 +11,8 @@ public class Destructable : MonoBehaviour {
     [Tooltip("Does this Destructable have anything inside")]
     [SerializeField] bool objInside;
     [SerializeField] bool canDropItems;
+    [Tooltip("Place the items that can only drop once as the first item in the list")]
     [SerializeField] GameObject[] droppableItems;
-    [Tooltip("Items that may only drops once per dungeon, special keys, portal books etc")]
-    [SerializeField] string singularDropItem;
 
     [SerializeField] int chanceToDrop;
 
@@ -47,7 +47,7 @@ public class Destructable : MonoBehaviour {
     /// </summary>
     public void Impact()
     {
-        ShakeManager.instance.shakeGameObject(this, gameObject, shakeTime, decreaseShakeTiome, true);
+        ShakeManager.instance.shakeGameObject(gameObject, shakeTime, decreaseShakeTiome, true, this);
 
         health -= 50;
         impact.Play();
@@ -77,27 +77,43 @@ public class Destructable : MonoBehaviour {
 
             if (canDropItems)
             {
-                int rand = UnityEngine.Random.Range(0, 100);
-
-                if (rand < chanceToDrop)
-                {
-                    rand = UnityEngine.Random.Range(0, droppableItems.Length);
-
-                    if (rand == 0)
-                    {
-                        var check = InventoryScript.instance.FindItemInInventory(singularDropItem);
-
-                        if (check == null)
-                        {
-                            Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
-                            return;
-                        }
-                    }
-
-                    Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
-
-                }
+                DetermineLoot();
             }
+        }
+    }
+
+    /// <summary>
+    /// Determines what if anything dropped
+    /// </summary>
+    private void DetermineLoot()
+    {
+        int rand = UnityEngine.Random.Range(0, 100);
+
+
+        if (rand < chanceToDrop)
+        {
+            rand = UnityEngine.Random.Range(0, droppableItems.Length);
+
+            Debug.Log("tag = " + droppableItems[rand].tag);
+
+
+            if (droppableItems[rand].tag == "TownPortal")
+            {
+                DungeonManager dungeon = DungeonManager.instance;
+
+                if (!dungeon.townPortalDropped)
+                {
+                    Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
+                    dungeon.townPortalDropped = true;
+                    return;
+                }
+
+                Instantiate(droppableItems[rand + 1], transform.position, Quaternion.identity);
+                return;
+            }
+
+            Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
+
         }
     }
 

@@ -49,6 +49,7 @@ public class BoardCreator : MonoBehaviour
     public GameObject chestLowerTier;
     public GameObject chestHigherTier;
     public GameObject floorGrid;
+    public GameObject followLight;
 
     public List<TileLocation> skullDoorLocations = new List<TileLocation>();
 
@@ -165,7 +166,7 @@ public class BoardCreator : MonoBehaviour
         if (tmp.tag == "Enemy" && !isBoss)
         {
             tmp.transform.parent = enemyHolder.transform;
-            DungeonManager.Instance.enemiesInDungeon.Add(tmp);
+            DungeonManager.instance.enemiesInDungeon.Add(tmp);
         }
 
         else if (tmp.tag == "Goal")
@@ -595,7 +596,7 @@ public class BoardCreator : MonoBehaviour
         if (spaceForBossRoom)
         {
             //Debug.LogWarning("Area Clear");
-            DungeonManager.Instance.bossRoomAvailable = true;
+            DungeonManager.instance.bossRoomAvailable = true;
         }
     }
 
@@ -3048,10 +3049,16 @@ public class BoardCreator : MonoBehaviour
 
             BuildEntranceRoom();
 
+            Debug.Log("There are " + DungeonManager.instance.enemiesInDungeon.Count + " enemies in the list");
+
+            DungeonManager.instance.enemiesInDungeon.Clear();
+
             SpawnEnemies();
             SpawnDestructables();
             RemoveAllEnemiesNearStartPoint();
             SpawnObstructedCorridor();
+
+            Debug.Log("There are " + DungeonManager.instance.enemiesInDungeon.Count + " enemies in the list");
 
             workDone = true;
         }
@@ -3068,7 +3075,7 @@ public class BoardCreator : MonoBehaviour
         foreach (var enemy in killzone)
         {
             Debug.Log("Im a: " + enemy.transform.parent.gameObject.name);
-            DungeonManager.Instance.enemiesInDungeon.Remove(enemy.gameObject);
+            DungeonManager.instance.enemiesInDungeon.Remove(enemy.gameObject);
             Destroy(enemy.transform.parent.gameObject);
         }
     }
@@ -3079,6 +3086,8 @@ public class BoardCreator : MonoBehaviour
     /// </summary>
     private void SpawnEnemies()
     {
+
+
         foreach (Room room in rooms)
         {
             if (room != rooms[0] && room != rooms[rooms.Length - 1])

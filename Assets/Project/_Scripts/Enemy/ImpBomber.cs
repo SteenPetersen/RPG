@@ -38,14 +38,16 @@ public class ImpBomber : EnemyAI {
 
             if (SceneManager.GetActiveScene().name.EndsWith("_indoor"))
             {
-                DungeonManager.Instance.enemiesInDungeon.Remove(gameObject);
+                DungeonManager dungeon = DungeonManager.instance;
 
-                if (DungeonManager.Instance.enemiesInDungeon.Count == 0 && !DungeonManager.Instance.bossKeyHasDropped)
+                dungeon.enemiesInDungeon.Remove(gameObject);
+
+                if (dungeon.enemiesInDungeon.Count == 0 && !dungeon.bossKeyHasDropped && dungeon.bossRoomAvailable)
                 {
-                    Instantiate(DungeonManager.Instance.bossRoomKey, tr.position, Quaternion.identity);
+                    Instantiate(DungeonManager.instance.bossRoomKey, tr.position, Quaternion.identity);
                 }
 
-                Debug.LogWarning(" there are now " + DungeonManager.Instance.enemiesInDungeon.Count + " enemies on the list");
+                Debug.LogWarning(" there are now " + DungeonManager.instance.enemiesInDungeon.Count + " enemies on the list");
             }
 
             CameraShaker.Instance.ShakeOnce(3f, 3f, 0.1f, 0.5f);

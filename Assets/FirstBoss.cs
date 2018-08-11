@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -198,7 +199,24 @@ public class FirstBoss : EnemyAI
 
     public override void OnAoeCastComplete()
     {
-        StartCoroutine(FireAoe());
+        int rand = UnityEngine.Random.Range(0, 3);
+
+        if (rand == 0)
+        {
+            StartCoroutine(FourDirectionalAoe());
+        }
+        else if (rand == 1)
+        {
+            StartCoroutine(RoundShot());
+        }
+        else if (rand == 2)
+        {
+            StartCoroutine(SpreadShotAoe());
+        }
+        else
+        {
+            StartCoroutine(PulseShotAoe());
+        }
 
         castingTimer = castingDelay;
         aoeTimer = aoeDelay;
@@ -271,7 +289,7 @@ public class FirstBoss : EnemyAI
         pausingMovement = false;
     }
 
-    IEnumerator FireAoe()
+    IEnumerator FourDirectionalAoe()
     {
         for (int i = 0; i <= amountOfFireballs; i++)
         {
@@ -279,19 +297,119 @@ public class FirstBoss : EnemyAI
             Vector2 direction = new Vector2(playerObj.transform.position.x - transform.position.x, playerObj.transform.position.y - transform.position.y);
             direction.Normalize();
 
-            if (myStats.currentHealth > (myStats.maxHealth / 2))
-            {
-                FourDirectionalShot(direction, 4);
-            }
-            else
-            {
-                WavesOfFire(direction);
-            }
+            FourDirectionalShot(direction, 4);
 
             yield return new WaitForSeconds(timeBetweenAoe);
         }
 
         StartCoroutine(ReAggroPlayer());
+    }
+
+    IEnumerator RoundShot()
+    {
+        Debug.Log("Round shot");
+
+        Vector2 direction = new Vector2(playerObj.transform.position.x - transform.position.x, playerObj.transform.position.y - transform.position.y);
+        direction.Normalize();
+
+        for (int i = 0; i <= amountOfFireballs * 4; i++)
+        {
+            if (i != 0)
+            {
+                direction = direction.Rotate(15f);
+            }
+
+            GameObject projectile = PooledProjectilesController.instance.GetEnemyProjectile(gameObject.name, aoeProjectile);
+
+            projectile.GetComponent<enemy_Projectile>().MakeProjectileReady();
+            projectile.transform.position = projectileLaunchPoint.transform.position;
+            projectile.transform.rotation = Quaternion.identity;
+            projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+            SoundManager.instance.PlayCombatSound(gameObject.name + "_shot");
+
+            yield return new WaitForSeconds(timeBetweenAoe / 4);
+        }
+
+        StartCoroutine(ReAggroPlayer());
+    }
+
+    IEnumerator SpreadShotAoe()
+    {
+        Debug.Log("Spread shot");
+
+
+        for (int i = 0; i <= amountOfFireballs; i++)
+        {
+            // at the player
+            Vector2 direction = new Vector2(playerObj.transform.position.x - transform.position.x, playerObj.transform.position.y - transform.position.y);
+            direction.Normalize();
+
+            SpreadShot(direction);
+
+            yield return new WaitForSeconds(timeBetweenAoe);
+        }
+
+        StartCoroutine(ReAggroPlayer());
+    }
+
+    IEnumerator PulseShotAoe()
+    {
+        Debug.Log("pulse shot");
+
+        for (int i = 1; i <= 5; i++)
+        {
+            // at the player
+            Vector2 direction = new Vector2(playerObj.transform.position.x - transform.position.x, playerObj.transform.position.y - transform.position.y);
+            direction.Normalize();
+
+            PulseShot(direction);
+
+            yield return new WaitForSeconds(timeBetweenAoe * 2);
+        }
+
+        StartCoroutine(ReAggroPlayer());
+    }
+
+    private void PulseShot(Vector2 direction)
+    {
+        for (int i = 0; i <= 18; i++)
+        {
+            if (i != 0)
+            {
+                direction = direction.Rotate(20);
+            }
+
+            GameObject projectile = PooledProjectilesController.instance.GetEnemyProjectile(gameObject.name, aoeProjectile);
+
+            projectile.GetComponent<enemy_Projectile>().MakeProjectileReady();
+            projectile.transform.position = projectileLaunchPoint.transform.position;
+            projectile.transform.rotation = Quaternion.identity;
+            projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed / 4);
+            SoundManager.instance.PlayCombatSound(gameObject.name + "_shot");
+        }
+    }
+
+    private void SpreadShot(Vector2 direction)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == 1)
+            {
+                direction = direction.Rotate(25f);
+            }
+            else if (i == 2)
+            {
+                direction = direction.Rotate(315f);
+            }
+
+            GameObject projectile = PooledProjectilesController.instance.GetEnemyProjectile(gameObject.name, aoeProjectile);
+
+            projectile.GetComponent<enemy_Projectile>().MakeProjectileReady();
+            projectile.transform.position = projectileLaunchPoint.transform.position;
+            projectile.transform.rotation = Quaternion.identity;
+            projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
+            SoundManager.instance.PlayCombatSound(gameObject.name + "_shot");
+        }
     }
 
     /// <summary>
@@ -318,42 +436,6 @@ public class FirstBoss : EnemyAI
             SoundManager.instance.PlayCombatSound(gameObject.name + "_shot");
         }
 
-    }
-
-    /// <summary>
-    /// Shoots projectiles in a fan shape in the direction of the Player
-    /// </summary>
-    /// <param name="initialDirection"></param>
-    void WavesOfFire(Vector3 initialDirection)
-    {
-        Vector2 prevDirection;
-        prevDirection = initialDirection;
-
-        for (int i = 1; i <= 8; i++)
-        {
-            if (i != 1)
-            {
-                Vector3 tmp = Vector2.Perpendicular(prevDirection);
-
-                if (i % 2 == 0)
-                {
-                    prevDirection = (initialDirection + tmp).normalized;
-                }
-                else
-                {
-                    prevDirection = (initialDirection - tmp).normalized;
-                }
-
-            }
-
-            GameObject projectile = PooledProjectilesController.instance.GetEnemyProjectile(gameObject.name, aoeProjectile);
-
-            projectile.GetComponent<enemy_Projectile>().MakeProjectileReady();
-            projectile.transform.position = projectileLaunchPoint.transform.position;
-            projectile.transform.rotation = Quaternion.identity;
-            projectile.GetComponent<Rigidbody2D>().AddForce(prevDirection * projectileSpeed);
-            SoundManager.instance.PlayCombatSound(gameObject.name + "_shot");
-        }
     }
 
 }

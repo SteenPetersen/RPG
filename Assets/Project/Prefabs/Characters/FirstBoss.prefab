@@ -1333,7 +1333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335e7911ae216954dae8d856ffee6b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 6500
+  maxHealth: 3500
   damage:
     baseValue: 0
   armor:
@@ -1354,6 +1354,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 56
   playOnAwake: 0
+  p: {fileID: 0}
 --- !u!114 &114045906091740378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1427,6 +1428,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 56
   playOnAwake: 0
+  p: {fileID: 0}
 --- !u!114 &114424881174669058
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1466,6 +1468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 23
   playOnAwake: 0
+  p: {fileID: 0}
 --- !u!114 &114478968658878132
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1626,6 +1629,8 @@ MonoBehaviour:
   whenCloseToDestination: 0
   healthbar: {fileID: 114667532976719208}
   speechLocation: {fileID: 1349606499620456}
+  showGizmos: 0
+  interval: 2
   setter: {fileID: 0}
   isDead: 0
   inRange: 0
@@ -1700,6 +1705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 23
   playOnAwake: 0
+  p: {fileID: 0}
 --- !u!198 &198066739655191034
 ParticleSystem:
   m_ObjectHideFlags: 1

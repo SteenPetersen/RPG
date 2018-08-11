@@ -5,9 +5,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Book", menuName = "Items/Books", order = 1)]
 public class Book : Item, IUseable
 {
+    [Tooltip("first line of the description")]
     [SerializeField] string description;
+    [Tooltip("Second line of the description")]
+    [SerializeField] string description2;
     [SerializeField] ParticleSystem clickParticles;
     [SerializeField] bool drawGizmos;
+
+    GameObject tmp;
+
     float range = 4f;
     Vector2 player;
 
@@ -52,7 +58,6 @@ public class Book : Item, IUseable
                 {
                     Vector2 toAdd = player + (direction * range);
                     positions.Add(toAdd);
-
                 }
             }
         }
@@ -73,8 +78,10 @@ public class Book : Item, IUseable
 
     public override string GetDescription(bool showSaleValue = true)
     {
-        return base.GetDescription() + string.Format("\n" + description);
+        return base.GetDescription() + string.Format("\n" + description + "\n" + description2);
     }
+
+
 
     /// <summary>
     /// Checks the area around a given Position for walls

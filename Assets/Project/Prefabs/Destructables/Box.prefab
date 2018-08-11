@@ -192,7 +192,9 @@ MonoBehaviour:
   canDropItems: 1
   droppableItems:
   - {fileID: 1392853231466582, guid: dd3f0c150f6468e44bc48105b4d98a6a, type: 2}
-  chanceToDrop: 5
+  - {fileID: 1003413813164730, guid: 6cb1a3daf00d25747b27bdfd69fd06d1, type: 2}
+  singularDropItem: Town Portal Book
+  chanceToDrop: 15
   damagedMat: {fileID: 0}
   shakeTime: 0.3
   decreaseShakeTiome: 0.2

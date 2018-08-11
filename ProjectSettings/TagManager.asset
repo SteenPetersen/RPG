@@ -12,6 +12,7 @@ TagManager:
   - Keybind
   - PlayerSkeleton
   - Projectile
+  - TownPortal
   layers:
   - Default
   - TransparentFX
@@ -33,7 +34,7 @@ TagManager:
   - DialogueNPC
   - Loot
   - Destructable
-  - 
+  - EnemyWallCollision
   - 
   - DungeonMisc
   - 

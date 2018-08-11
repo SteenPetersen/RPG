@@ -15,7 +15,7 @@ public class KeyPickup : Interactable {
     {
         if (!hasInteracted)
         {
-            DungeonManager.Instance.playerHasBossKey = true;
+            DungeonManager.instance.playerHasBossKey = true;
             Destroy(gameObject);
         }
     }

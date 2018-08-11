@@ -210,7 +210,7 @@ public class EnemyAI : AIPath
             {
                 if (haveAggro)
                 {
-                    if (hit.transform.gameObject.layer == obstacleLayer)
+                    if (hit.transform.gameObject.layer == obstacleLayer && !alert)
                     {
                         haveAggro = false;
                         setter.targetASTAR = null;

@@ -80,8 +80,8 @@ public class LootController : MonoBehaviour {
 
         if (n <= p)
         {
-            Instantiate(DungeonManager.Instance.bossRoomKey, pos, Quaternion.identity);
-            DungeonManager.Instance.bossKeyHasDropped = true;
+            Instantiate(DungeonManager.instance.bossRoomKey, pos, Quaternion.identity);
+            DungeonManager.instance.bossKeyHasDropped = true;
             //Debug.LogWarning("Boss Key dropped!");
         }
     }

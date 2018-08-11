@@ -4155,7 +4155,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 1.2897611
+  orthographic size: 1.9267288
   m_Depth: 6
   m_CullingMask:
     serializedVersion: 2
@@ -4191,7 +4191,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.81500006
+  orthographic size: 0.81166667
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -8653,6 +8653,7 @@ MonoBehaviour:
   bossRoomKey: {fileID: 1060794977428998, guid: 00c419fcb9cd1aa479f74568a70bc752,
     type: 2}
   chestKey: {fileID: 0}
+  townPortalDropped: 0
   playerHasBossKey: 0
   bossKeyHasDropped: 0
   bossRoomAvailable: 0

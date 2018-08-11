@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Town Portal Book
   m_EditorClassIdentifier: 
   name: Town Portal Book
-  icon: {fileID: 21300002, guid: b9662a92751b2af418e8e09ad3aabc16, type: 3}
+  icon: {fileID: 21300024, guid: b9662a92751b2af418e8e09ad3aabc16, type: 3}
   sellValue: 0
   buyValue: 300
   typeOfEquipment: 6
@@ -20,5 +20,7 @@ MonoBehaviour:
   title: Town Portal Book
   quality: 0
   MySlot: {fileID: 0}
-  description: 'Use: Teleports the user out of a Dungeon'
+  description: 'Use: Teleports the user '
+  description2: out of a Dungeon
   clickParticles: {fileID: 0}
+  drawGizmos: 0

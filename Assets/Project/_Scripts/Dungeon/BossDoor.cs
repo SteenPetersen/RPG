@@ -10,7 +10,7 @@ public class BossDoor : MonoBehaviour {
     {
         if (col.tag == "Player")
         {
-            if (DungeonManager.Instance.playerHasBossKey)
+            if (DungeonManager.instance.playerHasBossKey)
             {
                 if (!open)
                 {

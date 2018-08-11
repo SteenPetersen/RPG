@@ -8,6 +8,13 @@ TextureImporter:
     21300006: books_white
     21300008: books_yellow
     21300010: books_beige
+    21300012: books_0
+    21300014: books_1
+    21300016: books_2
+    21300018: books_3
+    21300020: books_4
+    21300022: books_5
+    21300024: books_6
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -98,47 +105,47 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: books_skull
+      name: books_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 131
         height: 131
-      alignment: 9
-      pivot: {x: 0.51605135, y: 0.17362244}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6e29f7cd53da4b74493ae8fd1d5ece8f
+      spriteID: 70882aec39f7ec64f890c7126aa2416f
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: books_pink
+      name: books_1
       rect:
         serializedVersion: 2
-        x: 132
+        x: 131
         y: 0
         width: 131
         height: 131
-      alignment: 9
-      pivot: {x: 0.53745323, y: 0.45184612}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 346f4b1a030ec344197049b8b5dd5563
+      spriteID: 17cd450077f565047b17d29385ad2946
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: books_blue
+      name: books_2
       rect:
         serializedVersion: 2
         x: 262
@@ -146,19 +153,19 @@ TextureImporter:
         width: 131
         height: 131
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e5cd4c46827fea6488bd0ee9a2a1404c
+      spriteID: a66de14ab9e16ce49963ef49acf985b1
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: books_white
+      name: books_3
       rect:
         serializedVersion: 2
         x: 393
@@ -166,19 +173,19 @@ TextureImporter:
         width: 131
         height: 131
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 23d312ff772a36147a9411d6d0a1c23b
+      spriteID: beedca60b2a68bb4abdc25b3b1c429a4
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: books_yellow
+      name: books_4
       rect:
         serializedVersion: 2
         x: 524
@@ -186,19 +193,19 @@ TextureImporter:
         width: 131
         height: 131
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0da699797fca42e45ba127f5750b8d0f
+      spriteID: 0670b504dd59c2a4a92c4838a8d29c4f
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: books_beige
+      name: books_5
       rect:
         serializedVersion: 2
         x: 655
@@ -206,13 +213,33 @@ TextureImporter:
         width: 131
         height: 131
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fdca0403d0f72ad42918a8031fb833b0
+      spriteID: cd3def7e7cbfbf04893b3479827fe0c6
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: books_6
+      rect:
+        serializedVersion: 2
+        x: 786
+        y: 0
+        width: 131
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c24b96d9acb11e48bb2cd9207c88457
       vertices: []
       indices: 
       edges: []
