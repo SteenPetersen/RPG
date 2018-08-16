@@ -268,8 +268,8 @@ public class Room
 
     private void SetMapLocation()
     {
-        int mapX = UnityEngine.Random.Range(xPos, xPos + (roomWidth / 2));
-        int mapY = UnityEngine.Random.Range(yPos, yPos + (roomHeight / 2));
+        //int mapX = UnityEngine.Random.Range(xPos, xPos + (roomWidth / 2));
+        //int mapY = UnityEngine.Random.Range(yPos, yPos + (roomHeight / 2));
 
         //Debug.Log("Map is Placed at position X " + mapX + " and Y " + mapY);
 

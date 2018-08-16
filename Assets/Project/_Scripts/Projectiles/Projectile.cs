@@ -158,7 +158,7 @@ public class Projectile : MonoBehaviour {
     /// Prepares the projectile to be fired
     /// This method can be optimized
     /// </summary>
-    public void MakeProjectileReady()
+    public void PrepareProjectileState()
     {
         // check if this projectile has a chargedParticles effect attached to it and destroy it if it does
         for (int i = 0; i < transform.childCount; i++)

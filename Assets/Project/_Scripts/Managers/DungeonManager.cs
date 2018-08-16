@@ -5,6 +5,23 @@ public class DungeonManager : MonoBehaviour {
 
     public static DungeonManager _instance;
     public static DungeonManager instance { get { return _instance; } }
+
+    /// <summary>
+    /// Property where we set the image of the bosskey
+    /// </summary>
+    public bool _PlayerHasBossKey
+    {
+        get
+        {
+            return playerHasBossKey;
+        }
+
+        set
+        {
+            playerHasBossKey = value;
+        }
+    }
+
     private void Awake()
     {
         if (_instance != null && _instance != this)
@@ -23,7 +40,7 @@ public class DungeonManager : MonoBehaviour {
     public GameObject chestKey;   // accessed by the lootcontroller
     public bool townPortalDropped;
 
-    public bool playerHasBossKey;
+    private bool playerHasBossKey;
     public bool bossKeyHasDropped;
     public bool bossRoomAvailable;
 

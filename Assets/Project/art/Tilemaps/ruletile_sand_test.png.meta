@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: 4cdcf1a767539da4998e9e87224f6061
-timeCreated: 1518641614
-licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: ruletile_sand_test_0
@@ -32,7 +30,7 @@ TextureImporter:
     21300050: ruletile_sand_test_25
     21300052: ruletile_sand_test_26
   externalObjects: {}
-  serializedVersion: 4
+  serializedVersion: 5
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -79,11 +77,13 @@ TextureImporter:
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
+  singleChannelComponent: 0
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - buildTarget: DefaultTexturePlatform
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
     maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
@@ -93,7 +93,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Standalone
+  - serializedVersion: 2
+    buildTarget: Standalone
     maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
@@ -103,7 +104,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: WebGL
+  - serializedVersion: 2
+    buildTarget: WebGL
     maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
@@ -134,6 +136,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 4df06ed95ab8e854596beb4ff7cb1f56
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_1
       rect:
@@ -152,6 +160,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: b74c5e032be28cf4db57af2baed6b71b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_2
       rect:
@@ -170,6 +184,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: e42cb773c599450478db298ae4daaada
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_3
       rect:
@@ -188,6 +208,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: a71abe94bb4c48d4089154743285688e
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_4
       rect:
@@ -206,6 +232,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 97dbf48b43739fb4d8d8e689398c0abc
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_5
       rect:
@@ -227,6 +259,12 @@ TextureImporter:
         - {x: 10, y: 19}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 58d2f7b4dded67f42978983ac855981c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_6
       rect:
@@ -247,6 +285,12 @@ TextureImporter:
         - {x: 19.915703, y: 3.1092606}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 32d73f9a1b331274b869fd9df14e501b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_7
       rect:
@@ -269,6 +313,12 @@ TextureImporter:
         - {x: 16.019905, y: 7.4290924}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 7d93a92bb03ffbe43a052b1b945996c9
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_8
       rect:
@@ -289,6 +339,12 @@ TextureImporter:
         - {x: -19.91571, y: 2.954155}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: f8ebe99f1eae9a34f92bcc594f742322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_9
       rect:
@@ -307,6 +363,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 141c373201f91db46b3d7528523b3b88
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_10
       rect:
@@ -325,6 +387,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 938a53e7aa097484e9f3bed3514b5d8e
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_11
       rect:
@@ -344,6 +412,12 @@ TextureImporter:
         - {x: 12, y: 9}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: d3ec9a2a60603a64a86b680dcf050db2
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_12
       rect:
@@ -366,6 +440,12 @@ TextureImporter:
         - {x: 5.2450867, y: 5.0168915}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: c8aaad7eddae25b4abf2b7ca7ac7b2a0
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_13
       rect:
@@ -391,6 +471,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 3fb37f9785ceeb044914f3a8e5b7a1c7
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_14
       rect:
@@ -409,6 +495,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 9ab3135946da26a478bda903ad115da7
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_15
       rect:
@@ -429,6 +521,12 @@ TextureImporter:
         - {x: 7.567314, y: 16.071342}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 8cae5ba5a60d73f439817d2aba092944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_16
       rect:
@@ -448,6 +546,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 69a82406762934140bdbfcdbb38efdee
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_17
       rect:
@@ -467,6 +571,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 4393ec91d786b3743be7285b1e43c2d5
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_18
       rect:
@@ -486,6 +596,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: ecc6947a47ba02a4499cc322367f1e35
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_19
       rect:
@@ -508,6 +624,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: e02d5fff4f48ea84cb0a11e664f2b00b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_20
       rect:
@@ -528,6 +650,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 695088ec28c16b8479be8def48225c8c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_21
       rect:
@@ -550,6 +678,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 3e3c153e4e1377e4cbcecfee4528cb5a
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_22
       rect:
@@ -569,6 +703,12 @@ TextureImporter:
         - {x: 2.7464066, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: aaca83dcb0bc51042b53d346bb2eadde
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_23
       rect:
@@ -588,6 +728,12 @@ TextureImporter:
         - {x: 17, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 0fdeab59e9db5894bb2de59b28b982bc
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_24
       rect:
@@ -607,6 +753,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 837acd1b8b397d54e919752271d424e9
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_25
       rect:
@@ -627,6 +779,12 @@ TextureImporter:
         - {x: 20, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 59ef752d01489824ebd45e592d0866ac
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_sand_test_26
       rect:
@@ -649,8 +807,20 @@ TextureImporter:
         - {x: 5.3943787, y: 20}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 13e46cad514f7d443a4e05feca9eb6ff
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
+    bones: []
+    spriteID: 
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
   spritePackingTag: Pixlrelm
   userData: 
   assetBundleName: 

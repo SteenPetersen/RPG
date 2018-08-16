@@ -19,7 +19,7 @@ public class Destructable : MonoBehaviour {
     [SerializeField] Material damagedMat;
 
     [SerializeField] float shakeTime;
-    [SerializeField] float decreaseShakeTiome;
+    [SerializeField] float decreaseShakeTime;
     [SerializeField] int MaxHealth;
     [SerializeField] int health;
     [SerializeField] ParticleSystem impact;
@@ -47,7 +47,7 @@ public class Destructable : MonoBehaviour {
     /// </summary>
     public void Impact()
     {
-        ShakeManager.instance.shakeGameObject(gameObject, shakeTime, decreaseShakeTiome, true, this);
+        ShakeManager.instance.shakeGameObject(gameObject, shakeTime, decreaseShakeTime, true, this);
 
         health -= 50;
         impact.Play();

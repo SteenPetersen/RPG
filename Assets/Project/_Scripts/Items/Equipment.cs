@@ -11,6 +11,8 @@ public class Equipment : Item, IUseable {
 
     [SerializeField] Sprite glowEffect;
 
+    public int tier;
+
     public int armorModifier;
     public int damageModifier;
     public int sta;

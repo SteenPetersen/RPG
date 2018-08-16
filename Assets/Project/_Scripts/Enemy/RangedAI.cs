@@ -1,4 +1,5 @@
-﻿using Pathfinding;
+﻿using EZCameraShake;
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -180,6 +181,19 @@ public class RangedAI : EnemyAI {
     {
         distanceToLook = newLookDistance;
         setter.ai.destination = PlayerController.instance.gameObject.transform.position;
+    }
+
+    public override void DieBurning()
+    {
+        GameObject tmp = ParticleSystemHolder.instance.PlaySpellEffect(transform.Find("Imp_A*/Skeleton/Body").position, "imp die burning");
+        Destroy(tmp, 3);
+    }
+
+    public override void altDeath()
+    {
+        SoundManager.instance.PlayCombatSound("bomb");
+        ParticleSystemHolder.instance.PlaySpellEffect(tr.position, "explode");
+        CameraShaker.Instance.ShakeOnce(3f, 3f, 0.1f, 0.5f);
     }
 
 }

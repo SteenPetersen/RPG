@@ -10,7 +10,7 @@ public static class QualityColor {
     {
         {Quality.Common, "#cecece" },
         {Quality.UnCommon, "#00ff00ff" },
-        {Quality.Rare, "#7b87ff" },
+        {Quality.Rare, "#4c5cfe" },
         {Quality.Epic, "#9e7afa" },
         {Quality.Legendary, "#af1717" }
 

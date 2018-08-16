@@ -681,7 +681,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1170947441184882
 GameObject:
   m_ObjectHideFlags: 1
@@ -1618,7 +1618,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1439724512683520
 GameObject:
   m_ObjectHideFlags: 1
@@ -3794,7 +3794,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1085842817211462}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.27, y: -18.225, z: -10}
+  m_LocalPosition: {x: -15.98, y: -20.76, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4604255163508626}
@@ -4155,7 +4155,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 1.9267288
+  orthographic size: 2.0058553
   m_Depth: 6
   m_CullingMask:
     serializedVersion: 2
@@ -4191,7 +4191,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.81166667
+  orthographic size: 0.84499997
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -5003,11 +5003,23 @@ MonoBehaviour:
     visible: {fileID: 21300002, guid: f6a865b468ef73f4b8aee5b4d767dac6, type: 3}
     glow: {fileID: 21300004, guid: f6a865b468ef73f4b8aee5b4d767dac6, type: 3}
     icon: {fileID: 21300000, guid: f6a865b468ef73f4b8aee5b4d767dac6, type: 3}
+  swords1: []
+  swords2: []
   bows:
   - id: 0
     visible: {fileID: 21300002, guid: 4f21ed4071b2fc747a8d417966ddd27b, type: 3}
     glow: {fileID: 21300004, guid: 4f21ed4071b2fc747a8d417966ddd27b, type: 3}
     icon: {fileID: 21300000, guid: 4f21ed4071b2fc747a8d417966ddd27b, type: 3}
+  - id: 1
+    visible: {fileID: 21300002, guid: 8420517a56536a649b8fae251ff2725d, type: 3}
+    glow: {fileID: 21300004, guid: 8420517a56536a649b8fae251ff2725d, type: 3}
+    icon: {fileID: 21300000, guid: 8420517a56536a649b8fae251ff2725d, type: 3}
+  - id: 2
+    visible: {fileID: 21300002, guid: d9867a32100e3ee478def7da9173a14b, type: 3}
+    glow: {fileID: 21300004, guid: d9867a32100e3ee478def7da9173a14b, type: 3}
+    icon: {fileID: 21300000, guid: d9867a32100e3ee478def7da9173a14b, type: 3}
+  bows1: []
+  bows2: []
   shields:
   - id: 0
     visible: {fileID: 21300002, guid: 179c14baf599e7145957647e76335d03, type: 3}
@@ -5021,14 +5033,43 @@ MonoBehaviour:
   - id: 3
     visible: {fileID: 21300002, guid: f7bb8a18d0039ea4e9af42fa0b45ec2b, type: 3}
     icon: {fileID: 21300000, guid: f7bb8a18d0039ea4e9af42fa0b45ec2b, type: 3}
-  leatherArmorHelm: []
-  leatherArmorChest: []
-  leatherArmorLegs: []
-  leatherArmorFrontfoot: []
-  leatherArmorBackfoot: []
-  leatherArmorGuantleft: []
-  leatherArmorGuantright: []
-  leatherArmorShoulder: []
+  shields1: []
+  shields2: []
+  leatherArmorHelm:
+  - id: 0
+    visible: {fileID: 21300002, guid: 99bf9cffd6adb694ab74bd3983595ef5, type: 3}
+    icon: {fileID: 21300000, guid: 99bf9cffd6adb694ab74bd3983595ef5, type: 3}
+  - id: 1
+    visible: {fileID: 21300002, guid: 59032adee7f56c14096f9f7ab89f4fcb, type: 3}
+    icon: {fileID: 21300000, guid: 59032adee7f56c14096f9f7ab89f4fcb, type: 3}
+  leatherArmorChest:
+  - id: 0
+    visible: {fileID: 21300002, guid: ebc0651f3f0f0724ca562283c0152bef, type: 3}
+    icon: {fileID: 21300000, guid: ebc0651f3f0f0724ca562283c0152bef, type: 3}
+  leatherArmorLegs:
+  - id: 0
+    visible: {fileID: 21300002, guid: c056720ce217ede4a9088336a37942ed, type: 3}
+    icon: {fileID: 21300000, guid: c056720ce217ede4a9088336a37942ed, type: 3}
+  leatherArmorFrontfoot:
+  - id: 0
+    visible: {fileID: 21300002, guid: 3232153fe27b3954599a4982d1c9813c, type: 3}
+    icon: {fileID: 21300000, guid: 26218583c0d6b89458f21cbe12214979, type: 3}
+  leatherArmorBackfoot:
+  - id: 0
+    visible: {fileID: 21300002, guid: b4cd4dfc65e7b45488b07ffe606ee380, type: 3}
+    icon: {fileID: 21300000, guid: 26218583c0d6b89458f21cbe12214979, type: 3}
+  leatherArmorGuantleft:
+  - id: 0
+    visible: {fileID: 21300002, guid: 2a7d5f01ccd333146b2992742b64dc9f, type: 3}
+    icon: {fileID: 21300000, guid: 2a7d5f01ccd333146b2992742b64dc9f, type: 3}
+  leatherArmorGuantright:
+  - id: 0
+    visible: {fileID: 21300002, guid: 73f485cf27f0d6c4e86cd4b0ff0e291e, type: 3}
+    icon: {fileID: 21300000, guid: 73f485cf27f0d6c4e86cd4b0ff0e291e, type: 3}
+  leatherArmorShoulder:
+  - id: 0
+    visible: {fileID: 21300002, guid: cdf22baece502a2429b8ce1f23c93d07, type: 3}
+    icon: {fileID: 21300000, guid: cdf22baece502a2429b8ce1f23c93d07, type: 3}
   metalArmorHelm:
   - id: 0
     visible: {fileID: 21300002, guid: 75892bfb2cbd17646979aa1b9b07667d, type: 3}
@@ -5373,8 +5414,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114403781247210042}
   m_HandleRect: {fileID: 224722115335201110}
   m_Direction: 2
-  m_Value: 0.00000021222237
-  m_Size: 0.3706095
+  m_Value: 0.00000026527795
+  m_Size: 0.37060946
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6395,7 +6436,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: v 0.0.0.15
+  m_Text: v 0.0.0.18
 --- !u!114 &114220253795250638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7800,7 +7841,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ffa455306331cc49a9c2c8e1a246189, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   experience: 0
   experienceRequired: 0
   fillImage: {fileID: 114683773045203832}
@@ -8654,7 +8694,6 @@ MonoBehaviour:
     type: 2}
   chestKey: {fileID: 0}
   townPortalDropped: 0
-  playerHasBossKey: 0
   bossKeyHasDropped: 0
   bossRoomAvailable: 0
   teleport: 0
@@ -9557,6 +9596,7 @@ MonoBehaviour:
   shieldriposte: {fileID: 0}
   crit: {fileID: 0}
   lootdrop: {fileID: 0}
+  lootAppearsChest: {fileID: 0}
   purchase: {fileID: 0}
   chestopen: {fileID: 0}
   chestclose: {fileID: 0}
@@ -9570,6 +9610,8 @@ MonoBehaviour:
   destroyBox: {fileID: 0}
   portalAppears: {fileID: 0}
   enterPortal: {fileID: 0}
+  portIn: {fileID: 0}
+  firstBossDeath: {fileID: 0}
   audioSrc: {fileID: 0}
 --- !u!114 &114635843468031594
 MonoBehaviour:
@@ -10224,8 +10266,17 @@ MonoBehaviour:
     type: 2}
   bossOneFireShield: {fileID: 198169411683952716, guid: ad48fb49766c6e041950eb96545cd69d,
     type: 2}
-  townPortal: {fileID: 1272434244660828, guid: d98e11f5ee41a5d4cab426c9ab034398, type: 2}
+  bombExplosionObj: {fileID: 1056374588509000, guid: 51b68412f84aa1344a531b3764f3525f,
+    type: 2}
+  ashAway: {fileID: 1136131069163032, guid: 14a37518801d8d143bfbd46f6189987c, type: 2}
+  townPortal: {fileID: 1149486327779336, guid: 93e7d530f6bbc1846b329776558ddcfe, type: 2}
   townPortalEnter: {fileID: 1758807585086052, guid: 36730c7703438a34f942f90128bd16d8,
+    type: 2}
+  bossPortal: {fileID: 1149486327779336, guid: 84dd2e6d541f9a54c98ae9c0ea145af4, type: 2}
+  bossPortalEnter: {fileID: 1758807585086052, guid: fe4e7072ef167c5429fae90c956d57a4,
+    type: 2}
+  spawnIn: {fileID: 1501811682052280, guid: 23c3a6b22ad4803459f9e35918458f64, type: 2}
+  levelUpEffect: {fileID: 1589733703383816, guid: c8016a997079ccd4198467be2efa9d4a,
     type: 2}
   ChargedBowShot: {fileID: 1255754474404892, guid: af5b97ee2621ce04fa4c453620b83805,
     type: 2}
@@ -10699,6 +10750,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   box: {fileID: 1092575134886626, guid: 48c244e8dbfa98648b8663fcfccd29f2, type: 2}
   inventoryCam: {fileID: 1842271940594510}
+  keys: []
   toolTipLocation: {fileID: 224714465512117592}
   equipmentWindow: {fileID: 1921791494084082}
   actionButtons:
@@ -11857,6 +11909,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungeonFloorCount: 0
   reylith: {fileID: 1262274371615102, guid: 7b4a6f1638f219c459ac64f79ed0edf3, type: 2}
+  currentHomePosition: {x: 0, y: 0}
 --- !u!114 &114877839006519176
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12006,6 +12059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 879a236526c1c5a4ca0b86f936f17851, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bossKey: {fileID: 0}
   bags: []
   bagButtons:
   - {fileID: 114918325845648266}
@@ -12106,9 +12160,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vendorWindowOpen: 0
   potion:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: adca14bb4ad1d104ebb3420a099c8037, type: 2}
+  - {fileID: 11400000, guid: 08e9d21126a91644a95d2ad3bf1bbd87, type: 2}
+  - {fileID: 11400000, guid: 999df4bd5b215a04d93e20426c79e02f, type: 2}
+  - {fileID: 11400000, guid: 207611295fffc3e4fae9975b59b4a5f1, type: 2}
   armor: []
   general: []
 --- !u!114 &114917286655878074
@@ -19143,7 +19198,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000021584834, y: 287.59988}
+  m_AnchoredPosition: {x: 0.000021584834, y: 287.59985}
   m_SizeDelta: {x: 456.8, y: 913.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224080976581634028
@@ -19856,7 +19911,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 549, y: 132.26495}
+  m_AnchoredPosition: {x: 552, y: 172}
   m_SizeDelta: {x: 59.600006, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224294062718216938

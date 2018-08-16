@@ -46,7 +46,7 @@ public class LootController : MonoBehaviour {
             switch (tier)
             {
                 case 0:
-                    EquipmentGenerator._instance.CreateDroppable(position);
+                    EquipmentGenerator._instance.CreateDroppable(position, tier);
                     
                     // play loot sound
                     SoundManager.instance.PlayUiSound("lootdrop");
@@ -96,8 +96,13 @@ public class LootController : MonoBehaviour {
         switch (tier)
         {
             case 0:
-                var go = EquipmentGenerator._instance.CreateDroppable();
-                return go;
+                return EquipmentGenerator._instance.CreateDroppable(tier);
+
+            case 1:
+                return EquipmentGenerator._instance.CreateDroppable(tier);
+
+            case 2:
+                return EquipmentGenerator._instance.CreateDroppable(tier);
         }
 
         throw new Exception("there is no recognizable tier upon which to run the switch case ");

@@ -20,10 +20,16 @@ public class EquipmentRepo : MonoBehaviour {
     }
 
     public List<ItemGraphicSet> swords = new List<ItemGraphicSet>();
+    public List<ItemGraphicSet> swords1 = new List<ItemGraphicSet>();
+    public List<ItemGraphicSet> swords2 = new List<ItemGraphicSet>();
 
     public List<ItemGraphicSet> bows = new List<ItemGraphicSet>();
+    public List<ItemGraphicSet> bows1 = new List<ItemGraphicSet>();
+    public List<ItemGraphicSet> bows2 = new List<ItemGraphicSet>();
 
     public List<ArmorGraphicSet> shields = new List<ArmorGraphicSet>();
+    public List<ArmorGraphicSet> shields1 = new List<ArmorGraphicSet>();
+    public List<ArmorGraphicSet> shields2 = new List<ArmorGraphicSet>();
 
     public List<ArmorGraphicSet> leatherArmorHelm = new List<ArmorGraphicSet>();
     public List<ArmorGraphicSet> leatherArmorChest = new List<ArmorGraphicSet>();
@@ -54,15 +60,41 @@ public class EquipmentRepo : MonoBehaviour {
 
     public List<GameObject> teirOneArrows = new List<GameObject>();
 
-    public ItemGraphicSet GetMeleeItemSet(int identification)
+    public ItemGraphicSet GetMeleeItemSet(int identification, int tier)
     {
-        foreach (ItemGraphicSet item in swords)
+        if (tier == 0)
         {
-            if (item.id == identification)
+            foreach (ItemGraphicSet item in swords)
             {
-                return item;
+                if (item.id == identification)
+                {
+                    return item;
+                }
             }
         }
+
+        else if (tier == 1)
+        {
+            foreach (ItemGraphicSet item in swords1)
+            {
+                if (item.id == identification)
+                {
+                    return item;
+                }
+            }
+        }
+
+        else if (tier == 2)
+        {
+            foreach (ItemGraphicSet item in swords2)
+            {
+                if (item.id == identification)
+                {
+                    return item;
+                }
+            }
+        }
+
 
         Debug.LogWarning("didnt find the corresponding melee set");
         return null;
@@ -100,7 +132,100 @@ public class EquipmentRepo : MonoBehaviour {
     {
         if (armorType == ArmorType.Leather)
         {
+            switch (slot)
+            {
+                case EquipmentSlot.Head:
 
+                    foreach (ArmorGraphicSet armor in leatherArmorHelm)
+                    {
+                        if (armor.id == identification)
+                        {
+                            return armor;
+                        }
+                    }
+
+                    Debug.LogWarning("didnt find the corresponding ranged set");
+                    break;
+
+                case EquipmentSlot.Chest:
+
+                    foreach (ArmorGraphicSet armor in leatherArmorChest)
+                    {
+                        if (armor.id == identification)
+                        {
+                            return armor;
+                        }
+                    }
+
+                    Debug.LogWarning("didnt find the corresponding ranged set");
+                    break;
+
+                case EquipmentSlot.Legs:
+
+                    foreach (ArmorGraphicSet armor in leatherArmorLegs)
+                    {
+                        if (armor.id == identification)
+                        {
+                            return armor;
+                        }
+                    }
+                    break;
+
+                case EquipmentSlot.FrontFoot:
+
+                    foreach (ArmorGraphicSet armor in leatherArmorFrontfoot)
+                    {
+                        if (armor.id == identification)
+                        {
+                            return armor;
+                        }
+                    }
+                    break;
+
+                case EquipmentSlot.BackFoot:
+
+                    foreach (ArmorGraphicSet armor in leatherArmorBackfoot)
+                    {
+                        if (armor.id == identification)
+                        {
+                            return armor;
+                        }
+                    }
+                    break;
+
+                case EquipmentSlot.GauntletLeft:
+
+                    foreach (ArmorGraphicSet armor in leatherArmorGuantleft)
+                    {
+                        if (armor.id == identification)
+                        {
+                            return armor;
+                        }
+                    }
+                    break;
+
+                case EquipmentSlot.GauntletRight:
+
+                    foreach (ArmorGraphicSet armor in leatherArmorGuantright)
+                    {
+                        if (armor.id == identification)
+                        {
+                            return armor;
+                        }
+                    }
+                    break;
+
+                case EquipmentSlot.Shoulder:
+
+                    foreach (ArmorGraphicSet armor in leatherArmorShoulder)
+                    {
+                        if (armor.id == identification)
+                        {
+                            return armor;
+                        }
+                    }
+                    break;
+            }
         }
 
         else if (armorType == ArmorType.Metal)

@@ -7,8 +7,9 @@ public delegate void ItemCountChanged(Item item);
 public class InventoryScript : MonoBehaviour {
 
     public event ItemCountChanged itemCountChangedEvent;
-
     public static InventoryScript instance;
+
+    public GameObject bossKey;
 
     private void Awake()
     {
@@ -42,8 +43,7 @@ public class InventoryScript : MonoBehaviour {
     [SerializeField]
     private BagButton[] bagButtons;
 
-    [SerializeField]
-    private Item[] itemListForDebugging; // for debugging delete it later
+    public Item[] itemListForDebugging; // for debugging delete it later
 
     public bool CanAddBag
     {
@@ -151,29 +151,6 @@ public class InventoryScript : MonoBehaviour {
         get
         {
             return itemListForDebugging;
-        }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            Bag bag = (Bag)Instantiate(itemListForDebugging[0]);
-            bag.Initialize(16);
-            bag.Use();
-        }
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            Bag bag = (Bag)Instantiate(itemListForDebugging[0]);
-            bag.Initialize(16);
-            AddItem(bag);
-        }
-
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Item potion = Instantiate(itemListForDebugging[1]);
-            bool test = AddItem(potion);
         }
     }
 
@@ -408,6 +385,32 @@ public class InventoryScript : MonoBehaviour {
         }
 
         return slots;
+    }
+
+    /// <summary>
+    /// Find a key in the inventory that matches the
+    /// request tier 
+    /// </summary>
+    /// <param name="tier"></param>
+    /// <returns></returns>
+    public Key CheckForCorrectKey(int tier)
+    {
+        foreach (Bag bag in bags)
+        {
+            foreach (SlotScript slot in bag.MyBagScript.MySlots)
+            {
+                if (!slot.IsEmpty && slot.MyItem.GetType() == typeof(Key))
+                {
+                    Key k = (Key)slot.MyItem;
+                    if (k._Tier == tier)
+                    {
+                        return (Key)slot.MyItem;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public void OnItemCountChanged(Item item)

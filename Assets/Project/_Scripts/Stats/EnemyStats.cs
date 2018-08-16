@@ -10,6 +10,8 @@ public class EnemyStats : CharacterStats {
 
     ExperienceManager playerExp;
 
+    [SerializeField] bool noLoot;
+
     [HideInInspector] public bool shielded;
 
     public List<GameObject> specialLoot = new List<GameObject>();
@@ -79,12 +81,24 @@ public class EnemyStats : CharacterStats {
         // TODO something fancy with combattext or something
 
         // Add death animation
-        anim.SetTrigger("Dead");
+        int rand = UnityEngine.Random.Range(0,2);
+
+        if (rand == 0)
+        {
+            anim.SetTrigger("Dead");
+        }
+        else if (rand == 1)
+        {
+            anim.SetTrigger("Dead1");
+            enemyAI.altDeath();
+        }
         enemyAI.isDead = true;
 
         // Loot logic
-
-        LootController.instance.EnemyLoot(enemyAI.tier, transform.position);
+        if (!noLoot)
+        {
+            LootController.instance.EnemyLoot(enemyAI.tier, transform.position);
+        }
 
         Destroy(gameObject, 5f);
     }

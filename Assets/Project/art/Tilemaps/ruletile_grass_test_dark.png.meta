@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: 5a5e08f219807c54aab84514be99041e
-timeCreated: 1518616372
-licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: ruletile_grass_test_dark_0
@@ -32,7 +30,7 @@ TextureImporter:
     21300050: ruletile_grass_test_dark_25
     21300052: ruletile_grass_test_dark_26
   externalObjects: {}
-  serializedVersion: 4
+  serializedVersion: 5
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -79,11 +77,13 @@ TextureImporter:
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
+  singleChannelComponent: 0
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - buildTarget: DefaultTexturePlatform
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
     maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
@@ -93,7 +93,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Standalone
+  - serializedVersion: 2
+    buildTarget: Standalone
     maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
@@ -103,7 +104,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: WebGL
+  - serializedVersion: 2
+    buildTarget: WebGL
     maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
@@ -125,11 +127,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: bd825f6335c0ae040be85347e060565a
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_1
       rect:
@@ -139,11 +151,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 281311345375f2248aa4c47ad87e3b47
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_2
       rect:
@@ -153,11 +175,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: c151c3e08064bd44d973f2b18bea9fcf
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_3
       rect:
@@ -167,11 +199,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 2dee7c5beb8a0d34ba425b496dc58ebd
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_4
       rect:
@@ -181,11 +223,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 7b79393bdeac7ad4db8f968c85ac487a
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_5
       rect:
@@ -195,11 +247,23 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -4, y: 9}
+        - {x: -10, y: 0}
+        - {x: -4, y: -10}
+        - {x: 5, y: -10}
+        - {x: 9, y: -3}
+        - {x: 4, y: 8}
       tessellationDetail: 0
+      bones: []
+      spriteID: fa330578ac21a4d4a9932f13f1dec85d
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_6
       rect:
@@ -209,11 +273,22 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 2, y: -12}
+        - {x: 0, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: -5}
+        - {x: 8, y: -5}
       tessellationDetail: 0
+      bones: []
+      spriteID: 27e995e30d291f44ebb8d52edada94c0
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_7
       rect:
@@ -223,11 +298,23 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 5, y: -3}
+        - {x: -6, y: -3}
+        - {x: -20, y: -5}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: -5}
       tessellationDetail: 0
+      bones: []
+      spriteID: 7af026ce7522b8943a49662168daba4b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_8
       rect:
@@ -237,11 +324,23 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: -5}
+        - {x: -20, y: -20}
+        - {x: -5, y: -20}
+        - {x: -6, y: -14}
+        - {x: -9, y: -10}
+        - {x: -14, y: -6}
       tessellationDetail: 0
+      bones: []
+      spriteID: b7aeb289dba4b7b4bb0409bc6c993c4a
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_9
       rect:
@@ -251,11 +350,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: baf62904d9263024fb4658d0dda8b1b8
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_10
       rect:
@@ -265,11 +374,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 5e6d8311c4294414b949d4ff3454de53
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_11
       rect:
@@ -279,11 +398,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: -5}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: -4}
       tessellationDetail: 0
+      bones: []
+      spriteID: 1fab0e95ac5eece46b1d6422f16c60e4
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_12
       rect:
@@ -293,11 +422,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: -5}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: -5}
       tessellationDetail: 0
+      bones: []
+      spriteID: 07d99f6efff7fa9458b870196cab52fc
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_13
       rect:
@@ -307,11 +446,22 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: 20}
+        - {x: 0, y: 13}
+        - {x: 0, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 613c2102259eeda44a2b245837114197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_14
       rect:
@@ -321,11 +471,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 8754e7e438b6afe4ca248fd90d2bf5db
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_15
       rect:
@@ -335,11 +495,23 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -5, y: 20}
+        - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: -5, y: -20}
+        - {x: -4, y: -8}
+        - {x: -5, y: 14}
       tessellationDetail: 0
+      bones: []
+      spriteID: d2fd04943e0c8bf4ea529cba2373a54c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_16
       rect:
@@ -349,11 +521,22 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 0, y: -19}
+        - {x: 20, y: 0}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: df7d00ea7179dfa4a84054362f659220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_17
       rect:
@@ -363,11 +546,22 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: 0}
+        - {x: 0, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: fb22542574090784783806e2a7f56403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_18
       rect:
@@ -377,11 +571,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: 0}
+        - {x: 20, y: 0}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 127e3cd8c7c2aea4f91b0919572c2dca
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_19
       rect:
@@ -391,11 +595,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: 0}
+        - {x: 20, y: -1}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 854fa8efe15a4c6479a07c50df921935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_20
       rect:
@@ -405,11 +619,22 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: 20}
+        - {x: 3, y: 12}
+        - {x: 12, y: 3}
+        - {x: 20, y: 0}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: d97319068b94ecb49b7530d3f111b559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_21
       rect:
@@ -419,11 +644,23 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: 0}
+        - {x: -7, y: 2}
+        - {x: 8, y: 0}
+        - {x: 20, y: 0}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 9217ed09d6b27f0489b3b19b2190ede6
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_22
       rect:
@@ -433,11 +670,23 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -5, y: 20}
+        - {x: -20, y: 20}
+        - {x: -20, y: 0}
+        - {x: -12, y: 3}
+        - {x: -7, y: 7}
+        - {x: -7, y: 14}
       tessellationDetail: 0
+      bones: []
+      spriteID: 989eefcbb6f671a40a9593153d2366db
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_23
       rect:
@@ -447,11 +696,22 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 0}
+        - {x: 0, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: f3c82c7f8fcd6f24bb6add38aa31fb77
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_24
       rect:
@@ -461,11 +721,22 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: 19}
+        - {x: -20, y: -1}
+        - {x: -20, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 10442a22a3f29604cbd00fa44bfa4037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_25
       rect:
@@ -475,11 +746,21 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: 20}
+        - {x: 0, y: -20}
+        - {x: 20, y: -20}
+        - {x: 20, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: ad0d3b988c95b7e48bf1f54dd5bfb4a0
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: ruletile_grass_test_dark_26
       rect:
@@ -489,13 +770,29 @@ TextureImporter:
         width: 40
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -20}
+        - {x: -5, y: -20}
+        - {x: -5, y: 20}
       tessellationDetail: 0
+      bones: []
+      spriteID: 2e60f8da9d894e94ab07fc5a0e8349a8
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
+    bones: []
+    spriteID: ee4b3c881591f38468d034f8abcc3de5
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
   spritePackingTag: Pixlrelm
   userData: 
   assetBundleName: 

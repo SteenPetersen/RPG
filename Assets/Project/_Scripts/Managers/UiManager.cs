@@ -9,9 +9,14 @@ public class UiManager : MonoBehaviour {
 
     public static UiManager instance;
 
+    public delegate void KeyLooted(Key key);
+    public KeyLooted keyLooted;
+
     [SerializeField] GameObject box;
 
     public GameObject inventoryCam;
+
+    [SerializeField] List<Key> keys = new List<Key>();
 
     [SerializeField] Transform toolTipLocation;
 
@@ -26,6 +31,37 @@ public class UiManager : MonoBehaviour {
     [SerializeField] GameObject toolTip;
 
     Text toolTipTitle, toolTipStats;
+
+    Key currentKey;
+
+    /// <summary>
+    /// Currently selected Key
+    /// </summary>
+    public Key MyCurrentKey
+    {
+        get
+        {
+            return currentKey;
+        }
+
+        set
+        {
+            currentKey = value;
+        }
+    }
+
+    public List<Key> MyKeys
+    {
+        get
+        {
+            return keys;
+        }
+
+        set
+        {
+            keys = value;
+        }
+    }
 
     private void Awake()
     {
@@ -44,7 +80,7 @@ public class UiManager : MonoBehaviour {
         keybindButtons = GameObject.FindGameObjectsWithTag("Keybind");
     }
 
-    void Update () {
+    void Update() {
 
         if (Input.GetKeyDown(KeyCode.B))
         {
@@ -59,6 +95,19 @@ public class UiManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.O))
         {
             PlayerStats.instance.TakeDamage(10);
+
+            Vector3 pos = PlayerController.instance.transform.position;
+
+            GameObject tmp = ParticleSystemHolder.instance.PlaySpellEffect(pos, "level up");
+            tmp.transform.parent = PlayerController.instance.transform;
+            SoundManager.instance.PlayUiSound("levelup");
+
+            var text = CombatTextManager.instance.FetchText(pos);
+            var textScript = text.GetComponent<CombatText>();
+            textScript.White("Level up!", pos);
+            text.transform.position = pos;
+            text.SetActive(true);
+            textScript.FadeOut();
         }
 
         if (Input.GetKeyDown(KeyCode.L))
@@ -66,16 +115,51 @@ public class UiManager : MonoBehaviour {
             Instantiate(box, new Vector3(PlayerController.instance.transform.position.x, PlayerController.instance.transform.position.y, -0.25f), Quaternion.identity);
         }
 
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            Vector2 tmp = PlayerController.instance.transform.position;
+            Debug.Log("My Current Position is " + tmp);
+            StartCoroutine(PlayerController.instance.SpawnIn());
+        }
+
         if (Input.GetKeyDown(KeyCode.P))
         {
             //SceneManager.LoadSceneAsync(3);
-            EquipmentGenerator._instance.CreateDroppable(PlayerController.instance.transform.position);
+            int r = UnityEngine.Random.Range(0, 2);
+            EquipmentGenerator._instance.CreateDroppable(PlayerController.instance.transform.position, r);
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             OpenCloseMenu();
         }
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            Bag bag = (Bag)Instantiate(InventoryScript.instance.itemListForDebugging[0]);
+            bag.Initialize(16);
+            bag.Use();
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            Bag bag = (Bag)Instantiate(InventoryScript.instance.itemListForDebugging[0]);
+            bag.Initialize(16);
+            InventoryScript.instance.AddItem(bag);
+        }
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            //Item potion = Instantiate(InventoryScript.instance.itemListForDebugging[1]);
+            //InventoryScript.instance.AddItem(potion);
+            GameDetails.Instance.Save(true);
+        }
+
+        //if (Input.GetKeyDown(KeyCode.U))
+        //{
+        //    EquipmentManager.instance.UnequipAll();
+        //}
+
 
         if (Input.GetButtonDown("Inventory"))
         {
@@ -200,6 +284,5 @@ public class UiManager : MonoBehaviour {
     {
         toolTip.SetActive(false);
     }
-
 
 }

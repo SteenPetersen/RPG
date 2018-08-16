@@ -15,8 +15,9 @@ EditorBuildSettings:
     path: Assets/Project/_Scenes/Loading.unity
     guid: f947c6d8b8f011247ba9bcf777997ece
   - enabled: 1
-    path: Assets/Project/_Scenes/bossroom1_indoor.unity
-    guid: 2d4ceba27224269469ba87b6c628e5c6
-  - enabled: 1
     path: Assets/Project/_Scenes/DeathScreen.unity
     guid: 63335be23dfa8e3428887e537ab5f60b
+  - enabled: 1
+    path: Assets/Project/_Scenes/After_First_Dungeon.unity
+    guid: 96f61a6046dfe6c408e8b8aef42c6b3b
+  m_configObjects: {}

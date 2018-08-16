@@ -1,43 +1,26 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 
 
 public class DungeonLevelLoadLogic : MonoBehaviour {
 
-    //int level = 0;
     [SerializeField] int ZoneToLoad;
-
-    private void Start()
-    {
-        //level = SceneControl.dungeonLevel;
-    }
+    bool loading;
 
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.tag == "Player")
         {
-            StartCoroutine(FadeOUt());
+            if (!loading)
+            {
+                // add to statistics
+                GameDetails.dungeonFloorsExplored++;
+
+                // set the camera correctly so we can know the outset of the player when zoning in if not it can be hard to determine how dialogue looks.
+                CameraController.instance.transform.rotation = Quaternion.Euler(0, 0, 0);
+
+                StartCoroutine(GameDetails.Instance.FadeOutAndLoadScene(ZoneToLoad));
+                loading = true;
+            }
         }
-    }
-
-    IEnumerator FadeOUt()
-    {
-        while (GameDetails._instance.fadeToBlack.color.a <= 0.98)
-        {
-            GameDetails._instance.fadeToBlack.enabled = true;
-            GameDetails._instance.fadeToBlack.color = new Color(0, 0, 0, GameDetails._instance.fadeSpeed);
-            GameDetails._instance.fadeSpeed += 0.02f;
-            yield return new WaitForSeconds(0.01f);
-        }
-
-        // add to statistics
-        GameDetails.dungeonFloorsExplored++;
-
-        // set the camera correctly so we can know the outset of the player when zoning in if not it can be hard to determine how dialogue looks.
-        CameraController.instance.transform.rotation = Quaternion.Euler(0, 0, 0);
-
-        SceneManager.LoadSceneAsync(ZoneToLoad);
-        yield return null;
     }
 }

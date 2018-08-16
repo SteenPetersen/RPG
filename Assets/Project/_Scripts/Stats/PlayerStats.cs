@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using EZCameraShake;
 using System.Collections;
+using System;
 
 public class PlayerStats : CharacterStats {
 
@@ -76,6 +77,7 @@ public class PlayerStats : CharacterStats {
         {
             instance = this;
         }
+
     }
 
     void Start () {
@@ -98,31 +100,34 @@ public class PlayerStats : CharacterStats {
         agil = statHolder.transform.Find("Agility").GetComponent<Text>();
         lvl = statHolder.transform.Find("Level").GetComponent<Text>();
 
-
+        UpdateUiStats();
     }
 
     private void Update()
     {
-        if (playerControl == null)
+        if (Time.frameCount % 3 == 0)
         {
-            playerControl = PlayerController.instance;
-        }
+            if (playerControl == null)
+            {
+                playerControl = PlayerController.instance;
+            }
 
-        maxhps.text = "Max health: " + maxHealth.ToString();
-        hps.text = "Health: " + currentHealth.ToString();
-        dmg.text = "Damage: " + damage.GetValue().ToString();
-        ac.text = "Armor: " + armor.GetValue().ToString();
-        stmina.text = "Stamina: " + Sta.GetValue().ToString();
-        strn.text = "Strength: " + Str.GetValue().ToString();
-        agil.text = "Agilty: " + Agi.GetValue().ToString();
-        lvl.text = "Level: " + ExperienceManager.instance.level.ToString();
+            hps.text = "Health: " + currentHealth.ToString();
 
-        if (staminaFull && MyCurrentStamina < MyMaxStamina || !staminaFull && MyCurrentStamina >= MyMaxStamina)
-        {
-            staminaFull = !staminaFull;
+
+            if (staminaFull && MyCurrentStamina < MyMaxStamina || !staminaFull && MyCurrentStamina >= MyMaxStamina)
+            {
+                staminaFull = !staminaFull;
+            }
         }
     }
 
+    /// <summary>
+    /// Method Listening to the ONequipment changed method on inventoryscript
+    /// In order to correctly remove or add modifiers that gear may have
+    /// </summary>
+    /// <param name="newItem"></param>
+    /// <param name="oldItem"></param>
     private void OnEquipmentChanged(Equipment newItem, Equipment oldItem)
     {
         if (oldItem != null)
@@ -143,7 +148,24 @@ public class PlayerStats : CharacterStats {
             Agi.AddModifier(newItem.agi);
         }
 
-        //Debug.LogWarning("Equipment Changed");
+        UpdateUiStats();
+
+    }
+
+    /// <summary>
+    /// Updates the Ui with the text corresponding to 
+    /// the players current stats. done in the delegate
+    /// of changing gear and at start
+    /// </summary>
+    private void UpdateUiStats()
+    {
+        maxhps.text = "Max health: " + maxHealth.ToString();
+        dmg.text = "Damage: " + damage.GetValue().ToString();
+        ac.text = "Armor: " + armor.GetValue().ToString();
+        stmina.text = "Stamina: " + Sta.GetValue().ToString();
+        strn.text = "Strength: " + Str.GetValue().ToString();
+        agil.text = "Agilty: " + Agi.GetValue().ToString();
+        lvl.text = "Level: " + ExperienceManager.MyLevel.ToString();
     }
 
     public override void Die()
@@ -237,11 +259,12 @@ public class PlayerStats : CharacterStats {
 
     public void LevelUpStats()
     {
-        Agi.SetValue(ExperienceManager.instance.level);
-        Str.SetValue(ExperienceManager.instance.level);
-        Sta.SetValue(ExperienceManager.instance.level);
+        Agi.SetValue(ExperienceManager.MyLevel);
+        Str.SetValue(ExperienceManager.MyLevel);
+        Sta.SetValue(ExperienceManager.MyLevel);
 
         UpdateStats();
+        UpdateUiStats();
 
         currentHealth = maxHealth;
 
@@ -253,7 +276,7 @@ public class PlayerStats : CharacterStats {
     /// </summary>
     public void UpdateStats()
     {
-        maxHealth = 100 + ExperienceManager.instance.level + (Sta.GetValue() * 10);
+        maxHealth = 100 + ExperienceManager.MyLevel + (Sta.GetValue() * 10);
         maxStamina = 100;
         damage.SetValue(Str.GetValue());
         armor.SetValue(Agi.GetValue());

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec998a0a29afa9d4f862f759f1bd7f2e, type: 3}
+  m_Name: Bronze Key
+  m_EditorClassIdentifier: 
+  name: Bronze Key
+  icon: {fileID: 21300002, guid: 670c7b41a8bb4a0448ea210b76908e4e, type: 3}
+  sellValue: 0
+  buyValue: 100
+  typeOfEquipment: 3
+  stackSize: 5
+  title: Bronze Key
+  quality: 0
+  MySlot: {fileID: 0}
+  description: A bronze Key
+  description2: 'Use: Opens chests'
+  drawGizmos: 0
+  amount: 0
+  tier: 0
+  bossKey: 0

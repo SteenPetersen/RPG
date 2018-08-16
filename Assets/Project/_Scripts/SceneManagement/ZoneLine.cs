@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ZoneLine : MonoBehaviour {
 
     public int ZoneToLoad;
+    bool loading;
 
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -17,22 +18,15 @@ public class ZoneLine : MonoBehaviour {
             }
             else
             {
-                StartCoroutine(FadeOUt());
+                if (!loading)
+                {
+                    StartCoroutine(GameDetails.Instance.FadeOutAndLoadScene(ZoneToLoad));
+                    GameDetails.Instance.Save(true);
+                    loading = true;
+                }
             }
         }
     }
 
-    IEnumerator FadeOUt()
-    {
-        while (GameDetails._instance.fadeToBlack.color.a <= 0.98)
-        {
-            GameDetails._instance.fadeToBlack.enabled = true;
-            GameDetails._instance.fadeToBlack.color = new Color(0, 0, 0, GameDetails._instance.fadeSpeed);
-            GameDetails._instance.fadeSpeed += 0.02f;
-            yield return new WaitForSeconds(0.01f);
-        }
 
-        SceneManager.LoadSceneAsync(ZoneToLoad);
-        yield return null;
-    }
 }

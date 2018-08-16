@@ -1333,12 +1333,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335e7911ae216954dae8d856ffee6b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 3500
+  maxHealth: 3000
   damage:
     baseValue: 0
   armor:
     baseValue: 0
   hitByProjectile: 0
+  noLoot: 0
   shielded: 0
   specialLoot: []
 --- !u!114 &114040132663804490
@@ -1629,6 +1630,7 @@ MonoBehaviour:
   whenCloseToDestination: 0
   healthbar: {fileID: 114667532976719208}
   speechLocation: {fileID: 1349606499620456}
+  speechBubbleId: 0
   showGizmos: 0
   interval: 2
   setter: {fileID: 0}

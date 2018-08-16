@@ -18,51 +18,27 @@ public class CameraController : MonoBehaviour {
     }
     #endregion
 
-    //float zValue, n;
-    //public int renderAxisCase;
-
     public GameObject lookAt;
     public float cameraRot;
     public Transform measurementTransform;
     public Camera cam;
     public int fieldOfViewBase = 48;
     public int fieldOfViewDungeon = 40;
-
-
-    //public float test;
-    Vector3 offSet;
-
-    public Quaternion rot
-    {
-        get
-        {
-            return cam.transform.rotation;
-            //TODO check if I still use this
-        }
-
-    }
-
+    PlayerController player;
 
     private void Start()
     {
         cam = GetComponentInChildren<Camera>();
         cam.transparencySortMode = TransparencySortMode.Orthographic;
-        offSet = new Vector3(0f, 0f, -10f);
+        player = PlayerController.instance;
     }
+
     private void Update()
     {
-
         if (lookAt == null)
         {
-            lookAt = GameObject.Find("Player");
+            lookAt = player.gameObject;
         }
-
-        //if (lookAt != null)
-        //{
-        //    zValue = lookAt.transform.rotation.eulerAngles.z;
-        //    //n = 360 + zValue * -1;
-        //    //DetermineRenderOrderAxis();
-        //}
     }
 
     private void FixedUpdate()
@@ -72,8 +48,7 @@ public class CameraController : MonoBehaviour {
 
     void UpdateCameraPosition()
     {
-
-        if (GameDetails._instance.paused)
+        if (GameDetails._instance.paused || player.Portal)
             return;
 
         if (Input.GetKey(KeybindManager.instance.CameraBinds["CAMERACCW"]))
@@ -84,13 +59,14 @@ public class CameraController : MonoBehaviour {
         {
             transform.Rotate(0, 0, -cameraRot * Time.deltaTime);
         }
-        //if (lookAt != null)
-        //{
-        //    Vector3 desiredPosition = lookAt.transform.position + offSet;
-        //    transform.position = desiredPosition;
-        //}
     }
 
+    public void SetHomeRotation()
+    {
+        transform.rotation = Quaternion.identity;
+    }
+
+    #region renderOrderAxis
     //public void DetermineRenderOrderAxis()
     //{
     //    if (n >= 0 && n < 45)
@@ -142,4 +118,6 @@ public class CameraController : MonoBehaviour {
     //        GraphicsSettings.transparencySortAxis = new Vector3(-0.5f, 1, 0);
     //    }
     //}
+
+    #endregion renderOrderAxis
 }

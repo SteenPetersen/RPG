@@ -4,10 +4,43 @@ using UnityEngine.SceneManagement;
 public class SceneControl : MonoBehaviour {
 
     public static SceneControl instance;
-    [SerializeField]
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+
     public static int dungeonLevel;
     public int dungeonFloorCount;
+
     [SerializeField] GameObject reylith;
+    [SerializeField] Vector2 currentHomePosition;
+
+    /// <summary>
+    /// The position to which the player will return on saved game 
+    /// or when porting back to this zone
+    /// </summary>
+    public Vector2 MyCurrentHomePosition
+    {
+        get
+        {
+            Debug.Log("Trying to fetch homePosition");
+            return currentHomePosition;
+        }
+
+        set
+        {
+            currentHomePosition = value;
+        }
+    }
 
     private void OnEnable()
     {
@@ -22,17 +55,18 @@ public class SceneControl : MonoBehaviour {
         {
             dungeonLevel += 1;
         }
+
         else if (scene.name != "dungeon_indoor" && scene.name != "Loading")
         {
             dungeonLevel = 0;
         }
-        if (scene.name == "bossroom1_indoor")
-        {
-            var spawn = GameObject.Find("PlayerSpawnPosition");
-            PlayerController.instance.gameObject.transform.position = spawn.transform.position;
-        }
+
         if (scene.name == "main")
         {
+            MyCurrentHomePosition = new Vector2(-18, -18);
+
+            Debug.Log("I have set the current pos" + MyCurrentHomePosition);
+
             if (StoryManager.stage == 0)
             {
                 Vector3 pos = new Vector3(-22.75f, -15f, 0);

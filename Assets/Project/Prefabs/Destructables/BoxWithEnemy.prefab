@@ -228,16 +228,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyed: 0
   shaking: 0
+  obstructVision: 0
   objInside: 1
+  canDropItems: 0
+  droppableItems: []
+  chanceToDrop: 0
+  damagedMat: {fileID: 0}
   shakeTime: 0.3
-  decreaseShakeTiome: 0.2
+  decreaseShakeTime: 0.2
+  MaxHealth: 0
   health: 149
   impact: {fileID: 198133176307893264}
   destroy: {fileID: 198864907620713430}
   impactSound: impact_box
   destroySound: destroy_box
   obj:
-  - {fileID: 1979376440952840, guid: 3f444a2853ac9134b969ef16b01bf115, type: 2}
+  - {fileID: 1920284135350258, guid: a1b552fd020fef24594456ca3f206920, type: 2}
 --- !u!198 &198133176307893264
 ParticleSystem:
   m_ObjectHideFlags: 1

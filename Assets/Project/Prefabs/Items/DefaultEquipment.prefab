@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 212099063407403028}
   - component: {fileID: 65672089338294172}
   - component: {fileID: 114862217638871564}
+  - component: {fileID: 114578830719900710}
   m_Layer: 0
   m_Name: DefaultEquipment
   m_TagString: Untagged
@@ -37,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1974148681692748}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -20.959677, y: -14.423775, z: -0.29606307}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -66,11 +67,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9fcd069f0cd00d42a7fa2797d7f586b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 1.16
-  objectName: 
+  radius: 1.4
+  drawGizmos: 0
   item: {fileID: 0}
   chanceToDrop: 1
+  tooltipPosition: {fileID: 0}
   mouseOver: 0
+--- !u!114 &114578830719900710
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1974148681692748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5dd38e3f6d11224389e3eeef246390b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  positionsSet: 0
 --- !u!114 &114862217638871564
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -82,6 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0df898f9eb487ed46a6a0e2e4585c358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!212 &212099063407403028
 SpriteRenderer:
   m_ObjectHideFlags: 1

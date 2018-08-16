@@ -21,9 +21,6 @@ GameObject:
   - component: {fileID: 4955902784890456}
   - component: {fileID: 198218436009993938}
   - component: {fileID: 199348106783991892}
-  - component: {fileID: 58067313247521936}
-  - component: {fileID: 114272779572915502}
-  - component: {fileID: 114090759541852882}
   - component: {fileID: 114656523479177646}
   m_Layer: 0
   m_Name: Town Portal
@@ -175,7 +172,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1149486327779336}
   m_LocalRotation: {x: -0.35020733, y: 0, z: 0, w: 0.9366723}
-  m_LocalPosition: {x: -14.85, y: -13.97, z: -0.91}
+  m_LocalPosition: {x: 0.2021389, y: -7.144713, z: -0.91}
   m_LocalScale: {x: 1, y: 1.6, z: 1}
   m_Children:
   - {fileID: 4088685951736864}
@@ -266,21 +263,6 @@ Transform:
   m_Father: {fileID: 4088685951736864}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &58067313247521936
-CircleCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1062665921465656}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.036111355, y: -0.079986796}
-  serializedVersion: 2
-  m_Radius: 0.31671923
 --- !u!58 &58323532760610100
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -365,29 +347,6 @@ MonoBehaviour:
   waitForSeconds: 0.1
   increment: 0.012
   doneFading: 0
---- !u!114 &114090759541852882
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1062665921465656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f1c16d152fd0fa43b0a49e4354ad143, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114272779572915502
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1062665921465656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0df898f9eb487ed46a6a0e2e4585c358, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
 --- !u!114 &114383402335173936
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -412,6 +371,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f1c16d152fd0fa43b0a49e4354ad143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneToLoad: 0
+  loadInPosition: {x: -18, y: -18}
 --- !u!114 &114469469201682600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -425,7 +386,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 67
   playOnAwake: 1
-  p: {fileID: 0}
 --- !u!114 &114656523479177646
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -439,7 +399,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 67
   playOnAwake: 1
-  p: {fileID: 0}
 --- !u!114 &114752306735273340
 MonoBehaviour:
   m_ObjectHideFlags: 1

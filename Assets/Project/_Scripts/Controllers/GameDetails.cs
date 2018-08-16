@@ -213,10 +213,10 @@ public class GameDetails : MonoBehaviour {
         PlayerController.instance.enemies.Clear();
     }
 
-    public void Save()
+    public void Save(bool keepPreviousPosition = false)
     {
-        int currentScene = SceneManager.GetActiveScene().buildIndex;
-        if (currentScene == 1)
+        Scene currentScene = SceneManager.GetActiveScene();
+        if (currentScene.name.EndsWith("_indoor"))
             return;
 
         BinaryFormatter bf = new BinaryFormatter();
@@ -228,7 +228,7 @@ public class GameDetails : MonoBehaviour {
         data.currentHealth = playerStats.currentHealth;
         data.maxHealth = playerStats.maxHealth;
         data.experience = ExperienceManager.instance.experience;
-        data.level = ExperienceManager.instance.level;
+        data.level = ExperienceManager.MyLevel;
         data.experienceNeeded = ExperienceManager.instance.experienceRequired;
         data.Stamina = playerStats.Sta.GetBaseValue();
         data.Strength = playerStats.Str.GetBaseValue();
@@ -277,9 +277,18 @@ public class GameDetails : MonoBehaviour {
         }
 
         data.zone = SceneManager.GetActiveScene().buildIndex;
-        data.locationX = player.transform.position.x;
-        data.locationY = player.transform.position.y;
 
+        if (!keepPreviousPosition)
+        {
+            data.locationX = player.transform.position.x;
+            data.locationY = player.transform.position.y;
+        }
+        else if (keepPreviousPosition)
+        {
+            Vector2 vec = SceneControl.instance.MyCurrentHomePosition;
+            data.locationX = vec.x;
+            data.locationY = vec.y;
+        }
 
         bf.Serialize(file, data);
         file.Close();
@@ -316,7 +325,7 @@ public class GameDetails : MonoBehaviour {
             playerStats.currentHealth = 0;
             playerStats.maxHealth = data.maxHealth;
             playerStats.Heal((int)data.currentHealth);
-            ExperienceManager.instance.level = data.level;
+            ExperienceManager.MyLevel = data.level;
             ExperienceManager.instance.experienceRequired = data.experienceNeeded;
             playerStats.Agi.SetValue(data.Agility);
             playerStats.Sta.SetValue(data.Stamina);
@@ -478,7 +487,7 @@ public class GameDetails : MonoBehaviour {
 
             if (EquipmentManager.instance.currentEquipment[i] != null)
             {
-                if (Resources.Load("Equipment/" + EquipmentManager.instance.currentEquipment[i].name) != null)
+                if (Resources.Load("PremadeItems/" + EquipmentManager.instance.currentEquipment[i].name) != null)
                 {
                     //Equipment t = Instantiate(Resources.Load("Equipment/" + item.name, typeof(Equipment))) as Equipment;
                     //tmp.Add(t);
@@ -493,6 +502,7 @@ public class GameDetails : MonoBehaviour {
                 Equipment current = EquipmentManager.instance.currentEquipment[i];
                 ItemData tmp = new ItemData();
 
+                tmp.tier = current.tier;
                 tmp.name = current.name;
                 tmp.title = current.GetTitle();
                 tmp.graphicId = current.graphicId;
@@ -542,7 +552,7 @@ public class GameDetails : MonoBehaviour {
                 {
                     Debug.Log("Item found is equipment therefore storing as equipment");
 
-                    if (Resources.Load("Equipment/" + current.name) != null)
+                    if (Resources.Load("PremadeItems/" + current.name) != null)
                     {
                         //Equipment t = Instantiate(Resources.Load("Equipment/" + item.name, typeof(Equipment))) as Equipment;
                         //tmp.Add(t);
@@ -555,6 +565,7 @@ public class GameDetails : MonoBehaviour {
                     }
 
                     Equipment equip = slot.MyItems.Peek() as Equipment;
+                    tmp.tier = equip.tier;
                     tmp.name = equip.name;
                     tmp.title = equip.GetTitle();
                     tmp.graphicId = equip.graphicId;
@@ -603,12 +614,12 @@ public class GameDetails : MonoBehaviour {
             }
             else
             {
-                if (Resources.Load("Equipment/" + item.name) != null)
+                if (Resources.Load("PremadeItems/" + item.name) != null)
                 {
-                    Equipment t = Instantiate(Resources.Load("Equipment/" + item.name, typeof(Equipment))) as Equipment;
+                    Equipment t = Instantiate(Resources.Load("PremadeItems/" + item.name, typeof(Equipment))) as Equipment;
                     tmp.Add(t);
                 }
-                else if (Resources.Load("Equipment/" + item.name) == null)
+                else if (Resources.Load("PremadeItems/" + item.name) == null)
                 {
                     //Debug.Log("inside LoadEquippedItems " + item.name + " armor type " + item.armorType);
 
@@ -642,12 +653,12 @@ public class GameDetails : MonoBehaviour {
             }
             else if (amountOfitemsPerSlot[count] == 1)
             {
-                if (Resources.Load("Equipment/" + itemInSlot[count].name) != null)
+                if (Resources.Load("PremadeItems/" + itemInSlot[count].name) != null)
                 {
-                    var tmpEquip = Instantiate(Resources.Load("Equipment/" + itemInSlot[count].name, typeof(Equipment))) as Equipment;
+                    Item tmpEquip = Instantiate(Resources.Load("PremadeItems/" + itemInSlot[count].name, typeof(Item))) as Item;
                     slot.AddItem(tmpEquip);
                 }
-                else if (Resources.Load("Equipment/" + itemInSlot[count].name) == null)
+                else if (Resources.Load("PremadeItems/" + itemInSlot[count].name) == null)
                 {
                     var tmpItem = EquipmentGenerator._instance.CreateLoadedItem(itemInSlot[count]);
                     slot.AddItem(tmpItem);
@@ -660,7 +671,7 @@ public class GameDetails : MonoBehaviour {
             {
                 for (int i = 0; i < amountOfitemsPerSlot[count]; i++)
                 {
-                    var tmpItem = Instantiate(Resources.Load("Items/" + itemInSlot[count].name, typeof(Item))) as Item;
+                    var tmpItem = Instantiate(Resources.Load("PremadeItems/" + itemInSlot[count].name, typeof(Item))) as Item;
                     slot.AddItem(tmpItem);
                 }
                 count++;
@@ -782,7 +793,12 @@ public class GameDetails : MonoBehaviour {
         //Debug.Log("being called inside enableUI");
     }
 
-    IEnumerator UnFade()
+    /// <summary>
+    /// Unfades the scene and sets the dungeons Astarpath to 
+    /// scan if the scen it is loading is a dungeon
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator UnFade()
     {
         while (fadeToBlack.color.a >= 0.02)
         {
@@ -798,10 +814,8 @@ public class GameDetails : MonoBehaviour {
 
             if (m_Scene.name.Contains("_indoor"))
             {
-                //Debug.Log("calling boardcreator method");
                 BoardCreator.instance.CreateDungeonGraph();
                 StopCoroutine("UnFade");
-                //Debug.Log("Ending Coroutine on GameDetails, board should now be created and have 2D grid.");
                 DrawDistanceActivator.instance.StartCoroutine("Check");
                 BoardCreator.instance.SetDoors();
             }
@@ -810,7 +824,53 @@ public class GameDetails : MonoBehaviour {
         }
     }
 
-   
+    /// <summary>
+    /// Fades out the scene when transitioning to a new scene
+    /// </summary>
+    /// <param name="zoneToLoad">the Index number of the zone that is to be loaded 
+    /// (can be found in the build setting pane)</param>
+    /// <returns></returns>
+    public IEnumerator FadeOutAndLoadScene(int zoneToLoad)
+    {
+        while (fadeToBlack.color.a <= 0.98)
+        {
+            fadeToBlack.enabled = true;
+            fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
+            fadeSpeed += 0.02f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        CameraController.instance.SetHomeRotation();
+        SceneManager.LoadSceneAsync(zoneToLoad);
+
+        yield return null;
+    }
+
+    /// <summary>
+    /// Overload Coroutine for also placing Player
+    /// </summary>
+    /// <param name="zoneToLoad"></param>
+    /// <param name="playerPos"></param>
+    /// <returns></returns>
+    public IEnumerator FadeOutAndLoadScene(int zoneToLoad, Vector2 playerPos)
+    {
+        while (fadeToBlack.color.a <= 0.98)
+        {
+            fadeToBlack.enabled = true;
+            fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
+            fadeSpeed += 0.02f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        PlayerController.instance.transform.position = playerPos;
+
+        CameraController.instance.SetHomeRotation();
+        SceneManager.LoadSceneAsync(zoneToLoad);
+
+        yield return null;
+    }
+
+
 }
 
 [Serializable]
@@ -870,6 +930,7 @@ public class ItemData
 {
     public string title;
     public string name;
+    public int tier;
     public int graphicId;
 
     public EquipmentType type;

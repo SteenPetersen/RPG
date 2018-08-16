@@ -56,4 +56,9 @@ public class ImpAnimationControl : MonoBehaviour {
     {
         ai.StartParticleOne();
     }
+
+    public void DieBurning()
+    {
+        ai.DieBurning();
+    }
 }

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Collections;
 using System;
+using EZCameraShake;
 
 public class PlayerController : MonoBehaviour
 {
@@ -169,12 +170,9 @@ public class PlayerController : MonoBehaviour
     public bool blocking;
     #endregion
 
-    //[SerializeField] private bool mouseOverInteractableAndPlayerInRange;
     [SerializeField] ParticleSystem weaponCharged;
     [SerializeField] ParticleSystem bowCharged;
     bool weaponChargeReady;
-
-
 
     private void OnEnable()
     {
@@ -635,14 +633,15 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Stops the state of charging the bow
     /// </summary>
-    /// <param name="changeingState">In case we wish to change the state due to coming from the melee state and not because the player has fired his arrows</param>
-    private void StopRangedChargeShotState(bool changeingState = false)
+    /// <param name="changingState">In case we wish to change the state due to coming from the 
+    /// melee state and not because the player has fired his arrows</param>
+    private void StopRangedChargeShotState(bool changingState = false)
     {
-        if (!changeingState)
+        if (!changingState)
         {
             anim.SetBool("ChargedShot", false);
         }
-        else if (changeingState)
+        else if (changingState)
         {
             anim.SetTrigger("abandonCharge");
             anim.SetBool("ChargedShot", false);
@@ -650,7 +649,7 @@ public class PlayerController : MonoBehaviour
 
         chargedShot = false;
 
-        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98 && !changeingState)
+        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98 && !changingState)
         {
             maxChargedHit = true;
             float percCost = (playerStat.MyMaxStamina / 100) * 25;
@@ -669,6 +668,28 @@ public class PlayerController : MonoBehaviour
             playerStat.chargeHeld = false;
         }
     }
+
+
+    private void StopMeleeChargedHitState(bool changeingState = false)
+    {
+        maxChargedHit = false;
+
+        // check if player was trying to to do a charged hit
+        if (largeStrikeAnimationReady)
+        {
+            anim.SetBool("StrikeHold", false);
+            largeStrikeAnimationReady = false;
+
+            Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+            tmp.a = 0;
+            EquipmentManager.instance.weaponGlowSlot.color = tmp;
+            weaponChargeReady = false;
+            weaponCharged.Stop();
+
+            return;
+        }
+    }
+
 
     /// <summary>
     /// Handles the movement of the Player with a normalized vector2
@@ -791,6 +812,8 @@ public class PlayerController : MonoBehaviour
         {
             if (!ranged)
             {
+                StopMeleeChargedHitState(true);
+
                 EquipFirstMatchingItemInBag(1, 3);
                 ranged = true;
                 melee = false;
@@ -1019,7 +1042,7 @@ public class PlayerController : MonoBehaviour
         GameObject projectile = pooledArrows.GetPooledArrow();
 
         var projectileScript = projectile.GetComponent<Projectile>();
-        projectileScript.MakeProjectileReady();
+        projectileScript.PrepareProjectileState();
 
         projectile.transform.position = projectilePoint.transform.position;
         projectile.transform.rotation = Quaternion.identity;
@@ -1028,56 +1051,29 @@ public class PlayerController : MonoBehaviour
 
         projectile.transform.Rotate(0, 0, angle, Space.World);
 
-        if (maxChargedHit) 
+        if (maxChargedHit)
         {
-            var dist = Vector2.Distance(mousePosition, startPos);
-
-            float deviation = (dist / 100) * 10;
-
             //----------------------------------------------------------------
-
-            // create a direction vector from Hit position of the mouse and the projectiles original position
-            Vector2 direction1 = new Vector2((mousePosition.x - deviation) - startPos.x, mousePosition.y - startPos.y);
-            direction1.Normalize();
-
-            // Determine the correct angle to turn the projectile
-            //float angle1 = Mathf.Atan2(direction.y, direction.x - deviation) * Mathf.Rad2Deg;
 
             GameObject projectile1 = pooledArrows.GetPooledArrow();
 
             var projectileScript1 = projectile1.GetComponent<Projectile>();
-            projectileScript1.MakeProjectileReady();
 
-            projectile1.transform.position = projectilePoint.transform.position;
-            projectile1.transform.rotation = Quaternion.identity;
-            projectile1.transform.localScale = new Vector3(1, 1, 1);
-
-            projectile1.transform.Rotate(0, 0, angle, Space.World);
+            projectileScript1.PrepareProjectileState();
+            PositionAndTurnProjectile(angle, projectile1);
 
             //----------------------------------------------------------------
-
-            // create a direction vector from Hit position of the mouse and the projectiles original position
-            Vector2 direction2 = new Vector2(mousePosition.x - startPos.x, (mousePosition.y - deviation) - startPos.y);
-            direction2.Normalize();
-
-            // Determine the correct angle to turn the projectile
-            //float angle2 = Mathf.Atan2(direction.y - deviation, direction.x) * Mathf.Rad2Deg;
 
             GameObject projectile2 = pooledArrows.GetPooledArrow();
 
             var projectileScript2 = projectile2.GetComponent<Projectile>();
-            projectileScript2.MakeProjectileReady();
-
-            projectile2.transform.position = projectilePoint.transform.position;
-            projectile2.transform.rotation = Quaternion.identity;
-            projectile2.transform.localScale = new Vector3(1, 1, 1);
-
-            projectile2.transform.Rotate(0, 0, angle, Space.World);
+            projectileScript2.PrepareProjectileState();
+            PositionAndTurnProjectile(angle, projectile2);
 
             // addforce force to the projectiles rigidbody in that direction.
             projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
-            projectile1.GetComponent<Rigidbody2D>().AddForce(direction1 * projectileSpeed);
-            projectile2.GetComponent<Rigidbody2D>().AddForce(direction2 * projectileSpeed);
+            projectile1.GetComponent<Rigidbody2D>().AddForce(direction.Rotate(5f) * projectileSpeed);
+            projectile2.GetComponent<Rigidbody2D>().AddForce(direction.Rotate(355f) * projectileSpeed);
 
             Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile.transform);
             Instantiate(ParticleSystemHolder.instance.ChargedBowShot, projectile1.transform);
@@ -1092,6 +1088,15 @@ public class PlayerController : MonoBehaviour
         projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
 
         GameDetails.arrowsFired++;
+    }
+
+    private void PositionAndTurnProjectile(float angle, GameObject projectile)
+    {
+        projectile.transform.position = projectilePoint.transform.position;
+        projectile.transform.rotation = Quaternion.identity;
+        projectile.transform.localScale = new Vector3(1, 1, 1);
+
+        projectile.transform.Rotate(0, 0, angle, Space.World);
     }
 
     public void OnStrikeComplete()
@@ -1240,13 +1245,21 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(meleeStartPoint.position, 0.5f);
     } // commented
 
+    bool spawnInRunning;
+
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (portal)
+        if (portal && !spawnInRunning)
         {
-            portal = false;
-            transform.Find("Skeleton").gameObject.SetActive(true);
             dungeon.townPortalDropped = false;
+
+            if (DungeonManager.instance._PlayerHasBossKey)
+            {
+                Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
+                tmp.Remove();
+            }
+
+            StartCoroutine(SpawnIn());
         }
 
         if (!scene.name.EndsWith("_indoor"))
@@ -1257,7 +1270,7 @@ public class PlayerController : MonoBehaviour
 
         else if (scene.name.EndsWith("_indoor"))
         {
-            dungeon.playerHasBossKey = false;
+            dungeon._PlayerHasBossKey = false;
             dungeon.bossKeyHasDropped = false;
             dungeon.bossRoomAvailable = false;
             Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 0.43f;
@@ -1301,6 +1314,21 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public IEnumerator SpawnIn() // Made public for debugging only
+    {
+        spawnInRunning = true;
+
+        SoundManager.instance.PlayEnvironmentSound("port_in");
+        ParticleSystemHolder.instance.PlaySpellEffect(transform.position, "Spawn in");
+        yield return new WaitForSeconds(2.5f);
+
+        CameraShaker.Instance.ShakeOnce(6f, 6f, 0.3f, 0.9f);
+        transform.Find("Skeleton").gameObject.SetActive(true);
+        GameDetails.Instance.Save();
+        portal = false;
+        spawnInRunning = false;
     }
 
     /// <summary>

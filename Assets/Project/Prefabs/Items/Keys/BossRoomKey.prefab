@@ -54,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1701482262885320}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.023, y: -0.34, z: -0.11}
+  m_LocalPosition: {x: -0.023, y: 0.21999946, z: -0.11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4625519382743832}
@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1060794977428998}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.489037, y: -19.123074, z: -0.473}
+  m_LocalPosition: {x: -12.354, y: -19.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4503206776103870}
@@ -109,9 +109,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8459e22340cef3741b4daaeccf38f10b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 1.16
-  objectName: 
+  radius: 1.4
   drawGizmos: 0
+  key: {fileID: 11400000, guid: b0018453247c37840b2f7f90d9270e08, type: 2}
+  tooltipPosition: {fileID: 0}
+  mouseOver: 0
 --- !u!198 &198121631277634868
 ParticleSystem:
   m_ObjectHideFlags: 1

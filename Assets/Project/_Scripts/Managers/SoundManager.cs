@@ -11,12 +11,13 @@ public class SoundManager : MonoBehaviour {
                      impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, firstBossPrepAoe, bigGreenFireball, bigGreenFireball1, bigGreenFireball2, bigGreenFireball3,
                      potionInteract, potionPickup, fireBurst, firebuildup,
                      levelup, deathsound, bomb, shieldblock, shieldriposte, crit,
-                     lootdrop, purchase, chestopen, chestclose,
+                     lootdrop, lootAppearsChest, purchase, chestopen, chestclose,
                      demontalk1, demontalk2, demontalk3,
                      spikeTrapFire, spikeTrapReset,
                      stoneWallOpen,
                      impactBox, destroyBox,
-                     portalAppears, enterPortal;
+                     portalAppears, enterPortal, portIn,
+                     firstBossDeath;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -78,11 +79,14 @@ public class SoundManager : MonoBehaviour {
         potionInteract = Resources.Load<AudioClip>("Sound/" + "potion_interact");
         potionPickup = Resources.Load<AudioClip>("Sound/" + "potion_pickup");
 
+        firstBossDeath = Resources.Load<AudioClip>("Sound/" + "first_boss_death");
+
         // UI
         levelup = Resources.Load<AudioClip>("Sound/" + "levelup");
         deathsound = Resources.Load<AudioClip>("Sound/" + "deathsound");
 
         lootdrop = Resources.Load<AudioClip>("Sound/" + "lootdrop");
+        lootAppearsChest = Resources.Load<AudioClip>("Sound/" + "loot_appears_chest");
         purchase = Resources.Load<AudioClip>("Sound/" + "purchase");
         chestopen = Resources.Load<AudioClip>("Sound/" + "chestopen");
         chestclose = Resources.Load<AudioClip>("Sound/" + "chestclose");
@@ -96,6 +100,7 @@ public class SoundManager : MonoBehaviour {
         stoneWallOpen = Resources.Load<AudioClip>("Sound/" + "stone_wall_open");
         portalAppears = Resources.Load<AudioClip>("Sound/" + "portal_appears");
         enterPortal = Resources.Load<AudioClip>("Sound/" + "enter_portal");
+        portIn = Resources.Load<AudioClip>("Sound/" + "port_in");
 
         audioSrc = GetComponent<AudioSource>();
     }
@@ -116,6 +121,10 @@ public class SoundManager : MonoBehaviour {
 
             case "hit_wall":
                 audioSrc.PlayOneShot(impactStone);
+                break;
+
+            case "first_boss_death":
+                audioSrc.PlayOneShot(firstBossDeath);
                 break;
 
             case "shieldblock":
@@ -343,6 +352,10 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(lootdrop);
                 break;
 
+            case "lootAppearsChest":
+                audioSrc.PlayOneShot(lootAppearsChest);
+                break;
+
             case "purchase":
                 audioSrc.PlayOneShot(purchase);
                 break;
@@ -420,6 +433,10 @@ public class SoundManager : MonoBehaviour {
 
             case "enter_portal":
                 audioSrc.PlayOneShot(enterPortal);
+                break;
+
+            case "port_in":
+                audioSrc.PlayOneShot(portIn);
                 break;
 
 

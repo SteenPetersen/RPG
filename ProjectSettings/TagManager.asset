@@ -42,7 +42,7 @@ TagManager:
   - Obstacles
   - 
   - A*
-  - 3DBackgroundObjects
+  - FlyingLoot
   - ProjectileCollision
   - PlayerProjectileCollisions
   - 3DSelectors

@@ -569,7 +569,7 @@ public class BoardCreator : MonoBehaviour
     /// <param name="yPos">Starting Position of the check on the Y Axis</param>
     private void CheckIfAreaIsClear(int xPos, int yPos , int xSmall , int xLarge, int ySmall, int yLarge)
     {
-        if (ExperienceManager.instance.level < playerLevelToSpawnBossRoom)
+        if (ExperienceManager.MyLevel < playerLevelToSpawnBossRoom)
         {
             spaceForBossRoom = false;
         }

@@ -28,7 +28,7 @@ public class ImpBomber : EnemyAI {
     {
         if (!hasExploded)
         {
-            Instantiate(explosion, bombPos.position, Quaternion.identity);
+            ParticleSystemHolder.instance.PlaySpellEffect(tr.position, "explode");
             bombPos.gameObject.SetActive(false);
             PlayerController.instance.enemies.Remove(gameObject);
             healthbar.gameObject.SetActive(false);

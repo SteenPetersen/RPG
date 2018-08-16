@@ -19,10 +19,10 @@ public class ExperienceManager : MonoBehaviour {
     }
 
 
-    public int level;
-    [SerializeField]
+    static int level;
+    static int talentPoints;
+
     public float experience;
-    [SerializeField]
     public float experienceRequired;
 
     public Image fillImage;
@@ -33,9 +33,41 @@ public class ExperienceManager : MonoBehaviour {
     float lerpStartTime;
     PlayerStats pStats;
 
+    /// <summary>
+    /// The level of the chracter
+    /// </summary>
+    public static int MyLevel
+    {
+        get
+        {
+            return level;
+        }
+
+        set
+        {
+            level = value;
+        }
+    }
+
+    /// <summary>
+    /// The talent points of the chracter
+    /// </summary>
+    public static int MyTalentPoints
+    {
+        get
+        {
+            return talentPoints;
+        }
+
+        set
+        {
+            talentPoints = value;
+        }
+    }
+
     private void Start()
     {
-        level = 1;
+        MyLevel = 1;
         experience = 0;
         experienceRequired = UpdateExperienceRequired();
         pStats = PlayerController.instance.gameObject.GetComponent<PlayerStats>();
@@ -68,10 +100,22 @@ public class ExperienceManager : MonoBehaviour {
 
     void LevelUp()
     {
-        level += 1;
+        MyLevel += 1;
+        MyTalentPoints += 1;
         experience = 0;
 
+        Vector3 pos = PlayerController.instance.transform.position;
+
+        GameObject tmp = ParticleSystemHolder.instance.PlaySpellEffect(PlayerController.instance.transform.position, "level up");
+        tmp.transform.parent = PlayerController.instance.transform;
         SoundManager.instance.PlayUiSound("levelup");
+
+        var text = CombatTextManager.instance.FetchText(pos);
+        var textScript = text.GetComponent<CombatText>();
+        textScript.White("Level up!", pos);
+        text.transform.position = pos;
+        text.SetActive(true);
+        textScript.FadeOut();
 
         experienceRequired = UpdateExperienceRequired();
 
@@ -91,33 +135,33 @@ public class ExperienceManager : MonoBehaviour {
         switch (tier)
         {
             case 0:
-                if (level < 5)
+                if (MyLevel < 5)
                 {
                     GrantExp(exp);
                 }
                 else
                 {
-                    GrantExp(exp / level);
+                    GrantExp(exp / MyLevel);
                 }
                 break;
             case 1:
-                if (level < 10)
+                if (MyLevel < 10)
                 {
                     GrantExp(exp);
                 }
                 else
                 {
-                    GrantExp(exp / level);
+                    GrantExp(exp / MyLevel);
                 }
                 break;
             case 2:
-                if (level < 15)
+                if (MyLevel < 15)
                 {
                     GrantExp(exp);
                 }
                 else
                 {
-                    GrantExp(exp / level);
+                    GrantExp(exp / MyLevel);
                 }
                 break;
         }
@@ -146,7 +190,7 @@ public class ExperienceManager : MonoBehaviour {
     {
         float value = 0;
 
-        value = (level * level + level + 3) * 6;
+        value = (MyLevel * MyLevel + MyLevel + 3) * 6;
 
         return value;
     }

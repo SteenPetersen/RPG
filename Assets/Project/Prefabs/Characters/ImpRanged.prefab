@@ -578,7 +578,7 @@ Transform:
   - {fileID: 4055569015754120}
   m_Father: {fileID: 4061437281608576}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -67.341}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 34.630207}
 --- !u!4 &4182772089773378
 Transform:
   m_ObjectHideFlags: 1
@@ -659,7 +659,7 @@ Transform:
   - {fileID: 4420246565338418}
   m_Father: {fileID: 4820424459523668}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.15034485}
 --- !u!4 &4381945317786244
 Transform:
   m_ObjectHideFlags: 1
@@ -962,6 +962,7 @@ MonoBehaviour:
   armor:
     baseValue: 0
   hitByProjectile: 0
+  noLoot: 0
   shielded: 0
   specialLoot: []
 --- !u!114 &114045906091740378
@@ -1197,6 +1198,7 @@ MonoBehaviour:
   whenCloseToDestination: 0
   healthbar: {fileID: 0}
   speechLocation: {fileID: 1357078828559112}
+  speechBubbleId: 0
   showGizmos: 0
   interval: 3
   setter: {fileID: 114478968658878132}

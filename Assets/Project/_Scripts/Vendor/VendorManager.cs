@@ -65,7 +65,7 @@ public class VendorManager : MonoBehaviour {
 
             for (int i = 0; i <= r; i++)
             {
-                items.Add(EquipmentGenerator._instance.CreateVendorEquipment());
+                items.Add(EquipmentGenerator._instance.CreateVendorEquipment(0));
             }
         }
 

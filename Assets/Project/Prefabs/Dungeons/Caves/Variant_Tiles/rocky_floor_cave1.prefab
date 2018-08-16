@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 33153408672349588}
   - component: {fileID: 114910546945339710}
   - component: {fileID: 114379796993117414}
-  m_Layer: 28
+  m_Layer: 9
   m_Name: pb-MergedObject-2812308
   m_TagString: Untagged
   m_Icon: {fileID: 0}

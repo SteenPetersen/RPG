@@ -17,6 +17,10 @@ public class EnemyAI : AIPath
     #region HiddenVariables
 
     [SerializeField] GameObject speechLocation;
+
+    [Tooltip("Which SpeechBubble am I currently using")]
+    public int speechBubbleId;
+
     [SerializeField] bool showGizmos;
     [Tooltip("the interval with which we check melee ranges (e.g 3 means every 3rd frame)")]
     [SerializeField] int interval = 2;
@@ -165,7 +169,7 @@ public class EnemyAI : AIPath
     /// </summary>
     public virtual void IncreaseStatsBasedOnPlayerLevel()
     {
-        int percentageToAdd = ExperienceManager.instance.level * 20;
+        int percentageToAdd = ExperienceManager.MyLevel * 20;
 
         myStats.maxHealth = myStats.maxHealth + percentageToAdd;
         myStats.currentHealth = myStats.maxHealth;
@@ -283,14 +287,21 @@ public class EnemyAI : AIPath
         if (isDead)
             return;
 
+        Transform speech = new GameObject().transform;
+        Vector3 speechPos = new Vector3();
+
+        if (speechLocation != null)
+        {
+            speech = speechLocation.transform;
+            speechPos = speech.position;
+            speech.SetParent(null);
+        }
+
         Transform tmp = healthGroup.transform;
-        Transform speech = speechLocation.transform;
 
         Vector3 pos = tmp.position;
-        Vector3 speechPos = speech.position;
 
         tmp.SetParent(null);
-        speech.SetParent(null);
 
         Vector3 theScale = child.gameObject.transform.localScale;
 
@@ -301,7 +312,6 @@ public class EnemyAI : AIPath
         child.gameObject.transform.localScale = theScale;
 
         tmp.SetParent(child.transform);
-        speech.SetParent(child.transform);
 
         if (facingRight)
         {
@@ -313,7 +323,13 @@ public class EnemyAI : AIPath
         }
 
         tmp.position = pos;
-        speech.position = speechPos;
+
+        if (speechLocation != null)
+        {
+            speech.SetParent(child.transform);
+            speech.position = speechPos;
+        }
+
     }
 
     public virtual void CheckMeleeRange()
@@ -542,6 +558,14 @@ public class EnemyAI : AIPath
     {
         //meant to be overwritten
     }
+
+    public virtual void DieBurning()
+    {
+        //meant to be overwritten
+    }
+
+    public virtual void altDeath()
+    { }
 
 
     #endregion ImpAnimationControl Methods

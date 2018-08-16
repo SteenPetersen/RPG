@@ -208,7 +208,7 @@ MonoBehaviour:
   chanceToDrop: 20
   damagedMat: {fileID: 0}
   shakeTime: 0.3
-  decreaseShakeTiome: 0.2
+  decreaseShakeTime: 0.2
   MaxHealth: 0
   health: 149
   impact: {fileID: 198581490585624174}
