@@ -15,7 +15,7 @@ public class SoundManager : MonoBehaviour {
                      demontalk1, demontalk2, demontalk3,
                      spikeTrapFire, spikeTrapReset,
                      stoneWallOpen,
-                     impactBox, destroyBox,
+                     impactBox, destroyBox, igniteTarget,
                      portalAppears, enterPortal, portIn,
                      firstBossDeath;
     public AudioSource audioSrc;
@@ -38,6 +38,7 @@ public class SoundManager : MonoBehaviour {
         playerHurt1 = Resources.Load<AudioClip>("Sound/" + "player_hit1");
 
         impact1 = Resources.Load<AudioClip>("Sound/" + "impact1");
+        igniteTarget = Resources.Load<AudioClip>("Sound/" + "ignite_target");
 
         impactHit = Resources.Load<AudioClip>("Sound/" + "impact4");
         impactHit1 = Resources.Load<AudioClip>("Sound/" + "impact2");
@@ -107,297 +108,313 @@ public class SoundManager : MonoBehaviour {
 
     public void PlayCombatSound(string clip)
     {
-        switch (clip)
+        if (GameDetails.soundEffects)
         {
-            case "player_hurt":
-                int rand = Random.Range(1, 3);
-                if (rand == 1)
-                {
-                    audioSrc.PlayOneShot(playerHurt);
+            switch (clip)
+            {
+                case "player_hurt":
+                    int rand = Random.Range(1, 3);
+                    if (rand == 1)
+                    {
+                        audioSrc.PlayOneShot(playerHurt);
+                        break;
+                    }
+                    audioSrc.PlayOneShot(playerHurt1);
                     break;
-                }
-                audioSrc.PlayOneShot(playerHurt1);
-                break;
 
-            case "hit_wall":
-                audioSrc.PlayOneShot(impactStone);
-                break;
-
-            case "first_boss_death":
-                audioSrc.PlayOneShot(firstBossDeath);
-                break;
-
-            case "shieldblock":
-                audioSrc.PlayOneShot(shieldblock);
-                break;
-
-            case "shieldriposte":
-                audioSrc.PlayOneShot(shieldriposte);
-                break;
-
-            case "impact":
-                audioSrc.PlayOneShot(impact1);
-                break;
-
-            case "impact_wood":
-                audioSrc.PlayOneShot(impactWood);
-                break;
-
-            case "impact_stone":
-                audioSrc.PlayOneShot(impactStone);
-                break;
-
-            case "Imp_Fireball_impact":
-            case "Imp_Fireball(Clone)_impact":
-                int randHitFire = Random.Range(1, 5);
-                if (randHitFire == 1)
-                {
-                    audioSrc.PlayOneShot(fireballimpact);
+                case "hit_wall":
+                    audioSrc.PlayOneShot(impactStone);
                     break;
-                }
-                else if (randHitFire == 2)
-                {
+
+                case "first_boss_death":
+                    audioSrc.PlayOneShot(firstBossDeath);
+                    break;
+
+                case "shieldblock":
+                    audioSrc.PlayOneShot(shieldblock);
+                    break;
+
+                case "shieldriposte":
+                    audioSrc.PlayOneShot(shieldriposte);
+                    break;
+
+                case "impact":
+                    audioSrc.PlayOneShot(impact1);
+                    break;
+
+                case "impact_wood":
+                    audioSrc.PlayOneShot(impactWood);
+                    break;
+
+                case "impact_stone":
+                    audioSrc.PlayOneShot(impactStone);
+                    break;
+
+                case "Imp_Fireball_impact":
+                case "Imp_Fireball(Clone)_impact":
+                    int randHitFire = Random.Range(1, 5);
+                    if (randHitFire == 1)
+                    {
+                        audioSrc.PlayOneShot(fireballimpact);
+                        break;
+                    }
+                    else if (randHitFire == 2)
+                    {
+                        audioSrc.PlayOneShot(fireballimpact1);
+                        break;
+                    }
+                    else if (randHitFire == 3)
+                    {
+                        audioSrc.PlayOneShot(fireballimpact2);
+                        break;
+                    }
+                    else if (randHitFire == 4)
+                    {
+                        audioSrc.PlayOneShot(fireballimpact3);
+                        break;
+                    }
                     audioSrc.PlayOneShot(fireballimpact1);
                     break;
-                }
-                else if (randHitFire == 3)
-                {
-                    audioSrc.PlayOneShot(fireballimpact2);
-                    break;
-                }
-                else if (randHitFire == 4)
-                {
-                    audioSrc.PlayOneShot(fireballimpact3);
-                    break;
-                }
-                audioSrc.PlayOneShot(fireballimpact1);
-                break;
 
-            case "Imp_Fireball_wallimpact":
-            case "Imp_Fireball(Clone)_wallimpact":
-                int randHitFireWall = Random.Range(1, 5);
-                if (randHitFireWall == 1)
-                {
-                    audioSrc.PlayOneShot(fireballimpact);
-                    break;
-                }
-                else if (randHitFireWall == 2)
-                {
+                case "Imp_Fireball_wallimpact":
+                case "Imp_Fireball(Clone)_wallimpact":
+                    int randHitFireWall = Random.Range(1, 5);
+                    if (randHitFireWall == 1)
+                    {
+                        audioSrc.PlayOneShot(fireballimpact);
+                        break;
+                    }
+                    else if (randHitFireWall == 2)
+                    {
+                        audioSrc.PlayOneShot(fireballimpact1);
+                        break;
+                    }
+                    else if (randHitFireWall == 3)
+                    {
+                        audioSrc.PlayOneShot(fireballimpact2);
+                        break;
+                    }
+                    else if (randHitFireWall == 4)
+                    {
+                        audioSrc.PlayOneShot(fireballimpact3);
+                        break;
+                    }
                     audioSrc.PlayOneShot(fireballimpact1);
                     break;
-                }
-                else if (randHitFireWall == 3)
-                {
-                    audioSrc.PlayOneShot(fireballimpact2);
+
+                case "impact_hit":
+                    int randHit = Random.Range(1, 3);
+                    if (randHit == 1)
+                    {
+                        audioSrc.PlayOneShot(impactHit);
+                        break;
+                    }
+                    audioSrc.PlayOneShot(impactHit1);
                     break;
-                }
-                else if (randHitFireWall == 4)
-                {
-                    audioSrc.PlayOneShot(fireballimpact3);
+
+                case "bow":
+                    audioSrc.PlayOneShot(bow);
                     break;
-                }
-                audioSrc.PlayOneShot(fireballimpact1);
-                break;
 
-            case "impact_hit":
-                int randHit = Random.Range(1, 3);
-                if (randHit == 1)
-                {
-                    audioSrc.PlayOneShot(impactHit);
+                case "bladeSwing":
+                    audioSrc.PlayOneShot(bladeSwing);
                     break;
-                }
-                audioSrc.PlayOneShot(impactHit1);
-                break;
 
-            case "bow":
-                audioSrc.PlayOneShot(bow);
-                break;
-
-            case "bladeSwing":
-                audioSrc.PlayOneShot(bladeSwing);
-                break;
-
-            case "Imp_Boss":
-            case "Imp_Boss(Clone)":
-                audioSrc.PlayOneShot(impBossHit);
-                break;
-
-            case "FirstBoss_shot":
-            case "FirstBoss(Clone)_shot":
-                int randGreenFireball = Random.Range(1, 5);
-                if (randGreenFireball == 1)
-                {
-                    audioSrc.PlayOneShot(bigGreenFireball);
+                case "Imp_Boss":
+                case "Imp_Boss(Clone)":
+                    audioSrc.PlayOneShot(impBossHit);
                     break;
-                }
-                else if (randGreenFireball == 2)
-                {
-                    audioSrc.PlayOneShot(bigGreenFireball1);
+
+                case "FirstBoss_shot":
+                case "FirstBoss(Clone)_shot":
+                    int randGreenFireball = Random.Range(1, 5);
+                    if (randGreenFireball == 1)
+                    {
+                        audioSrc.PlayOneShot(bigGreenFireball);
+                        break;
+                    }
+                    else if (randGreenFireball == 2)
+                    {
+                        audioSrc.PlayOneShot(bigGreenFireball1);
+                        break;
+                    }
+                    else if (randGreenFireball == 3)
+                    {
+                        audioSrc.PlayOneShot(bigGreenFireball2);
+                        break;
+                    }
+                    audioSrc.PlayOneShot(bigGreenFireball3);
                     break;
-                }
-                else if (randGreenFireball == 3)
-                {
-                    audioSrc.PlayOneShot(bigGreenFireball2);
+
+                case "FirstBoss_prep":
+                case "FirstBoss(Clone)_prep":
+                    audioSrc.PlayOneShot(firstBossPrepAoe);
                     break;
-                }
-                audioSrc.PlayOneShot(bigGreenFireball3);
-                break;
 
-            case "FirstBoss_prep":
-            case "FirstBoss(Clone)_prep":
-                audioSrc.PlayOneShot(firstBossPrepAoe);
-                break;
-
-            case "ImpGiant_sound1":
-            case "ImpGiant(Clone)_sound1":
-                audioSrc.PlayOneShot(fireBurst);
-                break;
-
-            case "ImpGiant_sound2":
-            case "ImpGiant(Clone)_sound2":
-                audioSrc.PlayOneShot(firebuildup);
-                break;
-
-            case "Imp_swing":
-            case "Imp(Clone)_swing":
-                audioSrc.PlayOneShot(impSwing);
-                break;
-
-            case "Imp_hit":
-            case "Imp(Clone)_hit":
-                int Imp_hit = Random.Range(1, 3);
-                if (Imp_hit == 1)
-                {
-                    audioSrc.PlayOneShot(impHit);
+                case "ImpGiant_sound1":
+                case "ImpGiant(Clone)_sound1":
+                    audioSrc.PlayOneShot(fireBurst);
                     break;
-                }
-                audioSrc.PlayOneShot(impHit1);
-                break;
 
-            case "Imp_death":
-            case "Imp(Clone)_death":
-                audioSrc.PlayOneShot(impDeath);
-                break;
-
-            case "ImpRanged_hit":
-            case "ImpRanged(Clone)_hit":
-                int ImpRanged_hit = Random.Range(1, 3);
-                if (ImpRanged_hit == 1)
-                {
-                    audioSrc.PlayOneShot(impHit);
+                case "ImpGiant_sound2":
+                case "ImpGiant(Clone)_sound2":
+                    audioSrc.PlayOneShot(firebuildup);
                     break;
-                }
-                audioSrc.PlayOneShot(impHit1);
-                break;
 
-            case "ImpRanged_death":
-            case "ImpRanged(Clone)_death":
-                audioSrc.PlayOneShot(impDeath);
-                break;
+                case "Imp_swing":
+                case "Imp(Clone)_swing":
+                    audioSrc.PlayOneShot(impSwing);
+                    break;
 
-            case "bomb":
-                audioSrc.PlayOneShot(bomb);
-                break;
+                case "Imp_hit":
+                case "Imp(Clone)_hit":
+                    int Imp_hit = Random.Range(1, 3);
+                    if (Imp_hit == 1)
+                    {
+                        audioSrc.PlayOneShot(impHit);
+                        break;
+                    }
+                    audioSrc.PlayOneShot(impHit1);
+                    break;
 
-            case "crit":
-                audioSrc.PlayOneShot(crit);
-                break;
+                case "Imp_death":
+                case "Imp(Clone)_death":
+                    audioSrc.PlayOneShot(impDeath);
+                    break;
 
+                case "ImpRanged_hit":
+                case "ImpRanged(Clone)_hit":
+                    int ImpRanged_hit = Random.Range(1, 3);
+                    if (ImpRanged_hit == 1)
+                    {
+                        audioSrc.PlayOneShot(impHit);
+                        break;
+                    }
+                    audioSrc.PlayOneShot(impHit1);
+                    break;
+
+                case "ImpRanged_death":
+                case "ImpRanged(Clone)_death":
+                    audioSrc.PlayOneShot(impDeath);
+                    break;
+
+                case "bomb":
+                    audioSrc.PlayOneShot(bomb);
+                    break;
+
+                case "crit":
+                    audioSrc.PlayOneShot(crit);
+                    break;
+
+            }
         }
     }
 
     public void PlayInventorySound(string clip)
     {
-        switch (clip)
+        if (GameDetails.soundEffects)
         {
-            case "player_hurt":
-                int rand = Random.Range(1, 3);
-                if (rand == 1)
-                {
-                    audioSrc.PlayOneShot(playerHurt);
+            switch (clip)
+            {
+                case "player_hurt":
+                    int rand = Random.Range(1, 3);
+                    if (rand == 1)
+                    {
+                        audioSrc.PlayOneShot(playerHurt);
+                        break;
+                    }
+                    audioSrc.PlayOneShot(playerHurt1);
                     break;
-                }
-                audioSrc.PlayOneShot(playerHurt1);
-                break;
 
-            case "AddItem":
-                audioSrc.PlayOneShot(impactStone);
-                break;
+                case "AddItem":
+                    audioSrc.PlayOneShot(impactStone);
+                    break;
 
-            case "gulp":
-                audioSrc.PlayOneShot(potionPickup);
-                break;
+                case "gulp":
+                    audioSrc.PlayOneShot(potionPickup);
+                    break;
 
-            case "Small Health Potion_pickup":
-            case "Small Health Potion(Clone)_pickup":
-                audioSrc.PlayOneShot(potionInteract);
-                break;
+                case "Small Health Potion_pickup":
+                case "Small Health Potion(Clone)_pickup":
+                    audioSrc.PlayOneShot(potionInteract);
+                    break;
+
+            }
 
         }
     }
 
     public void PlayUiSound(string clip)
     {
-        switch (clip)
+        if (GameDetails.soundEffects)
         {
-            case "levelup":
-                audioSrc.PlayOneShot(levelup);
-                break;
+            switch (clip)
+            {
+                case "levelup":
+                    audioSrc.PlayOneShot(levelup);
+                    break;
 
-            case "deathsound":
-                audioSrc.PlayOneShot(deathsound);
-                break;
+                case "deathsound":
+                    audioSrc.PlayOneShot(deathsound);
+                    break;
 
-            case "lootdrop":
-                audioSrc.PlayOneShot(lootdrop);
-                break;
+                case "lootdrop":
+                    audioSrc.PlayOneShot(lootdrop);
+                    break;
 
-            case "lootAppearsChest":
-                audioSrc.PlayOneShot(lootAppearsChest);
-                break;
+                case "lootAppearsChest":
+                    audioSrc.PlayOneShot(lootAppearsChest);
+                    break;
 
-            case "purchase":
-                audioSrc.PlayOneShot(purchase);
-                break;
+                case "purchase":
+                    audioSrc.PlayOneShot(purchase);
+                    break;
 
-            case "chestopen":
-                audioSrc.PlayOneShot(chestopen);
-                break;
+                case "chestopen":
+                    audioSrc.PlayOneShot(chestopen);
+                    break;
 
-            case "chestclose":
-                audioSrc.PlayOneShot(chestclose);
-                break;
+                case "chestclose":
+                    audioSrc.PlayOneShot(chestclose);
+                    break;
 
+
+            }
 
         }
     }
 
     public void PlayDialogueSound(string clip)
     {
-        switch (clip)
+        if (GameDetails.soundEffects)
         {
-            case "ImpGiant":
-            case "ImpGiant(Clone)":
-                int rnd = UnityEngine.Random.Range(0, 2);
-                switch (rnd)
-                {
-                    case 0:
-                        audioSrc.PlayOneShot(demontalk1);
-                        break;
-                    case 1:
-                        audioSrc.PlayOneShot(demontalk2);
-                        break;
-                    case 2:
-                        audioSrc.PlayOneShot(demontalk3);
-                        break;
-                }
-                break;
+            switch (clip)
+            {
+                case "ImpGiant":
+                case "ImpGiant(Clone)":
+                    int rnd = UnityEngine.Random.Range(0, 2);
+                    switch (rnd)
+                    {
+                        case 0:
+                            audioSrc.PlayOneShot(demontalk1);
+                            break;
+                        case 1:
+                            audioSrc.PlayOneShot(demontalk2);
+                            break;
+                        case 2:
+                            audioSrc.PlayOneShot(demontalk3);
+                            break;
+                    }
+                    break;
+            }
         }
     }
 
     public void PlayEnvironmentSound(string clip)
     {
-        switch (clip)
+        if (GameDetails.soundEffects)
+        {
+            switch (clip)
         {
             case "spike_trap_fire":
                 //int rand = Random.Range(1, 3);
@@ -439,8 +456,12 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(portIn);
                 break;
 
+            case "ignite_target":
+                audioSrc.PlayOneShot(igniteTarget);
+                break;
 
 
+            }
         }
     }
 }

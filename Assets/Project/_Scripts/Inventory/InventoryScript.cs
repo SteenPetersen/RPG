@@ -229,7 +229,7 @@ public class InventoryScript : MonoBehaviour {
     }
 
     /// <summary>
-    /// Checks to see if item can be placed in stackable form anywhere in inventory, if it cannot places it in an empty slot
+    /// Checks to see if item can be placed anywhere in inventory, if it cannot places it in an empty slot
     /// </summary>
     /// <param name="item">Item to add</param>
     public bool AddItem(Item item)
@@ -247,6 +247,7 @@ public class InventoryScript : MonoBehaviour {
             PlaceInEmpty(item);
             return true;
         }
+
         else
         {
             if (item.MyStackSize > 0)
@@ -260,6 +261,60 @@ public class InventoryScript : MonoBehaviour {
 
         return false;
 
+    }
+
+    /// <summary>
+    /// Override method that also tries to place the item at the first slots of the bags
+    /// </summary>
+    /// <param name="item">Item to add</param>
+    public void AddItem(Item mainHand, Item offHand)
+    {
+        List<SlotScript> slots = GetAllSlots();
+
+        Item tmp = slots[0].MyItem;
+        Item tmp1 = slots[1].MyItem;
+
+        int count = slots[0].MyCount;
+        int count1 = slots[1].MyCount;
+
+        slots[0].Clear();
+        slots[1].Clear();
+
+        PlaceInEmpty(mainHand);
+        PlaceInEmpty(offHand);
+
+        for (int i = 0; i < count; i++)
+        {
+            AddItem(tmp);
+        }
+
+        for (int i = 0; i < count1; i++)
+        {
+            AddItem(tmp1);
+        }
+    }
+
+    /// <summary>
+    /// Places the bow in the first slot of the inventory
+    /// </summary>
+    /// <param name="bow"></param>
+    /// <param name="isBow"></param>
+    public void AddItem(Item bow, bool isBow = false)
+    {
+        List<SlotScript> slots = GetAllSlots();
+
+        Item tmp = slots[0].MyItem;
+
+        int count = slots[0].MyCount;
+
+        slots[0].Clear();
+
+        PlaceInEmpty(bow);
+
+        for (int i = 0; i < count; i++)
+        {
+            AddItem(tmp);
+        }
     }
 
 
@@ -280,7 +335,7 @@ public class InventoryScript : MonoBehaviour {
     }
 
     /// <summary>
-    /// checks if it is possible to add the item to the bag
+    /// checks if it there is a corresponding items with available stack space.
     /// </summary>
     /// <param name="item">Item we are trying to return</param>
     /// <returns>A boolean of wether or not item can be added</returns>
@@ -402,7 +457,7 @@ public class InventoryScript : MonoBehaviour {
                 if (!slot.IsEmpty && slot.MyItem.GetType() == typeof(Key))
                 {
                     Key k = (Key)slot.MyItem;
-                    if (k._Tier == tier)
+                    if (k._Tier == tier && k._BossKey == false)
                     {
                         return (Key)slot.MyItem;
                     }

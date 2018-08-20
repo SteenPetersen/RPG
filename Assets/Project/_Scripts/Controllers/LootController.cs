@@ -76,7 +76,7 @@ public class LootController : MonoBehaviour {
 
         float n = UnityEngine.Random.Range(0, 100);
 
-        Debug.LogWarning("Percent chance to drop key was " + p + " and random number was " + n + " amount of enemies was " + amountOfEnemies);
+        //Debug.LogWarning("Percent chance to drop key was " + p + " and random number was " + n + " amount of enemies was " + amountOfEnemies);
 
         if (n <= p)
         {

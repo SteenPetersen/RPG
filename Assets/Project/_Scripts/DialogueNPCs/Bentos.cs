@@ -8,41 +8,54 @@ public class Bentos : DialogueNPC {
     [SerializeField] Item bow;
     [SerializeField] Item pants;
     [SerializeField] bool bowGiven, pantsGiven;
+    [SerializeField] TutorialManager tut;
+    [SerializeField] bool speaking;
+    [SerializeField] string[] sayings;
+    [SerializeField] Transform speechPosition;
 
     protected override void Start()
     {
         base.Start();
 
         col = GetComponent<SphereCollider>();
+        tut = TutorialManager.instance;
     }
 
     void Update()
     {
-        if (StoryManager.stage == 2)
+        if (!currentlyInteractingWithPlayer)
         {
-            if (!currentlyInteractingWithPlayer)
+            speechEffect.Stop();
+
+            if (!dialogueAvailable.isPlaying)
             {
-                speechEffect.Stop();
-
-                if (!dialogueAvailable.isPlaying)
+                if (contentAvailable)
                 {
-                    if (contentAvailable)
-                    {
-                        dialogueAvailable.Play();
+                    dialogueAvailable.Play();
 
-                        if (!col.enabled)
-                        {
-                            col.enabled = true;
-                        }
+                    if (!col.enabled)
+                    {
+                        col.enabled = true;
                     }
                 }
             }
         }
 
-        if (StoryManager.stage == 3)
+        if (StoryManager.tutorialStage == 1)
         {
-            speechEffect.Stop();
-            dialogueAvailable.Stop();
+            if (tut.MyOverTheLine)
+            {
+                if (!speaking)
+                {
+                    int rnd = UnityEngine.Random.Range(0, sayings.Length - 1);
+                    SpeechBubbleManager.instance.FetchBubble(speechPosition, sayings[rnd]);
+                    speaking = true;
+                }
+            }
+            else if (!tut.MyOverTheLine && speaking)
+            {
+                speaking = false;
+            }
         }
 
 
@@ -55,100 +68,64 @@ public class Bentos : DialogueNPC {
     /// </summary>
     private void ConversationProgress()
     {
-        if (StoryManager.stage == 2)
+        if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
         {
-            if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
+            /// Start conversation
+            /// if you havent done anything and you've reached the end of NPC intro
+            if (StoryManager.tutorialStage == 0 && currentParagraph > 5)
             {
-                // Start conversation
-                if (StoryManager.tutorialConversation == 5)
-                {
-
-                    if (currentParagraph == 4 && StoryManager.givenItems < 2)
-                    {
-                        InventoryScript.instance.AddItem(bow);
-
-                        bool closedBag = InventoryScript.instance.MyBags.Find(x => !x.MyBagScript.isOpen);
-
-                        if (closedBag)
-                        {
-                            InventoryScript.instance.OpenClose();
-                        }
-
-                        StoryManager.givenItems = 2;
-                        StoryManager.tutorialConversation = 6;
-                    }
-                }
-
-                if (StoryManager.tutorialConversation == 6)
-                {
-                    if (GameDetails.arrowsFired < 10)
-                    {
-                        contentAvailable = false;
-                        currentParagraph = 4;
-                    }
-                    else
-                    {
-                        currentParagraph = 5;
-                        StoryManager.tutorialConversation = 7;
-                    }
-                }
-
-                if (StoryManager.tutorialConversation == 7)
-                {
-                    if (!pantsGiven)
-                    {
-                        InventoryScript.instance.AddItem(pants);
-
-                        bool closedBag = InventoryScript.instance.MyBags.Find(x => !x.MyBagScript.isOpen);
-
-                        if (closedBag)
-                        {
-                            InventoryScript.instance.OpenClose();
-                        }
-
-                        pantsGiven = true;
-
-                        StoryManager.tutorialConversation = 8;
-                    }
-
-                }
-
-                if (StoryManager.tutorialConversation == 8)
-                {
-                    if (currentParagraph == 6)
-                    {
-                        StoryManager.tutorialConversation = 9;
-                    }
-                }
-
-                if (StoryManager.tutorialConversation == 9)
-                {
-                    currentParagraph = 6;
-                    StoryManager.stage = 3;
-                    GameDetails._instance.Save();
-                }
-
-
-
-                currentParagraphIncrement = currentParagraph + 1;
-                speechText.text = textLines[currentParagraph];
-
+                currentParagraph = 5;
+                contentAvailable = false;
+                StoryManager.tutorialStage = 1;
+                CloseDialogue();
             }
 
-            // must be done outside loop as character is waiting for 
-            // something to happen to continue conversation
-            if (StoryManager.tutorialConversation == 6 && GameDetails.arrowsFired > 10)
+
+            else if (StoryManager.tutorialStage == 2)
             {
-                contentAvailable = true;
+                GivePlayerItem(pants, pantsGiven);
+                StoryManager.tutorialStage = 3;
+            }
+
+            currentParagraphIncrement = currentParagraph + 1;
+            speechText.text = textLines[currentParagraph];
+        }
+
+        if (StoryManager.tutorialStage == 2)
+        {
+            if (!contentAvailable)
+            {
+                ReadyToTalkAgain(6);
             }
         }
 
-        if (StoryManager.stage > 2)
+        else if (StoryManager.tutorialStage == 3 && !currentlyInteractingWithPlayer)
         {
-             currentParagraph = 7;
+            currentParagraph = 7;
+
+            if (!TutorialManager.instance.archeryDoorsOpen)
+            {
+                TutorialManager.instance.OpenArcheryDoors();
+            }
         }
 
 
+    }
+
+
+
+    private void GivePlayerItem(Item item, bool boolToCHange)
+    {
+        InventoryScript.instance.AddItem(item);
+
+        bool closedBag = InventoryScript.instance.MyBags.Find(x => !x.MyBagScript.isOpen);
+
+        if (closedBag)
+        {
+            InventoryScript.instance.OpenClose();
+        }
+
+        boolToCHange = true;
     }
 
     public override void AdvanceSpeech()
@@ -171,3 +148,75 @@ public class Bentos : DialogueNPC {
         base.Interact();
     }
 }
+
+#region oldConversation
+//if (StoryManager.tutorialConversation == 5)
+//{
+
+//    if (currentParagraph == 4 && StoryManager.givenItems < 2)
+//    {
+//        InventoryScript.instance.AddItem(bow);
+
+//        bool closedBag = InventoryScript.instance.MyBags.Find(x => !x.MyBagScript.isOpen);
+
+//        if (closedBag)
+//        {
+//            InventoryScript.instance.OpenClose();
+//        }
+
+//        StoryManager.givenItems = 2;
+//        StoryManager.tutorialConversation = 6;
+//    }
+//}
+
+//if (StoryManager.tutorialConversation == 6)
+//{
+//    if (GameDetails.arrowsFired < 10)
+//    {
+//        contentAvailable = false;
+//        currentParagraph = 4;
+//    }
+//    else
+//    {
+//        currentParagraph = 5;
+//        StoryManager.tutorialConversation = 7;
+//    }
+//}
+
+//if (StoryManager.tutorialConversation == 7)
+//{
+//    if (!pantsGiven)
+//    {
+//        InventoryScript.instance.AddItem(pants);
+
+//        bool closedBag = InventoryScript.instance.MyBags.Find(x => !x.MyBagScript.isOpen);
+
+//        if (closedBag)
+//        {
+//            InventoryScript.instance.OpenClose();
+//        }
+
+//        pantsGiven = true;
+
+//        StoryManager.tutorialConversation = 8;
+//    }
+
+//}
+
+//if (StoryManager.tutorialConversation == 8)
+//{
+//    if (currentParagraph == 6)
+//    {
+//        StoryManager.tutorialConversation = 9;
+//    }
+//}
+
+//if (StoryManager.tutorialConversation == 9)
+//{
+//    currentParagraph = 6;
+//    StoryManager.stage = 3;
+//    GameDetails.instance.Save();
+//}
+
+#endregion oldConversation
+

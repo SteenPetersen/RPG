@@ -20,8 +20,8 @@ public class ZoneLine : MonoBehaviour {
             {
                 if (!loading)
                 {
-                    StartCoroutine(GameDetails.Instance.FadeOutAndLoadScene(ZoneToLoad));
-                    GameDetails.Instance.Save(true);
+                    StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(ZoneToLoad));
+                    GameDetails.MyInstance.Save(true);
                     loading = true;
                 }
             }

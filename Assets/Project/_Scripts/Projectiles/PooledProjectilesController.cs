@@ -96,8 +96,9 @@ public class PooledProjectilesController : MonoBehaviour {
         switch (enemyName)
         {
             case "ImpRanged":
+            case "ImpRanged_Tutorial":
 
-                    if (impFireballs.Count != 0)
+                if (impFireballs.Count != 0)
                     {
                         for (int i = 0; i < impFireballs.Count; i++)
                         {

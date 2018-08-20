@@ -11,10 +11,15 @@ public class Chest : Interactable {
     [Tooltip("How big is the circle around this Chest in which the items can spawn")]
     public float lootSpawnRadius;
 
+    [SerializeField] int maxAmountOfItems;
+
     [SerializeField] bool locked = true;
 
     [Tooltip("Tier of loot to provide")]
     public int tier;  // tier of loot to provide
+
+    [Tooltip("Level of key required to open")]
+    [SerializeField] int keyTier;
 
     [Tooltip("Has this chest been Opened before")]
     public bool hasBeenOpened;
@@ -34,15 +39,18 @@ public class Chest : Interactable {
     [Tooltip("How High should loot jump?")]
     [SerializeField] float heightOfLootJump;
 
-    [SerializeField] float distanceFromChest;
+    [Tooltip("All possible position where loot can land depending on this chests position in the dungeon")]
+    [SerializeField] List<Vector2> positions = new List<Vector2>();
 
-    GameObject goToCircumventrotationOnChest;
+    [SerializeField] float distanceFromChest;
 
     bool showingEffect;
     [SerializeField] GameObject front;
     [SerializeField] ParticleSystem effect;
+    bool lootTaken;
 
-    
+    [SerializeField] bool specificItemChest;
+    [SerializeField] GameObject[] specificItems;
 
     void Start () {
         // set reference to spriteRenderer
@@ -51,14 +59,7 @@ public class Chest : Interactable {
         player = PlayerController.instance.gameObject.transform;
 
         myCollider = GetComponent<BoxCollider>();
-
-        goToCircumventrotationOnChest = new GameObject();
-        goToCircumventrotationOnChest.transform.rotation = CameraController.instance.transform.rotation;
-        goToCircumventrotationOnChest.transform.parent = null;
-        goToCircumventrotationOnChest.transform.position = transform.position;
-
     }
-
 
     private void Update()
     {
@@ -67,17 +68,15 @@ public class Chest : Interactable {
             CloseIfPlayerLeaves();
         }
 
-
-        if (Input.GetKey(KeyCode.T))
+        if (!lootTaken)
         {
-            FindLocation(goToCircumventrotationOnChest);
-        }
+            if (!showingEffect && !chestClosed)
+            {
+                front.SetActive(true);
+                effect.Play();
+                showingEffect = true;
+            }
 
-        if (!showingEffect && !chestClosed)
-        {
-            front.SetActive(true);
-            effect.Play();
-            showingEffect = true;
         }
 
         if (showingEffect && chestClosed)
@@ -87,24 +86,8 @@ public class Chest : Interactable {
             effect.Clear();
             showingEffect = false;
         }
-
     }
 
-    /// <summary>
-    /// Determines what loot there is inside the chest by passing its teir to the Loot Manager
-    /// </summary>
-    private void DetermineLoot()
-    {
-        // generate a random number
-        int rnd = UnityEngine.Random.Range(0, 4);
-
-        // iterate for as many times as the random number determined
-        for (int i = 0; i < rnd; i++)
-        {
-            // add loot to the chest for each iteration
-            loot.Add(EquipmentGenerator._instance.CreateDroppable(tier));
-        }
-    }
 
     public override void Interact()
     {
@@ -119,7 +102,7 @@ public class Chest : Interactable {
 
                 if (distance < lootSpawnRadius)
                 {
-                    Key k = InventoryScript.instance.CheckForCorrectKey(tier);
+                    Key k = InventoryScript.instance.CheckForCorrectKey(keyTier);
 
                     if (k != null)
                     {
@@ -161,6 +144,13 @@ public class Chest : Interactable {
             // if this chest has not been opened before
             if (!hasBeenOpened)
             {
+                bool hasLoot = DetermineLoot();
+
+                if (!hasLoot)
+                {
+                    lootTaken = true;
+                }
+
                 // spawn the loot
                 SpawnLoot();
             }
@@ -187,31 +177,72 @@ public class Chest : Interactable {
         }
     }
 
-    private void CloseIfPlayerLeaves()
+    /// <summary>
+    /// Determines what loot there is inside the chest by passing its teir to the Loot Manager
+    /// </summary>
+    private bool DetermineLoot()
     {
-        Vector2 direction = new Vector2(PlayerController.instance.gameObject.transform.position.x - transform.position.x, PlayerController.instance.gameObject.transform.position.y - transform.position.y);
-        direction.Normalize();
-
-        int playerLayer = 10;
-        var playerlayerMask = 1 << playerLayer;
-
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, closeRadius, playerlayerMask);
-
-        Debug.DrawRay(transform.position, direction, Color.green, 1);
-        //Debug.DrawLine(transform.position, PlayerController.instance.gameObject.transform.position - transform.position, Color.yellow);
-
-        if (hit.transform != null)
+        if (specificItemChest)
         {
-            if (hit.collider.name == "Player")
+            for (int i = 0; i < specificItems.Length; i++)
             {
-                //Debug.Log("Player is nearby!");
-                return;
+                loot.Add(Instantiate(specificItems[i]));
             }
+
+
+            return true;
         }
 
-        CloseChest();
+        // generate a random number
+        int rnd = UnityEngine.Random.Range(0, maxAmountOfItems + 1);
 
+        Debug.Log(rnd);
+
+        if (rnd == 0)
+        {
+            return false;
+        }
+
+
+        // iterate for as many times as the random number determined
+        for (int i = 0; i < rnd; i++)
+        {
+            // add loot to the chest for each iteration
+            loot.Add(EquipmentGenerator._instance.CreateDroppable(tier));
+        }
+
+        return true;
     }
+
+    private void SpawnLoot()
+    {
+        if (loot.Count != 0)
+        {
+            GameObject shadeChest = new GameObject();
+            shadeChest.transform.rotation = CameraController.instance.transform.rotation;
+            shadeChest.transform.parent = null;
+            shadeChest.transform.position = transform.position;
+
+            FindAllEndPositions(shadeChest);
+
+            StartCoroutine(SpawnLootItems(loot, loot.Count, shadeChest.transform));
+        }
+
+        else if (loot.Count == 0)
+        {
+            var text = CombatTextManager.instance.FetchText(transform.position);
+            var textScript = text.GetComponent<CombatText>();
+            textScript.White("Empty!", transform.position);
+            text.transform.position = transform.position;
+            text.SetActive(true);
+        }
+
+
+        // make sure you cannot open this chest multiple times
+        hasBeenOpened = true;
+    }
+
+
 
     private void CloseChest()
     {
@@ -234,28 +265,6 @@ public class Chest : Interactable {
         }
     }
 
-    private void SpawnLoot()
-    {
-        DetermineLoot();
-
-        if (loot.Count != 0)
-        {
-             StartCoroutine(SpawnLootItems(loot, loot.Count));
-        }
-
-        else if (loot.Count == 0)
-        {
-            var text = CombatTextManager.instance.FetchText(transform.position);
-            var textScript = text.GetComponent<CombatText>();
-            textScript.White("Empty!", transform.position);
-            text.transform.position = transform.position;
-            text.SetActive(true);
-        }
-
-
-        // make sure you cannot open this chest multiple times
-        hasBeenOpened = true;
-    }
 
     /// <summary>
     /// Finds a random position amongst 24 evenly distributed points which fill the
@@ -263,7 +272,7 @@ public class Chest : Interactable {
     /// </summary>
     /// <param name="origin"></param>
     /// <returns></returns>
-    Vector2 FindLocation(GameObject origin)
+    void FindAllEndPositions(GameObject origin)
     {
         int obstacleLayer = 13;
         int destructableLayer = 19;
@@ -271,9 +280,6 @@ public class Chest : Interactable {
         var destructableLayerMask = 1 << destructableLayer;
 
         var finalMask = obstacleLayerMask | destructableLayerMask;
-
-        // A list of possible locations for the loot to land at
-        List<Vector2> positions = new List<Vector2>();
 
         //Start on ground
         Vector3 beginRayCast = new Vector3(origin.transform.position.x, origin.transform.position.y, 0);
@@ -307,18 +313,12 @@ public class Chest : Interactable {
                 {
                     Vector2 toAdd = (Vector2)beginRayCast + (dir.normalized * distanceFromChest);
                     positions.Add(toAdd);
+
+                    Vector2 toAddClose = (Vector2)beginRayCast + (dir.normalized * (distanceFromChest / 2));
+                    positions.Add(toAddClose);
                 }
             }
         }
-
-        if (positions.Count != 0)
-        {
-            int rand = UnityEngine.Random.Range(0, positions.Count);
-            return positions[rand];
-        }
-
-        return transform.position;
-
     }
 
     /// <summary>
@@ -347,6 +347,41 @@ public class Chest : Interactable {
         return true;
     }
 
+    private void CloseIfPlayerLeaves()
+    {
+        Vector2 direction = new Vector2(PlayerController.instance.gameObject.transform.position.x - transform.position.x, PlayerController.instance.gameObject.transform.position.y - transform.position.y);
+        direction.Normalize();
+
+        int playerLayer = 10;
+        var playerlayerMask = 1 << playerLayer;
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, closeRadius, playerlayerMask);
+
+        Debug.DrawRay(transform.position, direction, Color.green, 1);
+        //Debug.DrawLine(transform.position, PlayerController.instance.gameObject.transform.position - transform.position, Color.yellow);
+
+        if (hit.transform != null)
+        {
+            if (hit.collider.name == "Player")
+            {
+                //Debug.Log("Player is nearby!");
+                return;
+            }
+        }
+
+        CloseChest();
+
+    }
+
+    Vector2 SelectEndPosition()
+    {
+        positions.Shuffle();
+
+        Vector2 tmp = positions[0];
+        positions.RemoveAt(0);
+        return tmp;
+    }
+
     /// <summary>
     /// A temporary change of ths sorting order so the item look like they are coming from inside
     /// the Chest and not from behind it.
@@ -362,48 +397,44 @@ public class Chest : Interactable {
         sr.sortingOrder = 10;
     }
 
-    IEnumerator SpawnLootItems(List<GameObject> items, int count)
+    IEnumerator SpawnLootItems(List<GameObject> items, int count, Transform shadeChest)
     {
-        var text = CombatTextManager.instance.FetchText(transform.position);
-        var textScript = text.GetComponent<CombatText>();
-        textScript.White("Click!", transform.position);
-        text.transform.position = transform.position;
-        text.SetActive(true);
-
-        ShakeManager.instance.shakeGameObject(gameObject, 1f, 0.2f, true);
-
-        yield return new WaitForSeconds(0.2f);
-
         foreach (var item in items)
         {
+            var text = CombatTextManager.instance.FetchText(transform.position);
+            var textScript = text.GetComponent<CombatText>();
+            textScript.White(item.name, transform.position);
+            text.transform.position = transform.position;
+            text.SetActive(true);
+
+            ShakeManager.instance.shakeGameObject(gameObject, 0.3f, 0.2f, true);
+
             LootParabola movement = item.GetComponent<LootParabola>();
 
-            // TODO maybe activate the lootParabola here instead of having it on the default item? if it gives trouble elsewhere 
+            // TODO maybe activate (SetActive) the lootParabola here instead of having it on the default item? if it gives trouble elsewhere 
             // then this would be the place to fix it
 
-            GameObject goToCircumventrotationOnChest = new GameObject();
-            goToCircumventrotationOnChest.transform.rotation = CameraController.instance.transform.rotation;
-            goToCircumventrotationOnChest.transform.parent = null;
-            goToCircumventrotationOnChest.transform.position = transform.position;
-            item.transform.parent = goToCircumventrotationOnChest.transform;
+            item.transform.parent = shadeChest;
             item.transform.position = transform.position;
 
-            Vector2 endPosition = FindLocation(goToCircumventrotationOnChest);
+            Vector2 endPosition = SelectEndPosition();
 
             movement._EndPosition = endPosition;
             movement._StartPosition = transform.position;
             movement._Height = heightOfLootJump;
 
-            Debug.DrawLine(goToCircumventrotationOnChest.transform.position, endPosition, Color.cyan, 5f);
+            Debug.DrawLine(shadeChest.position, endPosition, Color.cyan, 5f);
 
             movement.Go = true;
 
+            shadeChest.gameObject.name = item.name + "_Creator";
             SoundManager.instance.PlayUiSound("lootAppearsChest");
-
 
             yield return new WaitForSeconds(0.5f);
         }
 
+        lootTaken = true;
+        Destroy(shadeChest.gameObject, 3f);
     }
 }
 

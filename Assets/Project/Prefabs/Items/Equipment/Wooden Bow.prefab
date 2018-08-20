@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 212231389549248408}
   - component: {fileID: 65772230802677754}
   - component: {fileID: 114721302308904460}
+  - component: {fileID: 114175862167534264}
   m_Layer: 0
   m_Name: Wooden Bow
   m_TagString: Untagged
@@ -55,6 +56,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.49510598, y: 0.55563426, z: 0.2}
   m_Center: {x: -0.030759692, y: -0.1617192, z: 0}
+--- !u!114 &114175862167534264
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1939266952197240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5dd38e3f6d11224389e3eeef246390b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  positionsSet: 0
 --- !u!114 &114721302308904460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -79,17 +92,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 1.16
-  objectName: 
-  gameDetails: {fileID: 0}
-  isFocus: 0
-  hasInteracted: 0
-  player: {fileID: 0}
-  selector: {fileID: 0}
-  healthGroup: {fileID: 0}
-  healthbar: {fileID: 0}
-  playercontrol: {fileID: 0}
+  drawGizmos: 0
   item: {fileID: 11400000, guid: ae4764eba996d634883beeedcd317797, type: 2}
   chanceToDrop: 30
+  tooltipPosition: {fileID: 0}
+  mouseOver: 0
 --- !u!212 &212231389549248408
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -103,6 +110,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:

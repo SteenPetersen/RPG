@@ -20,20 +20,20 @@ public class GameDetails : MonoBehaviour {
 
 
     #region Singleton
-    public static GameDetails _instance;
+    public static GameDetails instance;
 
-    public static GameDetails Instance { get { return _instance; } }
+    public static GameDetails MyInstance { get { return instance; } }
 
     private void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (instance != null && instance != this)
         {
             Destroy(this.gameObject);
             return;
         }
         else
         {
-            _instance = this;
+            instance = this;
         } 
 
         DontDestroyOnLoad(this.gameObject);
@@ -48,11 +48,14 @@ public class GameDetails : MonoBehaviour {
 
     #endregion
 
+    /// <summary>
+    /// Player entered Information
+    /// </summary>
+    public static string playerName = "Pixl";
 
-    // statics
-    public static int dungeonLevel;
-
-    // used for deathScreen statistics
+    /// <summary>
+    /// Static variables used for deathScreen statistics
+    /// </summary>
     public static int enemiesKilled;
     public static int dungeonFloorsExplored;
     public static int ripostes;
@@ -62,7 +65,11 @@ public class GameDetails : MonoBehaviour {
     public static int arrowsFired;
     public static int randomizedItemsDropped;
 
-
+    /// <summary>
+    /// Public bools for turning things on or off
+    /// </summary>
+    public static bool soundEffects = true;
+    public static bool music = true;
 
     /// <summary>
     /// Accessed by DungeonLevelLoadLogic in order to fade the screen when loading another level
@@ -154,11 +161,11 @@ public class GameDetails : MonoBehaviour {
 
     public IEnumerator FadeOUt()
     {
-        while (GameDetails._instance.fadeToBlack.color.a <= 0.98)
+        while (GameDetails.instance.fadeToBlack.color.a <= 0.98)
         {
-            GameDetails._instance.fadeToBlack.enabled = true;
-            GameDetails._instance.fadeToBlack.color = new Color(0, 0, 0, GameDetails._instance.fadeSpeed);
-            GameDetails._instance.fadeSpeed += 0.02f;
+            GameDetails.instance.fadeToBlack.enabled = true;
+            GameDetails.instance.fadeToBlack.color = new Color(0, 0, 0, GameDetails.instance.fadeSpeed);
+            GameDetails.instance.fadeSpeed += 0.02f;
             yield return new WaitForSeconds(0.01f);
         }
 
@@ -243,7 +250,7 @@ public class GameDetails : MonoBehaviour {
         data.questLine = StoryManager.questLine;
         data.stage = StoryManager.stage;
         data.givenItems = StoryManager.givenItems;
-        data.tutorialConversation = StoryManager.tutorialConversation;
+        data.tutorialConversation = StoryManager.tutorialStage;
 
 
         // bags
@@ -261,8 +268,6 @@ public class GameDetails : MonoBehaviour {
         data.gold = CurrencyManager.wealth;
 
         // action bars
-        //Debug.Log(actionbar2.MyUseable.ToString());
-
         if (actionbar1.SaveItemData != string.Empty)
         {
             data.actionbar1 = actionbar1.SaveItemData;
@@ -276,7 +281,17 @@ public class GameDetails : MonoBehaviour {
             data.actionbar3 = actionbar3.SaveItemData;
         }
 
-        data.zone = SceneManager.GetActiveScene().buildIndex;
+        // Statics
+        data.dungeonFloorsExplored = dungeonFloorsExplored;
+        data.enemiesKilled = enemiesKilled;
+        data.ripostes = ripostes;
+        data.blocks = blocks;
+        data.hits = hits;
+        data.fullChargeHits = fullChargeHits;
+        data.arrowsFired = arrowsFired;
+        data.randomizedItemsDropped = randomizedItemsDropped;
+
+    data.zone = SceneManager.GetActiveScene().buildIndex;
 
         if (!keepPreviousPosition)
         {
@@ -340,7 +355,7 @@ public class GameDetails : MonoBehaviour {
             StoryManager.questLine = data.questLine;
             StoryManager.stage = data.stage;
             StoryManager.givenItems = data.givenItems;
-            StoryManager.tutorialConversation = data.tutorialConversation;
+            StoryManager.tutorialStage = data.tutorialConversation;
 
             // bags
             LoadBags(data.amountOfBags, data.amountOfSlotsPerBag);
@@ -370,6 +385,16 @@ public class GameDetails : MonoBehaviour {
             {
                 actionbar3.LoadGameUseable(tmp as IUseable, tmp);
             }
+
+            // statics
+            dungeonFloorsExplored = data.dungeonFloorsExplored;
+            enemiesKilled = data.enemiesKilled;
+            ripostes = data.ripostes;
+            blocks = data.blocks;
+            hits = data.hits;
+            fullChargeHits = data.fullChargeHits;
+            arrowsFired = data.arrowsFired;
+            randomizedItemsDropped = data.randomizedItemsDropped;
 
             SceneManager.LoadScene(data.zone);
             player.transform.position = new Vector2(data.locationX, data.locationY);
@@ -621,8 +646,6 @@ public class GameDetails : MonoBehaviour {
                 }
                 else if (Resources.Load("PremadeItems/" + item.name) == null)
                 {
-                    //Debug.Log("inside LoadEquippedItems " + item.name + " armor type " + item.armorType);
-
                     Equipment tmpEquip = EquipmentGenerator._instance.CreateLoadedItem(item);
                     tmp.Add(tmpEquip);
                 }
@@ -634,7 +657,7 @@ public class GameDetails : MonoBehaviour {
         {
             if (tmp[i] != null)
             {
-                EquipmentManager.instance.Equip(tmp[i]);
+                EquipmentManager.instance.Equip(tmp[i], true);
             }
         }
     }
@@ -721,6 +744,18 @@ public class GameDetails : MonoBehaviour {
         {
             File.Delete(Application.persistentDataPath + "/playerInfo.dat");
         }
+    }
+
+    public void ResetStaticData()
+    {
+        dungeonFloorsExplored = 0;
+        enemiesKilled         = 0;
+        ripostes              = 0;
+        blocks                = 0;
+        hits                  = 0;
+        fullChargeHits        = 0;
+        arrowsFired           = 0;
+        randomizedItemsDropped= 0;
     }
 
     private void OnDisable()
@@ -814,10 +849,19 @@ public class GameDetails : MonoBehaviour {
 
             if (m_Scene.name.Contains("_indoor"))
             {
-                BoardCreator.instance.CreateDungeonGraph();
+                if (BoardCreator.instance != null)
+                {
+                    BoardCreator.instance.CreateDungeonGraph();
+                }
+             
                 StopCoroutine("UnFade");
+
                 DrawDistanceActivator.instance.StartCoroutine("Check");
-                BoardCreator.instance.SetDoors();
+
+                if (BoardCreator.instance != null)
+                {
+                    BoardCreator.instance.SetDoors();
+                }
             }
 
             //AstarPath.active.Scan();
@@ -922,6 +966,16 @@ class PlayerData
     public int zone;
     public float locationX;
     public float locationY;
+
+    // Static data
+    public int dungeonFloorsExplored ;
+    public int enemiesKilled         ;
+    public int ripostes              ;
+    public int blocks                ;
+    public int hits                  ;
+    public int fullChargeHits        ;
+    public int arrowsFired           ;
+    public int randomizedItemsDropped;
 
 }
 

@@ -15,9 +15,12 @@ public class BoardCreator : MonoBehaviour
 
     public int chanceOfChestPerRoom;
     public int chanceOfBetterChestPerRoom;
-    public int percentageOfEnemiesInCorridors;
+    //[Tooltip("How many enemies in corridors")]
+    //public int percentageOfEnemiesInCorridors;
+    [Tooltip("Maximum length of obstructed corridors")]
     public int obstructedCorridorMaxLength;
     public int playerLevelToSpawnBossRoom = 5;
+    [SerializeField] IntRange floorsBeforeBoss = new IntRange(2, 4);
 
     public float chanceOfVariantFloorTiles;
     public int columns = 100;                                 // The number of columns on the board (how wide it will be).
@@ -57,8 +60,6 @@ public class BoardCreator : MonoBehaviour
     public List<TileLocation> allRoomFloorTiles = new List<TileLocation>();
     public List<TileLocation> allCorridorFloorTiles = new List<TileLocation>();
 
-    public Camera cam;
-
     bool spaceForBossRoom = true;
 
     private TileType[][] tiles;                               // A jagged array of tile types representing the board, like a grid.
@@ -74,11 +75,11 @@ public class BoardCreator : MonoBehaviour
 
     [HideInInspector]
     public int currentBoardsNumberOfRooms;
+    int currentBoardFloorsBeforeBoss;
 
     private void Awake()
     {
         player = PlayerController.instance.gameObject;
-        cam = CameraController.instance.GetComponentInChildren<Camera>();
         instance = this;
 
         StartCoroutine(InitializeMap());
@@ -569,7 +570,7 @@ public class BoardCreator : MonoBehaviour
     /// <param name="yPos">Starting Position of the check on the Y Axis</param>
     private void CheckIfAreaIsClear(int xPos, int yPos , int xSmall , int xLarge, int ySmall, int yLarge)
     {
-        if (ExperienceManager.MyLevel < playerLevelToSpawnBossRoom)
+        if (ExperienceManager.MyLevel < playerLevelToSpawnBossRoom || DungeonManager.dungeonLevel <= currentBoardFloorsBeforeBoss)
         {
             spaceForBossRoom = false;
         }
@@ -3033,9 +3034,7 @@ public class BoardCreator : MonoBehaviour
             boardHolder = GameObject.Find("BoardHolder");
             enemyHolder = new GameObject("EnemyHolder");
             outterWallHolder = GameObject.Find("OutterWallHolder");
-
-            cam.fieldOfView = 43;
-            cam.backgroundColor = Color.black;
+            currentBoardFloorsBeforeBoss = floorsBeforeBoss.Random;
 
             SetupTilesArray();
 
@@ -3086,8 +3085,6 @@ public class BoardCreator : MonoBehaviour
     /// </summary>
     private void SpawnEnemies()
     {
-
-
         foreach (Room room in rooms)
         {
             if (room != rooms[0] && room != rooms[rooms.Length - 1])
@@ -3129,6 +3126,41 @@ public class BoardCreator : MonoBehaviour
                     if (canSpawn)
                     {
                         SpawnElement(vec, destructables[rand], true);
+                    }
+                }
+
+                if (room.chestSpawned)
+                {
+                    int rand = UnityEngine.Random.Range(0, 100);
+
+                    TileLocation spawnTile = new TileLocation();
+                    Vector2 vec = new Vector2();
+
+                    if (rand <= 25)
+                    {
+                        spawnTile = room.edgeFloorTilesOfThisRoom[0];
+                        vec = new Vector2(spawnTile.x, spawnTile.y);
+                        room.edgeFloorTilesOfThisRoom.Remove(spawnTile);
+
+                    }
+                    else
+                    {
+                        spawnTile = room.middleFloorTilesInThisRoom[0];
+                        vec = new Vector2(spawnTile.x, spawnTile.y);
+                        room.middleFloorTilesInThisRoom.Remove(spawnTile);
+                    }
+
+                    bool canSpawn = CheckArea(vec);
+
+                    if (canSpawn)
+                    {
+                        if (room.chestQuality == 0)
+                        {
+                            SpawnElement(vec, chestLowerTier, true);
+                            return;
+                        }
+
+                        SpawnElement(vec, chestHigherTier, true);
                     }
                 }
             }

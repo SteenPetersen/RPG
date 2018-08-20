@@ -90,6 +90,7 @@ public class EquipmentGenerator : MonoBehaviour {
             equip.MyGlowSprite = tmp.glow;
             equip.MyIcon = tmp.icon;
         }
+
         else if (equip.equipType == EquipmentType.Ranged)
         {
             ItemGraphicSet tmp = EquipmentRepo._instance.GetRangedItemSet(item.graphicId);
@@ -97,6 +98,7 @@ public class EquipmentGenerator : MonoBehaviour {
             equip.MyGlowSprite = tmp.glow;
             equip.MyIcon = tmp.icon;
         }
+
         else if (equip.equipType == EquipmentType.Armor)
         {
             if (equip.equipSlot == EquipmentSlot.OffHand)

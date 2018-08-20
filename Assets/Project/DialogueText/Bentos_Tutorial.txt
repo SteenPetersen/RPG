@@ -1,0 +1,25 @@
+Hello adventurer, I am Bentos. I have been tasked with showing
+you what dialogue looks like as well as showing you ranged combat.
+#Now that we are done with the former, how's about we get on 
+with the latter!?
+#The bow on the ground is a gift, and will serve you well, now 
+that you have both ranged and melee weapons you can quick change 
+between stances by pressing "1" and "2", at least thats the default.
+You can change your keybinds from the main menu.
+#I have taken the liberty of setting up some targets for you. Hit them
+without crossing the line.
+I heard them saying you could'nt hit the ground with an arrow, haha! 
+which... come to think of it... is true... hmmm... oh my! noone can!
+#Remember you can also charge a special hit with bows by holding in the 
+right mouse button. This however will consume stamina, so use it carefully.
+#Come back and talk to me when you've successfully hit all three targets,
+But don't step over that line!
+#Ok not bad, but there is one last thing I'd like to tell you...
+You really need some pants... Im not judging... It's just...
+I'm just happy this is a pixelated world... here have these, I 
+always carry an extra pair becau... because nevermind.
+#We're done here <PLAYER_NAME>, in the next room is a real foe. We have been 
+holding onto it for a while so I think it's... whats the word i'm looking for here...
+eager! yes... eager to talk to you. Be careful and apply what you've learned here
+to overcoming this challenge.
+

@@ -55,18 +55,12 @@ public class EquipmentManager : MonoBehaviour {
         listOfProjectiles = ProjectileList.instance;
     }
 
-    public bool Equip (Equipment newItem)
+    public bool Equip (Equipment newItem, bool silent = false)
     {
         //Debug.Log("calling equip");
 
         // find slotIndex of the new item.
         int slotIndex = (int)newItem.equipSlot;
-
-        // if Item has a glow effect add it here
-        if (newItem.MyGlowSprite != null)
-        {
-            weaponGlowSlot.sprite = newItem.MyGlowSprite;
-        }
 
         // instantiate oldItem
         Equipment oldItem = null;
@@ -110,12 +104,6 @@ public class EquipmentManager : MonoBehaviour {
                         return false;
                     }
                 }
-
-                //else if (currentEquipment[3] == null)
-                //{
-                //    UpdateEquipmentSlot(newItem, slotIndex);
-                //}
-
             }
         }
 
@@ -146,9 +134,8 @@ public class EquipmentManager : MonoBehaviour {
 
             if (inventory.MyEmptySlotCount >= 1)
             {
-                inventory.AddItem(oldItem);
+                inventory.AddItem(oldItem, true);
                 UpdateEquipmentSlot(newItem, slotIndex);
-                //onEquipmentChanged(newItem, oldItem);
             }
             else if (inventory.MyEmptySlotCount == 0)
             {
@@ -162,7 +149,15 @@ public class EquipmentManager : MonoBehaviour {
             onEquipmentChanged.Invoke(newItem, oldItem);
         }
 
-        inventoryEquipment[slotIndex].AddItem(newItem);
+        // if Item has a glow effect add it here
+        if (newItem.MyGlowSprite != null)
+        {
+            weaponGlowSlot.sprite = newItem.MyGlowSprite;
+        }
+
+        // Equip the item and make the sound of equipping
+        inventoryEquipment[slotIndex].AddItem(newItem, silent);
+
         UpdateEquipmentSlot(newItem, slotIndex);
         //Debug.Log("finished calling equip");
         return true;
@@ -172,8 +167,7 @@ public class EquipmentManager : MonoBehaviour {
     private void PlaceItemsInInventory(Equipment newItem, int slotIndex, Equipment oldItem, Equipment oldOffhand)
     {
         // add the two items that the player was holding to the inventory
-        inventory.AddItem(oldItem);
-        inventory.AddItem(oldOffhand);
+        inventory.AddItem(oldItem, oldOffhand);
 
         //equip at offhand slot is null
         currentEquipment[4] = null;
@@ -187,10 +181,6 @@ public class EquipmentManager : MonoBehaviour {
         // update the array of currently equipped items with the new Item
 
         UpdateEquipmentSlot(newItem, slotIndex);
-
-        //onEquipmentChanged(newItem, oldItem);
-
-        //onEquipmentChanged(null, oldOffhand);
     }
 
     /// <summary>

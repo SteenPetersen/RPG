@@ -176,7 +176,7 @@ public class PlayerStats : CharacterStats {
         playerControl.isDead = true;
         SoundManager.instance.PlayUiSound("deathsound");
         anim.SetTrigger("Dead");
-        GameDetails._instance.KillPlayer();
+        GameDetails.instance.KillPlayer();
     }
 
     public override void TakeDamage(int damage)

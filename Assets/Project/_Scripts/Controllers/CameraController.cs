@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 public class CameraController : MonoBehaviour {
 
@@ -21,15 +23,46 @@ public class CameraController : MonoBehaviour {
     public GameObject lookAt;
     public float cameraRot;
     public Transform measurementTransform;
-    public Camera cam;
+    public Camera mainCamera;
     public int fieldOfViewBase = 48;
     public int fieldOfViewDungeon = 40;
     PlayerController player;
 
+    [SerializeField] Light dayLight;
+    [SerializeField] Camera[] cameras;
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += ChangingCameraSpecs;
+    }
+
+    private void ChangingCameraSpecs(Scene scene, LoadSceneMode mode)
+    {
+        if (!scene.name.EndsWith("_indoor"))
+        {
+            dayLight.intensity = 1;
+            mainCamera.fieldOfView = 48;
+            mainCamera.backgroundColor = Color.black;
+        }
+
+        else if (scene.name.EndsWith("_indoor"))
+        {
+            dayLight.intensity = 0.43f;
+            mainCamera.fieldOfView = 40;
+            mainCamera.backgroundColor = Color.black;
+        }
+
+        foreach (Camera cam in cameras)
+        {
+            cam.fieldOfView = mainCamera.fieldOfView;
+            cam.backgroundColor = mainCamera.backgroundColor;
+        }
+    }
+
     private void Start()
     {
-        cam = GetComponentInChildren<Camera>();
-        cam.transparencySortMode = TransparencySortMode.Orthographic;
+        mainCamera = Camera.main;
+        mainCamera.transparencySortMode = TransparencySortMode.Orthographic;
         player = PlayerController.instance;
     }
 
@@ -48,7 +81,7 @@ public class CameraController : MonoBehaviour {
 
     void UpdateCameraPosition()
     {
-        if (GameDetails._instance.paused || player.Portal)
+        if (GameDetails.instance.paused || player.Portal)
             return;
 
         if (Input.GetKey(KeybindManager.instance.CameraBinds["CAMERACCW"]))
@@ -64,6 +97,12 @@ public class CameraController : MonoBehaviour {
     public void SetHomeRotation()
     {
         transform.rotation = Quaternion.identity;
+    }
+
+    void OnDisable()
+    {
+        // unsubscribe from the scenemanager.
+        SceneManager.sceneLoaded -= ChangingCameraSpecs;
     }
 
     #region renderOrderAxis

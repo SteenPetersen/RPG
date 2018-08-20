@@ -14,11 +14,9 @@ public class DungeonLevelLoadLogic : MonoBehaviour {
             {
                 // add to statistics
                 GameDetails.dungeonFloorsExplored++;
+                DungeonManager.dungeonLevel++;
 
-                // set the camera correctly so we can know the outset of the player when zoning in if not it can be hard to determine how dialogue looks.
-                CameraController.instance.transform.rotation = Quaternion.Euler(0, 0, 0);
-
-                StartCoroutine(GameDetails.Instance.FadeOutAndLoadScene(ZoneToLoad));
+                StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(ZoneToLoad));
                 loading = true;
             }
         }

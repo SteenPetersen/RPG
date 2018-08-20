@@ -31,13 +31,19 @@ public class EquipedItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
         equipManager = EquipmentManager.instance;
     }
 
-    public void AddItem(Item newItem)
+    /// <summary>
+    /// Adds the item to the a visible slot
+    /// </summary>
+    /// <param name="newItem">Item to be added</param>
+    /// <param name="silent">Bool used in case we are loading a gaem and dont wish to have sound effects</param>
+    public void AddItem(Item newItem, bool silent = false)
     {
         equipment = (Equipment)newItem;
 
-        SoundManager.instance.PlayInventorySound("AddItem");
-
-        //Debug.Log("adding item to equipment slot");
+        if (!silent)
+        {
+            SoundManager.instance.PlayInventorySound("AddItem");
+        }
 
         MyIcon.sprite = MyEquipment.icon;
         MyIcon.enabled = true;
@@ -107,9 +113,7 @@ public class EquipedItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
                     InventoryScript.instance.FromSlot = null;
                 }
             }
-
         }
-
     }
 
     private void OnDisable()

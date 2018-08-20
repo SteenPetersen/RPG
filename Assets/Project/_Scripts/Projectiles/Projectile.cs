@@ -152,6 +152,29 @@ public class Projectile : MonoBehaviour {
                 }
             }
         }
+
+        else if (col.tag == "TargetBrick")
+        {
+            SoundManager.instance.PlayCombatSound("hit_wall");
+            rigid.isKinematic = true;
+            myCollider.enabled = false;
+            rigid.velocity = Vector2.zero;
+            foreach (var impact in impacts)
+            {
+                if (impact.name == "ArrowImpact")
+                {
+                    impact.Play();
+                }
+            }
+
+            if (col.gameObject.GetComponent<TargetBrick>() != null)
+            {
+                TargetBrick target = col.gameObject.GetComponent<TargetBrick>();
+                target.Impact();
+            }
+
+            transform.parent = col.gameObject.transform;
+        }
     }
 
     /// <summary>

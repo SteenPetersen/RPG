@@ -193,11 +193,13 @@ MonoBehaviour:
   canDropItems: 0
   droppableItems: []
   chanceToDrop: 0
+  chanceForRareItem: 0
+  chanceForUncommonItem: 0
   damagedMat: {fileID: 2100000, guid: 76a1dc37a1d0b7f438751f493985c3fd, type: 2}
   shakeTime: 0.3
   decreaseShakeTime: 0.2
-  MaxHealth: 249
-  health: 249
+  MaxHealth: 199
+  health: 199
   impact: {fileID: 198381613959827424}
   destroy: {fileID: 198210795580503560}
   impactSound: impact_box

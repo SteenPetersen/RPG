@@ -29,12 +29,10 @@ public class HandScript : MonoBehaviour {
     [SerializeField]
     private Vector3 offSet;
 
-    // Use this for initialization
     void Start () {
         icon = GetComponent<Image>();
 	}
 	
-	// Update is called once per frame
 	void Update () {
         icon.transform.position = Input.mousePosition + offSet;
 

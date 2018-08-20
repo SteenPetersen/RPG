@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 58381517674801496}
   - component: {fileID: 114178265606346522}
   m_Layer: 13
-  m_Name: Boss_Door
+  m_Name: _Door
   m_TagString: ProjectileSurface
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
@@ -104,7 +104,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1051046246198366}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.00000008847564, w: -1}
   m_LocalPosition: {x: 0, y: 0, z: 0.984}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -132,7 +132,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1830645292009668}
   m_LocalRotation: {x: -0, y: -0, z: -0.004234779, w: 0.9999911}
-  m_LocalPosition: {x: -19.71, y: -19.38329, z: -0.5}
+  m_LocalPosition: {x: 26.599998, y: 111.49, z: -1.49}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4379612766266836}
@@ -203,7 +203,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 2
+  m_SelectedEditorRenderState: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89

@@ -11,6 +11,8 @@ public class Room
     public Direction enteringCorridor;    // The direction of the corridor that is entering this room.
     public int enemyAmount;
     public int destructablesAmount;
+    public bool chestSpawned;
+    public int chestQuality;
 
     public List<TileLocation> middleFloorTilesInThisRoom = new List<TileLocation>();
     public List<TileLocation> edgeFloorTilesOfThisRoom = new List<TileLocation>();
@@ -116,32 +118,15 @@ public class Room
 
         if (chestRand <= BoardCreator.instance.chanceOfChestPerRoom)
         {
+            chestSpawned = true;
+
             if (chestRand < BoardCreator.instance.chanceOfBetterChestPerRoom)
             {
-                SetAChestInRoom(1);
+                chestQuality = 1;
                 return;
             }
 
-            SetAChestInRoom(0);
-        }
-    }
-
-    private void SetAChestInRoom(int type)
-    {
-        int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
-        int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
-
-        //Debug.Log(goalX + " " + goalY);
-
-        Vector2 pos = new Vector2(goalX, goalY);
-
-        if (type == 0)
-        {
-            BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.chestLowerTier);
-        }
-        else if (type == 1)
-        {
-            BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.chestHigherTier);
+            chestQuality = 0;
         }
     }
 

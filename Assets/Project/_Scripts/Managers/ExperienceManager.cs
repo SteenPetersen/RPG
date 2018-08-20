@@ -107,7 +107,7 @@ public class ExperienceManager : MonoBehaviour {
         Vector3 pos = PlayerController.instance.transform.position;
 
         GameObject tmp = ParticleSystemHolder.instance.PlaySpellEffect(PlayerController.instance.transform.position, "level up");
-        tmp.transform.parent = PlayerController.instance.transform;
+        tmp.transform.parent = PlayerController.instance.avoidFlip;
         SoundManager.instance.PlayUiSound("levelup");
 
         var text = CombatTextManager.instance.FetchText(pos);

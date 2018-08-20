@@ -22,13 +22,13 @@ GameObject:
   - component: {fileID: 33637909843537618}
   - component: {fileID: 23516984970971990}
   - component: {fileID: 114889055258792270}
-  - component: {fileID: 61258204204092024}
+  - component: {fileID: 61923065531616312}
   m_Layer: 13
   m_Name: BlackBrick
   m_TagString: ProjectileSurface
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &4742794048472400
 Transform:
@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1032974771773042}
   m_LocalRotation: {x: 0, y: 0, z: 0.000008726646, w: 1}
-  m_LocalPosition: {x: -19.77, y: -0.84, z: -0.5}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -56,6 +56,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 57a7333d9449f0142a5010645f2144f1, type: 2}
   m_StaticBatchInfo:
@@ -84,7 +85,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1032974771773042}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!61 &61258204204092024
+--- !u!61 &61923065531616312
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -95,7 +96,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_UsedByComposite: 1
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}

@@ -231,7 +231,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4717949468858770}
   m_Layer: 10
-  m_Name: Player - selector
+  m_Name: AvoidFlip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -737,7 +737,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1181809678313842}
   m_LocalRotation: {x: -0, y: -0, z: 0.000008726646, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4288126048093974}
@@ -757,7 +757,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1760166937193192}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -17.983, y: -15.259, z: 0}
+  m_LocalPosition: {x: -15.98, y: -20.76, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4561906690375752}
@@ -1324,6 +1324,7 @@ MonoBehaviour:
   mouseOverVendor: 0
   pointLight: {fileID: 108654953846501482}
   sprintTrail: {fileID: 198997676724543722}
+  avoidFlip: {fileID: 4717949468858770}
   footPrints: {fileID: 198469753909904488}
   sandTrail: {fileID: 198727915506887362}
   timedBlock: 0

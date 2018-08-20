@@ -51,8 +51,6 @@ public class Equipment : Item, IUseable {
 
     public override void Use()
     {
-        Debug.Log("trying to use " + name);
-
         if ((int)equipType != 5)
         {
             bool equipIt = EquipmentManager.instance.Equip(this);
@@ -63,6 +61,7 @@ public class Equipment : Item, IUseable {
             }
         }
     }
+
 
     public override string GetDescription(bool showSaleValue = true)
     {

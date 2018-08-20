@@ -59,6 +59,12 @@ public class PlayerController : MonoBehaviour
     #region Public Variables
 
     /// <summary>
+    /// Used for Particle effect to spawn on player and avoid the flipping
+    /// </summary>
+    public Transform avoidFlip;
+
+
+    /// <summary>
     /// Accessed by the grass to turn it off when player leaves the sand and enters Grass
     /// </summary>
     public ParticleSystem footPrints;
@@ -178,6 +184,7 @@ public class PlayerController : MonoBehaviour
     {
         // subscribe to notice is a scene is loaded.
         SceneManager.sceneLoaded += OnSceneLoaded;
+        dungeon = DungeonManager.instance;
     }
 
     void Start()
@@ -187,7 +194,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (isDead || GameDetails._instance.paused || dialogue || Portal)
+        if (isDead || GameDetails.instance.paused || dialogue || Portal)
             return;
 
         HandleCombatState();
@@ -799,11 +806,16 @@ public class PlayerController : MonoBehaviour
             {
                 StopRangedChargeShotState(true);
 
-                EquipFirstMatchingItemInBag(0, 3);
-                EquipFirstMatchingItemInBag(2, 4);
-                melee = true;
-                ranged = false;
-                playerStat.cantRegen = false;
+                bool sword = EquipFirstMatchingItemInBag(0, 3);
+                bool shield = EquipFirstMatchingItemInBag(2, 4);
+
+                if (sword)
+                {
+                    melee = true;
+                    ranged = false;
+                    playerStat.cantRegen = false;
+                }
+
             }
 
         }
@@ -814,10 +826,14 @@ public class PlayerController : MonoBehaviour
             {
                 StopMeleeChargedHitState(true);
 
-                EquipFirstMatchingItemInBag(1, 3);
-                ranged = true;
-                melee = false;
-                playerStat.cantRegen = false;
+                bool rangedWeap = EquipFirstMatchingItemInBag(1, 3);
+
+                if (rangedWeap)
+                {
+                    ranged = true;
+                    melee = false;
+                    playerStat.cantRegen = false;
+                }
             }
         }
     }
@@ -956,10 +972,14 @@ public class PlayerController : MonoBehaviour
 
                 if ((int)tmp.equipType == type && (int)tmp.equipSlot == slotIndex)
                 {
+
                     slot.MyItem.Use();
+
                     break;
                 }
+
             }
+
         }
 
         return false;
@@ -985,11 +1005,10 @@ public class PlayerController : MonoBehaviour
         //Gather obects not to be flipped///
         ////////////////////////////////////
 
-        //CanvasGroup healthImage = healthGroup;
+        Vector3 avoidPos = avoidFlip.position;
 
-        //Vector3 healthPos = healthImage.gameObject.transform.position;
+        avoidFlip.SetParent(null);
 
-        //healthImage.transform.SetParent(null);
 
         ////////////////////////////////////
         //////////Flip the objects//////////
@@ -1004,10 +1023,12 @@ public class PlayerController : MonoBehaviour
 
         transform.localScale = theScale;
 
+        ////////////////////////////////////
+        //////////Replace Objects///////////
+        ////////////////////////////////////
 
-
-        //healthImage.transform.SetParent(transform);
-        //healthImage.transform.position = healthPos;
+        avoidFlip.SetParent(transform);
+        avoidFlip.position = avoidPos;
     }
 
     public void KnockBack(float amount)
@@ -1197,8 +1218,8 @@ public class PlayerController : MonoBehaviour
         playerStat = GetComponent<PlayerStats>();
         anim = GetComponent<Animator>();
         equip = EquipmentManager.instance;
-        dungeon = DungeonManager.instance;
-        m_Plane = GameDetails._instance.m_Plane;
+        
+        m_Plane = GameDetails.instance.m_Plane;
         pooledArrows = PooledProjectilesController.instance;
         cameraControl = CameraController.instance;
 
@@ -1253,7 +1274,7 @@ public class PlayerController : MonoBehaviour
         {
             dungeon.townPortalDropped = false;
 
-            if (DungeonManager.instance._PlayerHasBossKey)
+            if (dungeon._PlayerHasBossKey)
             {
                 Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
                 tmp.Remove();
@@ -1264,8 +1285,8 @@ public class PlayerController : MonoBehaviour
 
         if (!scene.name.EndsWith("_indoor"))
         {
-            Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 1;
             pointLight.gameObject.SetActive(false);
+            DungeonManager.dungeonLevel = 0;
         }
 
         else if (scene.name.EndsWith("_indoor"))
@@ -1326,7 +1347,7 @@ public class PlayerController : MonoBehaviour
 
         CameraShaker.Instance.ShakeOnce(6f, 6f, 0.3f, 0.9f);
         transform.Find("Skeleton").gameObject.SetActive(true);
-        GameDetails.Instance.Save();
+        GameDetails.MyInstance.Save();
         portal = false;
         spawnInRunning = false;
     }

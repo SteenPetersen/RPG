@@ -114,7 +114,7 @@ public class Durir : DialogueNPC {
                     if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
                     {
                         // intro text and up until player is handed sword and shield
-                        if (StoryManager.tutorialConversation == 0)
+                        if (StoryManager.tutorialStage == 0)
                         {
                             if (currentParagraph == 5 && StoryManager.givenItems < 1)
                             {
@@ -135,12 +135,12 @@ public class Durir : DialogueNPC {
 
                             if (currentParagraph == 6)
                             {
-                                StoryManager.tutorialConversation = 1;
+                                StoryManager.tutorialStage = 1;
                             }
                         }
 
                         // making sure player has equipped sword and shield
-                        if (StoryManager.tutorialConversation == 1)
+                        if (StoryManager.tutorialStage == 1)
                         {
                             if (EquipmentManager.instance.currentEquipment[3] == null ||
                                 EquipmentManager.instance.currentEquipment[4] == null)
@@ -151,22 +151,22 @@ public class Durir : DialogueNPC {
                             else
                             {
                                 contentAvailable = true;
-                                StoryManager.tutorialConversation = 2;
+                                StoryManager.tutorialStage = 2;
                                 currentParagraph = 7;
                             }
                         }
 
                         // finish the sword and shield info
-                        if (StoryManager.tutorialConversation == 2)
+                        if (StoryManager.tutorialStage == 2)
                         {
                             if (currentParagraph == 9)
                             {
-                                StoryManager.tutorialConversation = 3;
+                                StoryManager.tutorialStage = 3;
                             }
                         }
 
                         // Introduce player to hitting a target.
-                        if (StoryManager.tutorialConversation == 3)
+                        if (StoryManager.tutorialStage == 3)
                         {
                             if (GameDetails.ripostes == 0 ||
                             GameDetails.blocks == 0 ||
@@ -184,27 +184,27 @@ public class Durir : DialogueNPC {
                             {
                                 contentAvailable = true;
                                 currentParagraph = 10;
-                                StoryManager.tutorialConversation = 4;
+                                StoryManager.tutorialStage = 4;
                             }
 
                         }
 
 
-                        if (StoryManager.tutorialConversation == 4)
+                        if (StoryManager.tutorialStage == 4)
                         {
                             if (currentParagraph == 11)
                             {
-                                StoryManager.tutorialConversation = 5;
+                                StoryManager.tutorialStage = 5;
                             }
                         }
 
                         // Done with conversation
-                        if (StoryManager.tutorialConversation == 5)
+                        if (StoryManager.tutorialStage == 5)
                         {
                             contentAvailable = false;
                             currentParagraph = 11;
                             StoryManager.stage = 2;
-                            GameDetails._instance.Save();
+                            GameDetails.instance.Save();
                         }
 
                         currentParagraphIncrement = currentParagraph + 1;
@@ -227,7 +227,7 @@ public class Durir : DialogueNPC {
                             ReportEndOfConversation(gameObject.name);
                             StoryManager.questLine = 1;
                             StoryManager.stage = 4;
-                            GameDetails._instance.Save();
+                            GameDetails.instance.Save();
                         }
                     }
 
@@ -254,7 +254,7 @@ public class Durir : DialogueNPC {
                     {
                         StoryManager.questLine = 2;
                         StoryManager.stage = 6;
-                        GameDetails._instance.Save();
+                        GameDetails.instance.Save();
                     }
 
                     //Debug.Log("current paragraph = " + currentParagraph);
@@ -275,7 +275,7 @@ public class Durir : DialogueNPC {
         // if he is not currently talking to him
         if (!currentlyInteractingWithPlayer)
         {
-            if (StoryManager.tutorialConversation == 3)
+            if (StoryManager.tutorialStage == 3)
             {
                 if (GameDetails.ripostes > 0 &&
                     GameDetails.blocks > 0 &&

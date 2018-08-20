@@ -1,6 +1,5 @@
 fileFormatVersion: 2
 guid: 126df8b496250864a8acd683b90fa499
-timeCreated: 18446744011573954816
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -11,12 +10,13 @@ TrueTypeFontImporter:
   includeFontData: 1
   fontName: Supercell-Magic
   fontNames:
-  - Supercell-Magic
+  - Magic
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1
   useLegacyBoundsCalculation: 1
+  shouldRoundAdvanceValue: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 

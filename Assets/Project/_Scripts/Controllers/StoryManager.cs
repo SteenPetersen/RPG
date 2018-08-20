@@ -13,7 +13,7 @@ public class StoryManager : MonoBehaviour {
 
     public static int reylithIntro;
     [SerializeField] public static int stage;
-    public static int tutorialConversation;
+    public static int tutorialStage;
     public static int questLine;
 
     /// <summary>

@@ -28,15 +28,36 @@ public abstract class DialogueNPC : Interactable {
     [SerializeField] protected bool contentAvailable = true;
     #endregion
 
-    protected virtual void Start () {
+    protected virtual void Start ()
+    {
 
         cam = CameraController.instance;
         dialogueUi = StoryManager.instance.MyDialogueUi;
         speechText = StoryManager.instance.MySpeechText;
 
+        PrepareTextFile();
+    }
+
+    /// <summary>
+    /// Prepares the text seperating it into an aray of paragraphs 
+    /// and enter's player entered data into the correct fields
+    /// </summary>
+    private void PrepareTextFile()
+    {
         if (textFile != null)
         {
             textLines = (textFile.text.Split('#'));
+        }
+
+        if (textLines.Length > 0)
+        {
+            for (int i = 0; i < textLines.Length; i++)
+            {
+                if (textLines[i].Contains("<PLAYER_NAME>"))
+                {
+                    textLines[i] = textLines[i].Replace("<PLAYER_NAME>", GameDetails.playerName);
+                }
+            }
         }
     }
 
@@ -54,33 +75,12 @@ public abstract class DialogueNPC : Interactable {
         currentlyInteractingWithPlayer = true;
 
         PlayerController.instance.dialogue = true;
-       
-        GameDetails._instance.paused = true;
 
-        float distanceFromLeftToPlayer = Vector3.Distance(cam.measurementTransform.position, PlayerController.instance.transform.position);
-        float distanceFromLeftToNPC = Vector3.Distance(cam.measurementTransform.position, transform.position);
+        GameDetails.instance.paused = true;
 
-        if (distanceFromLeftToPlayer > distanceFromLeftToNPC)
-        {
-            GameDetails._instance.dialogueCamera.transform.localPosition = GameDetails._instance.dialogueNPCIsStandingOnTheLeft;
-            dialogueUi.SetActive(true);
-            StoryManager.instance.MySpeechBubble.sprite = StoryManager.instance.MyBubbleRight;
-        }
+        DetermineCameraSide();
 
-        else if (distanceFromLeftToPlayer < distanceFromLeftToNPC)
-        {
-            GameDetails._instance.dialogueCamera.transform.localPosition = GameDetails._instance.dialogueNPCIsStandingOnTheRight;
-            StoryManager.instance.MySpeechBubble.sprite = StoryManager.instance.MyBubbleLeft;
-
-            dialogueUi.SetActive(true);
-        }
-
-        else
-        {
-            Debug.LogWarning("something wrong with camera positions in dialogue, distances are being measured incorrectly");
-        }
-
-        GameDetails._instance.dialogueCamera.SetActive(!GameDetails._instance.dialogueCamera.activeSelf);
+        GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
 
 
         if (dialogueAvailable != null)
@@ -93,6 +93,36 @@ public abstract class DialogueNPC : Interactable {
             speechEffect.Play();
         }
 
+    }
+
+    /// <summary>
+    /// Determines which side of the NPC the camera should be placed as 
+    /// NPCs dont stand in the middleof the screen
+    /// </summary>
+    private void DetermineCameraSide()
+    {
+        float distanceFromLeftToPlayer = Vector3.Distance(cam.measurementTransform.position, PlayerController.instance.transform.position);
+        float distanceFromLeftToNPC = Vector3.Distance(cam.measurementTransform.position, transform.position);
+
+        if (distanceFromLeftToPlayer > distanceFromLeftToNPC)
+        {
+            GameDetails.instance.dialogueCamera.transform.localPosition = GameDetails.instance.dialogueNPCIsStandingOnTheLeft;
+            dialogueUi.SetActive(true);
+            StoryManager.instance.MySpeechBubble.sprite = StoryManager.instance.MyBubbleRight;
+        }
+
+        else if (distanceFromLeftToPlayer < distanceFromLeftToNPC)
+        {
+            GameDetails.instance.dialogueCamera.transform.localPosition = GameDetails.instance.dialogueNPCIsStandingOnTheRight;
+            StoryManager.instance.MySpeechBubble.sprite = StoryManager.instance.MyBubbleLeft;
+
+            dialogueUi.SetActive(true);
+        }
+
+        else
+        {
+            Debug.LogWarning("something wrong with camera positions in dialogue, distances are being measured incorrectly");
+        }
     }
 
     protected void Flip()
@@ -123,19 +153,30 @@ public abstract class DialogueNPC : Interactable {
 
     protected virtual void CloseDialogue()
     {
-        GameDetails._instance.dialogueCamera.SetActive(!GameDetails._instance.dialogueCamera.activeSelf);
+        GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
         dialogueUi.SetActive(false);
         PlayerController.instance.dialogue = false;
-        GameDetails._instance.paused = false;
+        GameDetails.instance.paused = false;
         currentlyInteractingWithPlayer = false;
         StoryManager.instance.MyCurrentDialogueNpc = null;
         speechEffect.Stop();
     }
 
     /// <summary>
+    /// Will let the player know that this NPC is ready to talk again
+    /// Parameter lets the script know which line it should start on.
+    /// </summary>
+    /// <param name="startAgainAtLine">Which Line shall this NPC start on once it interacts again</param>
+    public virtual void ReadyToTalkAgain(int startAgainAtLine)
+    {
+        contentAvailable = true;
+        currentParagraph = startAgainAtLine;
+    }
+
+    /// <summary>
     /// Advances the speech in the speech bubble to the next section
     /// This function is a method called by the UI when pressing the "continue" button
-    /// It will call this function on the dialogueManagers currentDialogueNPC
+    /// It will call this function on the StoryManagers currentDialogueNPC
     /// </summary>
     public virtual void AdvanceSpeech()
     {

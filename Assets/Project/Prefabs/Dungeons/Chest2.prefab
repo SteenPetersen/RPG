@@ -218,15 +218,18 @@ MonoBehaviour:
   drawGizmos: 1
   closeRadius: 2
   lootSpawnRadius: 2
+  maxAmountOfItems: 3
   locked: 1
-  tier: 1
+  tier: 0
+  keyTier: 0
   hasBeenOpened: 0
   closed: {fileID: 21300002, guid: 7809c3003a55d234595f4200529f5679, type: 3}
   open: {fileID: 21300014, guid: 7809c3003a55d234595f4200529f5679, type: 3}
   chestClosed: 1
   loot: []
   heightOfLootJump: 3
-  distanceFromChest: 3.5
+  positions: []
+  distanceFromChest: 2.5
   front: {fileID: 1454974676035800}
   effect: {fileID: 198233497085982192}
 --- !u!114 &114655696834337956
@@ -4886,7 +4889,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.42
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -6014,7 +6017,7 @@ ParticleSystem:
     sprites:
     - sprite: {fileID: 0}
   VelocityModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 2
       minMaxState: 3

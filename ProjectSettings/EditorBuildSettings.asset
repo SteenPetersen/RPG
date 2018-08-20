@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Project/_Scenes/main.unity
     guid: bdad5da1d45347544b99cff98038650c
   - enabled: 1
-    path: Assets/Project/_Scenes/dungeon_indoor.unity
+    path: Assets/Project/_Scenes/Caves_indoor.unity
     guid: 5c2d7c7bc0bb55b4d846212100aafa09
   - enabled: 1
     path: Assets/Project/_Scenes/Loading.unity
@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/_Scenes/After_First_Dungeon.unity
     guid: 96f61a6046dfe6c408e8b8aef42c6b3b
+  - enabled: 1
+    path: Assets/Project/_Scenes/TutorialArea_indoor.unity
+    guid: a647c31f477b8054cbc7e214a4cfbedc
   m_configObjects: {}

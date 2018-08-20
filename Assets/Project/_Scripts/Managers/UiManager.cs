@@ -89,7 +89,7 @@ public class UiManager : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.M))
         {
-            GameDetails.Instance.StartCoroutine(GameDetails.Instance.FadeOUt());
+            GameDetails.MyInstance.StartCoroutine(GameDetails.MyInstance.FadeOUt());
         }
 
         if (Input.GetKeyDown(KeyCode.O))
@@ -99,7 +99,7 @@ public class UiManager : MonoBehaviour {
             Vector3 pos = PlayerController.instance.transform.position;
 
             GameObject tmp = ParticleSystemHolder.instance.PlaySpellEffect(pos, "level up");
-            tmp.transform.parent = PlayerController.instance.transform;
+            tmp.transform.parent = PlayerController.instance.avoidFlip;
             SoundManager.instance.PlayUiSound("levelup");
 
             var text = CombatTextManager.instance.FetchText(pos);
@@ -152,7 +152,7 @@ public class UiManager : MonoBehaviour {
         {
             //Item potion = Instantiate(InventoryScript.instance.itemListForDebugging[1]);
             //InventoryScript.instance.AddItem(potion);
-            GameDetails.Instance.Save(true);
+            GameDetails.MyInstance.Save(true);
         }
 
         //if (Input.GetKeyDown(KeyCode.U))
@@ -175,7 +175,7 @@ public class UiManager : MonoBehaviour {
 
                 PlayerController.instance.anim.Rebind();
                 PlayerController.instance.anim.SetTrigger("ForceStopWalk");
-                GameDetails._instance.paused = GameDetails._instance.paused == true ? false : true;
+                GameDetails.instance.paused = GameDetails.instance.paused == true ? false : true;
                 inventoryCam.SetActive(!inventoryCam.activeSelf);
                 equipmentWindow.SetActive(!equipmentWindow.activeSelf);
                 HideToolTip();
@@ -222,7 +222,7 @@ public class UiManager : MonoBehaviour {
         keybindMenu.blocksRaycasts = keybindMenu.blocksRaycasts == true ? false : true;
 
         // Tell the gamedetails to pause the game
-        GameDetails._instance.paused = GameDetails._instance.paused == true ? false : true;
+        GameDetails.instance.paused = GameDetails.instance.paused == true ? false : true;
     }
 
     /// <summary>

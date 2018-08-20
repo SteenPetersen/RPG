@@ -15,6 +15,8 @@ public class Destructable : MonoBehaviour {
     [SerializeField] GameObject[] droppableItems;
 
     [SerializeField] int chanceToDrop;
+    [SerializeField] float chanceForRareItem;
+    [SerializeField] float chanceForUncommonItem;
 
     [SerializeField] Material damagedMat;
 
@@ -92,28 +94,39 @@ public class Destructable : MonoBehaviour {
 
         if (rand < chanceToDrop)
         {
-            rand = UnityEngine.Random.Range(0, droppableItems.Length);
+            rand = UnityEngine.Random.Range(0, 100);
 
-            Debug.Log("tag = " + droppableItems[rand].tag);
-
-
-            if (droppableItems[rand].tag == "TownPortal")
+            if (rand < chanceForRareItem)
             {
-                DungeonManager dungeon = DungeonManager.instance;
-
-                if (!dungeon.townPortalDropped)
-                {
-                    Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
-                    dungeon.townPortalDropped = true;
-                    return;
-                }
-
-                Instantiate(droppableItems[rand + 1], transform.position, Quaternion.identity);
+                Instantiate(droppableItems[1], transform.position, Quaternion.identity);
                 return;
             }
 
-            Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
+            else if (rand > chanceForRareItem && rand < chanceForUncommonItem)
+            {
+                rand = UnityEngine.Random.Range(2, droppableItems.Length);
 
+                Debug.Log("inside uncommon" + rand + "   " + droppableItems.Length);
+
+                if (droppableItems[rand].tag == "Town Portal Book")
+                {
+                    DungeonManager dungeon = DungeonManager.instance;
+
+                    if (!dungeon.townPortalDropped)
+                    {
+                        Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
+                        dungeon.townPortalDropped = true;
+                        return;
+                    } 
+                }
+
+                Instantiate(droppableItems[rand], transform.position, Quaternion.identity);
+
+                return;
+
+            }
+
+            Instantiate(droppableItems[0], transform.position, Quaternion.identity);
         }
     }
 

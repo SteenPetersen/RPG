@@ -18,7 +18,7 @@ public class EnterPortal : MonoBehaviour {
 
         if (SceneManager.GetActiveScene().name.Contains("_indoor"))
         {
-            followLight = BoardCreator.instance.followLight;
+            followLight = GameObject.Find("FollowLight");
         }
 
     }
@@ -42,11 +42,11 @@ public class EnterPortal : MonoBehaviour {
         DungeonManager dungeon = DungeonManager.instance;
         dungeon._PlayerHasBossKey = false;
 
-        StartCoroutine(GameDetails.Instance.FadeOutAndLoadScene(sceneToLoad, loadInPosition));
+        StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(sceneToLoad, loadInPosition));
 
         if (followLight != null)
         {
-            BoardCreator.instance.followLight.SetActive(false);
+            followLight.SetActive(false);
         }
 
         yield return new WaitForSeconds(1);

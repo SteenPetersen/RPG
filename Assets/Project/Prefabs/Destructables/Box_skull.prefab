@@ -203,9 +203,14 @@ MonoBehaviour:
   objInside: 0
   canDropItems: 1
   droppableItems:
-  - {fileID: 1392853231466582, guid: dd3f0c150f6468e44bc48105b4d98a6a, type: 2}
   - {fileID: 1003413813164730, guid: 6cb1a3daf00d25747b27bdfd69fd06d1, type: 2}
-  chanceToDrop: 20
+  - {fileID: 1591094875518546, guid: a67f596fe2e9a58448f446a756517d49, type: 2}
+  - {fileID: 1814537491769038, guid: fb92f464764031343a669f45865dd006, type: 2}
+  - {fileID: 1003413813164730, guid: f73cab4f7f38f884fa3875e04760f6cf, type: 2}
+  - {fileID: 1392853231466582, guid: dd3f0c150f6468e44bc48105b4d98a6a, type: 2}
+  chanceToDrop: 28
+  chanceForRareItem: 5
+  chanceForUncommonItem: 40
   damagedMat: {fileID: 0}
   shakeTime: 0.3
   decreaseShakeTime: 0.2

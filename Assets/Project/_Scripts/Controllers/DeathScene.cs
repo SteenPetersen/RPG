@@ -7,8 +7,14 @@ using System;
 
 public class DeathScene : MonoBehaviour {
 
-    public Text foesVanquished, dungeonFloorsExplored;
-
+    public Text foesVanquished, 
+        dungeonFloorsExplored, 
+        riposte, 
+        block, 
+        hits, 
+        fullChargeHits, 
+        arrowsFired, 
+        randomizedLootDropped;
 
     private void OnEnable()
     {
@@ -16,17 +22,25 @@ public class DeathScene : MonoBehaviour {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         foesVanquished.text = "Foes Vanquished: " + GameDetails.enemiesKilled;
         dungeonFloorsExplored.text = "Dungeon floors explored: " + GameDetails.dungeonFloorsExplored;
+        riposte.text = "Ripostes executed: " + GameDetails.ripostes;
+        block.text = "Blocks performed: " + GameDetails.blocks;
+        hits.text = "Successful hits: " + GameDetails.hits;
+        fullChargeHits.text = "Charged Hits: " + GameDetails.fullChargeHits;
+        arrowsFired.text = "Arrows Fired: " + GameDetails.arrowsFired;
+        randomizedLootDropped.text = "Random loot created: " + GameDetails.randomizedItemsDropped;
+
+        GameDetails.MyInstance.ResetStaticData();
 
     }
 
     // Use this for initialization
     void Start () {
 
-        var allCanvas = GameDetails._instance.gameObject.GetComponentsInChildren<Canvas>();
+        var allCanvas = GameDetails.instance.gameObject.GetComponentsInChildren<Canvas>();
 
         foreach (Canvas i in allCanvas)
         {
@@ -49,6 +63,6 @@ public class DeathScene : MonoBehaviour {
 
     public void Continue()
     {
-        GameDetails._instance.Load();
+        GameDetails.instance.Load();
     }
 }

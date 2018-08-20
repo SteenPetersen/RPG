@@ -17,7 +17,7 @@ MonoBehaviour:
   buyValue: 250
   typeOfEquipment: 3
   stackSize: 5
-  title: Bronze Key
+  title: Silver Key
   quality: 1
   MySlot: {fileID: 0}
   description: A bronze Key

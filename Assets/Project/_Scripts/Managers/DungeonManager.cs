@@ -6,6 +6,9 @@ public class DungeonManager : MonoBehaviour {
     public static DungeonManager _instance;
     public static DungeonManager instance { get { return _instance; } }
 
+    // statics
+    public static int dungeonLevel;
+
     /// <summary>
     /// Property where we set the image of the bosskey
     /// </summary>

@@ -90,12 +90,11 @@ public class LootParabola : MonoBehaviour {
                 positionsSet = true;
             }
 
-
             _TimeToDestination += Time.deltaTime;
 
             transform.localPosition = ExtMethods.Parabola(localStartPos, localEndPos, _Height, _TimeToDestination);
 
-            if (Vector2.Distance(transform.localPosition, localEndPos) < 0.1f)
+            if (Vector2.Distance(transform.localPosition, localEndPos) < 0.2f)
             {
                 transform.parent = null;
                 Go = false;

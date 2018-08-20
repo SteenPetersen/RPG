@@ -43,7 +43,7 @@ public class Reylith : DialogueNPC {
                 {
                     speechEffect.Stop();
                     StoryManager.stage = 1;
-                    GameDetails._instance.Save();
+                    GameDetails.instance.Save();
                     conversationDone = true;
                 }
 
