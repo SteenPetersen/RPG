@@ -23,6 +23,9 @@ public class StoryManager : MonoBehaviour {
     public static int givenItems;
     [SerializeField] int givenItemsSerialization;
 
+    [SerializeField] bool showStatics;
+    [SerializeField] int currentStage;
+
     private void Awake()
     {
         if (instance == null)
@@ -50,6 +53,11 @@ public class StoryManager : MonoBehaviour {
         if (givenItems != givenItemsSerialization)
         {
             givenItemsSerialization = givenItems;
+        }
+
+        if (showStatics)
+        {
+            currentStage = tutorialStage;
         }
     }
 

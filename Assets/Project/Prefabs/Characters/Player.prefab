@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4022602297070308}
   - component: {fileID: 212626755433340676}
   m_Layer: 10
-  m_Name: MainItem - Glow
+  m_Name: MainItemGlow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1322,6 +1322,7 @@ MonoBehaviour:
   blockTime: 0.2
   maxChargedHit: 0
   mouseOverVendor: 0
+  mouseOverItem: 0
   pointLight: {fileID: 108654953846501482}
   sprintTrail: {fileID: 198997676724543722}
   avoidFlip: {fileID: 4717949468858770}

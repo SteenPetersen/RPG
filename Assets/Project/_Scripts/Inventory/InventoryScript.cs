@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -154,6 +155,8 @@ public class InventoryScript : MonoBehaviour {
         }
     }
 
+
+
     /// <summary>
     /// Equips a bag in th inventory
     /// </summary>
@@ -264,57 +267,98 @@ public class InventoryScript : MonoBehaviour {
     }
 
     /// <summary>
-    /// Override method that also tries to place the item at the first slots of the bags
+    /// Places an Item in the first slot of the bags
     /// </summary>
-    /// <param name="item">Item to add</param>
-    public void AddItem(Item mainHand, Item offHand)
+    /// <param name="item"></param>
+    /// <param name="isBow"></param>
+    public void AddItemToFirstInvSlot(Item item)
     {
         List<SlotScript> slots = GetAllSlots();
 
         Item tmp = slots[0].MyItem;
-        Item tmp1 = slots[1].MyItem;
 
         int count = slots[0].MyCount;
-        int count1 = slots[1].MyCount;
 
         slots[0].Clear();
-        slots[1].Clear();
 
-        PlaceInEmpty(mainHand);
-        PlaceInEmpty(offHand);
+        PlaceInEmpty(item);
 
         for (int i = 0; i < count; i++)
         {
             AddItem(tmp);
-        }
-
-        for (int i = 0; i < count1; i++)
-        {
-            AddItem(tmp1);
         }
     }
 
     /// <summary>
-    /// Places the bow in the first slot of the inventory
+    /// Places an Item in the first slot of the bags
     /// </summary>
-    /// <param name="bow"></param>
+    /// <param name="item"></param>
     /// <param name="isBow"></param>
-    public void AddItem(Item bow, bool isBow = false)
+    public void AddItemToSecondInvSlot(Item item)
     {
         List<SlotScript> slots = GetAllSlots();
 
-        Item tmp = slots[0].MyItem;
+        Item tmp = slots[1].MyItem;
 
-        int count = slots[0].MyCount;
+        int count = slots[1].MyCount;
 
-        slots[0].Clear();
+        slots[1].Clear();
 
-        PlaceInEmpty(bow);
+        PlaceInEmpty(item);
 
         for (int i = 0; i < count; i++)
         {
             AddItem(tmp);
         }
+    }
+
+    /// <summary>
+    /// return a slotscript based on its position in the inventory
+    /// </summary>
+    /// <param name="mySlot"></param>
+    /// <returns></returns>
+    internal SlotScript GetSlotScript(int mySlot)
+    {
+        List<SlotScript> slots = GetAllSlots();
+        return slots[mySlot];
+    }
+
+    /// <summary>
+    /// return a slotscript that matches the slotscript passed as a paramter
+    /// </summary>
+    /// <param name="mySlot"></param>
+    /// <returns></returns>
+    internal SlotScript GetSlotScript(SlotScript slot)
+    {
+        foreach (Bag bag in bags)
+        {
+            foreach (SlotScript s in bag.MyBagScript.MySlots)
+            {
+                if (s == slot)
+                {
+                    return s;
+                }
+            }
+        }
+
+        if (DebugControl.debugInventory)
+        {
+            Debug.LogError("Could not find the requested slot");
+        }
+
+        return null;
+    }
+
+    internal void ClearFromSlot(SlotScript slot)
+    {
+        SlotScript s = GetSlotScript(slot);
+        s.Clear();
+    }
+
+    internal void ClearFromSlot(int slot)
+    {
+        List<SlotScript> slots = GetAllSlots();
+        slots[slot].Clear();
     }
 
 
@@ -328,6 +372,10 @@ public class InventoryScript : MonoBehaviour {
         {
             if (bag.MyBagScript.AddItem(item))
             {
+                if (DebugControl.debugInventory)
+                {
+                    Debug.Log("Found an empty slot");
+                }
                 OnItemCountChanged(item);
                 return;
             }
@@ -441,6 +489,7 @@ public class InventoryScript : MonoBehaviour {
 
         return slots;
     }
+
 
     /// <summary>
     /// Find a key in the inventory that matches the

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class LoadingLogic : MonoBehaviour {
 
     [SerializeField]
-    private int scene;
+    private string scene;
 
     Canvas[] ui;
 
@@ -29,7 +29,7 @@ public class LoadingLogic : MonoBehaviour {
     }
 
     // The coroutine runs on its own at the same time as Update() and takes an integer indicating which scene to load.
-    IEnumerator LoadNewScene(int scene)
+    IEnumerator LoadNewScene(string scene)
     {
         //Application.backgroundLoadingPriority = ThreadPriority.Low;
         // Start an asynchronous operation to load the scene that was passed to the LoadNewScene coroutine.

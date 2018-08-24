@@ -20,13 +20,16 @@ public class CameraController : MonoBehaviour {
     }
     #endregion
 
-    public GameObject lookAt;
+    public Transform lookAt;
     public float cameraRot;
     public Transform measurementTransform;
     public Camera mainCamera;
     public int fieldOfViewBase = 48;
     public int fieldOfViewDungeon = 40;
     PlayerController player;
+
+    [SerializeField] Vector3 cameraOffset;
+
 
     [SerializeField] Light dayLight;
     [SerializeField] Camera[] cameras;
@@ -43,6 +46,11 @@ public class CameraController : MonoBehaviour {
             dayLight.intensity = 1;
             mainCamera.fieldOfView = 48;
             mainCamera.backgroundColor = Color.black;
+
+            if (scene.name == "StartArea")
+            {
+
+            }
         }
 
         else if (scene.name.EndsWith("_indoor"))
@@ -70,7 +78,13 @@ public class CameraController : MonoBehaviour {
     {
         if (lookAt == null)
         {
-            lookAt = player.gameObject;
+            lookAt = player.gameObject.transform;
+        }
+
+
+        if (transform.position != lookAt.position + cameraOffset)
+        {
+            transform.position = lookAt.position + cameraOffset;
         }
     }
 

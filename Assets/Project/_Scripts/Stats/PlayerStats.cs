@@ -298,8 +298,8 @@ public class PlayerStats : CharacterStats {
     /// returns the float value of division between maximum Stamina and current Stamina
     /// This value will always be a value between 0 and 1
     /// </summary>
-    /// <param name="currentHealth"></param>
-    /// <param name="maxHealth"></param>
+    /// <param name="currentStamina"></param>
+    /// <param name="maxStamina"></param>
     /// <returns></returns>
     public float CalculateStamina(float currentStamina, float maxStamina)
     {

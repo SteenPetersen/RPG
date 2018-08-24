@@ -20,15 +20,22 @@ public class UiManager : MonoBehaviour {
 
     [SerializeField] Transform toolTipLocation;
 
-    [SerializeField] private GameObject equipmentWindow;
+    [SerializeField] GameObject equipmentWindow;
 
-    [SerializeField] private ActionButton[] actionButtons;
+    [SerializeField] ActionButton[] actionButtons;
 
-    [SerializeField] private CanvasGroup keybindMenu;
+    [SerializeField] CanvasGroup keybindMenu;
 
-    [SerializeField] private GameObject[] keybindButtons;
+    [SerializeField] GameObject[] keybindButtons;
 
-    [SerializeField] GameObject toolTip;
+    [SerializeField] Canvas mainMenu;
+
+    GameDetails gameDetails;
+
+    /// <summary>
+    /// Needed by the playercontroller to stop him firing uncontrollably even when tooltip is up
+    /// </summary>
+    public GameObject toolTip;
 
     Text toolTipTitle, toolTipStats;
 
@@ -80,6 +87,11 @@ public class UiManager : MonoBehaviour {
         keybindButtons = GameObject.FindGameObjectsWithTag("Keybind");
     }
 
+    void Start()
+    {
+        gameDetails = GameDetails.instance;
+    }
+
     void Update() {
 
         if (Input.GetKeyDown(KeyCode.B))
@@ -90,6 +102,12 @@ public class UiManager : MonoBehaviour {
         if (Input.GetKey(KeyCode.M))
         {
             GameDetails.MyInstance.StartCoroutine(GameDetails.MyInstance.FadeOUt());
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            mainMenu.gameObject.SetActive(!mainMenu.gameObject.activeSelf);
+            gameDetails.paused = mainMenu.gameObject.activeSelf;
         }
 
         if (Input.GetKeyDown(KeyCode.O))
@@ -113,6 +131,7 @@ public class UiManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.L))
         {
             Instantiate(box, new Vector3(PlayerController.instance.transform.position.x, PlayerController.instance.transform.position.y, -0.25f), Quaternion.identity);
+            Screen.fullScreen = true;
         }
 
         if (Input.GetKeyDown(KeyCode.U))
@@ -150,9 +169,9 @@ public class UiManager : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.H))
         {
-            //Item potion = Instantiate(InventoryScript.instance.itemListForDebugging[1]);
-            //InventoryScript.instance.AddItem(potion);
-            GameDetails.MyInstance.Save(true);
+            Item potion = Instantiate(InventoryScript.instance.itemListForDebugging[1]);
+            InventoryScript.instance.AddItem(potion);
+            //GameDetails.MyInstance.Save(true);
         }
 
         //if (Input.GetKeyDown(KeyCode.U))

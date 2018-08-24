@@ -821,7 +821,7 @@ public class GameDetails : MonoBehaviour {
 
     IEnumerator enableUi()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.5f);
 
         StartCoroutine(UnFade());
         loadingScene = false;
@@ -830,13 +830,14 @@ public class GameDetails : MonoBehaviour {
 
     /// <summary>
     /// Unfades the scene and sets the dungeons Astarpath to 
-    /// scan if the scen it is loading is a dungeon
+    /// scan if the Scene it is loading is a dungeon
     /// </summary>
     /// <returns></returns>
     public IEnumerator UnFade()
     {
         while (fadeToBlack.color.a >= 0.02)
         {
+            Debug.Log("!");
             fadeToBlack.enabled = true;
             fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
             fadeSpeed -= 0.02f;
@@ -874,7 +875,7 @@ public class GameDetails : MonoBehaviour {
     /// <param name="zoneToLoad">the Index number of the zone that is to be loaded 
     /// (can be found in the build setting pane)</param>
     /// <returns></returns>
-    public IEnumerator FadeOutAndLoadScene(int zoneToLoad)
+    public IEnumerator FadeOutAndLoadScene(string zoneToLoad)
     {
         while (fadeToBlack.color.a <= 0.98)
         {
@@ -896,7 +897,7 @@ public class GameDetails : MonoBehaviour {
     /// <param name="zoneToLoad"></param>
     /// <param name="playerPos"></param>
     /// <returns></returns>
-    public IEnumerator FadeOutAndLoadScene(int zoneToLoad, Vector2 playerPos)
+    public IEnumerator FadeOutAndLoadScene(string zoneToLoad, Vector2 playerPos)
     {
         while (fadeToBlack.color.a <= 0.98)
         {

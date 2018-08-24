@@ -32,7 +32,6 @@ public class SceneControl : MonoBehaviour {
     {
         get
         {
-            Debug.Log("Trying to fetch homePosition");
             return currentHomePosition;
         }
 
@@ -61,11 +60,9 @@ public class SceneControl : MonoBehaviour {
             dungeonLevel = 0;
         }
 
-        if (scene.name == "main")
+        if (scene.name == "Start_Area")
         {
             MyCurrentHomePosition = new Vector2(-18, -18);
-
-            Debug.Log("I have set the current pos" + MyCurrentHomePosition);
 
             if (StoryManager.stage == 0)
             {

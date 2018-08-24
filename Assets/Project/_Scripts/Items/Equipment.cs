@@ -53,12 +53,7 @@ public class Equipment : Item, IUseable {
     {
         if ((int)equipType != 5)
         {
-            bool equipIt = EquipmentManager.instance.Equip(this);
-            //remove it from inventory if it managed to get equipped
-            if (equipIt)
-            {
-                Remove();
-            }
+            EquipmentManager.instance.Equip(this);
         }
     }
 

@@ -37,12 +37,12 @@ TagManager:
   - Loot
   - Destructable
   - EnemyWallCollision
-  - 
+  - LightSource
   - DungeonMisc
-  - 
-  - 
+  - AmbientLight
+  - Walls
   - Obstacles
-  - 
+  - Torches & Lights
   - A*
   - FlyingLoot
   - ProjectileCollision

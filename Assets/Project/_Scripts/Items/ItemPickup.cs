@@ -10,10 +10,16 @@ public class ItemPickup : Interactable
     public Item item;
     public float chanceToDrop;
     [SerializeField] Transform tooltipPosition;
+    PlayerController player;
 
     bool showBagsFullText = true;
 
     [SerializeField] bool mouseOver;
+
+    void Start()
+    {
+        player = PlayerController.instance;
+    }
 
     public override void Interact()
     {
@@ -49,6 +55,7 @@ public class ItemPickup : Interactable
                 mouseOver = false;
                 hasInteracted = true;
             }
+
             else if (!wasPickedUp)
             {
                 if (showBagsFullText)
@@ -82,6 +89,7 @@ public class ItemPickup : Interactable
     {
         if (!mouseOver)
         {
+            player.mouseOverItem = true;
             mouseOver = true;
         }
     }
@@ -90,6 +98,11 @@ public class ItemPickup : Interactable
     {
         //The mouse is no longer hovering over the GameObject so output this message each frame
         //Debug.Log("Mouse is no longer on GameObject.");
+        if (player.mouseOverItem)
+        {
+            player.mouseOverItem = false;
+        }
+
         UiManager.instance.HideToolTip();
         mouseOver = false;
     }

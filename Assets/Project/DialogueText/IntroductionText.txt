@@ -1,86 +1,22 @@
-Good morrow! I see you're up and about, and I am sure 
-Reylith already had her words with you. She finds 
-herself in such a hurry that she barely has time to 
-look around. 
-#The war she speaks of may very well happen - but 
-she thinks with the sharpest item in her arsenal 
-and her hurry could very well be her downfall... 
-I assuredly hope not.
-#I did however promise her that I would help, and you 
-will play a pivotal role in my assistance. Your abscence 
-from the battlefield has possibly made you slow, So I 
-would like to start by just making sure you have all your 
-wits about you.
-#Remember you can Move ('W','S','A','D'), adjust 
-your view ('Q','E'), slash or shoot your bow 
-(left mouse button) and block (right mouse button) 
-if you have a shield. And if you find yourself in harms way. 
-Dogde (Spacebar). If you feel like any of these keys 
-are placed wrong they can always be changed from the 
-keybind menu ('Tab') to anything that you feel more comfortable with.
-#In order to keep track of your items and all the things 
-that you pick up throughout your travels you have an 
-inventory ('I') and bags ('B'). You can click and drag 
-things in your bag to your action bar or to your inventory 
-if the item is equippable. You can also just right click an 
-equippable or consumable item to equip/use them.
-#Speaking of which, here are the item I promised Reylith I would  
-give you. You cannot open your Inventory during a conversation. 
-Right click the items from your bag to equip them.
-#Equip the sword and shield I gave you and we can continue 
-talking.
-#When you're wearing a shield you have the ability to "Block" 
-('hold right mouse'). This allows you to withstand a great deal 
-more damage but also stops you from attacking. A well timed 
-block will give you the ability to stun an enemy with a riposte, 
-but be quick!
-#You can charge your strikes by holding in the left mouse button. 
-if the sword becomes fully charged ('watch for glow and effect') 
-you will deal significantly more damage. You can combine charging 
-with a combo of hits to optimize your damage output.
-#I hope you paid attention because I'm going to release the chains 
-holding this imp here and I'd like to see that you can handle yourself. 
-If you time the block just before he hits you, you can riposte him 
-by pressing the 'left mouse button' directly after the block. 
-be quick!
-
-Show me a block, hit, riposte and a fully charged hit!
-#Good job! I think you're ready to go and talk to Bentos, 
-He will teach you a bit about archery. There will be many 
-situations in which staying away from monsters is a good idea. 
-Make haste young one!
-#I have no more to tell you right now! You need to learn about 
-ranged attacks and then we can start to get a handle on our situation 
-here.
-#Ok, good it seems you still know your way around a weapon, that is 
-going to come in handy.
-#Now lend me your ear so I can try to get you to understand the depth to 
-which this story goes, and why the fog through which reylith sees the world 
-must be lifted. I do not hold all the answers to this tale, and this is precisely 
-why I need you.
-#Reylith sees the war brewing between narrow minded and power hungry mortals 
-that can hardly see threats within their own domain let alone those coming 
-from afar. Few of the more savvy kings see the threat looming from creatures 
-migrating because of the shifts in political and actual climate.
-#But none see, or do not wish to believe in the underlying threat of why there is 
-this shift in climate, and the consequences that may yet arrise.
-#Thousands of years ago the world was cast into darkness when the now forgotten 
-ice kingdoms of the north and the fiery demons of the south confronted each other.
-It is not properly understood how or when the world returned to a balanced state as 
-all life as we understand it, and all documentation before and during that era was lost 
-presumably to the destruction to reigned the world.
-#I fear that what we are witnessing here is an imbalance between these two forces, and I 
-believe that quarrels of mortals, and the migrations of beasts and creature alike are mere 
-distractions. Perhaps by the time we notice the real underlying threat it will be too late... 
-perhaps it is already.
-#This is why I want you to investigate what is happening at the southern volcanic lands to 
-see if we can find answers to these questions. If we are to get caught in the hell that will 
-arrise in the conflict to come. then these quarrels, beasts and creatures. will be the least 
-of our troubles.
-#Your journey however, starts close by. There is a cave to the north that is being blocked 
-by a thrawn of imps led by a vicious master called "Qupha". Find out why they are there and 
-and secure passage through the mountains. Once on the other side of the mountains you can 
-start your journey south to investigate the lands there. I may meet you further south. Hopefully 
-you will have some answers for me.
-#Now make your way into the caves and fight your way to the bottom, somewhere in the depths of 
-those caves you should find Qupha.
+<PLAYER_NAME>! Just the person I wanted to see, I trust
+Reylith has spoken to you but surely not about what we 
+want of you this time, else your face would be more contorted... 
+#The Empire is starting to take control of Battlefields all 
+over the globe, and our troops are spread thin as it is. Reylith
+will command our troops best she can and I am recruiting as many
+people to "The Insurgency" as I can.
+#What we need from you, is to take out targets of high priority
+that we can identify and locate. And Reylith has done just that.
+#She has managed to identify a General of the Empire called "Tol'tar"
+who has been causing us quite a bit of difficulty. We want you to 
+deal with him. But that is not all.
+#In order to travel to his keep you must first get through the 
+mountains, north of here. They are windey and dangerous and many have
+gotten lost inside the caves that exist within.
+#Just outside my house to the north you will find an entrance to 
+the caves, be careful there is an entire throng of imps inside.
+#I have heard reports of a powerful magic weilding imp called 
+"Qupha" who resides within those caves. Perhaps finding him is a
+a good way to find a way through. surely he guards it carefully.
+#Once through the mountains travel East and you will find Tol'Tar's
+Keep, but be forwarned. He is no push-over.

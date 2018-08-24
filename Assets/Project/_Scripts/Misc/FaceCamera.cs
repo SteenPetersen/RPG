@@ -20,7 +20,11 @@ public class FaceCamera : MonoBehaviour {
         if (!EnemyFaceCamera.FastApproximately(target.rotation.x, transform.rotation.x, 0.00001f))
         {
             transform.rotation = target.rotation;
-            Debug.Log("rendering Player");
+
+            if (DebugControl.debugOn)
+            {
+                Debug.Log("rendering Player");
+            }
         }
     }
 }

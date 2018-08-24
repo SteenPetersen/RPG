@@ -11,13 +11,15 @@ public class Reylith : DialogueNPC {
     [SerializeField] int progress;
     [SerializeField] bool conversationDone;
     GameObject skeleton;
+    GameObject boat;
     bool fading;
 
     protected override void Start()
     {
         base.Start();
         boatLocation = GameObject.Find("BoatLocation").transform;
-        skeleton = transform.Find("logic").transform.Find("Skeleton").gameObject;
+        skeleton = transform.Find("Skeleton").gameObject;
+        boat = GameObject.Find("Boat");
     }
 
     void Update()
@@ -93,9 +95,9 @@ public class Reylith : DialogueNPC {
     /// </summary>
     private void OnDestroy()
     {
-        if (conversationDone)
+        if (conversationDone && boat != null)
         {
-            GameObject.Find("Boat").GetComponent<BoatMovement>().readyToSail = true;
+            boat.GetComponent<BoatMovement>().readyToSail = true;
         }
     }
 
@@ -108,7 +110,6 @@ public class Reylith : DialogueNPC {
         {
             currentParagraphIncrement = currentParagraph + 1;
             speechText.text = textLines[currentParagraph];
-
         }
     }
 

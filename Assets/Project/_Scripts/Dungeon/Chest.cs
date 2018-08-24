@@ -55,9 +55,6 @@ public class Chest : Interactable {
     void Start () {
         // set reference to spriteRenderer
         rend = GetComponent<SpriteRenderer>();
-
-        player = PlayerController.instance.gameObject.transform;
-
         myCollider = GetComponent<BoxCollider>();
     }
 
@@ -196,7 +193,10 @@ public class Chest : Interactable {
         // generate a random number
         int rnd = UnityEngine.Random.Range(0, maxAmountOfItems + 1);
 
-        Debug.Log(rnd);
+        if (DebugControl.debugEnvironment)
+        {
+            Debug.Log(rnd);
+        }
 
         if (rnd == 0)
         {

@@ -8,7 +8,7 @@ public class EnterPortal : MonoBehaviour {
     PlayerController player;
     bool routineRunning;
 
-    [SerializeField] int sceneToLoad;
+    [SerializeField] string sceneToLoad;
     [SerializeField] Vector2 loadInPosition;
     GameObject followLight;
 

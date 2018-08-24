@@ -192,8 +192,8 @@ MonoBehaviour:
   canDropItems: 1
   droppableItems:
   - {fileID: 1003413813164730, guid: 6cb1a3daf00d25747b27bdfd69fd06d1, type: 2}
-  - {fileID: 1591094875518546, guid: a67f596fe2e9a58448f446a756517d49, type: 2}
-  - {fileID: 1814537491769038, guid: fb92f464764031343a669f45865dd006, type: 2}
+  - {fileID: 1634832320161478, guid: 154c9b953a5c55143a2d5fa8c1a73517, type: 2}
+  - {fileID: 1184378841972410, guid: f35ddf3fbb0bebc41ba87b1c00da9a78, type: 2}
   - {fileID: 1003413813164730, guid: f73cab4f7f38f884fa3875e04760f6cf, type: 2}
   - {fileID: 1392853231466582, guid: dd3f0c150f6468e44bc48105b4d98a6a, type: 2}
   chanceToDrop: 28

@@ -123,6 +123,15 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPoin
         return true;
     }
 
+    public bool ReplaceItem(Item item)
+    {
+        MyItems.Clear();
+        icon.sprite = item.icon;
+        icon.color = Color.white;
+        item.MySlot = this;
+        return true;
+    }
+
     /// <summary>
     /// Places a stack of items in a new slot of the bags or tries to stack them if they are of the same type
     /// </summary>
@@ -252,7 +261,7 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPoin
                 RemoveItem(MyItem);
                 return;
             }
-            Debug.Log("clicking slot");
+
             UseItem();
         }
     }

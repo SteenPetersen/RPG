@@ -19,9 +19,10 @@ public class PlayerController : MonoBehaviour
     public bool maxChargedHit;
 
     /// <summary>
-    /// Used to stop Player from shooting and hitting when mousing over a vendor
+    /// Used to stop Player from shooting and hitting when mousing over a vendor or items on the ground
     /// </summary>
     public bool mouseOverVendor;
+    public bool mouseOverItem;
 
     Vector3 prevPosition;
     Vector3 move;
@@ -52,7 +53,6 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rigid;
     CameraController cameraControl;
     PlayerStats playerStat;
-    GameObject cameraHolder;
     ParticleSystem[] particles;
     [SerializeField] ParticleSystem sprintTrail;
 
@@ -184,7 +184,6 @@ public class PlayerController : MonoBehaviour
     {
         // subscribe to notice is a scene is loaded.
         SceneManager.sceneLoaded += OnSceneLoaded;
-        dungeon = DungeonManager.instance;
     }
 
     void Start()
@@ -213,6 +212,7 @@ public class PlayerController : MonoBehaviour
         {
             HandleAggro();
         }
+
     }
 
     private void FixedUpdate()
@@ -386,51 +386,56 @@ public class PlayerController : MonoBehaviour
                     // only set it to true if its true for this particular hit
                     maxChargedHit = false;
 
-                    // check if player was rtying to to do a charged hit
-                    if (largeStrikeAnimationReady)
+                    ///If you have a weapon Equipped
+                    if (equip.currentEquipment[3] != null)
                     {
-                        anim.SetBool("StrikeHold", false);
-                        largeStrikeAnimationReady = false;
-
-                        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
+                        // check if player was rtying to to do a charged hit
+                        if (largeStrikeAnimationReady)
                         {
-                            //Debug.Log("Maximum Hit");
-                            maxChargedHit = true;
+                            anim.SetBool("StrikeHold", false);
+                            largeStrikeAnimationReady = false;
+
+                            if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98)
+                            {
+                                //Debug.Log("Maximum Hit");
+                                maxChargedHit = true;
+                            }
+
+                            Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+                            tmp.a = 0;
+                            EquipmentManager.instance.weaponGlowSlot.color = tmp;
+                            weaponChargeReady = false;
+                            weaponCharged.Stop();
+
+
+                            return;
                         }
 
-                        Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-                        tmp.a = 0;
-                        EquipmentManager.instance.weaponGlowSlot.color = tmp;
-                        weaponChargeReady = false;
-                        weaponCharged.Stop();
+                        int rnd = UnityEngine.Random.Range(0, 4);
 
+                        // run a switch case on rnd and play a random hit animation
+                        switch (rnd)
+                        {
+                            case 0:
+                                anim.SetTrigger("Strike1");
+                                break;
 
-                        return;
+                            case 1:
+                                anim.SetTrigger("Strike2");
+                                break;
+
+                            case 2:
+                                anim.SetTrigger("Strike3");
+                                break;
+                        }
                     }
 
-                    int rnd = UnityEngine.Random.Range(0, 4);
-
-                    // run a switch case on rnd and play a random hit animation
-                    switch (rnd)
-                    {
-                        case 0:
-                            anim.SetTrigger("Strike1");
-                            break;
-
-                        case 1:
-                            anim.SetTrigger("Strike2");
-                            break;
-
-                        case 2:
-                            anim.SetTrigger("Strike3");
-                            break;
-                    }
                 }
             }
 
             if (Input.GetMouseButton(1))
             {
-                if (EquipmentManager.instance.currentEquipment[4] != null)
+                if (equip.currentEquipment[4] != null)
                 {
                     anim.SetBool("Block", true);
 
@@ -449,12 +454,15 @@ public class PlayerController : MonoBehaviour
 
             if (!Input.GetMouseButton(1))
             {
-                anim.SetBool("Block", false);
-                if (hasBlockingModifier)
+                if (blocking)
                 {
-                    blocking = false;
-                    playerStat.armor.RemoveModifier(modifierToRemove);
-                    hasBlockingModifier = false;
+                    anim.SetBool("Block", false);
+                    if (hasBlockingModifier)
+                    {
+                        blocking = false;
+                        playerStat.armor.RemoveModifier(modifierToRemove);
+                        hasBlockingModifier = false;
+                    }
                 }
             }
 
@@ -480,7 +488,6 @@ public class PlayerController : MonoBehaviour
         // if the player is in a ranged state
         else if (ranged)
         {
-
             if (Input.GetMouseButtonDown(0))
             {
                 bool canHit = CheckIfPlayerMayHit();
@@ -518,11 +525,14 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetMouseButton(0))
             {
-                if (!mouseOverVendor)
+                if (!mouseOverVendor && !mouseOverItem)
                 {
-                    autoFiring = true;
-                    maxChargedHit = false;
-                    anim.SetTrigger("ShootRanged");
+                    if (equip.currentEquipment[3] != null)
+                    {
+                        autoFiring = true;
+                        maxChargedHit = false;
+                        anim.SetTrigger("ShootRanged");
+                    }
                 }
             }
 
@@ -635,6 +645,11 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (Input.GetMouseButtonUp(0) && !UiManager.instance.toolTip.activeInHierarchy)
+        {
+            mouseOverItem = false;
+        }
+
     } // commented
 
     /// <summary>
@@ -676,7 +691,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     private void StopMeleeChargedHitState(bool changeingState = false)
     {
         maxChargedHit = false;
@@ -696,7 +710,6 @@ public class PlayerController : MonoBehaviour
             return;
         }
     }
-
 
     /// <summary>
     /// Handles the movement of the Player with a normalized vector2
@@ -760,7 +773,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Stop sprinting
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (!Input.GetKey(KeyCode.Space))
         {
             if (playerStat.sprinting)
             {
@@ -807,7 +820,7 @@ public class PlayerController : MonoBehaviour
                 StopRangedChargeShotState(true);
 
                 bool sword = EquipFirstMatchingItemInBag(0, 3);
-                bool shield = EquipFirstMatchingItemInBag(2, 4);
+                EquipFirstMatchingItemInBag(2, 4);
 
                 if (sword)
                 {
@@ -1223,20 +1236,17 @@ public class PlayerController : MonoBehaviour
         pooledArrows = PooledProjectilesController.instance;
         cameraControl = CameraController.instance;
 
+        staminaBar = GameDetails.instance.transform.Find("UiCanvas/VisibleUi/StaminaBar/Stamina_Bar/Stamina_Fill").GetComponent<Image>();
+        healthBar = GameDetails.instance.transform.Find("UiCanvas/VisibleUi/HealthBar/Health_Bar/Health_Fill").GetComponent<Image>();
+
         // set the lookat on the camera controller to be the playerObject.
-        cameraControl.lookAt = this.gameObject;
+        cameraControl.lookAt = this.gameObject.transform;
 
         // fetch all particleSystems that are children of this gameObject and place them in an array of particleSystems
         particles = GetComponentsInChildren<ParticleSystem>();
 
         // Find the object called "EventSystem" and make a reference to it
         eventSys = GameObject.Find("EventSystem").GetComponent<EventSystem>();
-
-        // make sure that the camera is always looking at the player
-        if (cameraControl.lookAt != this.gameObject)
-        {
-            cameraControl.lookAt = this.gameObject;
-        }
     }
 
     private ParticleSystem GetSystem(string systemName)
@@ -1272,12 +1282,17 @@ public class PlayerController : MonoBehaviour
     {
         if (portal && !spawnInRunning)
         {
-            dungeon.townPortalDropped = false;
+            dungeon = DungeonManager.instance;
 
-            if (dungeon._PlayerHasBossKey)
+            if (dungeon != null)
             {
-                Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
-                tmp.Remove();
+                dungeon.townPortalDropped = false;
+
+                if (dungeon._PlayerHasBossKey)
+                {
+                    Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
+                    tmp.Remove();
+                }
             }
 
             StartCoroutine(SpawnIn());
@@ -1291,9 +1306,12 @@ public class PlayerController : MonoBehaviour
 
         else if (scene.name.EndsWith("_indoor"))
         {
-            dungeon._PlayerHasBossKey = false;
-            dungeon.bossKeyHasDropped = false;
-            dungeon.bossRoomAvailable = false;
+            if (dungeon != null)
+            {
+                dungeon._PlayerHasBossKey = false;
+                dungeon.bossKeyHasDropped = false;
+                dungeon.bossRoomAvailable = false;
+            }
             Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 0.43f;
             pointLight.gameObject.SetActive(true);
         }
@@ -1343,6 +1361,7 @@ public class PlayerController : MonoBehaviour
 
         SoundManager.instance.PlayEnvironmentSound("port_in");
         ParticleSystemHolder.instance.PlaySpellEffect(transform.position, "Spawn in");
+
         yield return new WaitForSeconds(2.5f);
 
         CameraShaker.Instance.ShakeOnce(6f, 6f, 0.3f, 0.9f);

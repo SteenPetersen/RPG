@@ -94,7 +94,11 @@ public class FirstBoss : EnemyAI
                 aoeCasting = true;
 
                 anim.SetTrigger("aoe");
-                Debug.Log("aoe trigger");
+
+                if (DebugControl.debugEnemies)
+                {
+                    Debug.Log("aoe trigger");
+                }
             }
         }
     }
@@ -323,8 +327,6 @@ public class FirstBoss : EnemyAI
 
     IEnumerator RoundShot()
     {
-        Debug.Log("Round shot");
-
         Vector2 direction = new Vector2(playerObj.transform.position.x - transform.position.x, playerObj.transform.position.y - transform.position.y);
         direction.Normalize();
 
@@ -351,9 +353,6 @@ public class FirstBoss : EnemyAI
 
     IEnumerator SpreadShotAoe()
     {
-        Debug.Log("Spread shot");
-
-
         for (int i = 0; i <= amountOfFireballs; i++)
         {
             // at the player
@@ -370,8 +369,6 @@ public class FirstBoss : EnemyAI
 
     IEnumerator PulseShotAoe()
     {
-        Debug.Log("pulse shot");
-
         for (int i = 1; i <= 5; i++)
         {
             // at the player

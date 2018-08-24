@@ -3,7 +3,7 @@
 
 public class DungeonLevelLoadLogic : MonoBehaviour {
 
-    [SerializeField] int ZoneToLoad;
+    [SerializeField] string ZoneToLoad;
     bool loading;
 
     private void OnTriggerEnter2D(Collider2D col)

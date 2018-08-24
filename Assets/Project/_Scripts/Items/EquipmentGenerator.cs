@@ -109,7 +109,10 @@ public class EquipmentGenerator : MonoBehaviour {
             }
             else
             {
-                Debug.Log("Generating armor " + item.graphicId + " " + item.armorType + " " + item.slot + " " + item.name);
+                if (DebugControl.debugItemGenerator)
+                {
+                    Debug.Log("Generating armor " + item.graphicId + " " + item.armorType + " " + item.slot + " " + item.name);
+                }
 
                 ArmorGraphicSet tmp = EquipmentRepo._instance.GetArmorSet(item.graphicId, item.armorType, item.slot);
                 equip.characterVisibleSprite = tmp.visible;

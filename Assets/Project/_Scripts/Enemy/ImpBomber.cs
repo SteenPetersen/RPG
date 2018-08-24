@@ -47,7 +47,10 @@ public class ImpBomber : EnemyAI {
                     Instantiate(DungeonManager.instance.bossRoomKey, tr.position, Quaternion.identity);
                 }
 
-                Debug.LogWarning(" there are now " + DungeonManager.instance.enemiesInDungeon.Count + " enemies on the list");
+                if (DebugControl.debugEnemies)
+                {
+                    Debug.LogWarning(" there are now " + DungeonManager.instance.enemiesInDungeon.Count + " enemies on the list");
+                }
             }
 
             CameraShaker.Instance.ShakeOnce(3f, 3f, 0.1f, 0.5f);

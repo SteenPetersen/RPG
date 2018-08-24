@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyFaceCamera : MonoBehaviour {
 
     Transform cam;
     [SerializeField] float threshold;
-    [SerializeField] int interval = 2;
 
     public static bool FastApproximately(float a, float b, float threshold)
     {

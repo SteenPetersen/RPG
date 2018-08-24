@@ -5,7 +5,6 @@ public abstract class Interactable : MonoBehaviour {
 
     [SerializeField] protected float radius;
     protected bool hasInteracted;
-    protected Transform player;
 
     public bool drawGizmos;
 

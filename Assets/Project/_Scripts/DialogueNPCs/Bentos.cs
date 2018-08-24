@@ -7,7 +7,8 @@ public class Bentos : DialogueNPC {
     SphereCollider col;
     [SerializeField] Item bow;
     [SerializeField] Item pants;
-    [SerializeField] bool bowGiven, pantsGiven;
+    [SerializeField] bool bowGiven;
+    [SerializeField] bool pantsGiven;
     [SerializeField] TutorialManager tut;
     [SerializeField] bool speaking;
     [SerializeField] string[] sayings;

@@ -344,7 +344,10 @@ public class EnemyAI : AIPath
             int playerLayer = 10;
             var playerlayerMask = 1 << playerLayer;
 
-            Debug.Log("calling check melee range");
+            if (DebugControl.debugEnemies)
+            {
+                Debug.Log("calling check melee range");
+            }
 
             if (setter.targetASTAR != null)
             {

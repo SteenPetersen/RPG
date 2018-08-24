@@ -3048,7 +3048,10 @@ public class BoardCreator : MonoBehaviour
 
             BuildEntranceRoom();
 
-            Debug.Log("There are " + DungeonManager.instance.enemiesInDungeon.Count + " enemies in the list");
+            if (DebugControl.debugEnemies)
+            {
+                Debug.Log("There are " + DungeonManager.instance.enemiesInDungeon.Count + " enemies in the list");
+            }
 
             DungeonManager.instance.enemiesInDungeon.Clear();
 
@@ -3057,7 +3060,10 @@ public class BoardCreator : MonoBehaviour
             RemoveAllEnemiesNearStartPoint();
             SpawnObstructedCorridor();
 
-            Debug.Log("There are " + DungeonManager.instance.enemiesInDungeon.Count + " enemies in the list");
+            if (DebugControl.debugEnemies)
+            {
+                Debug.Log("There are " + DungeonManager.instance.enemiesInDungeon.Count + " enemies in the list");
+            }
 
             workDone = true;
         }

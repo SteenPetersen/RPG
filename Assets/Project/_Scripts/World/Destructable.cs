@@ -106,7 +106,10 @@ public class Destructable : MonoBehaviour {
             {
                 rand = UnityEngine.Random.Range(2, droppableItems.Length);
 
-                Debug.Log("inside uncommon" + rand + "   " + droppableItems.Length);
+                if (DebugControl.debugOn)
+                {
+                    Debug.Log("inside uncommon" + rand + "   " + droppableItems.Length);
+                }
 
                 if (droppableItems[rand].tag == "Town Portal Book")
                 {

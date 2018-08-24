@@ -50,96 +50,255 @@ public class EquipmentManager : MonoBehaviour {
         SetVisibleGearSpriteRenderers();
         checkStarterGraphics();
 
-
         player = PlayerController.instance;
+
+        weaponGlowSlot = player.transform.Find("Skeleton/Body/MainHand/MainItemGlow").GetComponent<SpriteRenderer>();
+
         listOfProjectiles = ProjectileList.instance;
     }
 
     public bool Equip (Equipment newItem, bool silent = false)
     {
-        //Debug.Log("calling equip");
-
-        // find slotIndex of the new item.
         int slotIndex = (int)newItem.equipSlot;
+        Equipment oldItem = currentEquipment[3];
+        Equipment oldOffhand = currentEquipment[4];
 
-        // instantiate oldItem
-        Equipment oldItem = null;
 
-        // if newItem is a bow
+
+        // newItem = Bow
         if (slotIndex == 3 && (int)newItem.equipType == 1)
         {
-            // is there something in offhand?
-            if (currentEquipment[4] != null)
+            if (DebugControl.debugInventory)
             {
-                var oldOffhand = currentEquipment[4];
-                oldItem = currentEquipment[3];
+                Debug.Log("Adding Bow as a new item");
+            }
 
-                // if there is space for the item in the inventory
+            /// if player has items equipped in both main and offhand
+            if (currentEquipment[3] != null && currentEquipment[4] != null)
+            {
+                if (DebugControl.debugInventory)
+                {
+                    Debug.Log("player has items equipped in both main and offhand");
+                }
+
+                /// if there is space for the item in the inventory
                 if (inventory.MyEmptySlotCount >= 2)
                 {
-                    PlaceItemsInInventory(newItem, slotIndex, oldItem, oldOffhand);
+                    ClearOffhandSlotAndUpdateVisuals(newItem, slotIndex);
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItemToFirstInvSlot(oldItem);
+                    inventory.AddItemToSecondInvSlot(oldOffhand);
                 }
 
-                else if (inventory.MyEmptySlotCount <= 1)
+                else if (inventory.MyEmptySlotCount == 1)
                 {
+                    if (DebugControl.debugInventory)
+                    {
+                        Debug.Log("Have only 1 slot available");
+                    }
+
+                    SlotScript one = inventory.GetSlotScript(0);
+                    SlotScript two = inventory.GetSlotScript(1);
+
+                    SlotInfo firstSlot = SaveItemInfoAndClearSlot(one);
+                    SlotInfo secondSlot = SaveItemInfoAndClearSlot(two);
+
+                    inventory.ClearFromSlot(newItem.MySlot);
+
+                    inventory.AddItemToFirstInvSlot(oldItem);
+                    inventory.AddItemToSecondInvSlot(oldOffhand);
+
+                    if (firstSlot.slotItem != null)
+                    {
+                        inventory.AddItem(firstSlot.slotItem);
+                    }
+
+                    if (secondSlot.slotItem != null)
+                    {
+                        inventory.AddItem(secondSlot.slotItem);
+                    }
+
+                    ClearOffhandSlotAndUpdateVisuals(newItem, slotIndex);
+
+                }
+
+                else if (inventory.MyEmptySlotCount < 1)
+                {
+                    if (DebugControl.debugInventory)
+                    {
+                        Debug.Log("Sending Notice that player cannot perform this action");
+                    }
+
+
+                    var text = CombatTextManager.instance.FetchText(transform.position);
+                    var textScript = text.GetComponent<CombatText>();
+                    textScript.White("Not enough room!", transform.position);
+                    text.transform.position = player.transform.position;
+                    text.SetActive(true);
+                    textScript.FadeOut();
+
                     return false;
                 }
             }
 
-            //great! nothing in offhand
-            else if (currentEquipment[4] == null)
+            /// Player has a main hand equipped but not a shield
+            else if (currentEquipment[3] != null && currentEquipment[4] == null)
             {
-                if (currentEquipment[3] != null)
+                if (DebugControl.debugInventory)
                 {
-                    oldItem = currentEquipment[3];
-
-                    if (inventory.MyEmptySlotCount >= 1)
-                    {
-                        inventory.AddItem(oldItem);
-                        UpdateEquipmentSlot(newItem, slotIndex);
-                    }
-
-                    else if (inventory.MyEmptySlotCount == 0)
-                    {
-                        return false;
-                    }
+                    Debug.Log("Player has a main hand equipped but not a shield");
                 }
+
+                oldItem = currentEquipment[slotIndex];
+
+                if (inventory.MyEmptySlotCount >= 1)
+                {
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItemToFirstInvSlot(oldItem);
+                }
+
+                else if (inventory.MyEmptySlotCount == 0)
+                {
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItem(oldItem);
+                }
+
+                ClearOffhandSlotAndUpdateVisuals(newItem, slotIndex);
+
+            }
+
+            /// Player does not have a main hand equipped but has a shield
+            else if (currentEquipment[3] == null && currentEquipment[4] != null)
+            {
+                if (DebugControl.debugInventory)
+                {
+                    Debug.Log("Player does not have a main hand equipped but has a shield");
+                }
+
+
+                oldOffhand = currentEquipment[4];
+
+                if (inventory.MyEmptySlotCount >= 1)
+                {
+                    inventory.AddItemToSecondInvSlot(oldOffhand);
+                }
+
+                else if (inventory.MyEmptySlotCount == 0)
+                {
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItem(oldOffhand);
+                }
+
+                ClearOffhandSlotAndUpdateVisuals(newItem, slotIndex);
+            }
+
+            /// Nothing equipped
+            else
+            {
+                SaveItemInfoAndClearSlot(newItem);
             }
         }
+
+
 
         // if its a shield
-        if (slotIndex == 4 && (int)newItem.equipType == 2)
+        else if (slotIndex == 4 && (int)newItem.equipType == 2)
         {
-            // check if a bow is equipped
-            if (currentEquipment[3] != null)
+            /// if player has items equipped in both main and offhand
+            if (currentEquipment[3] != null && currentEquipment[4] != null)
             {
+                if (inventory.MyEmptySlotCount >= 1)
+                {
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItemToSecondInvSlot(oldOffhand);
+                }
+
+                else if (inventory.MyEmptySlotCount == 0)
+                {
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItem(oldOffhand);
+                }
+            }
+
+            /// Player has a main hand equipped but not a shield
+            /// It could be a bow or a single melee weapon
+            else if (currentEquipment[3] != null && currentEquipment[4] == null)
+            {
+                ///Its a bow that he has equipped
                 if ((int)currentEquipment[3].equipType == 1)
                 {
-                    return false;
+                    if (DebugControl.debugInventory)
+                    {
+                        Debug.Log("Adding Shield in place of Bow");
+                    }
+
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItem(oldItem);
+                    ClearMainHandSlot(newItem, slotIndex);
                 }
+
+                else
+                {
+                    SaveItemInfoAndClearSlot(newItem);
+                }
+            }
+
+            /// Player does not have a main hand equipped but has a shield
+            else if (currentEquipment[3] == null && currentEquipment[4] != null)
+            {
+                if (inventory.MyEmptySlotCount >= 1)
+                {
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItemToSecondInvSlot(oldOffhand);
+                }
+
+                else if (inventory.MyEmptySlotCount == 0)
+                {
+                    SaveItemInfoAndClearSlot(newItem);
+                    inventory.AddItem(oldOffhand);
+                }
+            }
+
+            /// Nothing equipped
+            else
+            {
+                SaveItemInfoAndClearSlot(newItem);
             }
         }
 
-        //if its not a bow but you have an item in that position
-        if (currentEquipment[slotIndex] != null && (int)newItem.equipType != 1)
+
+
+        /// if its not a bow but you have an item in that position
+        /// Mainly, equipping a melee weapon and all armor
+        else if (currentEquipment[slotIndex] != null && (int)newItem.equipType != 1)
         {
-            // is the item in that position a bow?
+            /// is the item in that position a bow?
             if ((int)currentEquipment[slotIndex].equipType == 1)
             {
-                // remove the arrow
+                /// remove the arrow
                 visibleGear[4].sprite = null;
             }
 
             oldItem = currentEquipment[slotIndex];
 
-            if (inventory.MyEmptySlotCount >= 1)
+            if (slotIndex == 3)
             {
-                inventory.AddItem(oldItem, true);
-                UpdateEquipmentSlot(newItem, slotIndex);
+                SaveItemInfoAndClearSlot(newItem);
+                inventory.AddItemToFirstInvSlot(oldItem);
             }
-            else if (inventory.MyEmptySlotCount == 0)
+            else
             {
-                return false;
+                SaveItemInfoAndClearSlot(newItem);
+                inventory.AddItem(oldItem);
+            }
+        }
+
+        /// Adding an item to a slot that has nothing in it
+        else if (currentEquipment[slotIndex] == null)
+        {
+            if (!silent)
+            {
+                SaveItemInfoAndClearSlot(newItem);
             }
         }
 
@@ -149,26 +308,72 @@ public class EquipmentManager : MonoBehaviour {
             onEquipmentChanged.Invoke(newItem, oldItem);
         }
 
+
+
         // if Item has a glow effect add it here
         if (newItem.MyGlowSprite != null)
         {
             weaponGlowSlot.sprite = newItem.MyGlowSprite;
         }
 
-        // Equip the item and make the sound of equipping
-        inventoryEquipment[slotIndex].AddItem(newItem, silent);
 
-        UpdateEquipmentSlot(newItem, slotIndex);
-        //Debug.Log("finished calling equip");
+
+        // Equip the item and make the sound of equipping
+        inventoryEquipment[slotIndex].AddItemVisuals(newItem, silent);
+
+        UpdateIteminEquipmentSlot(newItem, slotIndex);
+
         return true;
 
     }
 
-    private void PlaceItemsInInventory(Equipment newItem, int slotIndex, Equipment oldItem, Equipment oldOffhand)
+    private void ClearMainHandSlot(Equipment newItem, int slotIndex)
     {
-        // add the two items that the player was holding to the inventory
-        inventory.AddItem(oldItem, oldOffhand);
+        /// equip at Mainhand slot is null
+        currentEquipment[3] = null;
 
+        /// set the sprite of the slot to the start sprite of the game
+        visibleGear[3].sprite = startGraphics[3];
+
+        /// remove that item from the list of currently equipped gear.
+        ClearEquippedGear(3);
+
+        /// Clear the glow sprite
+        weaponGlowSlot.sprite = null;
+
+        /// update the array of currently equipped items with the new Item
+        UpdateIteminEquipmentSlot(newItem, slotIndex);
+    }
+
+    private SlotInfo SaveItemInfoAndClearSlot(Equipment newItem)
+    {
+        SlotScript s = inventory.GetSlotScript(newItem.MySlot);
+
+        if (s != null)
+        {
+            SlotInfo tmp = new SlotInfo(s.MyCount, s.MyItem);
+
+            s.Clear();
+
+            return tmp;
+        }
+
+        return null;
+    }
+
+    private SlotInfo SaveItemInfoAndClearSlot(SlotScript slot)
+    {
+        SlotScript s = inventory.GetSlotScript(slot);
+
+        SlotInfo tmp = new SlotInfo(s.MyCount, s.MyItem);
+
+        s.Clear();
+
+        return tmp;
+    }
+
+    private void ClearOffhandSlotAndUpdateVisuals(Equipment newItem, int slotIndex)
+    {
         //equip at offhand slot is null
         currentEquipment[4] = null;
 
@@ -179,8 +384,7 @@ public class EquipmentManager : MonoBehaviour {
         ClearEquippedGear(4);
 
         // update the array of currently equipped items with the new Item
-
-        UpdateEquipmentSlot(newItem, slotIndex);
+        UpdateIteminEquipmentSlot(newItem, slotIndex);
     }
 
     /// <summary>
@@ -203,15 +407,10 @@ public class EquipmentManager : MonoBehaviour {
     /// </summary>
     /// <param name="newItem">Item to wear</param>
     /// <param name="slotIndex">Slot to update</param>
-    private void UpdateEquipmentSlot(Equipment newItem, int slotIndex)
+    private void UpdateIteminEquipmentSlot(Equipment newItem, int slotIndex)
     {
         // update the array of equipment with the new items
         currentEquipment[slotIndex] = newItem;
-
-        //Debug.Log(slotIndex);
-
-        // instantiate a sprite corresponding to the new items visiblesprite
-        //Sprite newSprite = Instantiate(newItem.characterVisibleSprite) as Sprite;
 
         // update the sprite of the equipmentSlots with the new sprite
         visibleGear[slotIndex].sprite = newItem.characterVisibleSprite;
@@ -416,6 +615,7 @@ public class EquipmentManager : MonoBehaviour {
         if ((int)equip.equipSlot == 3)
         {
             int stateId = (int)equip.equipType;
+
             if (stateId == 0)
             {
                 player.melee = true;
@@ -463,5 +663,24 @@ public class EquipmentManager : MonoBehaviour {
         Sprite newSprite = Instantiate<Sprite>(newProjectile.GetComponent<SpriteRenderer>().sprite);
         visibleGear[4].sprite = newSprite;
 
+    }
+}
+
+public class SlotInfo
+{
+    public int count;
+    public Item slotItem;
+    public bool dataAvailable;
+
+    /// <summary>
+    /// Constructor for initializing this class
+    /// </summary>
+    /// <param name="c">How many items</param>
+    /// <param name="s">What Item</param>
+    public SlotInfo(int c, Item s)
+    {
+        count = c;
+        slotItem = s;
+        dataAvailable = true;
     }
 }
