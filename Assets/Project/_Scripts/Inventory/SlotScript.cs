@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPointerEnterHandler, IPointerExitHandler
+public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPointerEnterHandler, IPointerExitHandler
 {
     /// <summary>
     /// A stack for all the items in this slot
@@ -123,15 +123,6 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPoin
         return true;
     }
 
-    public bool ReplaceItem(Item item)
-    {
-        MyItems.Clear();
-        icon.sprite = item.icon;
-        icon.color = Color.white;
-        item.MySlot = this;
-        return true;
-    }
-
     /// <summary>
     /// Places a stack of items in a new slot of the bags or tries to stack them if they are of the same type
     /// </summary>
@@ -139,7 +130,7 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPoin
     /// <returns></returns>
     public bool AddItems(ObservableStack<Item> newItems)
     {
-        // if the slot if empty or if the slot has items of the same type
+        // if the slot is empty or if the slot has items of the same type
         if (IsEmpty || newItems.Peek().GetType() == MyItem.GetType())
         {
             // how many items do I have in my hand?
@@ -192,7 +183,7 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPoin
     /// Determines what happens when the slot is right or left clicked
     /// </summary>
     /// <param name="eventData"></param>
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
@@ -254,13 +245,19 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPoin
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             // if the vendor window is currently open And your done with tutorial (else player can sell needed items to the vendors)
-            if (VendorManager.instance.vendorWindowOpen && !IsEmpty && StoryManager.tutorialStage >= 9)
+            if (VendorManager.instance.vendorWindowOpen && !IsEmpty && ExperienceManager.MyLevel > 1)
             {
                 // sell this item
                 VendorManager.instance.Sell(MyItem.sellValue, MyItem);
                 RemoveItem(MyItem);
                 return;
             }
+
+            else if (VendorManager.instance.vendorWindowOpen && !IsEmpty && ExperienceManager.MyLevel <= 1)
+            {
+                SpeechBubbleManager.instance.FetchBubble(VendorWindow.instance.MyVendor.MySpeechLocation, "Come back when you've got" + "\n" + "a little more experience");
+            }
+
 
             UseItem();
         }
@@ -344,6 +341,7 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPoin
 
     /// <summary>
     /// Merges a stack of items to allow player to organise his/her bags
+    /// 11.10
     /// </summary>
     /// <returns></returns>
     private bool MergeItems(SlotScript from)
@@ -359,8 +357,12 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable, IPoin
 
             for (int i = 0; i < free; i++)
             {
-                AddItem(from.MyItems.Pop());
+                if (from.MyCount > 0)
+                {
+                    AddItem(from.MyItems.Pop());
+                }
             }
+
             return true;
 
         }

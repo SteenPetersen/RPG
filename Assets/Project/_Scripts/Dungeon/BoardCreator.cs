@@ -13,6 +13,11 @@ public class BoardCreator : MonoBehaviour
 
     public static BoardCreator instance;
 
+    public Room furthestEast;
+    public Room furthestWest;
+    public Room furthestNorth;
+    public Room furthestSouth;
+
     public int chanceOfChestPerRoom;
     public int chanceOfBetterChestPerRoom;
     //[Tooltip("How many enemies in corridors")]

@@ -42,7 +42,7 @@ TagManager:
   - AmbientLight
   - Walls
   - Obstacles
-  - Torches & Lights
+  - UiParticles
   - A*
   - FlyingLoot
   - ProjectileCollision

@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameDetails : MonoBehaviour {
 
@@ -75,7 +76,11 @@ public class GameDetails : MonoBehaviour {
     /// Accessed by DungeonLevelLoadLogic in order to fade the screen when loading another level
     /// </summary>
     public float fadeSpeed;
-    public Image fadeToBlack;
+    public CanvasGroup fadeToBlack;
+    [SerializeField] TextMeshProUGUI loadScreenText;
+    [SerializeField] TextMeshProUGUI loadScreenTip;
+    [SerializeField] string[] tips;
+    [SerializeField] RawImage particleImage;
 
     public ParticleSystem gameSaved;
 
@@ -97,6 +102,7 @@ public class GameDetails : MonoBehaviour {
 
     // Tick event timer
     [SerializeField] float tickTime, tickTimer;
+    bool deathSequenceInitiated;
 
     private void OnEnable()
     {
@@ -139,9 +145,10 @@ public class GameDetails : MonoBehaviour {
         }
 
         // start death sequence
-        if (PlayerController.instance.isDead && fadeToBlack.color.a <= 1)
+        if (PlayerController.instance.isDead && !deathSequenceInitiated)
         {
-            DeathSequence();
+            StartCoroutine(DeathSequence());
+            deathSequenceInitiated = true;
         }
 
         if (!PlayerController.instance.isDead)
@@ -159,20 +166,6 @@ public class GameDetails : MonoBehaviour {
 
     }
 
-    public IEnumerator FadeOUt()
-    {
-        while (GameDetails.instance.fadeToBlack.color.a <= 0.98)
-        {
-            GameDetails.instance.fadeToBlack.enabled = true;
-            GameDetails.instance.fadeToBlack.color = new Color(0, 0, 0, GameDetails.instance.fadeSpeed);
-            GameDetails.instance.fadeSpeed += 0.02f;
-            yield return new WaitForSeconds(0.01f);
-        }
-
-        SceneManager.LoadSceneAsync(2);
-        yield return null;
-    }
-
     private void TickEvent()
     {
         //Debug.Log("tick event");
@@ -184,34 +177,38 @@ public class GameDetails : MonoBehaviour {
         }
     }
 
-    private void DeathSequence()
+    IEnumerator DeathSequence()
     {
-        fadeToBlack.enabled = true;
-        fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
-        fadeSpeed += 0.01f;
-
-
-        if (fadeToBlack.color.a >= 1 && !loadingScene)
+        if (GameObject.Find("FollowLight") != null)
         {
-            PlayerController.instance.anim.SetLayerWeight(1, 0);
-
-            SceneManager.LoadScene("DeathScreen");
-
-            // disallow player to animate walking
-
-            //if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
-            //{
-            //    Load();
-            //}
-            //else
-            //{
-            //    PlayerController.instance.gameObject.transform.position = new Vector2(-12f, 4);
-            //    playerStats.Heal((int)playerStats.maxHealth);
-            //    SceneManager.LoadScene(0);
-            //    PlayerController.instance.isDead = false;
-            //    loadingScene = true;
-            //}
+            GameObject.Find("FollowLight").SetActive(false);
         }
+
+        PlayerController.instance.anim.SetLayerWeight(1, 0);
+
+        while (fadeToBlack.alpha <= 0.98)
+        {
+            fadeToBlack.gameObject.SetActive(true);
+            fadeToBlack.alpha += 0.02f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        SceneManager.LoadScene("DeathScreen");
+
+        // disallow player to animate walking
+
+        //if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
+        //{
+        //    Load();
+        //}
+        //else
+        //{
+        //    PlayerController.instance.gameObject.transform.position = new Vector2(-12f, 4);
+        //    playerStats.Heal((int)playerStats.maxHealth);
+        //    SceneManager.LoadScene(0);
+        //    PlayerController.instance.isDead = false;
+        //    loadingScene = true;
+        //}
     }
 
     public void KillPlayer()
@@ -291,7 +288,7 @@ public class GameDetails : MonoBehaviour {
         data.arrowsFired = arrowsFired;
         data.randomizedItemsDropped = randomizedItemsDropped;
 
-    data.zone = SceneManager.GetActiveScene().buildIndex;
+        data.zone = SceneManager.GetActiveScene().name;
 
         if (!keepPreviousPosition)
         {
@@ -396,7 +393,7 @@ public class GameDetails : MonoBehaviour {
             arrowsFired = data.arrowsFired;
             randomizedItemsDropped = data.randomizedItemsDropped;
 
-            SceneManager.LoadScene(data.zone);
+            SceneManager.LoadScene(data.zone.ToString());
             player.transform.position = new Vector2(data.locationX, data.locationY);
 
 
@@ -786,6 +783,8 @@ public class GameDetails : MonoBehaviour {
             // undeadify the player
             PlayerController.instance.isDead = false;
 
+            deathSequenceInitiated = false;
+
             // reallow player to animate walking
             PlayerController.instance.anim.SetLayerWeight(1, 1);
 
@@ -835,14 +834,19 @@ public class GameDetails : MonoBehaviour {
     /// <returns></returns>
     public IEnumerator UnFade()
     {
-        while (fadeToBlack.color.a >= 0.02)
+        loadScreenText.text = "Almost done";
+
+        while (fadeToBlack.alpha >= 0.02)
         {
-            Debug.Log("!");
-            fadeToBlack.enabled = true;
-            fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
-            fadeSpeed -= 0.02f;
+            fadeToBlack.gameObject.SetActive(true);
+            fadeToBlack.alpha -= 0.02f;
             yield return new WaitForSeconds(0.01f);
         }
+
+        loadScreenTip.gameObject.SetActive(false);
+        loadScreenText.gameObject.SetActive(false);
+        particleImage.gameObject.SetActive(false);
+
 
         if (AstarPath.active != null)
         {
@@ -877,11 +881,46 @@ public class GameDetails : MonoBehaviour {
     /// <returns></returns>
     public IEnumerator FadeOutAndLoadScene(string zoneToLoad)
     {
-        while (fadeToBlack.color.a <= 0.98)
+        loadScreenText.text = "Loading";
+        loadScreenTip.text = GetRandomTip();
+
+        loadScreenTip.gameObject.SetActive(true);
+        loadScreenText.gameObject.SetActive(true);
+        particleImage.gameObject.SetActive(true);
+
+        while (fadeToBlack.alpha <= 0.98)
         {
-            fadeToBlack.enabled = true;
-            fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
-            fadeSpeed += 0.02f;
+            fadeToBlack.gameObject.SetActive(true);
+            fadeToBlack.alpha += 0.02f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+
+        CameraController.instance.SetHomeRotation();
+        SceneManager.LoadSceneAsync(zoneToLoad);
+
+        yield return null;
+    }
+
+    /// <summary>
+    /// Override to also add a text Fades out the scene when transitioning to a new scene
+    /// </summary>
+    /// <param name="zoneToLoad">the Index number of the zone that is to be loaded 
+    /// (can be found in the build setting pane)</param>
+    /// <returns></returns>
+    public IEnumerator FadeOutAndLoadScene(string zoneToLoad, string loadingText)
+    {
+        loadScreenText.text = loadingText;
+        loadScreenTip.text = GetRandomTip();
+
+        loadScreenTip.gameObject.SetActive(true);
+        loadScreenText.gameObject.SetActive(true);
+        particleImage.gameObject.SetActive(true);
+
+        while (fadeToBlack.alpha <= 0.98)
+        {
+            fadeToBlack.gameObject.SetActive(true);
+            fadeToBlack.alpha += 0.02f;
             yield return new WaitForSeconds(0.01f);
         }
 
@@ -891,6 +930,7 @@ public class GameDetails : MonoBehaviour {
         yield return null;
     }
 
+
     /// <summary>
     /// Overload Coroutine for also placing Player
     /// </summary>
@@ -899,11 +939,10 @@ public class GameDetails : MonoBehaviour {
     /// <returns></returns>
     public IEnumerator FadeOutAndLoadScene(string zoneToLoad, Vector2 playerPos)
     {
-        while (fadeToBlack.color.a <= 0.98)
+        while (fadeToBlack.alpha <= 0.98)
         {
-            fadeToBlack.enabled = true;
-            fadeToBlack.color = new Color(0, 0, 0, fadeSpeed);
-            fadeSpeed += 0.02f;
+            fadeToBlack.gameObject.SetActive(true);
+            fadeToBlack.alpha += 0.02f;
             yield return new WaitForSeconds(0.01f);
         }
 
@@ -913,6 +952,44 @@ public class GameDetails : MonoBehaviour {
         SceneManager.LoadSceneAsync(zoneToLoad);
 
         yield return null;
+    }
+
+    /// <summary>
+    /// Fades out the scene when transitioning to a new scene
+    /// </summary>
+    /// <param name="zoneToLoad">the Index number of the zone that is to be loaded 
+    /// (can be found in the build setting pane)</param>
+    /// <returns></returns>
+    public IEnumerator FadeOutAndLoadGame()
+    {
+        loadScreenText.text = "...Now where were we?";
+        loadScreenTip.text = GetRandomTip();
+
+        loadScreenTip.gameObject.SetActive(true);
+        loadScreenText.gameObject.SetActive(true);
+        particleImage.gameObject.SetActive(true);
+
+        while (fadeToBlack.alpha <= 0.98)
+        {
+            fadeToBlack.gameObject.SetActive(true);
+            fadeToBlack.alpha += 0.02f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        Load();
+
+        yield return null;
+    }
+
+    /// <summary>
+    /// Retursn a random player tip
+    /// </summary>
+    /// <returns></returns>
+    private string GetRandomTip()
+    {
+        int rndText = UnityEngine.Random.Range(0, tips.Length);
+
+        return tips[rndText];
     }
 
 
@@ -964,7 +1041,7 @@ class PlayerData
     public string actionbar3;
 
     // zone information
-    public int zone;
+    public string zone;
     public float locationX;
     public float locationY;
 

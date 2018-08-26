@@ -239,6 +239,25 @@ public class PlayerController : MonoBehaviour
                 bowCharged.Play();
             }
         }
+     
+    }
+
+
+
+    /// <summary>
+    /// Determines the speed at which the players weapon charges a power hit
+    /// </summary>
+    private void ChargeHit()
+    {
+        if (melee)
+        {
+            if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
+            {
+                Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+                tmp.a += 0.009f;
+                EquipmentManager.instance.weaponGlowSlot.color = tmp;
+            }
+        }
     }
 
     private void ChargeBowShot()
@@ -275,6 +294,24 @@ public class PlayerController : MonoBehaviour
             weaponChargeReady = false;
             bowCharged.Stop();
         }
+
+        if (equip.currentEquipment[3] != null)
+        {
+            if ((int)equip.currentEquipment[3].equipType != 1)
+            {
+                StopRangedChargeShotState();
+                chargedShot = false;
+                return;
+            }
+        }
+
+        if (equip.currentEquipment[3] == null)
+        {
+            StopRangedChargeShotState();
+            chargedShot = false;
+            return;
+        }
+
     }
 
     private void HandleAggro()
@@ -638,7 +675,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetMouseButton(1))
             {
                 // start checking if player wants to hold button in
-                if (!heldStrikeCoroutinePlaying && !chargedShot && playerStat.staminaFull && !autoFiring)
+                if (!heldStrikeCoroutinePlaying && !chargedShot && playerStat.staminaFull && !autoFiring && !VendorManager.instance.vendorWindowOpen)
                 {
                     StartCoroutine(CheckForHeldStrike());
                 }
@@ -835,6 +872,10 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION2"])) // ACTION2 is trying to use Ranged
         {
+            if (blocking)
+            {
+                anim.SetBool("Block", false);
+            }
             if (!ranged)
             {
                 StopMeleeChargedHitState(true);
@@ -851,22 +892,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-    /// <summary>
-    /// Determines the speed at which the players weapon charges a power hit
-    /// </summary>
-    private void ChargeHit()
-    {
-        if (melee)
-        {
-            if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
-            {
-                Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-                tmp.a += 0.009f;
-                EquipmentManager.instance.weaponGlowSlot.color = tmp;
-            }
-        }
-    }
 
     private bool CheckIfPlayerMayHit()
     {
@@ -1408,49 +1433,53 @@ public class PlayerController : MonoBehaviour
     /// <returns></returns>
     IEnumerator CheckForHeldStrike()
     {
-        // coroutine is running
-        heldStrikeCoroutinePlaying = true;
-
-        // set a bool to true at the start of the routine
-        largeStrike = true;
-
-        // wait for 0.3 seconds
-        yield return new WaitForSeconds(0.3f);
-
-        // if the boolean is still true (gets set to false if the button is released)
-        if (largeStrike)
+        if (equip.currentEquipment[3] != null && !eventSys.IsPointerOverGameObject())
         {
-            if (melee)
-            {
-                // then set the animation state to true
-                largeStrikeAnimationReady = true;
-                // set the animation of the weapon above their head
-                anim.SetBool("StrikeHold", true);
-            }
-            else if (ranged)
-            {
-                chargedShot = true;
+            // coroutine is running
+            heldStrikeCoroutinePlaying = true;
 
-                anim.SetBool("ChargedShot", true);
+            // set a bool to true at the start of the routine
+            largeStrike = true;
+
+            // wait for 0.3 seconds
+            yield return new WaitForSeconds(0.3f);
+
+            // if the boolean is still true (gets set to false if the button is released)
+            if (largeStrike)
+            {
+                if (melee)
+                {
+                    // then set the animation state to true
+                    largeStrikeAnimationReady = true;
+                    // set the animation of the weapon above their head
+                    anim.SetBool("StrikeHold", true);
+                }
+                else if (ranged)
+                {
+                    chargedShot = true;
+
+                    anim.SetBool("ChargedShot", true);
+                }
+
             }
+
+            else
+            {
+                if (melee)
+                {
+
+                }
+
+                else if (ranged)
+                {
+                    anim.SetTrigger("ShootRanged");
+                }
+            }
+
+            // let the script know the routine is done running
+            heldStrikeCoroutinePlaying = false;
 
         }
-
-        else
-        {
-            if (melee)
-            {
-
-            }
-
-            else if (ranged)
-            {
-                anim.SetTrigger("ShootRanged");
-            }
-        }
-
-        // let the script know the routine is done running
-        heldStrikeCoroutinePlaying = false;
     }
 
     /// <summary>

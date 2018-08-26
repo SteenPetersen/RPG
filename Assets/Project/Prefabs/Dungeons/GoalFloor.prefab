@@ -79,6 +79,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ZoneToLoad: Caves_indoor
+  loadingTexts:
+  - Deeper we go
+  - Darker still, and safer not
+  - There must be a way out
 --- !u!212 &212224631805075818
 SpriteRenderer:
   m_ObjectHideFlags: 1

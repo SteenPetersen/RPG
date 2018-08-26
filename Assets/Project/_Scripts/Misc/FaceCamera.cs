@@ -17,14 +17,22 @@ public class FaceCamera : MonoBehaviour {
 
     void OnWillRenderObject()
     {
-        if (!EnemyFaceCamera.FastApproximately(target.rotation.x, transform.rotation.x, 0.00001f))
+        if (target != null)
         {
-            transform.rotation = target.rotation;
-
-            if (DebugControl.debugOn)
+            if (!NumberApproximation(target.rotation.x, transform.rotation.x, 0.00001f))
             {
-                Debug.Log("rendering Player");
+                transform.rotation = target.rotation;
+
+                if (DebugControl.debugOn)
+                {
+                    Debug.Log("Rendering: " + gameObject.name);
+                }
             }
         }
+    }
+
+    public static bool NumberApproximation(float a, float b, float threshold)
+    {
+        return ((a - b) < 0 ? ((a - b) * -1) : (a - b)) <= threshold;
     }
 }

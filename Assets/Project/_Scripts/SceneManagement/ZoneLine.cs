@@ -7,6 +7,7 @@ public class ZoneLine : MonoBehaviour {
 
     [SerializeField] string ZoneToLoad;
     bool loading;
+    [SerializeField] string[] loadingTexts;
 
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -20,7 +21,9 @@ public class ZoneLine : MonoBehaviour {
             {
                 if (!loading)
                 {
-                    StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(ZoneToLoad));
+                    int rnd = UnityEngine.Random.Range(0, loadingTexts.Length);
+
+                    StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(ZoneToLoad, loadingTexts[rnd]));
                     GameDetails.MyInstance.Save(true);
                     loading = true;
                 }

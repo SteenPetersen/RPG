@@ -402,7 +402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f1c16d152fd0fa43b0a49e4354ad143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: 4
+  sceneToLoad: After_First_Dungeon
   loadInPosition: {x: -31.7, y: -15.8}
 --- !u!114 &114469469201682600
 MonoBehaviour:

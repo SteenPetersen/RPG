@@ -37,10 +37,7 @@ public class Room
         xPos = 10;
         yPos = Mathf.RoundToInt((rows / 2f) - (roomHeight / 2f));
 
-        //xPos = Mathf.RoundToInt((columns / 2f) - (roomWidth / 2f));
-        //yPos = Mathf.RoundToInt((rows / 2f) - (roomHeight / 2f));
 
-        //Debug.Log(xPos + " " + yPos);
 
         Vector3 playerPos = new Vector3(xPos + (roomWidth / 2), yPos + (roomHeight / 2), 0);
         BoardCreator.instance.player.transform.position = playerPos;
@@ -109,26 +106,15 @@ public class Room
                 break;
         }
 
-        float chestRand = UnityEngine.Random.Range(0, 100);
-
         if (middle)
         {
             SetMapLocation();
         }
 
-        if (chestRand <= BoardCreator.instance.chanceOfChestPerRoom)
-        {
-            chestSpawned = true;
-
-            if (chestRand < BoardCreator.instance.chanceOfBetterChestPerRoom)
-            {
-                chestQuality = 1;
-                return;
-            }
-
-            chestQuality = 0;
-        }
+        ChestDropCheck();
     }
+
+
 
     // This is a further overload only for the last room
     public void SetupRoom(IntRange widthRange, IntRange heightRange, int columns, int rows, Corridor corridor, IntRange enemies, int multiplier, bool bossRoom)
@@ -250,6 +236,29 @@ public class Room
 
         BoardCreator.instance.SpawnElement(pos, BoardCreator.instance.goal);
     }
+
+
+    /// <summary>
+    /// Checks if a chest is spawned in this room
+    /// </summary>
+    private void ChestDropCheck()
+    {
+        float chestRand = UnityEngine.Random.Range(0, 100);
+
+        if (chestRand <= BoardCreator.instance.chanceOfChestPerRoom)
+        {
+            chestSpawned = true;
+
+            if (chestRand < BoardCreator.instance.chanceOfBetterChestPerRoom)
+            {
+                chestQuality = 1;
+                return;
+            }
+
+            chestQuality = 0;
+        }
+    }
+
 
     private void SetMapLocation()
     {

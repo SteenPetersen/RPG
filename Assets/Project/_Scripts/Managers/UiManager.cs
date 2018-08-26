@@ -32,6 +32,8 @@ public class UiManager : MonoBehaviour {
 
     GameDetails gameDetails;
 
+    [SerializeField] Camera maskCamera;
+
     /// <summary>
     /// Needed by the playercontroller to stop him firing uncontrollably even when tooltip is up
     /// </summary>
@@ -99,86 +101,11 @@ public class UiManager : MonoBehaviour {
             InventoryScript.instance.OpenClose();
         }
 
-        if (Input.GetKey(KeyCode.M))
-        {
-            GameDetails.MyInstance.StartCoroutine(GameDetails.MyInstance.FadeOUt());
-        }
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             mainMenu.gameObject.SetActive(!mainMenu.gameObject.activeSelf);
             gameDetails.paused = mainMenu.gameObject.activeSelf;
         }
-
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            PlayerStats.instance.TakeDamage(10);
-
-            Vector3 pos = PlayerController.instance.transform.position;
-
-            GameObject tmp = ParticleSystemHolder.instance.PlaySpellEffect(pos, "level up");
-            tmp.transform.parent = PlayerController.instance.avoidFlip;
-            SoundManager.instance.PlayUiSound("levelup");
-
-            var text = CombatTextManager.instance.FetchText(pos);
-            var textScript = text.GetComponent<CombatText>();
-            textScript.White("Level up!", pos);
-            text.transform.position = pos;
-            text.SetActive(true);
-            textScript.FadeOut();
-        }
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Instantiate(box, new Vector3(PlayerController.instance.transform.position.x, PlayerController.instance.transform.position.y, -0.25f), Quaternion.identity);
-            Screen.fullScreen = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            Vector2 tmp = PlayerController.instance.transform.position;
-            Debug.Log("My Current Position is " + tmp);
-            StartCoroutine(PlayerController.instance.SpawnIn());
-        }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            //SceneManager.LoadSceneAsync(3);
-            int r = UnityEngine.Random.Range(0, 2);
-            EquipmentGenerator._instance.CreateDroppable(PlayerController.instance.transform.position, r);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            OpenCloseMenu();
-        }
-
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            Bag bag = (Bag)Instantiate(InventoryScript.instance.itemListForDebugging[0]);
-            bag.Initialize(16);
-            bag.Use();
-        }
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            Bag bag = (Bag)Instantiate(InventoryScript.instance.itemListForDebugging[0]);
-            bag.Initialize(16);
-            InventoryScript.instance.AddItem(bag);
-        }
-
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Item potion = Instantiate(InventoryScript.instance.itemListForDebugging[1]);
-            InventoryScript.instance.AddItem(potion);
-            //GameDetails.MyInstance.Save(true);
-        }
-
-        //if (Input.GetKeyDown(KeyCode.U))
-        //{
-        //    EquipmentManager.instance.UnequipAll();
-        //}
-
 
         if (Input.GetButtonDown("Inventory"))
         {
@@ -194,12 +121,88 @@ public class UiManager : MonoBehaviour {
 
                 PlayerController.instance.anim.Rebind();
                 PlayerController.instance.anim.SetTrigger("ForceStopWalk");
-                GameDetails.instance.paused = GameDetails.instance.paused == true ? false : true;
+                gameDetails.paused = gameDetails.paused == true ? false : true;
                 inventoryCam.SetActive(!inventoryCam.activeSelf);
                 equipmentWindow.SetActive(!equipmentWindow.activeSelf);
+
+                maskCamera.gameObject.SetActive(!gameDetails.paused);
                 HideToolTip();
             }
         }
+
+        ///Debugging commands go here
+        if (DebugControl.debugOn)
+        {
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                PlayerStats.instance.TakeDamage(10);
+
+                Vector3 pos = PlayerController.instance.transform.position;
+
+                GameObject tmp = ParticleSystemHolder.instance.PlaySpellEffect(pos, "level up");
+                tmp.transform.parent = PlayerController.instance.avoidFlip;
+                SoundManager.instance.PlayUiSound("levelup");
+
+                var text = CombatTextManager.instance.FetchText(pos);
+                var textScript = text.GetComponent<CombatText>();
+                textScript.White("Level up!", pos);
+                text.transform.position = pos;
+                text.SetActive(true);
+                textScript.FadeOut();
+            }
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                Instantiate(box, new Vector3(PlayerController.instance.transform.position.x, PlayerController.instance.transform.position.y, -0.25f), Quaternion.identity);
+                Screen.fullScreen = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                Vector2 tmp = PlayerController.instance.transform.position;
+                Debug.Log("My Current Position is " + tmp);
+                StartCoroutine(PlayerController.instance.SpawnIn());
+            }
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                //SceneManager.LoadSceneAsync(3);
+                int r = UnityEngine.Random.Range(0, 2);
+                EquipmentGenerator._instance.CreateDroppable(PlayerController.instance.transform.position, r);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                OpenCloseMenu();
+            }
+
+
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                Bag bag = (Bag)Instantiate(InventoryScript.instance.itemListForDebugging[0]);
+                bag.Initialize(16);
+                bag.Use();
+            }
+
+
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                Bag bag = (Bag)Instantiate(InventoryScript.instance.itemListForDebugging[0]);
+                bag.Initialize(16);
+                InventoryScript.instance.AddItem(bag);
+            }
+
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                Item potion = Instantiate(InventoryScript.instance.itemListForDebugging[1]);
+                InventoryScript.instance.AddItem(potion);
+                //GameDetails.MyInstance.Save(true);
+            }
+
+        }
+
+
+
     }
 
     /// <summary>

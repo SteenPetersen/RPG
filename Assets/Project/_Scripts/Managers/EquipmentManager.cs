@@ -39,6 +39,7 @@ public class EquipmentManager : MonoBehaviour {
 
     InventoryScript inventory;
     PlayerController player;
+    PlayerStats stats;
 
     private void Start()
     {
@@ -51,22 +52,30 @@ public class EquipmentManager : MonoBehaviour {
         checkStarterGraphics();
 
         player = PlayerController.instance;
+        stats = PlayerStats.instance;
 
         weaponGlowSlot = player.transform.Find("Skeleton/Body/MainHand/MainItemGlow").GetComponent<SpriteRenderer>();
 
         listOfProjectiles = ProjectileList.instance;
     }
 
-    public bool Equip (Equipment newItem, bool silent = false)
+    public bool Equip (Equipment newStatsToAdd, bool silent = false)
     {
-        int slotIndex = (int)newItem.equipSlot;
-        Equipment oldItem = currentEquipment[3];
-        Equipment oldOffhand = currentEquipment[4];
+        if (VendorManager.instance.vendorWindowOpen)
+            return false;
+
+        int slotIndex = (int)newStatsToAdd.equipSlot;
+
+        /// These item are set to null to start with because we invoke a callback that
+        /// will remove the stats from olditem and add the stats on newitem. only populate them 
+        /// if we are about the replace an item.
+        Equipment oldStatsToRemove = null;
+        Equipment oldOffhand = null;
 
 
 
         // newItem = Bow
-        if (slotIndex == 3 && (int)newItem.equipType == 1)
+        if (slotIndex == 3 && (int)newStatsToAdd.equipType == 1)
         {
             if (DebugControl.debugInventory)
             {
@@ -81,12 +90,17 @@ public class EquipmentManager : MonoBehaviour {
                     Debug.Log("player has items equipped in both main and offhand");
                 }
 
+                oldStatsToRemove = currentEquipment[3];
+                oldOffhand = currentEquipment[4];
+
+                stats.RemoveItemStats(oldOffhand);
+
                 /// if there is space for the item in the inventory
                 if (inventory.MyEmptySlotCount >= 2)
                 {
-                    ClearOffhandSlotAndUpdateVisuals(newItem, slotIndex);
-                    SaveItemInfoAndClearSlot(newItem);
-                    inventory.AddItemToFirstInvSlot(oldItem);
+                    ClearOffhandSlotAndUpdateVisuals(newStatsToAdd, slotIndex);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
+                    inventory.AddItemToFirstInvSlot(oldStatsToRemove);
                     inventory.AddItemToSecondInvSlot(oldOffhand);
                 }
 
@@ -103,9 +117,9 @@ public class EquipmentManager : MonoBehaviour {
                     SlotInfo firstSlot = SaveItemInfoAndClearSlot(one);
                     SlotInfo secondSlot = SaveItemInfoAndClearSlot(two);
 
-                    inventory.ClearFromSlot(newItem.MySlot);
+                    inventory.ClearFromSlot(newStatsToAdd.MySlot);
 
-                    inventory.AddItemToFirstInvSlot(oldItem);
+                    inventory.AddItemToFirstInvSlot(oldStatsToRemove);
                     inventory.AddItemToSecondInvSlot(oldOffhand);
 
                     if (firstSlot.slotItem != null)
@@ -118,7 +132,7 @@ public class EquipmentManager : MonoBehaviour {
                         inventory.AddItem(secondSlot.slotItem);
                     }
 
-                    ClearOffhandSlotAndUpdateVisuals(newItem, slotIndex);
+                    ClearOffhandSlotAndUpdateVisuals(newStatsToAdd, slotIndex);
 
                 }
 
@@ -149,21 +163,21 @@ public class EquipmentManager : MonoBehaviour {
                     Debug.Log("Player has a main hand equipped but not a shield");
                 }
 
-                oldItem = currentEquipment[slotIndex];
+                oldStatsToRemove = currentEquipment[slotIndex];
 
                 if (inventory.MyEmptySlotCount >= 1)
                 {
-                    SaveItemInfoAndClearSlot(newItem);
-                    inventory.AddItemToFirstInvSlot(oldItem);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
+                    inventory.AddItemToFirstInvSlot(oldStatsToRemove);
                 }
 
                 else if (inventory.MyEmptySlotCount == 0)
                 {
-                    SaveItemInfoAndClearSlot(newItem);
-                    inventory.AddItem(oldItem);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
+                    inventory.AddItem(oldStatsToRemove);
                 }
 
-                ClearOffhandSlotAndUpdateVisuals(newItem, slotIndex);
+                ClearOffhandSlotAndUpdateVisuals(newStatsToAdd, slotIndex);
 
             }
 
@@ -175,47 +189,51 @@ public class EquipmentManager : MonoBehaviour {
                     Debug.Log("Player does not have a main hand equipped but has a shield");
                 }
 
-
                 oldOffhand = currentEquipment[4];
+                stats.RemoveItemStats(oldOffhand);
 
                 if (inventory.MyEmptySlotCount >= 1)
                 {
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
                     inventory.AddItemToSecondInvSlot(oldOffhand);
                 }
 
                 else if (inventory.MyEmptySlotCount == 0)
                 {
-                    SaveItemInfoAndClearSlot(newItem);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
                     inventory.AddItem(oldOffhand);
                 }
 
-                ClearOffhandSlotAndUpdateVisuals(newItem, slotIndex);
+                ClearOffhandSlotAndUpdateVisuals(newStatsToAdd, slotIndex);
             }
 
             /// Nothing equipped
             else
             {
-                SaveItemInfoAndClearSlot(newItem);
+                SaveItemInfoAndClearSlot(newStatsToAdd);
             }
         }
 
 
 
         // if its a shield
-        else if (slotIndex == 4 && (int)newItem.equipType == 2)
+        else if (slotIndex == 4 && (int)newStatsToAdd.equipType == 2)
         {
             /// if player has items equipped in both main and offhand
             if (currentEquipment[3] != null && currentEquipment[4] != null)
             {
+                oldStatsToRemove = currentEquipment[4];
+                oldOffhand = currentEquipment[4];
+
                 if (inventory.MyEmptySlotCount >= 1)
                 {
-                    SaveItemInfoAndClearSlot(newItem);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
                     inventory.AddItemToSecondInvSlot(oldOffhand);
                 }
 
                 else if (inventory.MyEmptySlotCount == 0)
                 {
-                    SaveItemInfoAndClearSlot(newItem);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
                     inventory.AddItem(oldOffhand);
                 }
             }
@@ -232,29 +250,34 @@ public class EquipmentManager : MonoBehaviour {
                         Debug.Log("Adding Shield in place of Bow");
                     }
 
-                    SaveItemInfoAndClearSlot(newItem);
-                    inventory.AddItem(oldItem);
-                    ClearMainHandSlot(newItem, slotIndex);
+                    oldStatsToRemove = currentEquipment[3];
+
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
+                    inventory.AddItem(oldStatsToRemove);
+                    ClearMainHandSlot(newStatsToAdd, slotIndex);
                 }
 
                 else
                 {
-                    SaveItemInfoAndClearSlot(newItem);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
                 }
             }
 
             /// Player does not have a main hand equipped but has a shield
             else if (currentEquipment[3] == null && currentEquipment[4] != null)
             {
+                oldStatsToRemove = currentEquipment[slotIndex];
+                oldOffhand = currentEquipment[slotIndex];
+
                 if (inventory.MyEmptySlotCount >= 1)
                 {
-                    SaveItemInfoAndClearSlot(newItem);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
                     inventory.AddItemToSecondInvSlot(oldOffhand);
                 }
 
                 else if (inventory.MyEmptySlotCount == 0)
                 {
-                    SaveItemInfoAndClearSlot(newItem);
+                    SaveItemInfoAndClearSlot(newStatsToAdd);
                     inventory.AddItem(oldOffhand);
                 }
             }
@@ -262,7 +285,7 @@ public class EquipmentManager : MonoBehaviour {
             /// Nothing equipped
             else
             {
-                SaveItemInfoAndClearSlot(newItem);
+                SaveItemInfoAndClearSlot(newStatsToAdd);
             }
         }
 
@@ -270,7 +293,7 @@ public class EquipmentManager : MonoBehaviour {
 
         /// if its not a bow but you have an item in that position
         /// Mainly, equipping a melee weapon and all armor
-        else if (currentEquipment[slotIndex] != null && (int)newItem.equipType != 1)
+        else if (currentEquipment[slotIndex] != null && (int)newStatsToAdd.equipType != 1)
         {
             /// is the item in that position a bow?
             if ((int)currentEquipment[slotIndex].equipType == 1)
@@ -279,17 +302,17 @@ public class EquipmentManager : MonoBehaviour {
                 visibleGear[4].sprite = null;
             }
 
-            oldItem = currentEquipment[slotIndex];
+            oldStatsToRemove = currentEquipment[slotIndex];
 
             if (slotIndex == 3)
             {
-                SaveItemInfoAndClearSlot(newItem);
-                inventory.AddItemToFirstInvSlot(oldItem);
+                SaveItemInfoAndClearSlot(newStatsToAdd);
+                inventory.AddItemToFirstInvSlot(oldStatsToRemove);
             }
             else
             {
-                SaveItemInfoAndClearSlot(newItem);
-                inventory.AddItem(oldItem);
+                SaveItemInfoAndClearSlot(newStatsToAdd);
+                inventory.AddItem(oldStatsToRemove);
             }
         }
 
@@ -298,30 +321,30 @@ public class EquipmentManager : MonoBehaviour {
         {
             if (!silent)
             {
-                SaveItemInfoAndClearSlot(newItem);
+                SaveItemInfoAndClearSlot(newStatsToAdd);
             }
         }
 
         // invoke the callback for change of equipment
         if (onEquipmentChanged != null)
         {
-            onEquipmentChanged.Invoke(newItem, oldItem);
+            onEquipmentChanged.Invoke(newStatsToAdd, oldStatsToRemove);
         }
 
 
 
         // if Item has a glow effect add it here
-        if (newItem.MyGlowSprite != null)
+        if (newStatsToAdd.MyGlowSprite != null)
         {
-            weaponGlowSlot.sprite = newItem.MyGlowSprite;
+            weaponGlowSlot.sprite = newStatsToAdd.MyGlowSprite;
         }
 
 
 
         // Equip the item and make the sound of equipping
-        inventoryEquipment[slotIndex].AddItemVisuals(newItem, silent);
+        inventoryEquipment[slotIndex].AddItemVisuals(newStatsToAdd, silent);
 
-        UpdateIteminEquipmentSlot(newItem, slotIndex);
+        UpdateIteminEquipmentSlot(newStatsToAdd, slotIndex);
 
         return true;
 

@@ -153,6 +153,19 @@ public class PlayerStats : CharacterStats {
     }
 
     /// <summary>
+    /// Mainly used for unequipping the shield
+    /// </summary>
+    /// <param name="oldItem"></param>
+    public void RemoveItemStats(Equipment oldItem)
+    {
+        armor.RemoveModifier(oldItem.armorModifier);
+        damage.RemoveModifier(oldItem.damageModifier);
+        Sta.RemoveModifier(oldItem.sta);
+        Str.RemoveModifier(oldItem.str);
+        Agi.RemoveModifier(oldItem.agi);
+    }
+
+    /// <summary>
     /// Updates the Ui with the text corresponding to 
     /// the players current stats. done in the delegate
     /// of changing gear and at start

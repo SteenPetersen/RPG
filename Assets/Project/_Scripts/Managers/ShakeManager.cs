@@ -96,8 +96,6 @@ public class ShakeManager : MonoBehaviour {
                 //Check if we have reached the decreasePoint then start decreasing  decreaseSpeed value
                 if (counter >= decreasePoint)
                 {
-                    //Debug.Log("Decreasing shake");
-
                     //Reset counter to 0 
                     counter = 0f;
                     while (counter <= decreasePoint)
@@ -109,7 +107,7 @@ public class ShakeManager : MonoBehaviour {
                         //Debug.Log("Decrease Value: " + decreaseSpeed);
 
                         //Shake GameObject
-                        if (objectIs2D)
+                        if (objectIs2D && objTransform != null)
                         {
                             //Don't Translate the Z Axis if 2D Object
                             Vector3 tempPos = defaultPos + UnityEngine.Random.insideUnitSphere * decreaseSpeed;

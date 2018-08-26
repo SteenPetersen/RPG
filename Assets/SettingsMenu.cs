@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class SettingsMenu : MonoBehaviour {
 
@@ -11,6 +12,23 @@ public class SettingsMenu : MonoBehaviour {
     {
         mixer.SetFloat("Volume", volume);
         
+    }
+
+    public void PlayGame()
+    {
+        StartCoroutine(GameDetails.instance.FadeOutAndLoadScene("TutorialArea_indoor"));
+    }
+
+    public void QuitGame()
+    {
+        Scene s = SceneManager.GetActiveScene();
+
+        if (!s.name.EndsWith("_indoor"))
+        {
+            GameDetails.instance.Save(true);
+        }
+
+        Application.Quit();
     }
 
     public void GoToTwitter()
@@ -30,6 +48,6 @@ public class SettingsMenu : MonoBehaviour {
 
     public void LoadGame()
     {
-        GameDetails.instance.Load();
+        StartCoroutine(GameDetails.instance.FadeOutAndLoadGame());
     }
 }

@@ -5,6 +5,7 @@ public class DungeonLevelLoadLogic : MonoBehaviour {
 
     [SerializeField] string ZoneToLoad;
     bool loading;
+    [SerializeField] string[] loadingTexts;
 
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -16,7 +17,9 @@ public class DungeonLevelLoadLogic : MonoBehaviour {
                 GameDetails.dungeonFloorsExplored++;
                 DungeonManager.dungeonLevel++;
 
-                StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(ZoneToLoad));
+                int rnd = UnityEngine.Random.Range(0, loadingTexts.Length);
+
+                StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(ZoneToLoad, loadingTexts[rnd]));
                 loading = true;
             }
         }

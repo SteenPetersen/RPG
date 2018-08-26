@@ -14,7 +14,7 @@ public class ImpGiantDialogue : DialogueNPC {
         base.Start();
 
 
-        GameDetails.instance.fadeToBlack.enabled = true;
+        GameDetails.instance.fadeToBlack.gameObject.SetActive(true);
 
         // make a reference to the combat "main" script
         combatScript = GetComponent<ImpGiant>();
@@ -30,13 +30,13 @@ public class ImpGiantDialogue : DialogueNPC {
             }
         }
 
-        if (GameDetails.instance.fadeToBlack.color.a <= 0.02)
-        {
-            if (!currentlyInteractingWithPlayer && !hasTalkedToGiant)
-            {
-                base.Interact();
-            }
-        }
+        //if (GameDetails.instance.fadeToBlack.color.a <= 0.02)
+        //{
+        //    if (!currentlyInteractingWithPlayer && !hasTalkedToGiant)
+        //    {
+        //        base.Interact();
+        //    }
+        //}
 
 
         if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)

@@ -11,6 +11,8 @@ public class Vendor : MonoBehaviour
     GameObject vendorUi;
     CanvasGroup vendorWindow;
 
+    [SerializeField] Transform speechLocation;
+
     [SerializeField] StockEntry stockEntry;
 
     [SerializeField] List<Item> defaultStock;
@@ -30,6 +32,14 @@ public class Vendor : MonoBehaviour
         get
         {
             return purchasedStock;
+        }
+    }
+
+    public Transform MySpeechLocation
+    {
+        get
+        {
+            return speechLocation;
         }
     }
 

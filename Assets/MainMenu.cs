@@ -19,7 +19,8 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("TutorialArea_indoor");
+        StartCoroutine(GameDetails.instance.FadeOutAndLoadScene("TutorialArea_indoor"));
+        Debug.Log("Playing game");
     }
 
     public void QuitGame()
