@@ -15,6 +15,7 @@ TagManager:
   - TownPortal
   - Key
   - TargetBrick
+  - SecretRoomCover
   layers:
   - Default
   - TransparentFX

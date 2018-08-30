@@ -313,7 +313,7 @@ public class GameDetails : MonoBehaviour {
         Debug.Log("saved");
     }
 
-    public void Load()
+    public void Load(bool wasDead = false)
     {
         //Debug.Log("load land");
         if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
@@ -396,6 +396,10 @@ public class GameDetails : MonoBehaviour {
             SceneManager.LoadScene(data.zone.ToString());
             player.transform.position = new Vector2(data.locationX, data.locationY);
 
+            if (wasDead)
+            {
+                ResetStaticData();
+            }
 
         }
     }
@@ -745,14 +749,14 @@ public class GameDetails : MonoBehaviour {
 
     public void ResetStaticData()
     {
-        dungeonFloorsExplored = 0;
-        enemiesKilled         = 0;
-        ripostes              = 0;
-        blocks                = 0;
-        hits                  = 0;
-        fullChargeHits        = 0;
-        arrowsFired           = 0;
-        randomizedItemsDropped= 0;
+        dungeonFloorsExplored  = 0;
+        enemiesKilled          = 0;
+        ripostes               = 0;
+        blocks                 = 0;
+        hits                   = 0;
+        fullChargeHits         = 0;
+        arrowsFired            = 0;
+        randomizedItemsDropped = 0;
     }
 
     private void OnDisable()
@@ -812,7 +816,6 @@ public class GameDetails : MonoBehaviour {
         if (m_Scene.name != "Loading")
         {
             StartCoroutine(enableUi());
-
         }
 
 
@@ -836,41 +839,63 @@ public class GameDetails : MonoBehaviour {
     {
         loadScreenText.text = "Almost done";
 
-        while (fadeToBlack.alpha >= 0.02)
+        bool createdDungeonGraph = false;
+
+        var m_Scene = SceneManager.GetActiveScene();
+
+        if (m_Scene.name.Contains("dungeon_indoor"))
         {
-            fadeToBlack.gameObject.SetActive(true);
-            fadeToBlack.alpha -= 0.02f;
-            yield return new WaitForSeconds(0.01f);
+            if (BoardCreator.instance != null)
+            {
+                createdDungeonGraph = BoardCreator.instance.CreateDungeonGraph();
+
+                DrawDistanceActivator.instance.StartCoroutine("Check");
+
+                BoardCreator.instance.SetDoors();
+
+                if (createdDungeonGraph)
+                {
+                    Debug.Log("I successfully created a graph and am unfading the dungeon");
+
+                    while (fadeToBlack.alpha >= 0.02)
+                    {
+                        fadeToBlack.gameObject.SetActive(true);
+                        fadeToBlack.alpha -= 0.02f;
+                        yield return new WaitForSeconds(0.01f);
+                    }
+
+                    loadScreenTip.gameObject.SetActive(false);
+                    loadScreenText.gameObject.SetActive(false);
+                    particleImage.gameObject.SetActive(false);
+
+                    StopCoroutine("UnFade");
+                }
+            }
+
+
+
+            else
+            {
+                createdDungeonGraph = BoardCreator.instance.CreateDungeonGraph();
+
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+
+        else
+        {
+            while (fadeToBlack.alpha >= 0.02)
+            {
+                fadeToBlack.gameObject.SetActive(true);
+                fadeToBlack.alpha -= 0.02f;
+                yield return new WaitForSeconds(0.01f);
+            }
         }
 
         loadScreenTip.gameObject.SetActive(false);
         loadScreenText.gameObject.SetActive(false);
         particleImage.gameObject.SetActive(false);
-
-
-        if (AstarPath.active != null)
-        {
-            var m_Scene = SceneManager.GetActiveScene();
-
-            if (m_Scene.name.Contains("_indoor"))
-            {
-                if (BoardCreator.instance != null)
-                {
-                    BoardCreator.instance.CreateDungeonGraph();
-                }
-             
-                StopCoroutine("UnFade");
-
-                DrawDistanceActivator.instance.StartCoroutine("Check");
-
-                if (BoardCreator.instance != null)
-                {
-                    BoardCreator.instance.SetDoors();
-                }
-            }
-
-            //AstarPath.active.Scan();
-        }
+     
     }
 
     /// <summary>

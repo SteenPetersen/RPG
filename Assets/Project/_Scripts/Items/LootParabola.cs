@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class LootParabola : MonoBehaviour {
 
@@ -78,29 +80,40 @@ public class LootParabola : MonoBehaviour {
         }
     }
 
-    void Update ()
-    {
-        if (Go)
-        {
-            gameObject.layer = 28;
-            if (!positionsSet)
-            {
-                localStartPos = transform.InverseTransformPoint(_StartPosition);
-                localEndPos = transform.InverseTransformPoint(_EndPosition);
-                positionsSet = true;
-            }
+    bool bounce;
 
+    public IEnumerator Parabola()
+    {
+        GameObject tmpObject = new GameObject();
+        tmpObject.transform.rotation = CameraController.instance.transform.rotation;
+        tmpObject.transform.parent = null;
+        tmpObject.transform.position = _StartPosition;
+
+        transform.parent = tmpObject.transform;
+
+        if (!positionsSet)
+        {
+            localStartPos = transform.InverseTransformPoint(_StartPosition);
+            localEndPos = transform.InverseTransformPoint(_EndPosition);
+            positionsSet = true;
+        }
+
+        gameObject.layer = 28;
+
+        while (Vector2.Distance(transform.localPosition, localEndPos) > 0.2f
+            && _TimeToDestination < 0.5f)
+        {
             _TimeToDestination += Time.deltaTime;
 
-            transform.localPosition = ExtMethods.Parabola(localStartPos, localEndPos, _Height, _TimeToDestination);
+            transform.localPosition = ExtMethods.Parabola(localStartPos, localEndPos, _Height, _TimeToDestination * 2);
 
-            if (Vector2.Distance(transform.localPosition, localEndPos) < 0.2f)
-            {
-                transform.parent = null;
-                Go = false;
-                SoundManager.instance.PlayUiSound("lootdrop");
-                gameObject.layer = 10;
-            }
+            yield return null;
         }
-	}
+
+        transform.parent = null;
+        SoundManager.instance.PlayUiSound("lootdrop");
+        gameObject.layer = 10;
+
+        Destroy(tmpObject);
+    }
 }

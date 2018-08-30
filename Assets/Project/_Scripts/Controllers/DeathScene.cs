@@ -24,6 +24,8 @@ public class DeathScene : MonoBehaviour {
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        UiManager.instance.HideToolTip();
+
         foesVanquished.text = "Foes Vanquished: " + GameDetails.enemiesKilled;
         dungeonFloorsExplored.text = "Dungeon floors explored: " + GameDetails.dungeonFloorsExplored;
         riposte.text = "Ripostes executed: " + GameDetails.ripostes;
@@ -32,9 +34,6 @@ public class DeathScene : MonoBehaviour {
         fullChargeHits.text = "Charged Hits: " + GameDetails.fullChargeHits;
         arrowsFired.text = "Arrows Fired: " + GameDetails.arrowsFired;
         randomizedLootDropped.text = "Random loot created: " + GameDetails.randomizedItemsDropped;
-
-        GameDetails.MyInstance.ResetStaticData();
-
     }
 
     // Use this for initialization
@@ -49,12 +48,6 @@ public class DeathScene : MonoBehaviour {
 
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-
     private void OnDisable()
     {
         // unsubscribe from the scenemanager.
@@ -63,6 +56,7 @@ public class DeathScene : MonoBehaviour {
 
     public void Continue()
     {
-        GameDetails.instance.Load();
+        CameraController.instance.SetHomeRotation();
+        GameDetails.instance.Load(true);
     }
 }

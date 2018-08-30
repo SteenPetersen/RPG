@@ -61,7 +61,7 @@ public class EquipmentManager : MonoBehaviour {
 
     public bool Equip (Equipment newStatsToAdd, bool silent = false)
     {
-        if (VendorManager.instance.vendorWindowOpen)
+        if (VendorWindow.IsOpen)
             return false;
 
         int slotIndex = (int)newStatsToAdd.equipSlot;
@@ -530,6 +530,7 @@ public class EquipmentManager : MonoBehaviour {
             {
                 onEquipmentChanged.Invoke(null, oldItem);
             }
+
         }
     }
 

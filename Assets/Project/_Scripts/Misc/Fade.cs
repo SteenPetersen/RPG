@@ -31,20 +31,20 @@ public class Fade : MonoBehaviour
 
     void Update()
     {
-        FadeStart();
+        if (shouldFade)
+        {
+            FadeStart();
+        }
     }
 
     void FadeStart()
     {
-        if (shouldFade)
-        {
-            float duration = Time.time - startTime;
-            t = duration / seconds;
+        float duration = Time.time - startTime;
+        t = duration / seconds;
 
-            currentColor = Color.Lerp(startColor, endColor, t);
+        currentColor = Color.Lerp(startColor, endColor, t);
 
-            gameObject.GetComponent<SpriteRenderer>().material.SetColor("_Color", currentColor);
-        }
+        gameObject.GetComponent<SpriteRenderer>().material.SetColor("_Color", currentColor);
 
 
         if (currentColor == endColor)

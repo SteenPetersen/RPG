@@ -40,7 +40,8 @@ public class ItemPickup : Interactable
     {
         if (!hasInteracted)
         {
-            SoundManager.instance.PlayInventorySound(gameObject.name + "_pickup");
+            Debug.Log(item.typeOfEquipment + "_pickup");
+            SoundManager.instance.PlayInventorySound(item.typeOfEquipment + "_pickup");
             bool wasPickedUp = InventoryScript.instance.AddItem(Instantiate(item));
 
             if (wasPickedUp)

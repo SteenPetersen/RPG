@@ -184,12 +184,12 @@ public class TutorialManager : MonoBehaviour {
             StartCoroutine(equipSword.FadeOut());
         }
 
-        if (GameDetails.ripostes != 0 &&
-            GameDetails.blocks != 0 &&
-            GameDetails.hits != 0 &&
-            GameDetails.fullChargeHits != 0)
+        if (GameDetails.ripostes != 0 && GameDetails.blocks != 0 && GameDetails.hits != 0 && GameDetails.fullChargeHits != 0)
         {
-            doneWithMelee = true;
+            if (MyRiposte.MyAlpha < 0.05f && MyBlock.MyAlpha < 0.05f && MyHit.MyAlpha < 0.05f && MyChargedHit.MyAlpha < 0.05f)
+            {
+                doneWithMelee = true;
+            }
         }
     }
 

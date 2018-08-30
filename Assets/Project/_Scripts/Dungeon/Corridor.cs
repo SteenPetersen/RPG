@@ -16,8 +16,14 @@ public class Corridor
     public Direction direction;   // Which direction the corridor is heading from it's room.
 
     public List<TileLocation> tilesInCorridor = new List<TileLocation>();
+    public List<TileLocation> secretFloorTiles = new List<TileLocation>();
 
-    // Get the end position of the corridor based on it's start position and which direction it's heading.
+
+    public TileLocation secretRoomStartPosition;
+
+
+    /// Get the end position of the corridor based on it's 
+    /// start position and which direction it's heading.
     public int EndPositionX
     {
         get
@@ -85,8 +91,6 @@ public class Corridor
             maxLength = (columns - startXPos - roomWidth.m_Min) - 2;
         }
 
-
-
         if (!firstCorridor)
         {
             switch (direction)
@@ -128,4 +132,161 @@ public class Corridor
         // We clamp the length of the corridor to make sure it doesn't go off the board.
         corridorLength = Mathf.Clamp(corridorLength, 1, maxLength);
     }
+
+    public bool SetupCorridor(Room room, Direction dir)
+    {
+        direction = dir;
+
+        switch (dir)
+        {
+            case Direction.North:
+
+                /// Is there space for a secret room?
+                bool north = CheckSpaceForSecretRoom(room, dir);
+
+                if (north)
+                {
+                    if (DebugControl.debugDungeon)
+                    {
+                        Debug.Log("There is space for a secret room in the North");
+                    }
+
+                    /// Make the corridor
+                    startXPos = secretRoomStartPosition.x;
+                    startYPos = secretRoomStartPosition.y;
+                    corridorLength = 2;
+
+                    /// Make Fake door
+
+                    return true;
+
+                }
+
+                return false;
+
+
+            case Direction.East:
+
+                break;
+            case Direction.South:
+
+                /// Is there space for a secret room?
+                bool south = CheckSpaceForSecretRoom(room, dir);
+
+                if (south)
+                {
+                    if (DebugControl.debugDungeon)
+                    {
+                        Debug.Log("There is space for a secret room in the South");
+                    }
+
+                    /// Make the corridor
+                    startXPos = secretRoomStartPosition.x;
+                    startYPos = secretRoomStartPosition.y;
+                    corridorLength = 2; //TODO boardcreator can determine how long these are with a varaible later
+
+                    /// Make Fake door
+
+                    return true;
+
+                }
+
+                return false;
+
+            case Direction.West:
+
+                break;
+
+            default:
+                return false;
+        }
+
+        return false;
+    }
+
+    private bool CheckSpaceForSecretRoom(Room myRoom, Direction dir)
+    {
+        BoardCreator board = BoardCreator.instance;
+
+        switch (dir)
+        {
+            case Direction.North:
+
+                secretRoomStartPosition = new TileLocation(myRoom.middleTile.x, myRoom.yPos + myRoom.roomHeight);
+
+                /// Sanity Check
+                if (secretRoomStartPosition.y + myRoom.roomHeight < board.rows 
+                    && secretRoomStartPosition.x - 22 > 0 
+                    && secretRoomStartPosition.x + 22 < board.columns)
+                {
+
+                    for (int x = secretRoomStartPosition.x - 10; x < secretRoomStartPosition.x + 10; x += 2)
+                    {
+                        int xCoord = myRoom.xPos + x;
+
+                        for (int y = secretRoomStartPosition.y; y <= 20; y+= 2)
+                        {
+                            int yCoord = myRoom.yPos + y;
+
+                            if (board.tiles[xCoord][yCoord] != BoardCreator.TileType.BlackArea)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+
+                else
+                {
+                    return false;
+                }
+
+
+            case Direction.East:
+                break;
+            case Direction.South:
+
+                secretRoomStartPosition = new TileLocation(myRoom.middleTile.x, myRoom.yPos - 1);
+
+                /// Sanity Check
+                if (secretRoomStartPosition.y - myRoom.roomHeight > 5
+                    && secretRoomStartPosition.y + myRoom.roomHeight < board.rows - 5
+                    && secretRoomStartPosition.x - 22 > 5
+                    && secretRoomStartPosition.x + 22 < board.columns - 5)
+                {
+                    for (int x = secretRoomStartPosition.x - 10; x < secretRoomStartPosition.x + 10; x += 2)
+                    {
+                        int xCoord = myRoom.xPos + x;
+
+                        for (int y = secretRoomStartPosition.y; y <= 20; y += 2)
+                        {
+                            int yCoord = myRoom.yPos + y;
+
+                            if (board.tiles[xCoord][yCoord] != BoardCreator.TileType.BlackArea)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+
+                else
+                {
+                    return false;
+                }
+
+            case Direction.West:
+                break;
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+
 }

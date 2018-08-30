@@ -7,6 +7,9 @@ public class LootController : MonoBehaviour {
 
     public static LootController instance;
 
+    [SerializeField] float droppedLootDistance;
+    [SerializeField] float droppedLootHeight;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -30,6 +33,22 @@ public class LootController : MonoBehaviour {
     public List<GameObject> chestTier1 = new List<GameObject>();
     public List<GameObject> chestTier2 = new List<GameObject>();
 
+    /// <summary>
+    /// Needs to be exposed for the equipmentGenerator
+    /// </summary>
+    public float MyDroppedLootHeight
+    {
+        get
+        {
+            return droppedLootHeight;
+        }
+
+        set
+        {
+            droppedLootHeight = value;
+        }
+    }
+
 
     /// <summary>
     /// Checks if the enemy has loot and if it does, runs a switch statement to randomly drop loot from a list of items corresponding to the tier provided
@@ -46,7 +65,7 @@ public class LootController : MonoBehaviour {
             switch (tier)
             {
                 case 0:
-                    EquipmentGenerator._instance.CreateDroppable(position, tier);
+                    EquipmentGenerator._instance.CreateDroppable(position, tier, true);
                     
                     // play loot sound
                     SoundManager.instance.PlayUiSound("lootdrop");
@@ -106,5 +125,135 @@ public class LootController : MonoBehaviour {
         }
 
         throw new Exception("there is no recognizable tier upon which to run the switch case ");
+    }
+
+    /// <summary>
+    /// Finds a random position amongst 24 evenly distributed points which fill the
+    /// criteria of not being inside or on the otherside of a wall or innaccessable to the player.
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <returns></returns>
+    public List<Vector2> FindAllEndPositions(Transform origin)
+    {
+        int obstacleLayer = 13;
+        int destructableLayer = 19;
+        var obstacleLayerMask = 1 << obstacleLayer;
+        var destructableLayerMask = 1 << destructableLayer;
+
+        var finalMask = obstacleLayerMask | destructableLayerMask;
+
+        //Start on ground
+        Vector3 beginRayCast = new Vector3(origin.position.x, origin.position.y, 0);
+
+        // initial direction is from obj and up
+        Vector2 direction = origin.position + Vector3.up;
+
+        List<Vector2> p = new List<Vector2>();
+
+        for (int i = 1; i <= 24; i++)
+        {
+            Vector2 dir = direction.Rotate(15f * i);
+
+            RaycastHit2D hit = Physics2D.Raycast(beginRayCast, dir, droppedLootDistance, finalMask);
+
+            if (hit.collider == null)
+            {
+                bool canSpawn = CheckAreaForWalls((Vector2)beginRayCast + (dir.normalized * droppedLootDistance));
+
+                if (canSpawn)
+                {
+                    Vector2 toAdd = (Vector2)beginRayCast + (dir.normalized * droppedLootDistance);
+                    p.Add(toAdd);
+
+                    Vector2 toAddClose = (Vector2)beginRayCast + (dir.normalized * (droppedLootDistance / 2));
+                    p.Add(toAddClose);
+                }
+            }
+        }
+
+        return p;
+    }
+
+    /// <summary>
+    /// OverLoad METHOD: Finds a random position amongst 24 evenly distributed points which fill the
+    /// criteria of not being inside or on the otherside of a wall or innaccessable to the player.
+    /// </summary>
+    /// <param name="origin">startPosition</param>
+    /// <param name="setDistance">a distance that can be set from the calling function</param>
+    /// <returns></returns>
+    public List<Vector2> FindAllEndPositions(Transform origin, float setDistance)
+    {
+        int obstacleLayer = 13;
+        int destructableLayer = 19;
+        var obstacleLayerMask = 1 << obstacleLayer;
+        var destructableLayerMask = 1 << destructableLayer;
+
+        var finalMask = obstacleLayerMask | destructableLayerMask;
+
+        //Start on ground
+        Vector3 beginRayCast = new Vector3(origin.position.x, origin.position.y, 0);
+
+        // initial direction is from obj and up
+        Vector2 direction = origin.position + Vector3.up;
+
+        List<Vector2> p = new List<Vector2>();
+
+        for (int i = 1; i <= 24; i++)
+        {
+            Vector2 dir = direction.Rotate(15f * i);
+
+            RaycastHit2D hit = Physics2D.Raycast(beginRayCast, dir, setDistance, finalMask);
+
+            if (hit.collider == null)
+            {
+                bool canSpawn = CheckAreaForWalls((Vector2)beginRayCast + (dir.normalized * setDistance));
+
+                if (canSpawn)
+                {
+                    Vector2 toAdd = (Vector2)beginRayCast + (dir.normalized * setDistance);
+                    p.Add(toAdd);
+
+                    Vector2 toAddClose = (Vector2)beginRayCast + (dir.normalized * (setDistance / 2));
+                    p.Add(toAddClose);
+                }
+            }
+        }
+
+        return p;
+    }
+
+    /// <summary>
+    /// Checks a specific area for wall colliders
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    bool CheckAreaForWalls(Vector3 pos)
+    {
+        int obstaclesLayer = 13;
+        var obstacleLayerMask = 1 << obstaclesLayer;
+
+        Collider2D[] wallColliders = Physics2D.OverlapCircleAll(pos, 1f, obstacleLayerMask);
+
+        if (wallColliders.Length != 0)
+        {
+            foreach (Collider2D col in wallColliders)
+            {
+                if (col.transform.name.Contains("Wall"))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    internal Vector2 SelectEndPosition(List<Vector2> positions)
+    {
+        positions.Shuffle();
+
+        Vector2 tmp = positions[0];
+        positions.RemoveAt(0);
+        return tmp;
     }
 }

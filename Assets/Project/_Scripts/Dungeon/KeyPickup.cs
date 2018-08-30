@@ -5,6 +5,7 @@ using UnityEngine;
 public class KeyPickup : Interactable {
 
     [SerializeField] Key key;
+
     public Key MyKey
     {
         get
@@ -39,7 +40,7 @@ public class KeyPickup : Interactable {
                 DungeonManager.instance._PlayerHasBossKey = true;
             }
 
-            SoundManager.instance.PlayInventorySound(gameObject.name + "_pickup");
+            SoundManager.instance.PlayInventorySound(key.typeOfEquipment + "_pickup");
             bool wasPickedUp = InventoryScript.instance.AddItem(Instantiate(MyKey));
 
             if (wasPickedUp)

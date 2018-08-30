@@ -19,6 +19,8 @@ public abstract class DialogueNPC : Interactable {
     /// </summary>
     [SerializeField] protected int currentParagraphIncrement;
 
+    [SerializeField] protected int lastParagraph;
+
     #region Text
     [SerializeField] protected TextAsset textFile;
     [SerializeField] protected string[] textLines;
@@ -82,6 +84,9 @@ public abstract class DialogueNPC : Interactable {
 
         GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
 
+        currentParagraph = lastParagraph;
+        currentParagraphIncrement = currentParagraph;
+
 
         if (dialogueAvailable != null)
         {
@@ -92,6 +97,8 @@ public abstract class DialogueNPC : Interactable {
         {
             speechEffect.Play();
         }
+
+        Debug.Log("!");
 
     }
 
@@ -153,6 +160,7 @@ public abstract class DialogueNPC : Interactable {
 
     protected virtual void CloseDialogue()
     {
+        lastParagraph = currentParagraph;
         GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
         dialogueUi.SetActive(false);
         PlayerController.instance.dialogue = false;

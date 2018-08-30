@@ -1,187 +1,95 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Vendor : MonoBehaviour
+public class Vendor : Interactable
 {
-    PlayerController player;
-
+    VendorWindow vendorWindow;
     [SerializeField] VendorType vendorType;
 
-    public float radius;
-    GameObject vendorUi;
-    CanvasGroup vendorWindow;
+    [SerializeField] private List<VendorItem> items = new List<VendorItem>();
 
-    [SerializeField] Transform speechLocation;
-
-    [SerializeField] StockEntry stockEntry;
-
-    [SerializeField] List<Item> defaultStock;
-
-    [SerializeField] List<Item> purchasedStock;
-
-    public List<Item> MyDefaultStock
+    public List<VendorItem> MyItems
     {
         get
         {
-            return defaultStock;
+            return items;
         }
-    }
 
-    public List<Item> MyPurchasedStock
-    {
-        get
+        set
         {
-            return purchasedStock;
+            items = value;
         }
     }
-
-    public Transform MySpeechLocation
-    {
-        get
-        {
-            return speechLocation;
-        }
-    }
+    public IntRange amountOfItems;
+    bool interacting;
+    Transform player; // used to measure if the player is closeby
 
     void Start()
     {
-        player = PlayerController.instance;
-        vendorUi = GameObject.Find("VendorUi");
-        vendorWindow = vendorUi.GetComponentInParent<CanvasGroup>();
-        defaultStock = VendorManager.instance.GetGoods(vendorType);
+        vendorWindow = VendorWindow.instance;
+        MyItems = VendorManager.instance.GetGoods(vendorType, amountOfItems);
+        player = PlayerController.instance.transform;
     }
 
-    private void Update()
+    void Update()
     {
-        if (VendorManager.instance.vendorWindowOpen)
+        if (interacting)
         {
-            float distance = Vector2.Distance(PlayerController.instance.transform.position, 
-                                              VendorWindow.instance.MyVendor.transform.position);
-
-            // if the player moves away from the vendor then close the window
-            if (distance > radius * 4)
+            if (Time.frameCount % 10 == 0)
             {
-                OpenClose();
-            }
-        }
-    }
+                float dist = Vector2.Distance(transform.position, player.position);
 
-    /// <summary>
-    /// Display the vendor window and show a stock entry for each item in stock
-    /// </summary>
-    public void Interact()
-    {
-        if (!VendorManager.instance.vendorWindowOpen)
-        {
-            int count = 1;
-
-            // must delete everything everytime because we use the same window for all vendors.
-            foreach (Transform child in vendorUi.transform)
-            {
-                Destroy(child.gameObject);
-            }
-
-            VendorWindow.instance.MyVendor = this;
-            VendorWindow.instance.MyTitle = gameObject.name;
-
-            // run through each item in stocvk and place them in the vendorUI window
-            foreach (Item item in defaultStock)
-            {
-                GameObject entry = Instantiate(stockEntry.gameObject, vendorUi.transform);
-                StockEntry stockData = entry.GetComponent<StockEntry>();
-
-                stockData.StockIcon = item.icon;
-                stockData.MyItem = item;
-                stockData.isDefaultStock = true;
-                stockData.StockItemName = item.name;
-                stockData.StockItemPrice = item.buyValue.ToString();
-
-                count++;
-            }
-
-            foreach (Item item in purchasedStock)
-            {
-                if (count <= 6)
+                if (dist > MyRadius * 2)
                 {
-                    GameObject entry = Instantiate(stockEntry.gameObject, vendorUi.transform);
-                    StockEntry stockData = entry.GetComponent<StockEntry>();
-
-                    stockData.StockIcon = item.icon;
-                    stockData.MyItem = item;
-                    stockData.isDefaultStock = false;
-                    stockData.StockItemName = item.name;
-                    stockData.StockItemPrice = item.buyValue.ToString();
+                    StopInteracting();
                 }
-
-                count++;
             }
-
-            OpenClose();
-
         }
     }
 
-    /// <summary>
-    /// Opens and closes the vendor window
-    /// </summary>
-    public void OpenClose()
+    public override void Interact()
     {
-        // if the vendor UI menu's alpha is above zero set it to zero, else set it to 1
-        vendorWindow.alpha = vendorWindow.alpha > 0 ? 0 : 1;
-
-        // make sure you can block raycasts
-        vendorWindow.blocksRaycasts = vendorWindow.blocksRaycasts == true ? false : true;
-
-        // make sure all scripts can know if the window is open or not
-        VendorManager.instance.vendorWindowOpen = VendorManager.instance.vendorWindowOpen == true ? false : true;
-    }
-
-    /// <summary>
-    /// Add an item to the window, called when player sells an item to the vendor
-    /// </summary>
-    /// <param name="item"></param>
-    public void AddItemToWindow(Item item)
-    {
-        if (purchasedStock.Count + defaultStock.Count <= 6)
+        if (!VendorWindow.IsOpen)
         {
-            GameObject entry = Instantiate(stockEntry.gameObject, vendorUi.transform);
-            StockEntry stockData = entry.GetComponent<StockEntry>();
-
-            stockData.StockIcon = item.icon;
-            stockData.MyItem = item;
-            stockData.isDefaultStock = false;
-            stockData.StockItemName = item.name;
-            stockData.StockItemPrice = item.sellValue.ToString();
+            interacting = true;
+            VendorWindow.IsOpen = true;
+            vendorWindow.MyTitle = gameObject.name;
+            vendorWindow.CreatePages(MyItems);
+            vendorWindow.OpenWindow();
+            vendorWindow.MyVendor = this;
         }
+
     }
 
-    private void OnDrawGizmosSelected()
+    public void StopInteracting()
     {
-        Gizmos.color = Color.black;
-        Gizmos.DrawWireSphere(transform.position, radius);
-    }
-
-    /// <summary>
-    /// Keeps tabs on when mouse is over the vendor 
-    /// to stop player from shooting etc
-    /// </summary>
-    void OnMouseOver()
-    {
-        if (!player.mouseOverVendor)
+        if (VendorWindow.IsOpen)
         {
-            player.mouseOverVendor = true;
+            interacting = false;
+            VendorWindow.IsOpen = false;
+            vendorWindow.CloseWindow();
+            vendorWindow.MyVendor = null;
+            vendorWindow.MyTitle = string.Empty;
         }
     }
 
-    /// <summary>
-    /// keepos tabs on when mouse leaves vendor
-    /// to reallow player to shoot and hit etc
-    /// </summary>
-    void OnMouseExit()
+    public void UpdateNewItem(VendorItem item)
     {
-        if (player.mouseOverVendor)
+        foreach (VendorItem i in MyItems)
         {
-            player.mouseOverVendor = false;
+            if (i.MyItem.name == item.MyItem.name)
+            {
+                Debug.Log("I already have " + i.MyQuantity + " items like this");
+                i.MyQuantity++;
+                vendorWindow.CreatePages(MyItems);
+                return;
+            }
         }
+
+        MyItems.Add(item);
+
+        vendorWindow.CreatePages(MyItems);
     }
+
+
 }

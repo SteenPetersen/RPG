@@ -56,6 +56,10 @@ public class Key : Item, IUseable
 
     public override void Use()
     {
+    }
+
+    public void UseKeyOnChest()
+    {
         Remove();
     }
 

@@ -67,6 +67,8 @@ public class EnemyAI : AIPath
     [HideInInspector] public Transform skeleton;
     #endregion HiddenVariables
 
+    [SerializeField] bool seekingPlayer;
+
     /// <summary>
     /// Must be fed in as the name of this object can vary from monster to monster
     /// Used to check if collison detected is self or not
@@ -136,6 +138,11 @@ public class EnemyAI : AIPath
             {
                 anim.SetTrigger("Hit1");
                 timer = meleeDelay;
+
+                if (seekingPlayer)
+                {
+                    seekingPlayer = false;
+                }
             }
         }
 
@@ -190,14 +197,20 @@ public class EnemyAI : AIPath
 
         if (Vector3.Distance(playerPos, gameObject.transform.position) < distanceToLook)
         {
-            //create layer masks for the player and the obstacles ending a finalmask combining both
             int playerLayer = 10;
             int obstacleLayer = 13;
             int destructableLayer = 19;
             var playerlayerMask = 1 << playerLayer;
             var obstacleLayerMask = 1 << obstacleLayer;
             var destructableLayerMask = 1 << destructableLayer;
-            var finalMask = playerlayerMask | obstacleLayerMask | destructableLayerMask;
+
+            var finalMask = playerlayerMask | destructableLayerMask;
+
+            if (!alert)
+            {
+                finalMask = playerlayerMask | destructableLayerMask | obstacleLayerMask;
+            }
+            
 
             // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
             RaycastHit2D hit = Physics2D.Raycast(transform.position, (playerPos - transform.position), distanceToLook, finalMask);

@@ -706,7 +706,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1743192401343510
 GameObject:
   m_ObjectHideFlags: 1
@@ -2876,13 +2876,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d79dabe64095a32418e035d6e51fab6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vendorType: 0
   radius: 1.85
-  speechLocation: {fileID: 4335377966484070}
-  stockEntry: {fileID: 114060631802460656, guid: b2e55700a9028294d87e1820bea27ea3,
-    type: 2}
-  defaultStock: []
-  purchasedStock: []
+  drawGizmos: 0
+  items: []
 --- !u!114 &114199436274277676
 MonoBehaviour:
   m_ObjectHideFlags: 1

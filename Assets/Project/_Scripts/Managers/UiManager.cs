@@ -111,7 +111,6 @@ public class UiManager : MonoBehaviour {
         {
             Debug.Log("stopping player walking");
 
-
             if (!PlayerController.instance.dialogue)
             {
                 if (!PlayerController.instance.facingRight)
@@ -121,11 +120,10 @@ public class UiManager : MonoBehaviour {
 
                 PlayerController.instance.anim.Rebind();
                 PlayerController.instance.anim.SetTrigger("ForceStopWalk");
-                gameDetails.paused = gameDetails.paused == true ? false : true;
                 inventoryCam.SetActive(!inventoryCam.activeSelf);
                 equipmentWindow.SetActive(!equipmentWindow.activeSelf);
 
-                maskCamera.gameObject.SetActive(!gameDetails.paused);
+                maskCamera.gameObject.SetActive(!inventoryCam.activeSelf);
                 HideToolTip();
             }
         }
@@ -185,7 +183,7 @@ public class UiManager : MonoBehaviour {
             }
 
 
-            if (Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.T))
             {
                 Bag bag = (Bag)Instantiate(InventoryScript.instance.itemListForDebugging[0]);
                 bag.Initialize(16);
@@ -196,12 +194,27 @@ public class UiManager : MonoBehaviour {
             {
                 Item potion = Instantiate(InventoryScript.instance.itemListForDebugging[1]);
                 InventoryScript.instance.AddItem(potion);
-                //GameDetails.MyInstance.Save(true);
             }
 
+            /// Spawn a new dungeon
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene("Caves_dungeon_indoor", "Testing Loading"));
+            }
+
+            /// Remove Boss room key
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
+                tmp.Remove();
+            }
+
+            /// Add Gold
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                CurrencyManager.wealth += 100;
+            }
         }
-
-
 
     }
 

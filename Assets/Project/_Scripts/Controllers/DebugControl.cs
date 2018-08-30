@@ -22,12 +22,14 @@ public class DebugControl : MonoBehaviour {
     public static bool debugEnvironment;
     public static bool debugInventory;
     public static bool debugItemGenerator;
+    public static bool debugDungeon;
 
     [SerializeField] public bool debugOnBool;
     [SerializeField] bool debugEnemiesBool;
     [SerializeField] bool debugEnvironmentBool;
     [SerializeField] bool debugInventoryBool;
     [SerializeField] bool debugItemGeneratorBool;
+    [SerializeField] bool debugDungeonBool;
 
     void Start()
     {
@@ -36,6 +38,7 @@ public class DebugControl : MonoBehaviour {
         debugEnvironment = debugEnvironmentBool;
         debugInventory = debugInventoryBool;
         debugItemGenerator = debugItemGeneratorBool;
+        debugDungeon = debugDungeonBool;
     }
 
 

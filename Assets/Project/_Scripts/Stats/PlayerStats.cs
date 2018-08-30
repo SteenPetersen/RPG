@@ -184,7 +184,13 @@ public class PlayerStats : CharacterStats {
     public override void Die()
     {
         base.Die();
+
         // kill the player in some way
+        if (playerControl.blocking)
+        {
+            anim.SetBool("Block", false);
+        }
+
         playerControl.speed = 0;
         playerControl.isDead = true;
         SoundManager.instance.PlayUiSound("deathsound");

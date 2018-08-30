@@ -6,7 +6,10 @@ using UnityEngine.UI;
 
 public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPointerEnterHandler, IPointerExitHandler
 {
-
+    /// <summary>
+    /// 12.5 video
+    /// </summary>
+    /// 
     public IUseable MyUseable
     {
         get; set;
@@ -68,6 +71,20 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
         get { return stackSize; }
     }
 
+    public Stack<IUseable> MyUseables
+    {
+        get
+        {
+            return useables;
+        }
+
+        set
+        {
+            //MyUseable = value.Peek();
+            useables = value;
+        }
+    }
+
     // Use this for initialization
     void Start () {
         MyButton = GetComponent<Button>();
@@ -80,6 +97,7 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
     /// </summary>
     public void OnClick()
     {
+        /// Only use this if you you're not carrying another item
         if (HandScript.instance.MyMoveable == null)
         {
             if (MyUseable != null)
@@ -87,10 +105,11 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
                 MyUseable.Use();
                 Debug.Log("Use on the OnClick()");
             }
-            if (useables != null && useables.Count > 0)
+            if (MyUseables != null && MyUseables.Count > 0)
             {
-                useables.Peek().Use();
-                Debug.Log("Use on the OnClick() with Peek()");
+                Debug.LogError(MyUseables.Count);
+                MyUseables.Peek().Use();
+                Debug.LogError(MyUseables.Count + " After using");
             }
         }
 
@@ -111,8 +130,8 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
     {
         if (useable is Item)
         {
-            useables = InventoryScript.instance.GetUseables(useable, item);
-            count = useables.Count;
+            MyUseables = InventoryScript.instance.GetUseables(useable, item);
+            count = MyUseables.Count;
 
             buttonItem = item;
 
@@ -150,8 +169,8 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
     {
         if (useable is Item)
         {
-            useables = InventoryScript.instance.GetUseables(useable, item);
-            count = useables.Count;
+            MyUseables = InventoryScript.instance.GetUseables(useable, item);
+            count = MyUseables.Count;
             buttonItem = item;
         }
         else
@@ -174,7 +193,6 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
         MyIcon.color = Color.white;
 
         UpdateStackSize();
-
     }
 
     /// <summary>
@@ -184,15 +202,15 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
     /// <param name="item"></param>
     public void UpdateItemCount(Item item)
     {
-        if (item is IUseable && useables.Count > 0)
+        if (item is IUseable && MyUseables.Count > 0 && item.name == buttonItem.name)
         {
-            string input = useables.Peek().ToString().Substring(0, useables.Peek().ToString().IndexOf("("));
-
-            if (useables.Peek().GetType() == item.GetType() && item.name == input)
+            if (MyUseables.Peek().GetType() == item.GetType())
             {
-                useables = InventoryScript.instance.GetUseables(item as IUseable, item);
 
-                count = useables.Count;
+                MyUseables = InventoryScript.instance.GetUseables(item as IUseable, item);
+
+                count = MyUseables.Count;
+
 
                 UpdateStackSize();
             }
@@ -205,26 +223,7 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
     /// </summary>
     public void UpdateStackSize()
     {
-        // if the items are stacking
-        if (MyCount > 1)
-        {
-            MyStackText.text = MyCount.ToString();
-            MyStackText.color = Color.white;
-            MyIcon.color = Color.white;
-        }
-        // when there is only 1 item dont display text
-        else
-        {
-            MyStackText.color = new Color(0, 0, 0, 0);
-            MyIcon.color = Color.white;
-        }
-
-        // if the slot has nothing in it
-        if (MyCount == 0)
-        {
-            MyIcon.color = new Color(0, 0, 0, 0);
-            MyStackText.color = new Color(0, 0, 0, 0);
-        }
+        UiManager.instance.UpdateStackSize(this);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -233,7 +232,7 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
         {
            UiManager.instance.ShowToolTip(transform.position, buttonItem);
         }
-        else if (useables.Count > 0)
+        else if (MyUseables.Count > 0)
         {
             UiManager.instance.ShowToolTip(transform.position, buttonItem);
         }

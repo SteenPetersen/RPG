@@ -45,6 +45,7 @@ public class Reylith : DialogueNPC {
                 {
                     speechEffect.Stop();
                     StoryManager.stage = 1;
+                    Debug.Log("Setting stage to 1");
                     GameDetails.instance.Save();
                     conversationDone = true;
                 }

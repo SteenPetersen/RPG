@@ -54,7 +54,7 @@ public class EquipmentGenerator : MonoBehaviour {
     /// Creates a droppable Item into the world
     /// </summary>
     /// <param name="pos"></param>
-    public void CreateDroppable(Vector3 pos, int tier)
+    public void CreateDroppable(Vector3 pos, int tier, bool lootParabola = false)
     {
         GameObject tmp = Instantiate(droppableGameObject, pos, Quaternion.identity);
 
@@ -63,6 +63,23 @@ public class EquipmentGenerator : MonoBehaviour {
         tmp.GetComponent<ItemPickup>().item = equip;
         tmp.GetComponent<SpriteRenderer>().sprite = equip.icon;
         tmp.name = equip.name;
+
+        if (lootParabola)
+        {
+            LootController loot = LootController.instance;
+
+            LootParabola movement = tmp.AddComponent<LootParabola>();
+            List<Vector2> positions = new List<Vector2>();
+                
+            positions = loot.FindAllEndPositions(tmp.transform);
+            Vector2 endPosition = loot.SelectEndPosition(positions);
+
+            movement._EndPosition = endPosition;
+            movement._StartPosition = pos;
+            movement._Height = loot.MyDroppedLootHeight;
+
+            StartCoroutine(movement.Parabola());
+        }
     }
 
     /// <summary>
@@ -281,7 +298,8 @@ public class EquipmentGenerator : MonoBehaviour {
             currentCreation.sellValue = UnityEngine.Random.Range((playerLvl + 350), (playerLvl + 350 * 4));
         }
 
-        currentCreation.buyValue = currentCreation.sellValue * 6;
+        currentCreation.sellValue = currentCreation.sellValue / 2;
+        currentCreation.buyValue = currentCreation.sellValue * 10;
 
         string currentName = EquipNameGenerator._instance.GetBowName(currentCreation.MyQuality);
         currentCreation.MyTitle = currentName;
@@ -538,7 +556,8 @@ public class EquipmentGenerator : MonoBehaviour {
         currentCreation.MyTitle = currentName;
         currentCreation.name = currentName;
 
-        currentCreation.buyValue = currentCreation.sellValue * 6;
+        currentCreation.sellValue = currentCreation.sellValue / 2;
+        currentCreation.buyValue = currentCreation.sellValue * 10;
     }
 
     /// <summary>
@@ -607,7 +626,8 @@ public class EquipmentGenerator : MonoBehaviour {
             currentCreation.sellValue = UnityEngine.Random.Range((playerLvl + 350), (playerLvl + 350 * 4));
         }
 
-        currentCreation.buyValue = currentCreation.sellValue * 6 * statModifer;
+        currentCreation.sellValue = currentCreation.sellValue / 2;
+        currentCreation.buyValue = currentCreation.sellValue * 10 * statModifer;
 
         string currentName = EquipNameGenerator._instance.GetSwordName(currentCreation.MyQuality);
         currentCreation.MyTitle = currentName;

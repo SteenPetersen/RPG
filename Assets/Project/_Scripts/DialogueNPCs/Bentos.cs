@@ -81,6 +81,11 @@ public class Bentos : DialogueNPC {
                 CloseDialogue();
             }
 
+            else if (StoryManager.tutorialStage == 1 && currentParagraph > 5)
+            {
+                currentParagraph = 5;
+                CloseDialogue();
+            }
 
             else if (StoryManager.tutorialStage == 2)
             {

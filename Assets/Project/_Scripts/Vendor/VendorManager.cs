@@ -5,8 +5,6 @@ public class VendorManager : MonoBehaviour {
 
     public static VendorManager instance;
 
-    public bool vendorWindowOpen;
-
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -41,55 +39,54 @@ public class VendorManager : MonoBehaviour {
     /// </summary>
     /// <param name="vendorType">Type of vendor that is looking for items</param>
     /// <returns>a list of items related to the vendor</returns>
-    public List<Item> GetGoods(VendorType vendorType)
+    public List<VendorItem> GetGoods(VendorType vendorType, IntRange amount)
     {
-        List<Item> items = new List<Item>();
+        List<VendorItem> items = new List<VendorItem>();
 
         // potion
         if (vendorType == VendorType.Potion)
         {
-           // Debug.Log("Potion Vendor is requesting goods");
-
             foreach (Item item in potion)
             {
-                items.Add(item);
+                int rand = amount.Random;
+                VendorItem tmp = new VendorItem(item, rand);
+                items.Add(tmp);
             }
         }
 
         // weapon
         if (vendorType == VendorType.Weapon)
         {
-            //Debug.Log("Weapon Vendor is requesting goods");
-
-            int r = UnityEngine.Random.Range(0, 6);
+            int r = UnityEngine.Random.Range(0, 14);
 
             for (int i = 0; i <= r; i++)
             {
-                items.Add(EquipmentGenerator._instance.CreateVendorEquipment(0));
+                VendorItem tmp = new VendorItem(EquipmentGenerator._instance.CreateVendorEquipment(0), 1);
+                items.Add(tmp);
             }
         }
 
-        // armor
-        if (vendorType == VendorType.Armor)
-        {
-            //Debug.Log("Armor Vendor is requesting goods");
+        //// armor
+        //if (vendorType == VendorType.Armor)
+        //{
+        //    //Debug.Log("Armor Vendor is requesting goods");
 
-            foreach (Item item in armor)
-            {
-                items.Add(item);
-            }
-        }
+        //    foreach (Item item in armor)
+        //    {
+        //        items.Add(item);
+        //    }
+        //}
 
-        // general
-        if (vendorType == VendorType.General)
-        {
-            Debug.Log("General Vendor is requesting goods");
+        //// general
+        //if (vendorType == VendorType.General)
+        //{
+        //    Debug.Log("General Vendor is requesting goods");
 
-            foreach (Item item in general)
-            {
-                items.Add(item);
-            }
-        }
+        //    foreach (Item item in general)
+        //    {
+        //        items.Add(item);
+        //    }
+        //}
 
         return items;
     }
@@ -100,8 +97,12 @@ public class VendorManager : MonoBehaviour {
     /// <param name="value"></param>
     public void Sell(int value, Item item)
     {
-        VendorWindow.instance.MyVendor.MyPurchasedStock.Add(item);
-        VendorWindow.instance.MyVendor.AddItemToWindow(item);
+        //VendorWindow.instance.MyVendor.MyStock.Add(item);
+        //VendorWindow.instance.MyVendor.AddItemToWindow(item);
+        VendorItem newVendorItem = new VendorItem(item, 1);
+            
+        VendorWindow.instance.MyVendor.UpdateNewItem(newVendorItem);
+
         CurrencyManager.wealth += value;
 
         SoundManager.instance.PlayUiSound("lootdrop");

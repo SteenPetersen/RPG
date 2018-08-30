@@ -179,6 +179,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] ParticleSystem weaponCharged;
     [SerializeField] ParticleSystem bowCharged;
     bool weaponChargeReady;
+    float percentageCostOfChargingBow;
+    float determineChargeCost;
+    bool notEnoughStaminaWarning;
 
     private void OnEnable()
     {
@@ -242,8 +245,6 @@ public class PlayerController : MonoBehaviour
      
     }
 
-
-
     /// <summary>
     /// Determines the speed at which the players weapon charges a power hit
     /// </summary>
@@ -265,24 +266,43 @@ public class PlayerController : MonoBehaviour
         if (!playerStat.cantRegen)
         {
             playerStat.cantRegen = true;
+            percentageCostOfChargingBow = (playerStat.MyMaxStamina / 100) * 25;
         }
 
-        // if you have full stamina you can start charging
-        if (playerStat.staminaFull || playerStat.chargeHeld)
+        /// if you have enough stamina you can start charging
+        if (playerStat.chargeHeld)
         {
-            if (!playerStat.chargeHeld)
-            {
-                playerStat.chargeHeld = true;
-            }
-
             if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.98)
             {
+                /// Reset percent cost determiner
+                if (EquipmentManager.instance.weaponGlowSlot.color.a < 0.02)
+                {
+                    determineChargeCost = 0;
+                }
+
+                /// CHange the sprite of the item
                 Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
                 tmp.a += 0.009f;
                 EquipmentManager.instance.weaponGlowSlot.color = tmp;
+
+                /// Charge the player stamina per frame
+                playerStat.MyCurrentStamina -= 0.3f;
+
+                /// Determine what that number becomes
+                determineChargeCost += 0.3f;
+
+                /// If its higher than normal value then set this value to the new value
+                if (determineChargeCost > percentageCostOfChargingBow)
+                {
+                    percentageCostOfChargingBow = determineChargeCost;
+                }
             }
-            Debug.Log("charging bow");
-            playerStat.MyCurrentStamina -= 0.05f;
+
+
+            if (notEnoughStaminaWarning)
+            {
+                notEnoughStaminaWarning = false;
+            }
         }
 
         // if you run out of stamina you lose your charge
@@ -410,7 +430,7 @@ public class PlayerController : MonoBehaviour
                         {
                             float distanceFromInteractable = Vector2.Distance(vendor.gameObject.transform.position, transform.position);
 
-                            if (distanceFromInteractable < vendor.radius)
+                            if (distanceFromInteractable < vendor.MyRadius)
                             {
                                 vendor.Interact();
                             }
@@ -550,7 +570,7 @@ public class PlayerController : MonoBehaviour
                     {
                         float distanceFromInteractable = Vector2.Distance(vendor.gameObject.transform.position, transform.position);
 
-                        if (distanceFromInteractable < vendor.radius)
+                        if (distanceFromInteractable < vendor.MyRadius)
                         {
                             vendor.Interact();
                         }
@@ -605,7 +625,7 @@ public class PlayerController : MonoBehaviour
                     {
                         float distanceFromInteractable = Vector2.Distance(vendor.gameObject.transform.position, transform.position);
 
-                        if (distanceFromInteractable < vendor.radius)
+                        if (distanceFromInteractable < vendor.MyRadius)
                         {
                             vendor.Interact();
                         }
@@ -675,7 +695,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetMouseButton(1))
             {
                 // start checking if player wants to hold button in
-                if (!heldStrikeCoroutinePlaying && !chargedShot && playerStat.staminaFull && !autoFiring && !VendorManager.instance.vendorWindowOpen)
+                if (!heldStrikeCoroutinePlaying && !chargedShot && !autoFiring && !VendorWindow.IsOpen)
                 {
                     StartCoroutine(CheckForHeldStrike());
                 }
@@ -711,8 +731,6 @@ public class PlayerController : MonoBehaviour
         if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98 && !changingState)
         {
             maxChargedHit = true;
-            float percCost = (playerStat.MyMaxStamina / 100) * 25;
-            playerStat.MyCurrentStamina -= percCost;
         }
 
         Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
@@ -1309,16 +1327,13 @@ public class PlayerController : MonoBehaviour
         {
             dungeon = DungeonManager.instance;
 
-            if (dungeon != null)
+            Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
+            if (tmp != null)
             {
-                dungeon.townPortalDropped = false;
-
-                if (dungeon._PlayerHasBossKey)
-                {
-                    Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
-                    tmp.Remove();
-                }
+                tmp.Remove();
             }
+
+            dungeon.townPortalDropped = false;
 
             StartCoroutine(SpawnIn());
         }
@@ -1335,7 +1350,7 @@ public class PlayerController : MonoBehaviour
             {
                 dungeon._PlayerHasBossKey = false;
                 dungeon.bossKeyHasDropped = false;
-                dungeon.bossRoomAvailable = false;
+                //dungeon.bossRoomAvailable = false;
             }
             Camera.main.transform.Find("daylight").GetComponent<Light>().intensity = 0.43f;
             pointLight.gameObject.SetActive(true);
@@ -1456,9 +1471,17 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (ranged)
                 {
-                    chargedShot = true;
+                    Debug.Log(percentageCostOfChargingBow);
+                    if (playerStat.MyCurrentStamina > percentageCostOfChargingBow)
+                    {
+                        chargedShot = true;
 
-                    anim.SetBool("ChargedShot", true);
+                        playerStat.chargeHeld = true;
+
+                        anim.SetBool("ChargedShot", true);
+                    }
+
+
                 }
 
             }

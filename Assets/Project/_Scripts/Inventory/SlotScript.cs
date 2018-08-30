@@ -245,18 +245,22 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             // if the vendor window is currently open And your done with tutorial (else player can sell needed items to the vendors)
-            if (VendorManager.instance.vendorWindowOpen && !IsEmpty && ExperienceManager.MyLevel > 1)
+            if (VendorWindow.IsOpen && !IsEmpty && ExperienceManager.MyLevel > 1)
             {
                 // sell this item
-                VendorManager.instance.Sell(MyItem.sellValue, MyItem);
-                RemoveItem(MyItem);
-                return;
+                if (MyItem.sellValue > 0)
+                {
+                    Debug.Log(MyItem.name + "   " + MyItem.sellValue);
+                    VendorManager.instance.Sell(MyItem.sellValue, MyItem);
+                    RemoveItem(MyItem);
+                    return;
+                }
             }
 
-            else if (VendorManager.instance.vendorWindowOpen && !IsEmpty && ExperienceManager.MyLevel <= 1)
-            {
-                SpeechBubbleManager.instance.FetchBubble(VendorWindow.instance.MyVendor.MySpeechLocation, "Come back when you've got" + "\n" + "a little more experience");
-            }
+            //else if (VendorManager.instance.vendorWindowOpen && !IsEmpty && ExperienceManager.MyLevel <= 1)
+            //{
+            //    //SpeechBubbleManager.instance.FetchBubble(VendorWindow.instance.MyVendor.MySpeechLocation, "Come back when you've got" + "\n" + "a little more experience");
+            //}
 
 
             UseItem();

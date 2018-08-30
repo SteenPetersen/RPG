@@ -103,7 +103,7 @@ public class Chest : Interactable {
 
                     if (k != null)
                     {
-                        k.Use();
+                        k.UseKeyOnChest();
                         OpenChest();
                         return;
                     }
@@ -218,14 +218,14 @@ public class Chest : Interactable {
     {
         if (loot.Count != 0)
         {
-            GameObject shadeChest = new GameObject();
-            shadeChest.transform.rotation = CameraController.instance.transform.rotation;
-            shadeChest.transform.parent = null;
-            shadeChest.transform.position = transform.position;
+            //GameObject shadeChest = new GameObject();
+            //shadeChest.transform.rotation = CameraController.instance.transform.rotation;
+            //shadeChest.transform.parent = null;
+            //shadeChest.transform.position = transform.position;
 
-            FindAllEndPositions(shadeChest);
+            //positions = LootController.instance.FindAllEndPositions(shadeChest.transform, distanceFromChest);
 
-            StartCoroutine(SpawnLootItems(loot, loot.Count, shadeChest.transform));
+            StartCoroutine(SpawnLootItems(loot, loot.Count));
         }
 
         else if (loot.Count == 0)
@@ -241,8 +241,6 @@ public class Chest : Interactable {
         // make sure you cannot open this chest multiple times
         hasBeenOpened = true;
     }
-
-
 
     private void CloseChest()
     {
@@ -263,88 +261,6 @@ public class Chest : Interactable {
 
             hasInteracted = false;
         }
-    }
-
-
-    /// <summary>
-    /// Finds a random position amongst 24 evenly distributed points which fill the
-    /// criteria of not being inside or on the otherside of a wall or innaccessable to the player.
-    /// </summary>
-    /// <param name="origin"></param>
-    /// <returns></returns>
-    void FindAllEndPositions(GameObject origin)
-    {
-        int obstacleLayer = 13;
-        int destructableLayer = 19;
-        var obstacleLayerMask = 1 << obstacleLayer;
-        var destructableLayerMask = 1 << destructableLayer;
-
-        var finalMask = obstacleLayerMask | destructableLayerMask;
-
-        //Start on ground
-        Vector3 beginRayCast = new Vector3(origin.transform.position.x, origin.transform.position.y, 0);
-
-        // initial direction is from obj and up
-        Vector2 direction = origin.transform.position + Vector3.up;
-
-        for (int i = 1; i <= 24; i++)
-        {
-            Vector2 dir = direction.Rotate(15f * i);
-
-            RaycastHit2D hit = Physics2D.Raycast(beginRayCast, dir, distanceFromChest, finalMask);
-
-            if (hit.collider == null)
-            {
-                if (drawGizmos)
-                {
-                    if (i == 1)
-                    {
-                        Debug.DrawRay(beginRayCast, dir.normalized * distanceFromChest, Color.blue, 1f);
-                    }
-                    else
-                    {
-                        Debug.DrawRay(beginRayCast, dir.normalized * distanceFromChest, Color.red, 1f);
-                    }
-                }
-
-                bool canSpawn = CheckAreaForWalls((Vector2)beginRayCast + (dir.normalized * distanceFromChest));
-
-                if (canSpawn)
-                {
-                    Vector2 toAdd = (Vector2)beginRayCast + (dir.normalized * distanceFromChest);
-                    positions.Add(toAdd);
-
-                    Vector2 toAddClose = (Vector2)beginRayCast + (dir.normalized * (distanceFromChest / 2));
-                    positions.Add(toAddClose);
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Checks a specific area for wall colliders
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <returns></returns>
-    bool CheckAreaForWalls(Vector3 pos)
-    {
-        int obstaclesLayer = 13;
-        var obstacleLayerMask = 1 << obstaclesLayer;
-
-        Collider2D[] wallColliders = Physics2D.OverlapCircleAll(pos, 1f, obstacleLayerMask);
-
-        if (wallColliders.Length != 0)
-        {
-            foreach (Collider2D col in wallColliders)
-            {
-                if (col.transform.name.Contains("Wall"))
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     private void CloseIfPlayerLeaves()
@@ -373,31 +289,7 @@ public class Chest : Interactable {
 
     }
 
-    Vector2 SelectEndPosition()
-    {
-        positions.Shuffle();
-
-        Vector2 tmp = positions[0];
-        positions.RemoveAt(0);
-        return tmp;
-    }
-
-    /// <summary>
-    /// A temporary change of ths sorting order so the item look like they are coming from inside
-    /// the Chest and not from behind it.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator TemporarySortingOrderCHange(GameObject tmp)
-    {
-        SpriteRenderer sr = tmp.GetComponent<SpriteRenderer>();
-        sr.sortingOrder = 11;
-
-        yield return new WaitForSeconds(0.5f);
-
-        sr.sortingOrder = 10;
-    }
-
-    IEnumerator SpawnLootItems(List<GameObject> items, int count, Transform shadeChest)
+    IEnumerator SpawnLootItems(List<GameObject> items, int count)
     {
         foreach (var item in items)
         {
@@ -414,27 +306,34 @@ public class Chest : Interactable {
             // TODO maybe activate (SetActive) the lootParabola here instead of having it on the default item? if it gives trouble elsewhere 
             // then this would be the place to fix it
 
-            item.transform.parent = shadeChest;
+            //item.transform.parent = shadeChest;
             item.transform.position = transform.position;
 
-            Vector2 endPosition = SelectEndPosition();
+            List<Vector2> positions = new List<Vector2>();
+
+            positions = LootController.instance.FindAllEndPositions(transform, distanceFromChest);
+
+            Debug.Log(positions.Count);
+
+            Vector2 endPosition = LootController.instance.SelectEndPosition(positions);
 
             movement._EndPosition = endPosition;
             movement._StartPosition = transform.position;
             movement._Height = heightOfLootJump;
 
-            Debug.DrawLine(shadeChest.position, endPosition, Color.cyan, 5f);
+            //Debug.DrawLine(shadeChest.position, endPosition, Color.cyan, 5f);
 
-            movement.Go = true;
+            StartCoroutine(movement.Parabola());
+            //movement.Go = true;
 
-            shadeChest.gameObject.name = item.name + "_Creator";
+            //shadeChest.gameObject.name = item.name + "_Creator";
             SoundManager.instance.PlayUiSound("lootAppearsChest");
 
             yield return new WaitForSeconds(0.5f);
         }
 
         lootTaken = true;
-        Destroy(shadeChest.gameObject, 3f);
+        //Destroy(shadeChest.gameObject, 3f);
     }
 }
 

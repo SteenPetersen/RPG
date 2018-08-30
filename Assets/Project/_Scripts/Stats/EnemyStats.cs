@@ -23,15 +23,6 @@ public class EnemyStats : CharacterStats {
         playerExp = ExperienceManager.instance;
     }
 
-    private void Update()
-    {
-        if (hitByProjectile)
-        {
-            enemyAI.haveAggro = true;
-            hitByProjectile = false;
-        }
-    }
-
     public override void Die()
     {
         base.Die();
@@ -53,6 +44,7 @@ public class EnemyStats : CharacterStats {
                 EnemyHolder.instance.enemies.Remove(gameObject);
             }
         }
+
 
         if (DungeonManager.instance != null)
         {

@@ -38,7 +38,7 @@ public class EquipedItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
     /// <param name="silent">Bool used in case we are loading a gaem and dont wish to have sound effects</param>
     public void AddItemVisuals(Item newItem, bool silent = false)
     {
-        equipment = (Equipment)newItem;
+        MyEquipment = (Equipment)newItem;
 
         if (!silent)
         {

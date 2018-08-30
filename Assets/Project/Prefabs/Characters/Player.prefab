@@ -757,7 +757,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1760166937193192}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -15.98, y: -20.76, z: 0}
+  m_LocalPosition: {x: 26.029999, y: 79.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4561906690375752}
@@ -1392,7 +1392,7 @@ MonoBehaviour:
   playerControl: {fileID: 114124858234543866}
   exp: 0
   regen: 1
-  staminaRegen: 25
+  staminaRegen: 10
   chargeHeld: 0
   sprinting: 0
   cantRegen: 0

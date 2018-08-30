@@ -32,6 +32,8 @@ public class SpikeTrapActivate : MonoBehaviour {
                 resetTimer = 10;
             }
         }
+
+
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -41,7 +43,9 @@ public class SpikeTrapActivate : MonoBehaviour {
             if (col.tag == "Player")
             {
                 anim.SetBool("Fire", true);
+
                 fired = true;
+
                 if (!anim.GetCurrentAnimatorStateInfo(0).IsName("SpikeTrap"))
                 {
                     SoundManager.instance.PlayEnvironmentSound("spike_trap_fire");
@@ -127,10 +131,17 @@ public class SpikeTrapActivate : MonoBehaviour {
     public void ResetTrap()
     {
         anim.SetBool("Fire", false);
-        if (rend.isVisible)
+        fired = false;
+
+        Vector3 viewPos = Camera.main.WorldToViewportPoint(transform.position);
+
+        if (viewPos.x > 0 && viewPos.x < 1)
         {
-            SoundManager.instance.PlayEnvironmentSound("spike_trap_reset");
-            fired = false;
+            if (viewPos.y > 0 && viewPos.y < 1)
+            {
+                SoundManager.instance.PlayEnvironmentSound("spike_trap_reset");
+
+            }
         }
     }
 

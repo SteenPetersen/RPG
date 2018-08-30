@@ -78,10 +78,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c58f8b46d6a98f6439490e864a95b71d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ZoneToLoad: Caves_indoor
+  ZoneToLoad: Caves_dungeon_indoor
   loadingTexts:
   - Deeper we go
-  - Darker still, and safer not
+  - Darker still, but safer not
   - There must be a way out
 --- !u!212 &212224631805075818
 SpriteRenderer:

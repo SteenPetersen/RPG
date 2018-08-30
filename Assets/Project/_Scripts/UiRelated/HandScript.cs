@@ -60,6 +60,9 @@ public class HandScript : MonoBehaviour {
         // if I press the mouse button and my mouse isnt over UI element and I have something in my hand
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && instance.MyMoveable != null)
         {
+            if (MyMoveable is Key)
+                return;
+
             // If its and item in my hand from the inventory
             if (MyMoveable is Item && InventoryScript.instance.FromSlot != null)
             {

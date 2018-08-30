@@ -9,7 +9,7 @@ You can change your keybinds from the main menu.
 #I have taken the liberty of setting up some targets for you. Hit them
 without crossing the line.
 I heard them saying you could'nt hit the ground with an arrow, haha! 
-which... come to think of it... is true... hmmm... oh my! noone can!
+which... come to think of it... is true... hmmm... oh my! no one can!
 #Remember you can also charge a special hit with bows by holding in the 
 right mouse button. This however will consume stamina, so use it carefully.
 #Come back and talk to me when you've successfully hit all three targets,

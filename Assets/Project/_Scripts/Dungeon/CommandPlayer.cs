@@ -17,6 +17,7 @@ public class CommandPlayer : MonoBehaviour {
     [SerializeField] Color endResultOfBlink;
 
     [SerializeField] bool noCollider;
+    [SerializeField] float alphaLevel;
 
     /// <summary>
     /// Accessed by the _TutorialManager
@@ -31,6 +32,18 @@ public class CommandPlayer : MonoBehaviour {
         set
         {
             doneFading = value;
+        }
+    }
+
+    /// <summary>
+    /// return the alpha of the color of this command
+    /// which can show if it is faded or not
+    /// </summary>
+    public float MyAlpha
+    {
+        get
+        {
+            return command.color.a; ;
         }
     }
 

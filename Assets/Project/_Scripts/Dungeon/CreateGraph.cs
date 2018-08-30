@@ -14,7 +14,7 @@ public class CreateGraph : MonoBehaviour {
         //AiGridPath(d, w, node, diameter, cutCorners);
     }
 
-    public void AiGridPath(int depth, int width, float nodeSize, float diameter, bool cutCorners)
+    public bool AiGridPath(int depth, int width, float nodeSize, float diameter, bool cutCorners)
     {
         // This holds all graph data
         AstarData data = AstarPath.active.data;
@@ -53,6 +53,8 @@ public class CreateGraph : MonoBehaviour {
         
         // Scans all graphs, do not call gg.Scan(), that is an internal method
         AstarPath.active.Scan();
+
+        return true;
 
         // this is used to start the coroutine that only renders stuff close to the player
         // has to be called after the final scan so the grid knows where to draw the entire dungeon

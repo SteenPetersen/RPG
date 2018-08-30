@@ -9,7 +9,7 @@ public class SoundManager : MonoBehaviour {
     public AudioClip impact1, impact2, impact3, impact4, impact5, impactWood, impactStone, bow,
                      bladeSwing, impBossHit, impBossDeath, impSwing, impHit, impHit1, impDeath, impDeath1, playerHurt, playerHurt1,
                      impactHit, impactHit1, fireballimpact, fireballimpact1, fireballimpact2, fireballimpact3, firstBossPrepAoe, bigGreenFireball, bigGreenFireball1, bigGreenFireball2, bigGreenFireball3,
-                     potionInteract, potionPickup, fireBurst, firebuildup,
+                     potionInteract, potionPickup, meleePickup, rangedPickup, bookPickup, keyPickup, fireBurst, firebuildup,
                      levelup, deathsound, bomb, shieldblock, shieldriposte, crit,
                      lootdrop, lootAppearsChest, purchase, chestopen, chestclose,
                      demontalk1, demontalk2, demontalk3,
@@ -79,6 +79,10 @@ public class SoundManager : MonoBehaviour {
 
         potionInteract = Resources.Load<AudioClip>("Sound/" + "potion_interact");
         potionPickup = Resources.Load<AudioClip>("Sound/" + "potion_pickup");
+        meleePickup = Resources.Load<AudioClip>("Sound/" + "pickup_melee");
+        rangedPickup = Resources.Load<AudioClip>("Sound/" + "pickup_wood");
+        bookPickup = Resources.Load<AudioClip>("Sound/" + "pickup_book");
+        keyPickup = Resources.Load<AudioClip>("Sound/" + "pickup_key");
 
         firstBossDeath = Resources.Load<AudioClip>("Sound/" + "first_boss_death");
 
@@ -334,9 +338,34 @@ public class SoundManager : MonoBehaviour {
                     audioSrc.PlayOneShot(potionPickup);
                     break;
 
-                case "Small Health Potion_pickup":
-                case "Small Health Potion(Clone)_pickup":
+                case "Potion_pickup":
+                case "Potion(Clone)_pickup":
                     audioSrc.PlayOneShot(potionInteract);
+                    break;
+
+                case "Melee_pickup":
+                case "Melee(Clone)_pickup":
+                    audioSrc.PlayOneShot(meleePickup);
+                    break;
+
+                case "Ranged_pickup":
+                case "Ranged(Clone)_pickup":
+                    audioSrc.PlayOneShot(rangedPickup);
+                    break;
+
+                case "Armor_pickup":
+                case "Armor(Clone)_pickup":
+                    audioSrc.PlayOneShot(meleePickup);
+                    break;
+
+                case "Key_pickup":
+                case "Key(Clone)_pickup":
+                    audioSrc.PlayOneShot(keyPickup);
+                    break;
+
+                case "SpellBook_pickup":
+                case "SpellBook(Clone)_pickup":
+                    audioSrc.PlayOneShot(bookPickup);
                     break;
 
             }

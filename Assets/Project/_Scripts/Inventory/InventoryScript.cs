@@ -170,6 +170,7 @@ public class InventoryScript : MonoBehaviour {
                 bagButton.MyBag = bag;
                 bags.Add(bag);
                 bag.MyBagButton = bagButton;
+                bag.MyBagScript.transform.SetSiblingIndex(bagButton.MyBagIndex);
                 break;
             }
         }
@@ -179,6 +180,7 @@ public class InventoryScript : MonoBehaviour {
     {
         bags.Add(bag);
         bagButton.MyBag = bag;
+        bag.MyBagScript.transform.SetSiblingIndex(bagButton.MyBagIndex);
     }
 
     /// <summary>
@@ -427,6 +429,32 @@ public class InventoryScript : MonoBehaviour {
     /// Returns the amount of items that match the parameter item
     /// </summary>
     /// <param name="type"></param>
+    /// <returns></returns>
+    public Stack<IUseable> GetUseables(IUseable type)
+    {
+        Stack<IUseable> useables = new Stack<IUseable>();
+
+        foreach (Bag bag in bags)
+        {
+            foreach (SlotScript slot in bag.MyBagScript.MySlots)
+            {
+                if (!slot.IsEmpty && slot.MyItem.GetType() == type.GetType())
+                {
+                    foreach (Item currentItem in slot.MyItems)
+                    {
+                        useables.Push(currentItem as IUseable);
+                    }
+                }
+            }
+        }
+
+        return useables;
+    }
+
+    /// <summary>
+    /// Returns the amount of items that match the parameter item
+    /// </summary>
+    /// <param name="type"></param>
     /// <param name="item"></param>
     /// <returns></returns>
     public Stack<IUseable> GetUseables(IUseable type, Item item)
@@ -437,7 +465,7 @@ public class InventoryScript : MonoBehaviour {
         {
             foreach (SlotScript slot in bag.MyBagScript.MySlots)
             {
-                if (!slot.IsEmpty && slot.MyItem.GetType() == type.GetType() && slot.MyItem.name == item.name)
+                if (!slot.IsEmpty && slot.MyItem.GetType() == type.GetType() && item.name == slot.MyItem.name)
                 {
                     foreach (Item currentItem in slot.MyItems)
                     {

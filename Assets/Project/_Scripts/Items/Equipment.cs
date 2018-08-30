@@ -75,7 +75,7 @@ public class Equipment : Item, IUseable {
             info = info + "\nAgi:" + agi;
         }
 
-        if (VendorManager.instance.vendorWindowOpen && showSaleValue)
+        if (VendorWindow.IsOpen && showSaleValue)
         {
             info = info + "\n\nSell:" + sellValue;
         }

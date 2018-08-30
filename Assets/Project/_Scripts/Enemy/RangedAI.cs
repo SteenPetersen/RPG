@@ -14,17 +14,22 @@ public class RangedAI : EnemyAI {
 
     [Tooltip("The value to which the timer shall be reset after casting")]
     [SerializeField] float castingDelay;
+    float originalCastDelay; /// Used to reset the castDelay back to its original number when enemy is moving
     [SerializeField] float castingTimer;
 
 
     Transform projectileLaunchPoint;
     bool inCastingRange;
 
+    bool stoppedMoving;
+
     protected override void Start () {
 
         base.Start();
 
         projectileLaunchPoint = child.transform.Find("ProjectileLaunchPoint");
+
+        originalCastDelay = castingDelay;
     }
 
     protected override void Update () {
@@ -32,6 +37,22 @@ public class RangedAI : EnemyAI {
         base.Update();
 
         CheckCastingRange();
+
+        if (!moving)
+        {
+            if (!stoppedMoving)
+            {
+                castingTimer = 0;
+                stoppedMoving = true;
+            }
+
+            castingDelay = originalCastDelay / 4;
+        }
+        else if (moving)
+        {
+            stoppedMoving = false;
+            castingDelay = originalCastDelay;
+        }
 
         castingTimer -= Time.deltaTime;
 
@@ -46,73 +67,8 @@ public class RangedAI : EnemyAI {
         }
     }
 
-    //public override void DetermineAggro(Vector3 pos)
-    //{
-    //    if (inRange || isDead || pausingMovement)
-    //        return;
-
-    //    //create layer masks for the player and the obstacles ending a finalmask combining both
-    //    int playerLayer = 10;
-    //    int obstacleLayer = 13;
-    //    var playerlayerMask = 1 << playerLayer;
-    //    var obstacleLayerMask = 1 << obstacleLayer;
-    //    var finalMask = playerlayerMask | obstacleLayerMask;
-
-    //    // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
-    //    RaycastHit2D hit = Physics2D.Raycast(transform.position, (pos - transform.position), distanceToLook, finalMask);
-
-    //    RaycastHit2D[] hits = Physics2D.RaycastAll(tr.position, (pos - transform.position), distanceToLook, finalMask);
-
-    //    var drawdirection = (pos - transform.position).normalized;
-    //    Debug.DrawRay(transform.position, (pos - transform.position), Color.cyan);
-    //    Debug.DrawLine(transform.position, (drawdirection * distanceToLook) + transform.position, Color.black, 1f);
-
-    //    // if the ray hits something
-    //    if (hit.transform != null)
-    //    {
-    //        // is it the player?
-    //        if (hit.transform.name == "Player")
-    //        {
-    //            // if you've hit the player but don't have aggro
-    //            if (!haveAggro)
-    //            {
-    //                setter.targetASTAR = playerObj;
-    //                haveAggro = true;
-    //            }
-    //        }
-
-    //        // if you have aggro but what you're first Line of sight object is NOT the player
-    //        else if (haveAggro && hit.transform.name != "Player")
-    //        {
-    //            for (int i = 0; i < hits.Length; i++)
-    //            {
-    //                if (hits[i].transform.name == "Player")
-    //                {
-    //                    //Debug.Log("Player is still in range");
-    //                    return;
-    //                }
-    //            }
-    //            haveAggro = false;
-    //            setter.ai.destination = setter.targetASTAR.transform.position;
-    //            setter.targetASTAR = null;
-    //            //Debug.LogWarning("Lost Line of sight to the player");
-    //            return;
-    //        }
-    //    }
-
-    //    else if (hit.transform == null)
-    //    {
-    //        haveAggro = false;
-    //        setter.targetASTAR = null;
-    //        //Debug.LogWarning("Ran out of my distance");
-    //        return;
-    //    }
-    //}
-
     public override void OnEnemyCastComplete()
     {
-        Debug.Log("Starting OnEnemyCastComplete");
-
         if (setter.targetASTAR != null)
         {
             Vector2 direction = new Vector2(setter.targetASTAR.transform.position.x - transform.position.x, setter.targetASTAR.transform.position.y - transform.position.y);
@@ -137,9 +93,6 @@ public class RangedAI : EnemyAI {
 
             projectile.GetComponent<Rigidbody2D>().AddForce(direction * projectileSpeed);
         }
-
-        Debug.Log("Ending OnEnemyCastComplete");
-
     }
 
     public virtual void CheckCastingRange()
