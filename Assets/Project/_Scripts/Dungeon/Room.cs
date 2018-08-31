@@ -23,6 +23,8 @@ public class Room
 
     public List<TileLocation> edgeFloorTilesOfThisRoom = new List<TileLocation>();
 
+    public List<GameObject> secretCoverTiles;
+
     public bool roundedBossRoom; // testing round rooms
 
     /// To decreases likelihood of going over the board boudaries 
@@ -348,16 +350,18 @@ public class Room
     {
         BoardCreator board = BoardCreator.instance;
 
-        int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
-        int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
+        //int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
+        //int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
+
+        middleFloorTilesInThisRoom.Shuffle();
 
         //Debug.Log("Goal is Placed at position X " + goalX + " and Y " + goalY);
 
-        Vector2 pos = new Vector2(goalX, goalY);
+        Vector2 pos = new Vector2(middleFloorTilesInThisRoom[0].x, middleFloorTilesInThisRoom[0].y);
 
         board.SpawnElement(pos, board.goal);
 
-        TileLocation goalFloorLocation = new TileLocation(goalX, goalY);
+        TileLocation goalFloorLocation = new TileLocation(pos);
 
         board.SpawnGoalFloor(goalFloorLocation);
     }

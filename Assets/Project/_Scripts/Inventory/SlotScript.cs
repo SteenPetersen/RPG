@@ -28,7 +28,6 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
         MyItems.OnPop += new UpdateStackEvent(UpdateSlot);
         MyItems.OnPush += new UpdateStackEvent(UpdateSlot);
         MyItems.OnClear += new UpdateStackEvent(UpdateSlot);
-
     }
 
     /// <summary>

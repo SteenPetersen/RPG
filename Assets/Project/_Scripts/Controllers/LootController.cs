@@ -34,6 +34,13 @@ public class LootController : MonoBehaviour {
     public List<GameObject> chestTier2 = new List<GameObject>();
 
     /// <summary>
+    /// Used when iterating through positions and removing them
+    /// This is updated on each iteration so we dont run out of positions
+    /// and get an indexoutofrange exception.
+    /// </summary>
+    Vector2 defaultLootPos;
+
+    /// <summary>
     /// Needs to be exposed for the equipmentGenerator
     /// </summary>
     public float MyDroppedLootHeight
@@ -46,6 +53,19 @@ public class LootController : MonoBehaviour {
         set
         {
             droppedLootHeight = value;
+        }
+    }
+
+    public float MyDroppedLootDistance
+    {
+        get
+        {
+            return droppedLootDistance;
+        }
+
+        set
+        {
+            droppedLootDistance = value;
         }
     }
 
@@ -154,18 +174,18 @@ public class LootController : MonoBehaviour {
         {
             Vector2 dir = direction.Rotate(15f * i);
 
-            RaycastHit2D hit = Physics2D.Raycast(beginRayCast, dir, droppedLootDistance, finalMask);
+            RaycastHit2D hit = Physics2D.Raycast(beginRayCast, dir, MyDroppedLootDistance, finalMask);
 
             if (hit.collider == null)
             {
-                bool canSpawn = CheckAreaForWalls((Vector2)beginRayCast + (dir.normalized * droppedLootDistance));
+                bool canSpawn = CheckAreaForWalls((Vector2)beginRayCast + (dir.normalized * MyDroppedLootDistance));
 
                 if (canSpawn)
                 {
-                    Vector2 toAdd = (Vector2)beginRayCast + (dir.normalized * droppedLootDistance);
+                    Vector2 toAdd = (Vector2)beginRayCast + (dir.normalized * MyDroppedLootDistance);
                     p.Add(toAdd);
 
-                    Vector2 toAddClose = (Vector2)beginRayCast + (dir.normalized * (droppedLootDistance / 2));
+                    Vector2 toAddClose = (Vector2)beginRayCast + (dir.normalized * (MyDroppedLootDistance / 2));
                     p.Add(toAddClose);
                 }
             }
@@ -190,10 +210,10 @@ public class LootController : MonoBehaviour {
 
         var finalMask = obstacleLayerMask | destructableLayerMask;
 
-        //Start on ground
+        /// Start on the ground
         Vector3 beginRayCast = new Vector3(origin.position.x, origin.position.y, 0);
 
-        // initial direction is from obj and up
+        /// initial direction is from the obj and up
         Vector2 direction = origin.position + Vector3.up;
 
         List<Vector2> p = new List<Vector2>();
@@ -204,12 +224,15 @@ public class LootController : MonoBehaviour {
 
             RaycastHit2D hit = Physics2D.Raycast(beginRayCast, dir, setDistance, finalMask);
 
+
             if (hit.collider == null)
             {
                 bool canSpawn = CheckAreaForWalls((Vector2)beginRayCast + (dir.normalized * setDistance));
 
                 if (canSpawn)
                 {
+                    Debug.DrawRay(beginRayCast, (dir.normalized * setDistance), Color.red, 2f);
+
                     Vector2 toAdd = (Vector2)beginRayCast + (dir.normalized * setDistance);
                     p.Add(toAdd);
 
@@ -227,22 +250,17 @@ public class LootController : MonoBehaviour {
     /// </summary>
     /// <param name="pos"></param>
     /// <returns></returns>
-    bool CheckAreaForWalls(Vector3 pos)
+    public bool CheckAreaForWalls(Vector3 pos)
     {
         int obstaclesLayer = 13;
         var obstacleLayerMask = 1 << obstaclesLayer;
 
-        Collider2D[] wallColliders = Physics2D.OverlapCircleAll(pos, 1f, obstacleLayerMask);
+        Collider2D[] wallColliders = Physics2D.OverlapCircleAll(pos, 1.2f, obstacleLayerMask);
 
         if (wallColliders.Length != 0)
         {
-            foreach (Collider2D col in wallColliders)
-            {
-                if (col.transform.name.Contains("Wall"))
-                {
-                    return false;
-                }
-            }
+            Debug.Log("Found a collider abandoning this location");
+            return false;
         }
 
         return true;
@@ -252,8 +270,23 @@ public class LootController : MonoBehaviour {
     {
         positions.Shuffle();
 
-        Vector2 tmp = positions[0];
-        positions.RemoveAt(0);
-        return tmp;
+        if (positions.Count > 0)
+        {
+            defaultLootPos = positions[0];
+            Vector2 tmp = positions[0];
+            positions.RemoveAt(0);
+            return tmp;
+        }
+
+        return defaultLootPos;
+    }
+
+    public Vector2 FindEndPosition(Transform t, float dist)
+    {
+        List<Vector2> positions = new List<Vector2>();
+
+        positions = FindAllEndPositions(t.transform, dist);
+
+        return SelectEndPosition(positions);
     }
 }

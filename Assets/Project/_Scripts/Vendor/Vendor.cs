@@ -23,12 +23,14 @@ public class Vendor : Interactable
     public IntRange amountOfItems;
     bool interacting;
     Transform player; // used to measure if the player is closeby
+    PlayerController pc;
 
     void Start()
     {
         vendorWindow = VendorWindow.instance;
         MyItems = VendorManager.instance.GetGoods(vendorType, amountOfItems);
         player = PlayerController.instance.transform;
+        pc = PlayerController.instance;
     }
 
     void Update()
@@ -89,6 +91,16 @@ public class Vendor : Interactable
         MyItems.Add(item);
 
         vendorWindow.CreatePages(MyItems);
+    }
+
+    void OnMouseOver()
+    {
+        pc.mouseOverVendor = true;
+    }
+
+    void OnMouseExit()
+    {
+        pc.mouseOverVendor = false;
     }
 
 

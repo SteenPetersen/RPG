@@ -168,7 +168,6 @@ public class PlayerController : MonoBehaviour
 
     EquipmentManager equip;
     DungeonManager dungeon;
-    //bool weaponsGone = false;       // has the player unequipped his/her weapons
 
     //blockState
     bool hasBlockingModifier;           // To make sure armor modifer only get added once when block is clicked
@@ -181,7 +180,6 @@ public class PlayerController : MonoBehaviour
     bool weaponChargeReady;
     float percentageCostOfChargingBow;
     float determineChargeCost;
-    bool notEnoughStaminaWarning;
 
     private void OnEnable()
     {
@@ -261,12 +259,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Controls all the logic for the charing of the bow
+    /// </summary>
     private void ChargeBowShot()
     {
         if (!playerStat.cantRegen)
         {
             playerStat.cantRegen = true;
-            percentageCostOfChargingBow = (playerStat.MyMaxStamina / 100) * 25;
         }
 
         /// if you have enough stamina you can start charging
@@ -296,12 +296,6 @@ public class PlayerController : MonoBehaviour
                 {
                     percentageCostOfChargingBow = determineChargeCost;
                 }
-            }
-
-
-            if (notEnoughStaminaWarning)
-            {
-                notEnoughStaminaWarning = false;
             }
         }
 
@@ -334,6 +328,10 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Initiates the aggro by making a circle around the player
+    /// within which the mobs will check their aggro scripts
+    /// </summary>
     private void HandleAggro()
     {
         // make a layerMask
@@ -379,8 +377,12 @@ public class PlayerController : MonoBehaviour
             // let the script know that you have activated the corutine so you dont keep calling it
             lineOfSightRoutineActivated = true;
         }
-    } // commented
+    }
 
+    /// <summary>
+    /// Handles animation of the player, 
+    /// primarily hitting and shooting
+    /// </summary>
     private void HandleAnimation()
     {
 
@@ -388,9 +390,11 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("VelocityX", Mathf.Abs(rigid.velocity.x));
         anim.SetFloat("VelocityY", Mathf.Abs(rigid.velocity.y));
 
-        // make sure that is players mouse is over the UI that the player doesnt start performing animations
+        /// Ensure that if player's mouse is over the UI that the player doesnt start performing animations
         if (eventSys.IsPointerOverGameObject())
+        {
             return;
+        }
 
         // if the current state of the player is melee
         if (melee)
@@ -586,9 +590,12 @@ public class PlayerController : MonoBehaviour
                 {
                     if (equip.currentEquipment[3] != null)
                     {
-                        autoFiring = true;
                         maxChargedHit = false;
-                        anim.SetTrigger("ShootRanged");
+
+                        if (!autoFiring)
+                        {
+                            StartCoroutine(AutoFire());
+                        }
                     }
                 }
             }
@@ -707,63 +714,6 @@ public class PlayerController : MonoBehaviour
             mouseOverItem = false;
         }
 
-    } // commented
-
-    /// <summary>
-    /// Stops the state of charging the bow
-    /// </summary>
-    /// <param name="changingState">In case we wish to change the state due to coming from the 
-    /// melee state and not because the player has fired his arrows</param>
-    private void StopRangedChargeShotState(bool changingState = false)
-    {
-        if (!changingState)
-        {
-            anim.SetBool("ChargedShot", false);
-        }
-        else if (changingState)
-        {
-            anim.SetTrigger("abandonCharge");
-            anim.SetBool("ChargedShot", false);
-        }
-
-        chargedShot = false;
-
-        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98 && !changingState)
-        {
-            maxChargedHit = true;
-        }
-
-        Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-        tmp.a = 0;
-        EquipmentManager.instance.weaponGlowSlot.color = tmp;
-        weaponChargeReady = false;
-        bowCharged.Stop();
-
-
-        if (playerStat.chargeHeld)
-        {
-            playerStat.chargeHeld = false;
-        }
-    }
-
-    private void StopMeleeChargedHitState(bool changeingState = false)
-    {
-        maxChargedHit = false;
-
-        // check if player was trying to to do a charged hit
-        if (largeStrikeAnimationReady)
-        {
-            anim.SetBool("StrikeHold", false);
-            largeStrikeAnimationReady = false;
-
-            Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
-            tmp.a = 0;
-            EquipmentManager.instance.weaponGlowSlot.color = tmp;
-            weaponChargeReady = false;
-            weaponCharged.Stop();
-
-            return;
-        }
     }
 
     /// <summary>
@@ -840,6 +790,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles what happens when the action buttons are clicked
+    /// </summary>
     private void HandleActionBarInput()
     {
         if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION3"]))
@@ -866,6 +819,10 @@ public class PlayerController : MonoBehaviour
         //}
     }
 
+    /// <summary>
+    /// Handles changing the state of the player between
+    /// Ranged state and Melee State
+    /// </summary>
     private void HandleCombatState()
     {
         if (Input.GetKeyDown(KeybindManager.instance.ActionBinds["ACTION1"])) // ACTION1 is trying to use Melee
@@ -910,6 +867,67 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Stops the state of charging the bow
+    /// </summary>
+    /// <param name="changingState">In case we wish to change the state due to coming from the 
+    /// melee state and not because the player has fired his arrows</param>
+    private void StopRangedChargeShotState(bool changingState = false)
+    {
+        if (!changingState)
+        {
+            anim.SetBool("ChargedShot", false);
+        }
+        else if (changingState)
+        {
+            anim.SetTrigger("abandonCharge");
+            anim.SetBool("ChargedShot", false);
+        }
+
+        chargedShot = false;
+
+        if (EquipmentManager.instance.weaponGlowSlot.color.a > 0.98 && !changingState)
+        {
+            maxChargedHit = true;
+        }
+
+        Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+        tmp.a = 0;
+        EquipmentManager.instance.weaponGlowSlot.color = tmp;
+        weaponChargeReady = false;
+        bowCharged.Stop();
+
+
+        if (playerStat.chargeHeld)
+        {
+            playerStat.chargeHeld = false;
+        }
+    }
+
+    /// <summary>
+    /// Stops the state of charging a large hit
+    /// </summary>
+    /// <param name="changingState">In case we wish to change the state 
+    /// due to coming from the ranged state </param>
+    private void StopMeleeChargedHitState(bool changeingState = false)
+    {
+        maxChargedHit = false;
+
+        // check if player was trying to to do a charged hit
+        if (largeStrikeAnimationReady)
+        {
+            anim.SetBool("StrikeHold", false);
+            largeStrikeAnimationReady = false;
+
+            Color tmp = EquipmentManager.instance.weaponGlowSlot.color;
+            tmp.a = 0;
+            EquipmentManager.instance.weaponGlowSlot.color = tmp;
+            weaponChargeReady = false;
+            weaponCharged.Stop();
+
+            return;
+        }
+    }
 
     private bool CheckIfPlayerMayHit()
     {
@@ -950,9 +968,6 @@ public class PlayerController : MonoBehaviour
 
             if (vendor != null)
             {
-                // Stop player from hitting 
-
-
                 return vendor;
             }
             else
@@ -963,7 +978,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            //RemoveFocus();
             SetMousePosition();
             return null;
         }
@@ -1265,7 +1279,7 @@ public class PlayerController : MonoBehaviour
     } // commented
 
     /// <summary>
-    /// Make sures all references are set for the player
+    /// Ensures all references are set for the player
     /// </summary>
     private void InitializePlayerGameObject()
     {
@@ -1320,7 +1334,6 @@ public class PlayerController : MonoBehaviour
     } // commented
 
     bool spawnInRunning;
-
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (portal && !spawnInRunning)
@@ -1533,6 +1546,24 @@ public class PlayerController : MonoBehaviour
         // if there are no enemies in range then let the HandleAggro function know that the coroutine is not running and it can be restarted.
         lineOfSightRoutineActivated = false;
     } // commented
+
+
+    /// <summary>
+    /// Ensures the player only fires 1 arrow if button is only pressed once
+    /// but allows autofiring to also feel seamless, QoL effect that feel more
+    /// natural
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator AutoFire()
+    {
+        autoFiring = true;
+
+        anim.SetTrigger("ShootRanged");
+
+        yield return new WaitForSeconds(0.5f);
+
+        autoFiring = false;
+    }
 
 
 }

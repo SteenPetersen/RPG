@@ -76,7 +76,7 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: -1
 --- !u!33 &33491827958854720
 MeshFilter:
@@ -120,7 +120,7 @@ MonoBehaviour:
   SortOrderID: -1
   strokeRender: 0
   LightRadius: 3.9
-  Segments: 20
+  Segments: 30
   Layer:
     serializedVersion: 2
     m_Bits: 8192

@@ -9,8 +9,6 @@ public class LootParabola : MonoBehaviour {
     float height;
     private float timeToDestination;
 
-    bool go;
-
     public Vector2 _StartPosition
     {
         get
@@ -50,18 +48,6 @@ public class LootParabola : MonoBehaviour {
         }
     }
 
-    public bool Go
-    {
-        get
-        {
-            return go;
-        }
-
-        set
-        {
-            go = value;
-        }
-    }
     public bool positionsSet;
 
     Vector2 localStartPos;
@@ -80,17 +66,18 @@ public class LootParabola : MonoBehaviour {
         }
     }
 
-    bool bounce;
-
     public IEnumerator Parabola()
     {
+        /// Create a temporary Object so we can move in local positions
         GameObject tmpObject = new GameObject();
         tmpObject.transform.rotation = CameraController.instance.transform.rotation;
         tmpObject.transform.parent = null;
         tmpObject.transform.position = _StartPosition;
 
+        /// Parent this Object to the temporary object
         transform.parent = tmpObject.transform;
 
+        /// Convert the desired positions to local positions
         if (!positionsSet)
         {
             localStartPos = transform.InverseTransformPoint(_StartPosition);
@@ -98,22 +85,29 @@ public class LootParabola : MonoBehaviour {
             positionsSet = true;
         }
 
+        /// Set the layer of the item so that it will render infront of everything while in the air
         gameObject.layer = 28;
 
-        while (Vector2.Distance(transform.localPosition, localEndPos) > 0.2f
-            && _TimeToDestination < 0.5f)
+        /// Perform the parabola movement
+        if (transform != null)
         {
-            _TimeToDestination += Time.deltaTime;
+            while (Vector2.Distance(transform.localPosition, localEndPos) > 0.2f && _TimeToDestination < 0.5f)
+            {
+                _TimeToDestination += Time.deltaTime;
 
-            transform.localPosition = ExtMethods.Parabola(localStartPos, localEndPos, _Height, _TimeToDestination * 2);
+                transform.localPosition = ExtMethods.Parabola(localStartPos, localEndPos, _Height, _TimeToDestination * 2);
 
-            yield return null;
+                yield return null;
+            }
         }
 
+        /// Unparent, play sound, set the approriate layer and make it lootable
         transform.parent = null;
         SoundManager.instance.PlayUiSound("lootdrop");
         gameObject.layer = 10;
+        GetComponent<BoxCollider>().enabled = true;
 
+        /// destroy that temporary Object
         Destroy(tmpObject);
     }
 }

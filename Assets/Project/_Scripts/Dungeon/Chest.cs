@@ -129,16 +129,16 @@ public class Chest : Interactable {
     /// </summary>
     private void OpenChest()
     {
-        // if player has this item in focus and has not interacted with it
+        /// If noone has interacted with this object before
         if (!hasInteracted)
         {
-            //player a sound for opening the chest
+            /// play a sound for opening the chest
             SoundManager.instance.PlayUiSound("chestopen");
 
-            // change the sprite to look like the chest is open
+            /// change the sprite to look like the chest is open
             rend.sprite = open;
 
-            // if this chest has not been opened before
+            /// if this chest has not been opened before
             if (!hasBeenOpened)
             {
                 bool hasLoot = DetermineLoot();
@@ -183,7 +183,7 @@ public class Chest : Interactable {
         {
             for (int i = 0; i < specificItems.Length; i++)
             {
-                loot.Add(Instantiate(specificItems[i]));
+                loot.Add(Instantiate(specificItems[i], transform.position, Quaternion.identity));
             }
 
 
@@ -218,13 +218,6 @@ public class Chest : Interactable {
     {
         if (loot.Count != 0)
         {
-            //GameObject shadeChest = new GameObject();
-            //shadeChest.transform.rotation = CameraController.instance.transform.rotation;
-            //shadeChest.transform.parent = null;
-            //shadeChest.transform.position = transform.position;
-
-            //positions = LootController.instance.FindAllEndPositions(shadeChest.transform, distanceFromChest);
-
             StartCoroutine(SpawnLootItems(loot, loot.Count));
         }
 
@@ -291,6 +284,8 @@ public class Chest : Interactable {
 
     IEnumerator SpawnLootItems(List<GameObject> items, int count)
     {
+        yield return new WaitForSeconds(0.1f);
+
         foreach (var item in items)
         {
             var text = CombatTextManager.instance.FetchText(transform.position);
@@ -306,14 +301,11 @@ public class Chest : Interactable {
             // TODO maybe activate (SetActive) the lootParabola here instead of having it on the default item? if it gives trouble elsewhere 
             // then this would be the place to fix it
 
-            //item.transform.parent = shadeChest;
             item.transform.position = transform.position;
 
             List<Vector2> positions = new List<Vector2>();
 
             positions = LootController.instance.FindAllEndPositions(transform, distanceFromChest);
-
-            Debug.Log(positions.Count);
 
             Vector2 endPosition = LootController.instance.SelectEndPosition(positions);
 
@@ -321,19 +313,16 @@ public class Chest : Interactable {
             movement._StartPosition = transform.position;
             movement._Height = heightOfLootJump;
 
-            //Debug.DrawLine(shadeChest.position, endPosition, Color.cyan, 5f);
+            Debug.DrawLine(transform.position, endPosition, Color.cyan, 5f);
 
             StartCoroutine(movement.Parabola());
-            //movement.Go = true;
 
-            //shadeChest.gameObject.name = item.name + "_Creator";
             SoundManager.instance.PlayUiSound("lootAppearsChest");
 
             yield return new WaitForSeconds(0.5f);
         }
 
         lootTaken = true;
-        //Destroy(shadeChest.gameObject, 3f);
     }
 }
 

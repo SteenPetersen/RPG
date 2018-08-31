@@ -81,6 +81,7 @@ public class VendorButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
             if (vendorItem.MyQuantity == 0)
             {
                 gameObject.SetActive(false);
+                UiManager.instance.HideToolTip();
             }
         }
     }

@@ -174,7 +174,16 @@ public class BoardCreator : MonoBehaviour
 
     }
 
-    public void SpawnElement(Vector3 pos, GameObject obj, bool randRot = false, bool isBoss = false, bool wall = false)
+    /// <summary>
+    /// Spawns an elemtn into the dungeon
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="obj"></param>
+    /// <param name="randRot"></param>
+    /// <param name="isBoss"></param>
+    /// <param name="wall"></param>
+    /// <returns></returns>
+    public GameObject SpawnElement(Vector3 pos, GameObject obj, bool randRot = false, bool isBoss = false, bool wall = false)
     {
         GameObject tmp = Instantiate(obj, pos, Quaternion.identity);
 
@@ -205,6 +214,28 @@ public class BoardCreator : MonoBehaviour
         {
             tmp.transform.position = new Vector3(tmp.transform.position.x, tmp.transform.position.y, -0.5f);
         }
+
+        return tmp;
+    }
+
+    /// <summary>
+    /// Overload method which adds items to a list
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="obj"></param>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public GameObject SpawnElement(Vector3 pos, GameObject obj, List<GameObject> list)
+    {
+        GameObject tmp = Instantiate(obj, pos, Quaternion.identity);
+
+        if (tmp.tag == "SecretRoomCover")
+        {
+            tmp.transform.parent = boardHolder.transform;
+            list.Add(tmp);
+        }
+
+        return tmp;
     }
 
     /// <summary>
@@ -557,7 +588,7 @@ public class BoardCreator : MonoBehaviour
                     }
                 }
 
-                rooms[rooms.Count - 1].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[corridors.Count - 1], numEnemy, spaceForBossRoom); // TODO change this bool to spacewforbossroom
+                rooms[rooms.Count - 1].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[corridors.Count - 1], numEnemy, spaceForBossRoom);
 
             }
         }
@@ -3516,35 +3547,42 @@ public class BoardCreator : MonoBehaviour
         Room lowestRoom = rooms[0];
         lowestRoom = FindLowestRoom(avg, lowestRoom);
 
-        Corridor secretCorridorNorth = new Corridor();
-        bool northRoom = secretCorridorNorth.SetupCorridor(highestRoom, Direction.North);
-
-        Corridor secretCorridorSouth = new Corridor();
-        bool southRoom = secretCorridorSouth.SetupCorridor(lowestRoom, Direction.South);
-
-        if (northRoom)
+        if (highestRoom.roundedBossRoom == false)
         {
-            secretCorridors.Add(secretCorridorNorth);
+            Corridor secretCorridorNorth = new Corridor();
+            bool northRoom = secretCorridorNorth.SetupCorridor(highestRoom, Direction.North);
 
-            Room hiddenRoom = new Room();
-            hiddenRoom.SetupSecretRoom(hiddenRoomWidth, hiddenRoomHeight, columns, rows, secretCorridorNorth);
+            if (northRoom)
+            {
+                secretCorridors.Add(secretCorridorNorth);
 
-            secretRooms.Add(hiddenRoom);
+                Room hiddenRoom = new Room();
+                hiddenRoom.SetupSecretRoom(hiddenRoomWidth, hiddenRoomHeight, columns, rows, secretCorridorNorth);
 
-            Debug.Log("created secret room (North) start from secret corridor " + secretCorridorNorth.startXPos + "   " + secretCorridorNorth.startYPos);
+                secretRooms.Add(hiddenRoom);
+
+                Debug.Log("created secret room (North) start from secret corridor " + secretCorridorNorth.startXPos + "   " + secretCorridorNorth.startYPos);
+            }
         }
 
-        if (southRoom)
+        if (lowestRoom.roundedBossRoom == false)
         {
-            secretCorridors.Add(secretCorridorSouth);
+            Corridor secretCorridorSouth = new Corridor();
+            bool southRoom = secretCorridorSouth.SetupCorridor(lowestRoom, Direction.South);
 
-            Room hiddenRoom = new Room();
-            hiddenRoom.SetupSecretRoom(hiddenRoomWidth, hiddenRoomHeight, columns, rows, secretCorridorSouth);
+            if (southRoom)
+            {
+                secretCorridors.Add(secretCorridorSouth);
 
-            secretRooms.Add(hiddenRoom);
+                Room hiddenRoom = new Room();
+                hiddenRoom.SetupSecretRoom(hiddenRoomWidth, hiddenRoomHeight, columns, rows, secretCorridorSouth);
 
-            Debug.Log("created secret room (South) start from secret corridor " + secretCorridorSouth.startXPos + "   " + secretCorridorSouth.startYPos);
+                secretRooms.Add(hiddenRoom);
+
+                Debug.Log("created secret room (South) start from secret corridor " + secretCorridorSouth.startXPos + "   " + secretCorridorSouth.startYPos);
+            }
         }
+
     }
 
     /// <summary>
@@ -3873,14 +3911,18 @@ public class BoardCreator : MonoBehaviour
 
     void CoverSecretArea()
     {
+        float heightOfBlackArea = -1.001f;
+
         foreach (Room room in secretRooms)
         {
             Debug.Log("Attempting to cover area, there are " + room.middleFloorTilesInThisRoom.Count + " middle floor tiles");
 
+            room.secretCoverTiles = new List<GameObject>();
+
             foreach (TileLocation tile in room.middleFloorTilesInThisRoom)
             {
-                Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -1.01f);
-                SpawnElement(tilePos, secretCover, false, false, false);
+                Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -heightOfBlackArea);
+                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
             }
 
             switch (room.enteringCorridor)
@@ -3889,48 +3931,48 @@ public class BoardCreator : MonoBehaviour
 
                     foreach (TileLocation tile in room.edgeFloorTilesOfThisRoom)
                     {
-                        Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -1.01f);
-                        SpawnElement(tilePos, secretCover, false, false, false);
+                        Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -heightOfBlackArea);
+                        SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
                         /// Left Wall
                         if (tile.MyPosition.x == room.xPos && tile.MyPosition.y >= room.yPos)
                         {
-                            Vector3 leftWall = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y, -1.01f);
-                            SpawnElement(leftWall, secretCover, false, false, false);
+                            Vector3 leftWall = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y, -heightOfBlackArea);
+                            SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
                             /// Top left corner
                             if (tile.MyPosition.y == room.yPos + room.roomHeight - 1)
                             {
                                 Vector3 diagonallyUpLeft = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y + 1, -1.01f);
-                                SpawnElement(diagonallyUpLeft, secretCover, false, false, false);
+                                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
                                 Vector3 directlyAbove = new Vector3(tile.MyPosition.x, tile.MyPosition.y + 1, -1.01f);
-                                SpawnElement(directlyAbove, secretCover, false, false, false);
+                                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
                             }
                         }
 
                         /// Top Wall
                         else if (tile.MyPosition.y == room.yPos + room.roomHeight - 1)
                         {
-                            Vector3 topWall = new Vector3(tile.MyPosition.x, tile.MyPosition.y + 1, -1.01f);
-                            SpawnElement(topWall, secretCover, false, false, false);
+                            Vector3 topWall = new Vector3(tile.MyPosition.x, tile.MyPosition.y + 1, -heightOfBlackArea);
+                            SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
                             /// Top Right Corner
                             if (tile.MyPosition.x == room.xPos + room.roomWidth - 1)
                             {
-                                Vector3 diagonallyUpRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y + 1, -1.01f);
-                                SpawnElement(diagonallyUpRight, secretCover, false, false, false);
+                                Vector3 diagonallyUpRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y + 1, -heightOfBlackArea);
+                                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
-                                Vector3 directlyright = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -1.01f);
-                                SpawnElement(directlyright, secretCover, false, false, false);
+                                Vector3 directlyright = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -heightOfBlackArea);
+                                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
                             }
                         }
 
                         /// Right Wall
                         else if (tile.MyPosition.x == room.xPos + room.roomWidth - 1)
                         {
-                            Vector3 rightWall = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -1.01f);
-                            SpawnElement(rightWall, secretCover, false, false, false);
+                            Vector3 rightWall = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -heightOfBlackArea);
+                            SpawnElement(tilePos, secretCover, room.secretCoverTiles);
                         }
 
                     }
@@ -3942,48 +3984,48 @@ public class BoardCreator : MonoBehaviour
 
                     foreach (TileLocation tile in room.edgeFloorTilesOfThisRoom)
                     {
-                        Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -1.01f);
-                        SpawnElement(tilePos, secretCover, false, false, false);
+                        Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -heightOfBlackArea);
+                        SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
                         ///Left wall
                         if (tile.MyPosition.x == room.xPos && tile.MyPosition.y >= room.yPos)
                         {
-                            Vector3 leftWall = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y, -1.01f);
-                            SpawnElement(leftWall, secretCover, false, false, false);
+                            Vector3 leftWall = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y, -heightOfBlackArea);
+                            SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
                             ///Bottom left corner
                             if (tile.MyPosition.y == room.yPos)
                             {
-                                Vector3 diagonallyUnder = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y - 1, -1.01f);
-                                SpawnElement(diagonallyUnder, secretCover, false, false, false);
+                                Vector3 diagonallyUnder = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y - 1, -heightOfBlackArea);
+                                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
-                                Vector3 directlyUnder = new Vector3(tile.MyPosition.x, tile.MyPosition.y - 1, -1.01f);
-                                SpawnElement(directlyUnder, secretCover, false, false, false);
+                                Vector3 directlyUnder = new Vector3(tile.MyPosition.x, tile.MyPosition.y - 1, -heightOfBlackArea);
+                                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
                             }
                         }
 
                         /// bottom wall
                         else if (tile.MyPosition.y == room.yPos)
                         {
-                            Vector3 bottomWall = new Vector3(tile.MyPosition.x, tile.MyPosition.y - 1, -1.01f);
-                            SpawnElement(bottomWall, secretCover, false, false, false);
+                            Vector3 bottomWall = new Vector3(tile.MyPosition.x, tile.MyPosition.y - 1, -heightOfBlackArea);
+                            SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
                             ///Bottom right corner
                             if (tile.MyPosition.x == room.xPos + room.roomWidth - 1)
                             {
-                                Vector3 diagonallyDownRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y - 1, -1.01f);
-                                SpawnElement(diagonallyDownRight, secretCover, false, false, false);
+                                Vector3 diagonallyDownRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y - 1, -heightOfBlackArea);
+                                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
 
-                                Vector3 directlyToTheRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -1.01f);
-                                SpawnElement(directlyToTheRight, secretCover, false, false, false);
+                                Vector3 directlyToTheRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -heightOfBlackArea);
+                                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
                             }
                         }
 
                         /// right wall
                         else if (tile.MyPosition.x == room.xPos + room.roomWidth - 1)
                         {
-                            Vector3 rightWall = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -1.01f);
-                            SpawnElement(rightWall, secretCover, false, false, false);
+                            Vector3 rightWall = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -heightOfBlackArea);
+                            SpawnElement(tilePos, secretCover, room.secretCoverTiles);
                         }
 
                     }
@@ -4223,12 +4265,14 @@ public class BoardCreator : MonoBehaviour
 
             CreateRoomsAndCorridors();
 
-
             try
             {
-                CheckForSecretRooms();
                 SetTilesValuesForCorridors();
                 SetTilesValuesForRooms();
+
+                ///Reliant on setTileValulesForRooms so it
+                ///knows wether the rooms it checks are boss rooms or not
+                CheckForSecretRooms();
 
                 SetTilesValuesForSecretCorridors();
                 SetTileValuesForSecretRooms();
@@ -4301,7 +4345,7 @@ public class TileLocation
     public int y;
 
     /// <summary>
-    /// Normal constructor
+    /// Default constructor
     /// </summary>
     public TileLocation()
     {
@@ -4309,7 +4353,8 @@ public class TileLocation
     }
 
     /// <summary>
-    /// Paramaterized constructor 
+    /// Paramaterized constructor where each part of the 
+    /// vector is defined individually
     /// </summary>
     /// <param name="xStart"></param>
     /// <param name="yStart"></param>
@@ -4317,6 +4362,16 @@ public class TileLocation
     {
         x = xStart;
         y = yStart;
+    }
+
+    /// <summary>
+    /// Parameterized constructor which takes a vector
+    /// </summary>
+    /// <param name="pos"></param>
+    public TileLocation(Vector2 pos)
+    {
+        x = (int)pos.x;
+        y = (int)pos.y;
     }
 
     public Vector2 MyPosition

@@ -86,7 +86,7 @@ public class GameDetails : MonoBehaviour {
 
     public int stage;
     public int kingSpeech;
-    public bool paused, loadingScene;
+    public bool paused, loadingScene, slowMotion;
     public GameObject[] generalObjects;
 
     public Plane m_Plane = new Plane(Vector3.forward, Vector3.zero);
@@ -139,6 +139,12 @@ public class GameDetails : MonoBehaviour {
         {
             Time.timeScale = 0;
         }
+
+        if (slowMotion)
+        {
+            Time.timeScale = 0.2f;
+        }
+
         else if (!paused)
         {
             Time.timeScale = 1;
@@ -964,9 +970,10 @@ public class GameDetails : MonoBehaviour {
     /// <returns></returns>
     public IEnumerator FadeOutAndLoadScene(string zoneToLoad, Vector2 playerPos)
     {
+        fadeToBlack.gameObject.SetActive(true);
+
         while (fadeToBlack.alpha <= 0.98)
         {
-            fadeToBlack.gameObject.SetActive(true);
             fadeToBlack.alpha += 0.02f;
             yield return new WaitForSeconds(0.01f);
         }
@@ -1004,6 +1011,41 @@ public class GameDetails : MonoBehaviour {
         Load();
 
         yield return null;
+    }
+
+    public IEnumerator SetTimeBackToNormal()
+    {
+        slowMotion = false;
+
+        while (Time.timeScale < 1)
+        {
+            Debug.Log("!");
+            Time.timeScale += 0.05f;
+            yield return new WaitForSeconds(0.02f);
+        }
+
+        Time.timeScale = 1;
+
+        yield return null;
+    }
+
+    public IEnumerator LerpTime(float _lerpTimeTo, float _timeToTake, DungeonLevelLoadLogic script)
+    {
+        slowMotion = false;
+
+        float endTime = Time.time + _timeToTake;
+        float startTimeScale = Time.timeScale;
+        float i = 0f;
+        while (Time.time < endTime)
+        {
+            i += (1 / _timeToTake) * Time.deltaTime;
+            Time.timeScale = Mathf.Lerp(startTimeScale, _lerpTimeTo, i);
+            print(Time.timeScale);
+            yield return null;
+        }
+        Time.timeScale = _lerpTimeTo;
+
+        script.routineStarted = false;
     }
 
     /// <summary>

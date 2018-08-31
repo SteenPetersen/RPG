@@ -311,6 +311,13 @@ public class UiManager : MonoBehaviour {
         toolTip.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
     }
 
+    public void RefreshToolTip(IDescribable description, bool showSaleValue = true, float size = 1)
+    {
+        toolTipTitle.text = description.GetTitle();
+        toolTipStats.text = description.GetDescription(showSaleValue);
+        toolTip.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
+    }
+
     /// <summary>
     /// Handles hiding the tooltip whenever the mouse
     /// is no longer over an element that requires it
