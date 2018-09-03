@@ -16,11 +16,15 @@ public class EnemyStats : CharacterStats {
 
     public List<GameObject> specialLoot = new List<GameObject>();
 
+    [SerializeField] int _health;
+
     private void Start()
     {
         enemyAI = gameObject.GetComponent<EnemyAI>();
         anim = enemyAI.child.GetComponent<Animator>();
         playerExp = ExperienceManager.instance;
+        MyMaxHealth = _health;
+        MyCurrentHealth = _health;
     }
 
     public override void Die()
@@ -118,9 +122,9 @@ public class EnemyStats : CharacterStats {
                 newDmg += bonusDmg;
             }
 
-            currentHealth -= newDmg;
+            MyCurrentHealth -= newDmg;
 
-            if (currentHealth <= 0)
+            if (MyCurrentHealth <= 0)
             {
                 SoundManager.instance.PlayCombatSound(gameObject.name + "_death");
                 Die();
@@ -133,13 +137,13 @@ public class EnemyStats : CharacterStats {
             text.transform.position = transform.position;
             text.gameObject.SetActive(true);
 
-            if (currentHealth > 0)
+            if (MyCurrentHealth > 0)
             {
                 anim.SetTrigger("Hurt");
                 SoundManager.instance.PlayCombatSound(gameObject.name);
             }
 
-            enemyAI.healthbar.value = CalculateHealth(currentHealth, maxHealth);
+            enemyAI.healthbar.value = CalculateHealth(MyCurrentHealth, MyMaxHealth);
 
             // hit sound
             SoundManager.instance.PlayCombatSound(gameObject.name + "_hit");

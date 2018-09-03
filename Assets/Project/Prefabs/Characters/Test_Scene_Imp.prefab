@@ -72,7 +72,6 @@ GameObject:
   - component: {fileID: 114677511156904108}
   - component: {fileID: 114150843812300096}
   - component: {fileID: 50088470091262628}
-  - component: {fileID: 210050427327462776}
   m_Layer: 27
   m_Name: Test_Scene_Imp
   m_TagString: Enemy
@@ -282,12 +281,13 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4533305696478740}
+  - component: {fileID: 210913419389727306}
   m_Layer: 11
   m_Name: Skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1757835865388490
 GameObject:
@@ -489,7 +489,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1102277418783018}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.030693, y: -15.124815, z: 0}
+  m_LocalPosition: {x: -0.5555, y: 2.222, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4222326294375492}
@@ -547,7 +547,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1698190909181940}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4375, z: 0}
+  m_LocalPosition: {x: 0, y: 0.57, z: -0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4890530412862204}
@@ -924,7 +924,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335e7911ae216954dae8d856ffee6b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 65
   damage:
     baseValue: 0
   armor:
@@ -1136,15 +1135,15 @@ MonoBehaviour:
   traversableTags: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask: -1
---- !u!210 &210050427327462776
+--- !u!210 &210913419389727306
 SortingGroup:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1102277418783018}
+  m_GameObject: {fileID: 1698190909181940}
   m_Enabled: 1
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
 --- !u!212 &212013973751566572
 SpriteRenderer:
@@ -1179,7 +1178,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300032, guid: 8aebb6f418e46264b8c219c56060fc33, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1224,7 +1223,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1584,7 +1583,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1764,7 +1763,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1944,7 +1943,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

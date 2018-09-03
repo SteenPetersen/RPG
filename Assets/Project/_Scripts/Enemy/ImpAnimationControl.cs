@@ -61,4 +61,9 @@ public class ImpAnimationControl : MonoBehaviour {
     {
         ai.DieBurning();
     }
+
+    public void ThrowComplete()
+    {
+        ai.OnThrowComplete();
+    }
 }

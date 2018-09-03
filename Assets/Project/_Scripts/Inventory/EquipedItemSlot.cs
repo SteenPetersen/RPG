@@ -12,6 +12,8 @@ public class EquipedItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     private Equipment equipment;
 
+    bool displayingTooltip;
+
     public Equipment MyEquipment
     {
         get
@@ -47,6 +49,11 @@ public class EquipedItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
         MyIcon.sprite = MyEquipment.icon;
         MyIcon.enabled = true;
+
+        if (displayingTooltip)
+        {
+            UiManager.instance.RefreshToolTip(newItem);
+        }
     }
 
     public void ClearSLot()
@@ -127,6 +134,7 @@ public class EquipedItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
         if (MyEquipment != null)
         {
             UiManager.instance.ShowToolTipEquipmentView(MyEquipment);
+            displayingTooltip = true;
         }
     }
 
@@ -134,5 +142,6 @@ public class EquipedItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         // hide tooltip
         UiManager.instance.HideToolTip();
+        displayingTooltip = false;
     }
 }

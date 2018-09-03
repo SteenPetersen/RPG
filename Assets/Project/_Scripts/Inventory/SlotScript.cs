@@ -12,11 +12,10 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
     /// </summary>
     private ObservableStack<Item> items = new ObservableStack<Item>();
 
-    [SerializeField]
-    private Image icon;
+    [SerializeField] private Image icon;
+    [SerializeField] private Text stackSize;
 
-    [SerializeField]
-    private Text stackSize;
+    bool showingToolTip;
 
     /// <summary>
     /// reference to the Bag that this slot is associated with
@@ -186,9 +185,10 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            // If I didnt pick anything up from another slot
+            /// Hand is empty but the slot I clicked is not empty
             if (InventoryScript.instance.FromSlot == null && !IsEmpty)
             {
+                /// I have a bag in my hand
                 if (HandScript.instance.MyMoveable != null && HandScript.instance.MyMoveable is Bag)
                 {
                     if (MyItem is Bag)
@@ -200,16 +200,18 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
                 {
                     HandScript.instance.TakeMoveable(MyItem as IMoveable);
                     InventoryScript.instance.FromSlot = this;
+                    SoundManager.instance.PlayInventorySound(MyItem.typeOfEquipment + "_pickup");
                 }
 
             }
-            // if I didnt pick anything up from another slot
+
+            /// Hand has a bag in it, but it didnt come from another bag slot, and this slot is empty
             else if (InventoryScript.instance.FromSlot == null && IsEmpty && (HandScript.instance.MyMoveable is Bag))
             {
-                // dequips a bag from the inventory
+                /// dequips a bag from the inventory
                 Bag bag = (Bag)HandScript.instance.MyMoveable;
 
-                // if your not trying top place the bag inside itself
+                // if your not trying to place the bag inside itself
                 if (bag.MyBagScript != MyBag && InventoryScript.instance.MyEmptySlotCount - bag.Slots > 0)
                 {
                     AddItem(bag);
@@ -218,7 +220,8 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
                 }
 
             }
-            // I have picked something up from somewhere else
+
+            /// Picked something up from somewhere else
             else if (InventoryScript.instance.FromSlot != null)
             {
                 if (PutItemBack() || MergeItems(InventoryScript.instance.FromSlot) || SwapItems(InventoryScript.instance.FromSlot) || AddItems(InventoryScript.instance.FromSlot.MyItems))
@@ -227,7 +230,8 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
                     InventoryScript.instance.FromSlot = null;
                 }
             }
-            // I have taken an item that was previously equipped
+
+            /// I have taken an item that was previously equipped
             else if (InventoryScript.instance.FromEqippedSlot != null && IsEmpty)
             {
                 if (AddItem(InventoryScript.instance.FromEqippedSlot.MyEquipment))
@@ -249,7 +253,6 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
                 // sell this item
                 if (MyItem.sellValue > 0)
                 {
-                    Debug.Log(MyItem.name + "   " + MyItem.sellValue);
                     VendorManager.instance.Sell(MyItem.sellValue, MyItem);
                     RemoveItem(MyItem);
                     return;
@@ -300,7 +303,6 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
         return false;
     }
 
-
     private bool PutItemBack()
     {
         if (InventoryScript.instance.FromSlot == this)
@@ -318,6 +320,7 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
         {
             return false;
         }
+
         // if the item im moving is different from the item(s) in this slot
         // or if the count of items in my hand plus the items in this slot is larger than the total stacksize allowed 
         if (from.MyItem.GetType() != MyItem.GetType() || from.MyCount+MyCount > MyItem.MyStackSize)
@@ -334,6 +337,13 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
             MyItems.Clear();
             // Adding the items we originally copied into this slot
             AddItems(tmpFrom);
+
+            Debug.Log("from slotting");
+
+            if (showingToolTip)
+            {
+                UiManager.instance.RefreshToolTip(MyItem);
+            }
 
             return true;
 
@@ -375,6 +385,15 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
     private void UpdateSlot()
     {
         UiManager.instance.UpdateStackSize(this);
+
+        if (MyItem != null)
+        {
+            if (showingToolTip)
+            {
+                UiManager.instance.RefreshToolTip(MyItem);
+                Debug.Log("Updating slot " + MyItem.name);
+            }
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -383,6 +402,7 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
         if (!IsEmpty)
         {
             UiManager.instance.ShowToolTip(transform.position, MyItem);
+            showingToolTip = true;
         }
     }
 
@@ -390,5 +410,6 @@ public class SlotScript : MonoBehaviour, IPointerDownHandler, IClickable, IPoint
     {
         // hide tooltip
         UiManager.instance.HideToolTip();
+        showingToolTip = false;
     }
 }

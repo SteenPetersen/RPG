@@ -8,7 +8,7 @@ public class HealthPotion : Item, IUseable {
 
     public override void Use()
     {
-        if (PlayerStats.instance.currentHealth < PlayerStats.instance.maxHealth)
+        if (PlayerStats.instance.MyCurrentHealth < PlayerStats.instance.MyMaxHealth)
         {
             SoundManager.instance.PlayInventorySound("gulp");
 

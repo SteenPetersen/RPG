@@ -6176,7 +6176,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 1.7210001
+  orthographic size: 2.3896186
   m_Depth: 6
   m_CullingMask:
     serializedVersion: 2
@@ -6212,7 +6212,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.72499996
+  orthographic size: 0.755
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -15416,7 +15416,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: v 0.0.0.22
+  m_text: v 0.0.0.23
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9e8e796bf49b9814fb1344e529037372, type: 2}
   m_sharedMaterial: {fileID: 21310522006260848, guid: 9e8e796bf49b9814fb1344e529037372,
@@ -15840,7 +15840,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b87561dc87c2a4448dd4cce93b770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugOnBool: 0
+  debugOnBool: 1
   debugEnemiesBool: 0
   debugEnvironmentBool: 0
   debugInventoryBool: 0
@@ -17648,7 +17648,7 @@ MonoBehaviour:
   ImpBossProjectile: {fileID: 0}
   pooledAmount: 8
   willGrow: 1
-  impDaggers: []
+  impNets: []
   impFireballs: []
   aoeFireballs: []
   pooledArrows: []

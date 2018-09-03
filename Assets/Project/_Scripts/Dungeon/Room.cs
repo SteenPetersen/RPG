@@ -24,6 +24,7 @@ public class Room
     public List<TileLocation> edgeFloorTilesOfThisRoom = new List<TileLocation>();
 
     public List<GameObject> secretCoverTiles;
+    public List<GameObject> secretCornerTorches;
 
     public bool roundedBossRoom; // testing round rooms
 
@@ -329,6 +330,8 @@ public class Room
                 break;
         }
 
+        secretCornerTorches = new List<GameObject>();
+
         Vector3[] corners = new[] { new Vector3(xPos, yPos, 0f),
             new Vector3(xPos + roomWidth - 1, yPos, 0f),
             new Vector3(xPos, yPos + roomHeight - 1, 0f),
@@ -336,7 +339,12 @@ public class Room
 
         foreach (var corner in corners)
         {
-            BoardCreator.instance.SpawnElement(corner, BoardCreator.instance.entranceTorch);
+            GameObject torch = board.SpawnElement(corner, board.entranceTorch, secretCornerTorches);
+        }
+
+        foreach (GameObject torch in secretCornerTorches)
+        {
+            torch.transform.Find("Flame").GetComponent<ParticleSystem>().Stop();
         }
 
         middleTile = new TileLocation((roomWidth / 2) + xPos, (roomHeight / 2) + yPos);

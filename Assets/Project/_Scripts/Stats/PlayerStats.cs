@@ -86,7 +86,7 @@ public class PlayerStats : CharacterStats {
         playerControl = PlayerController.instance;
 
         UpdateStats();
-        currentHealth = maxHealth;
+        MyCurrentHealth = MyMaxHealth;
         currentStamina = maxStamina;
 
 
@@ -112,7 +112,7 @@ public class PlayerStats : CharacterStats {
                 playerControl = PlayerController.instance;
             }
 
-            hps.text = "Health: " + currentHealth.ToString();
+            hps.text = "Health: " + MyCurrentHealth.ToString();
 
 
             if (staminaFull && MyCurrentStamina < MyMaxStamina || !staminaFull && MyCurrentStamina >= MyMaxStamina)
@@ -172,7 +172,7 @@ public class PlayerStats : CharacterStats {
     /// </summary>
     private void UpdateUiStats()
     {
-        maxhps.text = "Max health: " + maxHealth.ToString();
+        maxhps.text = "Max health: " + MyMaxHealth.ToString();
         dmg.text = "Damage: " + damage.GetValue().ToString();
         ac.text = "Armor: " + armor.GetValue().ToString();
         stmina.text = "Stamina: " + Sta.GetValue().ToString();
@@ -205,9 +205,9 @@ public class PlayerStats : CharacterStats {
 
         DamageVariance(damage, out crit, out newDmg);
 
-        currentHealth -= newDmg;
+        MyCurrentHealth -= newDmg;
 
-        if (currentHealth <= 0)
+        if (MyCurrentHealth <= 0)
         {
             Die();
         }
@@ -250,14 +250,14 @@ public class PlayerStats : CharacterStats {
             blockText.gameObject.SetActive(true);
         }
 
-        playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
+        playerControl.healthBar.fillAmount = CalculateHealth(MyCurrentHealth, MyMaxHealth);
     }
 
     public override bool Heal(int healthIncrease)
     {
         bool tmp = base.Heal(healthIncrease);
 
-        playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
+        playerControl.healthBar.fillAmount = CalculateHealth(MyCurrentHealth, MyMaxHealth);
 
         return tmp;
     }
@@ -265,8 +265,8 @@ public class PlayerStats : CharacterStats {
     public void Regen()
     {
         // health
-        currentHealth += regen;
-        playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
+        MyCurrentHealth += regen;
+        playerControl.healthBar.fillAmount = CalculateHealth(MyCurrentHealth, MyMaxHealth);
 
         // stamina
         if (!chargeHeld && !sprinting && !cantRegen)
@@ -285,9 +285,9 @@ public class PlayerStats : CharacterStats {
         UpdateStats();
         UpdateUiStats();
 
-        currentHealth = maxHealth;
+        MyCurrentHealth = MyMaxHealth;
 
-        playerControl.healthBar.fillAmount = CalculateHealth(currentHealth, maxHealth);
+        playerControl.healthBar.fillAmount = CalculateHealth(MyCurrentHealth, MyMaxHealth);
     }
 
     /// <summary>
@@ -295,7 +295,7 @@ public class PlayerStats : CharacterStats {
     /// </summary>
     public void UpdateStats()
     {
-        maxHealth = 100 + ExperienceManager.MyLevel + (Sta.GetValue() * 10);
+        MyMaxHealth = 100 + ExperienceManager.MyLevel + (Sta.GetValue() * 10);
         maxStamina = 100;
         damage.SetValue(Str.GetValue());
         armor.SetValue(Agi.GetValue());

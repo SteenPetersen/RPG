@@ -176,7 +176,7 @@ public class GameDetails : MonoBehaviour {
     {
         //Debug.Log("tick event");
 
-        if (PlayerStats.instance.currentHealth < PlayerStats.instance.maxHealth ||
+        if (PlayerStats.instance.MyCurrentHealth < PlayerStats.instance.MyMaxHealth ||
             PlayerStats.instance.MyCurrentStamina < PlayerStats.instance.MyMaxStamina)
         {
             PlayerStats.instance.Regen();
@@ -235,8 +235,8 @@ public class GameDetails : MonoBehaviour {
         PlayerData data = new PlayerData();
 
         // save Stats
-        data.currentHealth = playerStats.currentHealth;
-        data.maxHealth = playerStats.maxHealth;
+        data.currentHealth = playerStats.MyCurrentHealth;
+        data.maxHealth = playerStats.MyMaxHealth;
         data.experience = ExperienceManager.instance.experience;
         data.level = ExperienceManager.MyLevel;
         data.experienceNeeded = ExperienceManager.instance.experienceRequired;
@@ -340,8 +340,8 @@ public class GameDetails : MonoBehaviour {
 
             // Load Stats
             PlayerController.instance.speed = normalSpeed;
-            playerStats.currentHealth = 0;
-            playerStats.maxHealth = data.maxHealth;
+            playerStats.MyCurrentHealth = 0;
+            playerStats.MyMaxHealth = data.maxHealth;
             playerStats.Heal((int)data.currentHealth);
             ExperienceManager.MyLevel = data.level;
             ExperienceManager.instance.experienceRequired = data.experienceNeeded;
@@ -853,11 +853,14 @@ public class GameDetails : MonoBehaviour {
         {
             if (BoardCreator.instance != null)
             {
-                createdDungeonGraph = BoardCreator.instance.CreateDungeonGraph();
+                BoardCreator board = BoardCreator.instance;
+
+                createdDungeonGraph = board.CreateDungeonGraph();
 
                 DrawDistanceActivator.instance.StartCoroutine("Check");
 
-                BoardCreator.instance.SetDoors();
+                board.SetDoors();
+                board.SpawnSecretWalls();
 
                 if (createdDungeonGraph)
                 {
@@ -1019,7 +1022,6 @@ public class GameDetails : MonoBehaviour {
 
         while (Time.timeScale < 1)
         {
-            Debug.Log("!");
             Time.timeScale += 0.05f;
             yield return new WaitForSeconds(0.02f);
         }
@@ -1040,7 +1042,7 @@ public class GameDetails : MonoBehaviour {
         {
             i += (1 / _timeToTake) * Time.deltaTime;
             Time.timeScale = Mathf.Lerp(startTimeScale, _lerpTimeTo, i);
-            print(Time.timeScale);
+
             yield return null;
         }
         Time.timeScale = _lerpTimeTo;

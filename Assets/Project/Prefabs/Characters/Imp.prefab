@@ -924,14 +924,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335e7911ae216954dae8d856ffee6b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 65
   damage:
     baseValue: 20
   armor:
     baseValue: 0
   hitByProjectile: 0
+  noLoot: 0
   shielded: 0
   specialLoot: []
+  _health: 0
 --- !u!114 &114337569586749334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1028,8 +1029,11 @@ MonoBehaviour:
   alwaysDrawGizmos: 0
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
-  healthGroup: {fileID: 225310460141251758}
   healthbar: {fileID: 114133185052998076}
+  speechLocation: {fileID: 0}
+  speechBubbleId: 0
+  showGizmos: 0
+  interval: 2
   setter: {fileID: 0}
   isDead: 0
   inRange: 0
@@ -1040,13 +1044,14 @@ MonoBehaviour:
   inMeleeRange: 0
   facingRight: 1
   playerObj: {fileID: 0}
-  tier: 0
   moving: 0
   anim: {fileID: 95283838999566108}
-  child: {fileID: 1816586640100016}
   myCollider: {fileID: 0}
   myStats: {fileID: 114150843812300096}
-  projectileLaunchPoint: {fileID: 0}
+  skeleton: {fileID: 4533305696478740}
+  seekingPlayer: 0
+  child: {fileID: 1816586640100016}
+  tier: 0
   woundGraphics:
   - {fileID: 1936766299087336}
   - {fileID: 1979304045774496}
@@ -1055,12 +1060,10 @@ MonoBehaviour:
   distanceToLook: 6
   meleeRange: 1
   force: 430
-  projectileSpeed: 430
-  experienceGain: 5
+  experienceGain: 2
   meleeDelay: 2
   timer: 0
   meleeHitRange: 1.7
-  skeleton: {fileID: 4533305696478740}
 --- !u!114 &114677511156904108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1106,6 +1109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0df898f9eb487ed46a6a0e2e4585c358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!114 &114890501210243864
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1175,7 +1179,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300032, guid: 8aebb6f418e46264b8c219c56060fc33, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1220,7 +1224,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1580,7 +1584,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1760,7 +1764,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1940,7 +1944,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

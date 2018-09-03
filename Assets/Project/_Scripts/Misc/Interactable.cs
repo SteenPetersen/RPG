@@ -8,6 +8,11 @@ public abstract class Interactable : MonoBehaviour {
 
     public bool drawGizmos;
 
+    PlayerController pc;
+
+    [Tooltip("Should this interactable stop the player from shooting and hitting while mouse is over them")]
+    [SerializeField] bool stopHitAnimationOnMouseOver;
+
     public float MyRadius
     {
         get { return radius; }
@@ -19,6 +24,7 @@ public abstract class Interactable : MonoBehaviour {
     public virtual void Interact()
     {
         // this method is meant to be overwritten
+        OnMouseExit();
     }
 
     protected void OnDrawGizmosSelected()
@@ -28,6 +34,39 @@ public abstract class Interactable : MonoBehaviour {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, radius);
         }
+    }
+
+    public virtual void OnMouseEnter()
+    {
+        if (stopHitAnimationOnMouseOver)
+        {
+            if (pc == null)
+            {
+                pc = PlayerController.instance;
+            }
+
+            pc.mouseOverInteractable = true;
+        }
+    }
+
+    public virtual void OnMouseOver()
+    {
+        /// Nothing here yet
+    }
+
+    public virtual void OnMouseExit()
+    {
+        if (stopHitAnimationOnMouseOver)
+        {
+            if (pc == null)
+            {
+                pc = PlayerController.instance;
+            }
+
+            pc.mouseOverInteractable = false;
+        }
+
+
     }
 
 }

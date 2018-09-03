@@ -128,10 +128,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 1.39
   drawGizmos: 1
+  stopHitAnimationOnMouseOver: 1
   item: {fileID: 11400000, guid: 207611295fffc3e4fae9975b59b4a5f1, type: 2}
   chanceToDrop: 0
   tooltipPosition: {fileID: 4819702580400734}
   mouseOver: 0
+  displayingTooltip: 0
 --- !u!135 &135740735655995520
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -4719,7 +4721,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 11
   m_RenderMode: 0
   m_SortMode: 0
@@ -4773,7 +4775,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300024, guid: b9662a92751b2af418e8e09ad3aabc16, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

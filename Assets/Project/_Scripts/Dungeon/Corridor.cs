@@ -21,6 +21,10 @@ public class Corridor
 
     public TileLocation secretRoomStartPosition;
 
+    /// <summary>
+    /// Used to know which secret Covers are related to which secret doors
+    /// </summary>
+    public Room mySecretRoom;
 
     /// Get the end position of the corridor based on it's 
     /// start position and which direction it's heading.
@@ -156,8 +160,6 @@ public class Corridor
                     startYPos = secretRoomStartPosition.y;
                     corridorLength = 2;
 
-                    /// Make Fake door
-
                     return true;
 
                 }
@@ -184,8 +186,6 @@ public class Corridor
                     startXPos = secretRoomStartPosition.x;
                     startYPos = secretRoomStartPosition.y;
                     corridorLength = 2; //TODO boardcreator can determine how long these are with a varaible later
-
-                    /// Make Fake door
 
                     return true;
 

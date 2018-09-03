@@ -22,6 +22,7 @@ public class RangedAI : EnemyAI {
     bool inCastingRange;
 
     bool stoppedMoving;
+    bool playerAbovelevelfive;
 
     protected override void Start () {
 
@@ -30,6 +31,11 @@ public class RangedAI : EnemyAI {
         projectileLaunchPoint = child.transform.Find("ProjectileLaunchPoint");
 
         originalCastDelay = castingDelay;
+
+        if (ExperienceManager.MyLevel >= 5)
+        {
+            playerAbovelevelfive = true;
+        }
     }
 
     protected override void Update () {
@@ -40,7 +46,7 @@ public class RangedAI : EnemyAI {
 
         if (!moving)
         {
-            if (!stoppedMoving)
+            if (!stoppedMoving && playerAbovelevelfive)
             {
                 castingTimer = 0;
                 stoppedMoving = true;

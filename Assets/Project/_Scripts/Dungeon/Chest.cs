@@ -39,9 +39,6 @@ public class Chest : Interactable {
     [Tooltip("How High should loot jump?")]
     [SerializeField] float heightOfLootJump;
 
-    [Tooltip("All possible position where loot can land depending on this chests position in the dungeon")]
-    [SerializeField] List<Vector2> positions = new List<Vector2>();
-
     [SerializeField] float distanceFromChest;
 
     bool showingEffect;

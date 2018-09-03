@@ -11,7 +11,7 @@ public class PooledProjectilesController : MonoBehaviour {
     public int pooledAmount;
     public bool willGrow = true;
 
-    public List<GameObject> impDaggers = new List<GameObject>();
+    public List<GameObject> impNets = new List<GameObject>();
     public List<GameObject> impFireballs = new List<GameObject>();
     public List<GameObject> aoeFireballs = new List<GameObject>();
 
@@ -99,42 +99,61 @@ public class PooledProjectilesController : MonoBehaviour {
             case "ImpRanged_Tutorial":
 
                 if (impFireballs.Count != 0)
+                {
+                    for (int i = 0; i < impFireballs.Count; i++)
                     {
-                        for (int i = 0; i < impFireballs.Count; i++)
+                        if (!impFireballs[i].activeInHierarchy)
                         {
-                            if (!impFireballs[i].activeInHierarchy)
-                            {
-                                impFireballs[i].transform.SetParent(projectileHolder);
-                                return impFireballs[i];
-                            }
+                            impFireballs[i].transform.SetParent(projectileHolder);
+                            return impFireballs[i];
                         }
                     }
+                }
 
 
-                    GameObject obj = Instantiate(projectile) as GameObject;
-                    impFireballs.Add(obj);
-                    obj.transform.SetParent(projectileHolder);
-                    return obj;
+                GameObject obj = Instantiate(projectile) as GameObject;
+                impFireballs.Add(obj);
+                obj.transform.SetParent(projectileHolder);
+                return obj;
 
 
             case "FirstBoss":
 
-                    if (aoeFireballs.Count != 0)
+                if (aoeFireballs.Count != 0)
+                {
+                    for (int i = 0; i < aoeFireballs.Count; i++)
                     {
-                        for (int i = 0; i < aoeFireballs.Count; i++)
+                        if (!aoeFireballs[i].activeInHierarchy)
                         {
-                            if (!aoeFireballs[i].activeInHierarchy)
-                            {
-                                aoeFireballs[i].transform.SetParent(projectileHolder);
-                                return aoeFireballs[i];
-                            }
+                            aoeFireballs[i].transform.SetParent(projectileHolder);
+                            return aoeFireballs[i];
                         }
                     }
+                }
 
-                    GameObject greenfireball = Instantiate(projectile) as GameObject;
-                    aoeFireballs.Add(greenfireball);
-                    greenfireball.transform.SetParent(projectileHolder);
-                    return greenfireball;
+                GameObject greenfireball = Instantiate(projectile) as GameObject;
+                aoeFireballs.Add(greenfireball);
+                greenfireball.transform.SetParent(projectileHolder);
+                return greenfireball;
+
+            case "ImpNormal":
+
+                if (impNets.Count != 0)
+                {
+                    for (int i = 0; i < impNets.Count; i++)
+                    {
+                        if (!impNets[i].activeInHierarchy)
+                        {
+                            impNets[i].transform.SetParent(projectileHolder);
+                            return impNets[i];
+                        }
+                    }
+                }
+
+                GameObject net = Instantiate(projectile) as GameObject;
+                impNets.Add(net);
+                net.transform.SetParent(projectileHolder);
+                return net;
         }
 
 
@@ -170,7 +189,7 @@ public class PooledProjectilesController : MonoBehaviour {
         projectileHolder = new GameObject("ProjectileHolder").transform;
 
         pooledArrows.Clear();
-        impDaggers.Clear();
+        impNets.Clear();
         impFireballs.Clear();
         pooledSwords.Clear();
 

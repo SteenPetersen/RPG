@@ -331,15 +331,11 @@ public class EquipmentManager : MonoBehaviour {
             onEquipmentChanged.Invoke(newStatsToAdd, oldStatsToRemove);
         }
 
-
-
         // if Item has a glow effect add it here
         if (newStatsToAdd.MyGlowSprite != null)
         {
             weaponGlowSlot.sprite = newStatsToAdd.MyGlowSprite;
         }
-
-
 
         // Equip the item and make the sound of equipping
         inventoryEquipment[slotIndex].AddItemVisuals(newStatsToAdd, silent);

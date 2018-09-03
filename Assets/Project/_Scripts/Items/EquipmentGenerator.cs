@@ -306,6 +306,9 @@ public class EquipmentGenerator : MonoBehaviour {
         currentCreation.name = currentName;
 
         currentCreation.rangedProjectile = PlayerTalents.instance.MyProjectile;
+
+        /// Corrections and test to stats
+        currentCreation.damageModifier = Mathf.Clamp(currentCreation.damageModifier, 1, currentCreation.damageModifier / 2);
     }
 
     /// <summary>
@@ -558,6 +561,9 @@ public class EquipmentGenerator : MonoBehaviour {
 
         currentCreation.sellValue = currentCreation.sellValue / 2;
         currentCreation.buyValue = currentCreation.sellValue * 10;
+
+        /// Edits to armor / damage
+        currentCreation.armorModifier = Mathf.Clamp(currentCreation.armorModifier, 1, currentCreation.armorModifier);
     }
 
     /// <summary>
@@ -632,6 +638,10 @@ public class EquipmentGenerator : MonoBehaviour {
         string currentName = EquipNameGenerator._instance.GetSwordName(currentCreation.MyQuality);
         currentCreation.MyTitle = currentName;
         currentCreation.name = currentName;
+
+        /// Corrections and test to stats
+        
+        currentCreation.damageModifier = Mathf.Clamp(currentCreation.damageModifier, 1, currentCreation.damageModifier / 2);
     }
 
     private int DetermineStatModifer(int tier)
@@ -676,7 +686,7 @@ public class EquipmentGenerator : MonoBehaviour {
     }
 
     /// <summary>
-    /// Creates a sword for the currentCreation
+    /// Creates a Shield for the currentCreation
     /// </summary>
     /// <param name="currentCreation">Current item under creation</param>
     /// <param name="playerLvl">Current Player level</param>

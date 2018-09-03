@@ -39,7 +39,7 @@ public class MeleeCollision : MonoBehaviour {
             EnemyStats targetStatsScript = col.gameObject.GetComponent<EnemyStats>();
             if (targetStatsScript != null)
             {
-                if (targetStatsScript.currentHealth > 0)
+                if (targetStatsScript.MyCurrentHealth > 0)
                 {
                     Debug.Log("sword collison detected");
                     //myCollider.enabled = false;

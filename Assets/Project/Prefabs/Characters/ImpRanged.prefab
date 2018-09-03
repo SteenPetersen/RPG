@@ -333,7 +333,6 @@ GameObject:
   - component: {fileID: 114478968658878132}
   - component: {fileID: 114032440156580086}
   - component: {fileID: 50897355738461184}
-  - component: {fileID: 210458355612289222}
   m_Layer: 27
   m_Name: ImpRanged
   m_TagString: Enemy
@@ -764,7 +763,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1721059457416130}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18, y: -16.12, z: 0}
+  m_LocalPosition: {x: 4.5495605, y: -2.5109086, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4820424459523668}
@@ -956,7 +955,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335e7911ae216954dae8d856ffee6b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 45
   damage:
     baseValue: 0
   armor:
@@ -965,6 +963,7 @@ MonoBehaviour:
   noLoot: 0
   shielded: 0
   specialLoot: []
+  _health: 60
 --- !u!114 &114045906091740378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1216,6 +1215,7 @@ MonoBehaviour:
   myCollider: {fileID: 0}
   myStats: {fileID: 114032440156580086}
   skeleton: {fileID: 4375850212807304}
+  seekingPlayer: 0
   child: {fileID: 1751329420212078}
   tier: 0
   woundGraphics:
@@ -1226,7 +1226,7 @@ MonoBehaviour:
   distanceToLook: 8
   meleeRange: 2
   force: 450
-  experienceGain: 6
+  experienceGain: 3
   meleeDelay: 3
   timer: 0
   meleeHitRange: 2.5
@@ -1264,7 +1264,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   threshold: 0
-  interval: 2
 --- !u!198 &198186632619352948
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -15090,7 +15089,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 11
   m_RenderMode: 0
   m_SortMode: 0
@@ -15146,7 +15145,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 11
   m_RenderMode: 0
   m_SortMode: 0
@@ -15167,16 +15166,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!210 &210458355612289222
-SortingGroup:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1721059457416130}
-  m_Enabled: 1
-  m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
-  m_SortingOrder: 10
 --- !u!210 &210527805793387636
 SortingGroup:
   m_ObjectHideFlags: 1
@@ -15185,7 +15174,7 @@ SortingGroup:
   m_GameObject: {fileID: 1778881153692926}
   m_Enabled: 1
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
 --- !u!212 &212155819491702938
 SpriteRenderer:
@@ -15400,7 +15389,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -15490,7 +15479,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -15670,7 +15659,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -15805,7 +15794,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300032, guid: 8aebb6f418e46264b8c219c56060fc33, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -15850,7 +15839,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

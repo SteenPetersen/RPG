@@ -66,19 +66,23 @@ public class KeyPickup : Interactable {
         }
     }
 
-    void OnMouseOver()
+    public override void OnMouseOver()
     {
+        base.OnMouseOver();
+
         if (!mouseOver)
         {
             mouseOver = true;
         }
     }
 
-    void OnMouseExit()
+    public override void OnMouseExit()
     {
-        //The mouse is no longer hovering over the GameObject so output this message each frame
-        UiManager.instance.HideToolTip();
+        base.OnMouseExit();
+
         mouseOver = false;
+        UiManager.instance.HideToolTip();
+
     }
 
     void ToolTipDisplay()

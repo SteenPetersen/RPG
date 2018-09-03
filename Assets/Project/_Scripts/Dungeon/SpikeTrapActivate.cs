@@ -7,7 +7,6 @@ public class SpikeTrapActivate : MonoBehaviour {
     [SerializeField] int damagePercent;
     [Tooltip("The range at which this trap can hit the player when activated - check yellow Gizmo")]
     [SerializeField] float range;
-    SpriteRenderer rend;  // needed to stop the trap from playing reset sound if it is not on screen
 
     [SerializeField]List<GameObject> enemiesInRange = new List<GameObject>();
 
@@ -15,9 +14,9 @@ public class SpikeTrapActivate : MonoBehaviour {
 
     bool fired;
 
-    void Start () {
+    void Start ()
+    {
         anim = GetComponent<Animator>();
-        rend = GetComponentInParent<SpriteRenderer>();
     }
 
     private void Update()
@@ -89,7 +88,7 @@ public class SpikeTrapActivate : MonoBehaviour {
                     ParticleSystemHolder.instance.PlayImpactEffect("player", hit.collider.transform.position);
 
                     var script = hit.collider.transform.root.GetComponent<PlayerStats>();
-                    script.TakeDamage(((int)PlayerStats.instance.maxHealth / 100) * damagePercent);
+                    script.TakeDamage(((int)PlayerStats.instance.MyMaxHealth / 100) * damagePercent);
                 }
             }
         }

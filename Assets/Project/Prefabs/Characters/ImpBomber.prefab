@@ -1050,6 +1050,7 @@ MonoBehaviour:
   whenCloseToDestination: 0
   healthbar: {fileID: 0}
   speechLocation: {fileID: 1487079522376302}
+  speechBubbleId: 0
   showGizmos: 0
   interval: 2
   setter: {fileID: 114358393488409876}
@@ -1067,6 +1068,7 @@ MonoBehaviour:
   myCollider: {fileID: 61185821038570992}
   myStats: {fileID: 114861463840128380}
   skeleton: {fileID: 0}
+  seekingPlayer: 0
   child: {fileID: 1003868362128070}
   tier: 0
   woundGraphics:
@@ -1076,7 +1078,7 @@ MonoBehaviour:
   distanceToLook: 7
   meleeRange: 2
   force: 430
-  experienceGain: 4
+  experienceGain: 3
   meleeDelay: 1
   timer: 1
   meleeHitRange: 0
@@ -1095,7 +1097,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   threshold: 0
-  interval: 2
 --- !u!114 &114708514358923930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1235,14 +1236,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335e7911ae216954dae8d856ffee6b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 45
   damage:
     baseValue: 10
   armor:
     baseValue: 0
   hitByProjectile: 0
+  noLoot: 0
   shielded: 0
   specialLoot: []
+  _health: 50
 --- !u!198 &198224651405645654
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -10602,7 +10604,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -10647,7 +10649,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300032, guid: 8aebb6f418e46264b8c219c56060fc33, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -11187,7 +11189,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -11232,7 +11234,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

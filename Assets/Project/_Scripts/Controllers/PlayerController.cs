@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Used to stop Player from shooting and hitting when mousing over a vendor or items on the ground
     /// </summary>
-    public bool mouseOverVendor;
+    public bool mouseOverInteractable;
     public bool mouseOverItem;
 
     Vector3 prevPosition;
@@ -586,7 +586,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetMouseButton(0))
             {
-                if (!mouseOverVendor && !mouseOverItem)
+                if (!mouseOverInteractable && !mouseOverItem)
                 {
                     if (equip.currentEquipment[3] != null)
                     {
@@ -912,6 +912,7 @@ public class PlayerController : MonoBehaviour
     private void StopMeleeChargedHitState(bool changeingState = false)
     {
         maxChargedHit = false;
+        largeStrike = false;
 
         // check if player was trying to to do a charged hit
         if (largeStrikeAnimationReady)

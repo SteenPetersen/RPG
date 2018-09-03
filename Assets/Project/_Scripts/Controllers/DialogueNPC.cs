@@ -84,6 +84,8 @@ public abstract class DialogueNPC : Interactable {
 
         GameDetails.instance.dialogueCamera.SetActive(!GameDetails.instance.dialogueCamera.activeSelf);
 
+        PlayerController.instance.anim.updateMode = AnimatorUpdateMode.UnscaledTime;
+
         currentParagraph = lastParagraph;
         currentParagraphIncrement = currentParagraph;
 
@@ -168,6 +170,8 @@ public abstract class DialogueNPC : Interactable {
         currentlyInteractingWithPlayer = false;
         StoryManager.instance.MyCurrentDialogueNpc = null;
         speechEffect.Stop();
+
+        PlayerController.instance.anim.updateMode = AnimatorUpdateMode.Normal;
     }
 
     /// <summary>
@@ -212,6 +216,16 @@ public abstract class DialogueNPC : Interactable {
         CloseDialogue();
         currentParagraph = 0;
         currentParagraphIncrement = 0;
+    }
+
+    void OnMouseEnter()
+    {
+        PlayerController.instance.mouseOverInteractable = true;
+    }
+
+    void OnMouseExit()
+    {
+        PlayerController.instance.mouseOverInteractable = false;
     }
 
 }

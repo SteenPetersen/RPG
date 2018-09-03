@@ -65,8 +65,15 @@ public class Durir : DialogueNPC {
         {
             if (currentlyInteractingWithPlayer && currentParagraph == currentParagraphIncrement)
             {
+                if (StoryManager.stage == 2)
+                {
+                    currentParagraph = textLines.Length - 1;
+                }
+
                 currentParagraphIncrement = currentParagraph + 1;
                 speechText.text = textLines[currentParagraph];
+
+
             }
         }
     }

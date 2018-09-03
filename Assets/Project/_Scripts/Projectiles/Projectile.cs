@@ -69,7 +69,7 @@ public class Projectile : MonoBehaviour {
             if (targetStatsScript != null && script != null)
             {
                 // if he still has health left
-                if (targetStatsScript.currentHealth > 0)
+                if (targetStatsScript.MyCurrentHealth > 0)
                 {
                     // play the impact particles that belongs to this enemy
                     ParticleSystemHolder.instance.PlayImpactEffect(col.transform.parent.name + "_impact", transform.position);

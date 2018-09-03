@@ -178,8 +178,8 @@ public class EnemyAI : AIPath
     {
         int percentageToAdd = ExperienceManager.MyLevel * 20;
 
-        myStats.maxHealth = myStats.maxHealth + percentageToAdd;
-        myStats.currentHealth = myStats.maxHealth;
+        myStats.MyMaxHealth = myStats.MyMaxHealth + percentageToAdd;
+        myStats.MyCurrentHealth = myStats.MyMaxHealth;
         maxSpeed = UnityEngine.Random.Range(maxSpeed - 1, maxSpeed + 1);
         distanceToLook = UnityEngine.Random.Range(distanceToLook - 2, distanceToLook + 2);
         meleeDelay = UnityEngine.Random.Range(meleeDelay - 0.9f, meleeDelay + 0.9f);
@@ -422,12 +422,12 @@ public class EnemyAI : AIPath
     /// </summary>
     public virtual void DisplayHealth()
     {
-        if (myStats.currentHealth < myStats.maxHealth && myStats.currentHealth > 0 && !displayingHealth)
+        if (myStats.MyCurrentHealth < myStats.MyMaxHealth && myStats.MyCurrentHealth > 0 && !displayingHealth)
         {
             healthGroup.alpha = 1;
             displayingHealth = true;
         }
-        else if (displayingHealth && myStats.currentHealth <= 0)
+        else if (displayingHealth && myStats.MyCurrentHealth <= 0)
         {
             healthGroup.alpha = 0;
             displayingHealth = false;
@@ -581,6 +581,9 @@ public class EnemyAI : AIPath
     }
 
     public virtual void altDeath()
+    { }
+
+    public virtual void OnThrowComplete()
     { }
 
 

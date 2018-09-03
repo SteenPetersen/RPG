@@ -45,7 +45,6 @@ public class Reylith : DialogueNPC {
                 {
                     speechEffect.Stop();
                     StoryManager.stage = 1;
-                    Debug.Log("Setting stage to 1");
                     GameDetails.instance.Save();
                     conversationDone = true;
                 }
@@ -53,7 +52,6 @@ public class Reylith : DialogueNPC {
 
                 if (setter.targetASTAR == null)
                 {
-                    Debug.Log("Out of content");
                     setter.targetASTAR = boatLocation;
                     anim.SetBool("run", true);
 

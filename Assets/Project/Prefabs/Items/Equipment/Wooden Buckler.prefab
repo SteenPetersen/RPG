@@ -69,10 +69,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 1.4
   drawGizmos: 0
+  stopHitAnimationOnMouseOver: 1
   item: {fileID: 11400000, guid: 3e3930e4c7168a64c829f976a0a33f12, type: 2}
   chanceToDrop: 6
   tooltipPosition: {fileID: 0}
   mouseOver: 0
+  displayingTooltip: 0
 --- !u!114 &114536193123368490
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -130,7 +132,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: ed64ef43783820945940c40b53222e46, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

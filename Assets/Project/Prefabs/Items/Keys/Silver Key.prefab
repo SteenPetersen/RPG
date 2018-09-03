@@ -111,6 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 1.4
   drawGizmos: 0
+  stopHitAnimationOnMouseOver: 1
   key: {fileID: 11400000, guid: b0c8c7b88793e9f4b8c908aa1d0543fb, type: 2}
   tooltipPosition: {fileID: 0}
   mouseOver: 0
@@ -4689,7 +4690,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 11
   m_RenderMode: 0
   m_SortMode: 0
@@ -4743,7 +4744,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 670c7b41a8bb4a0448ea210b76908e4e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

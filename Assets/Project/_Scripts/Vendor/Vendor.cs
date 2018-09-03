@@ -93,15 +93,4 @@ public class Vendor : Interactable
         vendorWindow.CreatePages(MyItems);
     }
 
-    void OnMouseOver()
-    {
-        pc.mouseOverVendor = true;
-    }
-
-    void OnMouseExit()
-    {
-        pc.mouseOverVendor = false;
-    }
-
-
 }

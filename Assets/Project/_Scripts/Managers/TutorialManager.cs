@@ -146,7 +146,7 @@ public class TutorialManager : MonoBehaviour {
 	
 	void Update ()
     {
-        if (playerStats.currentHealth < 10)
+        if (playerStats.MyCurrentHealth < 10)
         {
             playerStats.Heal(100);
         }

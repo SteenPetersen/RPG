@@ -2,15 +2,35 @@
 
 public class CharacterStats : MonoBehaviour {
 
-    public float maxHealth = 100;
-    public float currentHealth { get; set; }
+    private float maxHealth = 100;
+    private float currentHealth;
 
     public Stat damage;
     public Stat armor;
 
+    public float MyCurrentHealth
+    {
+        get { return currentHealth; }
+
+        set { currentHealth = Mathf.Clamp(value, 0, MyMaxHealth); }
+    }
+
+    public float MyMaxHealth
+    {
+        get
+        {
+            return maxHealth;
+        }
+
+        set
+        {
+            maxHealth = value;
+        }
+    }
+
     private void Awake()
     {
-        currentHealth = maxHealth;
+        MyCurrentHealth = MyMaxHealth;
     }
 
     public virtual void TakeDamage(int damage)
@@ -65,7 +85,7 @@ public class CharacterStats : MonoBehaviour {
 
     public virtual bool Heal(int healthIncrease)
     {
-        if (currentHealth < maxHealth)
+        if (MyCurrentHealth < MyMaxHealth)
         {
 
             var text = CombatTextManager.instance.FetchText(transform.position);
@@ -74,10 +94,10 @@ public class CharacterStats : MonoBehaviour {
             text.transform.position = transform.position;
             text.gameObject.SetActive(true);
 
-            currentHealth += Mathf.Clamp(healthIncrease, 1, maxHealth - currentHealth);
+            MyCurrentHealth += Mathf.Clamp(healthIncrease, 1, MyMaxHealth - MyCurrentHealth);
             return true;
         }
-        else if (currentHealth == maxHealth)
+        else if (MyCurrentHealth == MyMaxHealth)
         {
             return false;
         }

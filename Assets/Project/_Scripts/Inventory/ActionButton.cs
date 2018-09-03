@@ -58,6 +58,8 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
         }
     }
 
+    bool displayingTooltip;
+
     public int MyCount
     {
         get
@@ -103,13 +105,10 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
             if (MyUseable != null)
             {
                 MyUseable.Use();
-                Debug.Log("Use on the OnClick()");
             }
             if (MyUseables != null && MyUseables.Count > 0)
             {
-                Debug.LogError(MyUseables.Count);
                 MyUseables.Peek().Use();
-                Debug.LogError(MyUseables.Count + " After using");
             }
         }
 
@@ -159,6 +158,11 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
         }
 
         UpdateVisual();
+
+        if (displayingTooltip)
+        {
+            UiManager.instance.RefreshToolTip(buttonItem);
+        }
     }
 
     /// <summary>
@@ -231,15 +235,18 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable, IPo
         if (MyUseable != null)
         {
            UiManager.instance.ShowToolTip(transform.position, buttonItem);
+            displayingTooltip = true;
         }
         else if (MyUseables.Count > 0)
         {
             UiManager.instance.ShowToolTip(transform.position, buttonItem);
+            displayingTooltip = true;
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         UiManager.instance.HideToolTip();
+        displayingTooltip = false;
     }
 }

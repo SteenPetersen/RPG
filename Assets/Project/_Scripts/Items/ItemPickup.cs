@@ -15,6 +15,7 @@ public class ItemPickup : Interactable
     bool showBagsFullText = true;
 
     [SerializeField] bool mouseOver;
+    [SerializeField] bool displayingTooltip;
 
     void Start()
     {
@@ -86,12 +87,17 @@ public class ItemPickup : Interactable
         showBagsFullText = true;
     }
 
-    void OnMouseOver()
+    void OnMouseEnter()
     {
         if (!mouseOver)
         {
             player.mouseOverItem = true;
             mouseOver = true;
+
+            if (!displayingTooltip)
+            {
+                displayingTooltip = true;
+            }
         }
     }
 
@@ -103,6 +109,8 @@ public class ItemPickup : Interactable
         {
             player.mouseOverItem = false;
         }
+
+        displayingTooltip = false;
 
         UiManager.instance.HideToolTip();
         mouseOver = false;
