@@ -98,9 +98,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1386242392855948}
-  m_LocalRotation: {x: 0, y: 0, z: 0.0042346907, w: -0.99999106}
-  m_LocalPosition: {x: -20.5, y: -13.5, z: -0.245}
-  m_LocalScale: {x: 0.49999988, y: 0.49999988, z: 0.5}
+  m_LocalRotation: {x: -0, y: -0, z: 0.0042346907, w: -0.99999106}
+  m_LocalPosition: {x: 163.39673, y: -70.73807, z: 2.8513446}
+  m_LocalScale: {x: 0.49999982, y: 0.49999982, z: 0.5}
   m_Children:
   - {fileID: 4171689319587380}
   - {fileID: 4254955515836804}
@@ -140,7 +140,7 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 1
 --- !u!33 &33818840468423872
 MeshFilter:
@@ -185,7 +185,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a9d97f5048f91d4f8e0df5153f8d802, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyed: 0
   shaking: 0
   obstructVision: 0
   objInside: 0
@@ -209,6 +208,8 @@ MonoBehaviour:
   impactSound: impact_box
   destroySound: destroy_box
   obj: []
+  isDestroyed: 0
+  cannotMove: 0
 --- !u!114 &114264572643408426
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9487,7 +9488,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_RenderMode: 4
   m_SortMode: 0
@@ -9543,7 +9544,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_RenderMode: 0
   m_SortMode: 0

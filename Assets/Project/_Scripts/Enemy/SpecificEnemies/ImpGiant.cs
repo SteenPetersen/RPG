@@ -26,7 +26,7 @@ public class ImpGiant : EnemyAI {
     /// <summary>
     /// Needs to be accessed by the boom from the fireNova in order to alter them
     /// </summary>
-    public bool magicShieldUp, stunned;
+    public bool magicShieldUp, giantImpStunned;
 
     /// <summary>
     /// Needs to be accessed by the boom from the fireNova in order to disactivate it

@@ -116,7 +116,7 @@ public class GameDetails : MonoBehaviour {
         if (!File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
         {
             // then create one
-            Save();
+            Save(SceneManager.GetActiveScene(), true);
         }
 
         if (player == null)
@@ -223,11 +223,19 @@ public class GameDetails : MonoBehaviour {
         PlayerController.instance.enemies.Clear();
     }
 
-    public void Save(bool keepPreviousPosition = false)
+    public void Save(bool safeSpot = false)
     {
         Scene currentScene = SceneManager.GetActiveScene();
-        if (currentScene.name.EndsWith("_indoor"))
+
+        Save(currentScene, safeSpot);
+    }
+
+    public void Save(Scene scene, bool safeSpot = false)
+    {
+        if (scene.name.EndsWith("_indoor"))
             return;
+
+        Debug.Log("Entered scene dependant saving");
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
@@ -248,7 +256,6 @@ public class GameDetails : MonoBehaviour {
 
         // Talents
         data.projectile = PlayerTalents.instance.MyProjectile;
-
 
         data.questLine = StoryManager.questLine;
         data.stage = StoryManager.stage;
@@ -284,6 +291,39 @@ public class GameDetails : MonoBehaviour {
             data.actionbar3 = actionbar3.SaveItemData;
         }
 
+        if (scene.name.Contains("Death"))
+        {
+            ResetStaticData();
+
+            /// Places player in the first zone at its homePosition
+            string startScene = "Start_Area";
+            data.zone = startScene;
+
+            Debug.Log(data.zone + "!" + startScene);
+
+            Vector2 vec = SceneControl.instance.MyCurrentHomePosition(startScene);
+            data.locationX = vec.x;
+            data.locationY = vec.y;
+
+            Debug.Log("Death Screen save Game paramaters used");
+        }
+        else
+        {
+            data.zone = scene.name;
+
+            if (!safeSpot)
+            {
+                data.locationX = player.transform.position.x;
+                data.locationY = player.transform.position.y;
+            }
+            else if (safeSpot)
+            {
+                Vector2 vec = SceneControl.instance.MyCurrentHomePosition(SceneManager.GetActiveScene().name);
+                data.locationX = vec.x;
+                data.locationY = vec.y;
+            }
+        }
+
         // Statics
         data.dungeonFloorsExplored = dungeonFloorsExplored;
         data.enemiesKilled = enemiesKilled;
@@ -294,29 +334,16 @@ public class GameDetails : MonoBehaviour {
         data.arrowsFired = arrowsFired;
         data.randomizedItemsDropped = randomizedItemsDropped;
 
-        data.zone = SceneManager.GetActiveScene().name;
-
-        if (!keepPreviousPosition)
-        {
-            data.locationX = player.transform.position.x;
-            data.locationY = player.transform.position.y;
-        }
-        else if (keepPreviousPosition)
-        {
-            Vector2 vec = SceneControl.instance.MyCurrentHomePosition;
-            data.locationX = vec.x;
-            data.locationY = vec.y;
-        }
-
         bf.Serialize(file, data);
         file.Close();
+
         if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
             SyncFiles();
         }
 
         gameSaved.Play();
-        Debug.Log("saved");
+
     }
 
     public void Load(bool wasDead = false)
@@ -544,11 +571,6 @@ public class GameDetails : MonoBehaviour {
                 tmp.quality = current.MyQuality;
                 tmp.armorType = current.armorType;
 
-                if (current.armorType == ArmorType.Leather)
-                {
-                    Debug.LogWarning("WTF " + current.name);
-                }
-
                 tmp.dmgMod = current.damageModifier;
                 tmp.armorMod = current.armorModifier;
                 tmp.sta = current.sta;
@@ -582,8 +604,6 @@ public class GameDetails : MonoBehaviour {
 
                 if (current is Equipment)
                 {
-                    Debug.Log("Item found is equipment therefore storing as equipment");
-
                     if (Resources.Load("PremadeItems/" + current.name) != null)
                     {
                         //Equipment t = Instantiate(Resources.Load("Equipment/" + item.name, typeof(Equipment))) as Equipment;
@@ -620,7 +640,6 @@ public class GameDetails : MonoBehaviour {
 
                 else
                 {
-                    Debug.Log("Item is NOT equipment");
                     tmp.name = current.name;
                     tmp.title = current.GetTitle();
                 }
@@ -879,6 +898,8 @@ public class GameDetails : MonoBehaviour {
 
                     StopCoroutine("UnFade");
                 }
+
+                DungeonManager.instance.dungeonReady = true;
             }
 
 

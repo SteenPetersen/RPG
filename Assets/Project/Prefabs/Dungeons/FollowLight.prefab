@@ -116,7 +116,7 @@ MonoBehaviour:
   LightColor: {r: 0.2352941, g: 0.18279439, b: 0.044982698, a: 0.134}
   Intensity: 2.3
   LightMaterial: {fileID: 2100000, guid: 721fe554da1cfcc46abfb09fd18552a5, type: 2}
-  light2DType: 0
+  light2DType: 1
   SortOrderID: -1
   strokeRender: 0
   LightRadius: 3.9
@@ -134,9 +134,9 @@ MonoBehaviour:
   uv_Scale: {x: 0.5, y: 0.5}
   vertexWorking: 0
   RangeAngle: 360
-  staticScene: 1
+  staticScene: 0
   doNotRenderMesh: 0
-  lastLight2DType: 0
+  lastLight2DType: 1
 --- !u!114 &114537379596492772
 MonoBehaviour:
   m_ObjectHideFlags: 1

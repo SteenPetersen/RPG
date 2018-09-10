@@ -141,7 +141,7 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 1
 --- !u!33 &33724549484783634
 MeshFilter:
@@ -186,7 +186,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a9d97f5048f91d4f8e0df5153f8d802, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyed: 0
   shaking: 0
   obstructVision: 1
   objInside: 0
@@ -205,6 +204,8 @@ MonoBehaviour:
   impactSound: impact_box
   destroySound: destroy_box
   obj: []
+  isDestroyed: 0
+  cannotMove: 1
 --- !u!114 &114053738810908912
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9501,7 +9502,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_RenderMode: 0
   m_SortMode: 0
@@ -9557,7 +9558,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1648549513
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_RenderMode: 4
   m_SortMode: 0

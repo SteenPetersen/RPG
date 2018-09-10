@@ -208,6 +208,18 @@ public class Corridor
     {
         BoardCreator board = BoardCreator.instance;
 
+        if (DebugControl.debugDungeon)
+        {
+            Debug.LogWarning("Entering CheckSpaceForSecretRoom ");
+        }
+
+        int westMostPoint = 5;
+        int eastMostPoint = board.columns - 5;
+        int northmostPoint = board.rows - 5;
+        int southmostPoint = 5;
+        int countX = 0;
+        int countY = 0;
+
         switch (dir)
         {
             case Direction.North:
@@ -215,33 +227,39 @@ public class Corridor
                 secretRoomStartPosition = new TileLocation(myRoom.middleTile.x, myRoom.yPos + myRoom.roomHeight);
 
                 /// Sanity Check
-                if (secretRoomStartPosition.y + myRoom.roomHeight < board.rows 
-                    && secretRoomStartPosition.x - 22 > 0 
-                    && secretRoomStartPosition.x + 22 < board.columns)
+                if (secretRoomStartPosition.x > westMostPoint && secretRoomStartPosition.x + myRoom.roomWidth < eastMostPoint)
                 {
-
-                    for (int x = secretRoomStartPosition.x - 10; x < secretRoomStartPosition.x + 10; x += 2)
+                    if (secretRoomStartPosition.y > southmostPoint && secretRoomStartPosition.y + myRoom.roomHeight < northmostPoint)
                     {
-                        int xCoord = myRoom.xPos + x;
-
-                        for (int y = secretRoomStartPosition.y; y <= 20; y+= 2)
+                        for (int x = secretRoomStartPosition.x - 4; x <= secretRoomStartPosition.x + myRoom.roomWidth + 4; x += 2)
                         {
-                            int yCoord = myRoom.yPos + y;
+                            int xCoord = myRoom.xPos + countX;
 
-                            if (board.tiles[xCoord][yCoord] != BoardCreator.TileType.BlackArea)
+                            for (int y = secretRoomStartPosition.y; y <= myRoom.roomWidth; y += 2)
                             {
-                                return false;
+                                if (DebugControl.debugDungeon)
+                                {
+                                    Debug.LogWarning("Checking Tile " + xCoord + " " + (myRoom.yPos + y));
+                                }
+
+                                int yCoord = myRoom.yPos + countY;
+
+                                if (board.tiles[xCoord][yCoord] != BoardCreator.TileType.BlackArea)
+                                {
+                                    return false;
+                                }
+                                countY++;
                             }
+
+                            countX++;
+                            countY = 0;
                         }
+
+                        return true;
                     }
-
-                    return true;
                 }
 
-                else
-                {
-                    return false;
-                }
+                return false;
 
 
             case Direction.East:
@@ -251,33 +269,39 @@ public class Corridor
                 secretRoomStartPosition = new TileLocation(myRoom.middleTile.x, myRoom.yPos - 1);
 
                 /// Sanity Check
-                if (secretRoomStartPosition.y - myRoom.roomHeight > 5
-                    && secretRoomStartPosition.y + myRoom.roomHeight < board.rows - 5
-                    && secretRoomStartPosition.x - 22 > 5
-                    && secretRoomStartPosition.x + 22 < board.columns - 5)
+                if (secretRoomStartPosition.x > westMostPoint && secretRoomStartPosition.x + myRoom.roomWidth < eastMostPoint)
                 {
-                    for (int x = secretRoomStartPosition.x - 10; x < secretRoomStartPosition.x + 10; x += 2)
+                    if (secretRoomStartPosition.y > southmostPoint && secretRoomStartPosition.y + myRoom.roomHeight < northmostPoint)
                     {
-                        int xCoord = myRoom.xPos + x;
-
-                        for (int y = secretRoomStartPosition.y; y <= 20; y += 2)
+                        for (int x = secretRoomStartPosition.x - 4; x <= secretRoomStartPosition.x + myRoom.roomWidth + 4; x += 2)
                         {
-                            int yCoord = myRoom.yPos + y;
+                            int xCoord = myRoom.xPos + countX;
 
-                            if (board.tiles[xCoord][yCoord] != BoardCreator.TileType.BlackArea)
+                            for (int y = secretRoomStartPosition.y; y <= 20; y += 2)
                             {
-                                return false;
+                                if (DebugControl.debugDungeon)
+                                {
+                                    Debug.LogWarning("Checking Tile " + xCoord + " " + (myRoom.yPos + y));
+                                }
+
+                                int yCoord = myRoom.yPos + countY;
+
+                                if (board.tiles[xCoord][yCoord] != BoardCreator.TileType.BlackArea)
+                                {
+                                    return false;
+                                }
+                                countY++;
                             }
+
+                            countX++;
+                            countY = 0;
                         }
+
+                        return true;
                     }
-
-                    return true;
                 }
 
-                else
-                {
-                    return false;
-                }
+                return false;
 
             case Direction.West:
                 break;

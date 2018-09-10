@@ -43,6 +43,7 @@ public class FirstBoss : EnemyAI
     [Tooltip("Radius within which the box will land")]
     [SerializeField] float tossingRadius;
 
+    [SerializeField] Transform portalPosition;
 
     bool deadState;
 
@@ -70,7 +71,7 @@ public class FirstBoss : EnemyAI
             deadState = true;
             SpeechBubbleManager.instance.DisactivateBubble(speechBubbleId);
             SpeechBubbleManager.instance.FetchBubble(MySpeechLocation, this,  "AAARRGGHHHHH!");
-            ParticleSystemHolder.instance.SpawnPort(transform.position, "boss_portal", 4);
+            ParticleSystemHolder.instance.SpawnPort(portalPosition.position, "boss_portal");
             FireShield.Stop();
         }
 

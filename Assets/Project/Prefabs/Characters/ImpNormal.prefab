@@ -775,7 +775,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1979376440952840}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.12, y: 2.995469, z: 0}
+  m_LocalPosition: {x: 2.4312267, y: -6.9020796, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4936699507955932}
@@ -1191,7 +1191,7 @@ MonoBehaviour:
   endReachedDistance: 1
   alwaysDrawGizmos: 0
   slowWhenNotFacingTarget: 1
-  whenCloseToDestination: 1
+  whenCloseToDestination: 0
   healthbar: {fileID: 0}
   speechLocation: {fileID: 1855554138290220}
   speechBubbleId: 0
@@ -1205,6 +1205,7 @@ MonoBehaviour:
   displayingHealth: 0
   alert: 0
   inMeleeRange: 0
+  stunned: 0
   facingRight: 1
   playerObj: {fileID: 0}
   moving: 0
@@ -1221,12 +1222,11 @@ MonoBehaviour:
   - {fileID: 1715833611723708}
   distanceToLook: 6
   meleeRange: 2
-  force: 430
+  force: 1200
   experienceGain: 2
   meleeDelay: 2
   timer: 0
   meleeHitRange: 1.7
-  castingRange: 23
   projectileSpeed: 400
   castingDelay: 15
   castingTimer: 15

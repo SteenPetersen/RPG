@@ -151,7 +151,9 @@ public class RangedAI : EnemyAI {
     public override void altDeath()
     {
         SoundManager.instance.PlayCombatSound("bomb");
-        ParticleSystemHolder.instance.PlaySpellEffect(tr.position, "explode");
+        GameObject explosion = ParticleSystemHolder.instance.PlaySpellEffect(tr.position, "explode");
+        ExplosionPlayerProximityChecker script = explosion.GetComponent<ExplosionPlayerProximityChecker>();
+        script.harmless = true;
         CameraShaker.Instance.ShakeOnce(3f, 3f, 0.1f, 0.5f);
     }
 

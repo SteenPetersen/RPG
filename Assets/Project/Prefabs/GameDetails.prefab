@@ -6176,7 +6176,7 @@ Camera:
   far clip plane: 1000
   field of view: 23
   orthographic: 0
-  orthographic size: 2.3896186
+  orthographic size: 1.7210001
   m_Depth: 6
   m_CullingMask:
     serializedVersion: 2
@@ -6212,7 +6212,7 @@ Camera:
   far clip plane: 1000
   field of view: 7.5
   orthographic: 0
-  orthographic size: 0.755
+  orthographic size: 0.72499996
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -15678,6 +15678,7 @@ MonoBehaviour:
   townPortalDropped: 0
   bossKeyHasDropped: 0
   bossRoomAvailable: 0
+  dungeonReady: 0
   teleport: 0
 --- !u!114 &114508082128046192
 MonoBehaviour:
@@ -17047,13 +17048,16 @@ MonoBehaviour:
   spikeTrapFire: {fileID: 0}
   spikeTrapReset: {fileID: 0}
   stoneWallOpen: {fileID: 0}
+  secretRoomSfx: {fileID: 0}
   impactBox: {fileID: 0}
   destroyBox: {fileID: 0}
   igniteTarget: {fileID: 0}
+  cannonShoot: {fileID: 0}
   portalAppears: {fileID: 0}
   enterPortal: {fileID: 0}
   portIn: {fileID: 0}
   firstBossDeath: {fileID: 0}
+  dungeonEnv: {fileID: 0}
   audioSrc: {fileID: 0}
 --- !u!114 &114635843468031594
 MonoBehaviour:
@@ -17648,7 +17652,7 @@ MonoBehaviour:
   ImpBossProjectile: {fileID: 0}
   pooledAmount: 8
   willGrow: 1
-  impNets: []
+  trapCannonBalls: []
   impFireballs: []
   aoeFireballs: []
   pooledArrows: []

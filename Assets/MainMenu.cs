@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Not USed
+/// </summary>
 public class MainMenu : MonoBehaviour
 {
     private void OnEnable()
@@ -25,13 +28,12 @@ public class MainMenu : MonoBehaviour
 
     public void QuitGame()
     {
+        Debug.Log("trying to save");
         Scene s = SceneManager.GetActiveScene();
 
-        if (!s.name.EndsWith("_indoor"))
-        {
-            GameDetails.instance.Save(true);
-        }
+        GameDetails.instance.Save(s);
 
+        Debug.Log("trying to save II");
         Application.Quit();
     }
 

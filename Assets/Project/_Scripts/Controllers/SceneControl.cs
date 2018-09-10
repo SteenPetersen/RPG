@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneControl : MonoBehaviour {
@@ -24,22 +25,7 @@ public class SceneControl : MonoBehaviour {
     [SerializeField] GameObject reylith;
     [SerializeField] Vector2 currentHomePosition;
 
-    /// <summary>
-    /// The position to which the player will return on saved game 
-    /// or when porting back to this zone
-    /// </summary>
-    public Vector2 MyCurrentHomePosition
-    {
-        get
-        {
-            return currentHomePosition;
-        }
-
-        set
-        {
-            currentHomePosition = value;
-        }
-    }
+    Dictionary<string, Vector2> homePositions = new Dictionary<string, Vector2>();
 
     private void OnEnable()
     {
@@ -62,7 +48,13 @@ public class SceneControl : MonoBehaviour {
 
         if (scene.name == "Start_Area")
         {
-            MyCurrentHomePosition = new Vector2(-18, -18);
+            Debug.Log("saving start area");
+            Vector2 homePos = new Vector2(-18, -18);
+
+            if (!homePositions.ContainsKey(scene.name))
+            {
+                homePositions.Add(scene.name, homePos);
+            }
 
             if (StoryManager.stage == 0)
             {
@@ -79,5 +71,24 @@ public class SceneControl : MonoBehaviour {
         // Tell our 'OnLevelFinishedLoading' function to stop listening for a scene change as soon as this script is disabled. 
         // Remember to always have an unsubscription for every delegate you subscribe to!
         SceneManager.sceneLoaded -= OnLevelFinishedLoading;
+    }
+
+    /// <summary>
+    /// Returns the current homeposition of the scene requested.
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <returns></returns>
+    public Vector2 MyCurrentHomePosition(string scene)
+    {
+        foreach (KeyValuePair<string, Vector2> s in homePositions)
+        {
+            if (s.Key == scene)
+            {
+                return s.Value;
+            }
+        }
+
+        Debug.LogError("Invalid Scene name detected return 0");
+        return Vector2.zero;
     }
 }

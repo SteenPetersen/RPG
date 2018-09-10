@@ -10,6 +10,8 @@ public class enemy_Projectile : MonoBehaviour {
     Rigidbody2D rigid;
     Collider2D myCollider;
 
+    [SerializeField] bool dontDestroyDestructables;
+
     Transform projectileHolder;
 
     public float destroyAfter;
@@ -92,6 +94,16 @@ public class enemy_Projectile : MonoBehaviour {
             if (lightEffect != null)
             {
                 lightEffect.SetActive(false);
+            }
+
+            if (dontDestroyDestructables)
+            {
+                if (col.gameObject.GetComponent<Destructable>() != null)
+                {
+                    col.gameObject.GetComponent<Destructable>().Impact(true);
+                }
+
+                return;
             }
 
             if (col.gameObject.GetComponent<Destructable>() != null)

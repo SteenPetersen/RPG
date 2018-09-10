@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour {
 
@@ -14,10 +15,11 @@ public class SoundManager : MonoBehaviour {
                      lootdrop, lootAppearsChest, purchase, chestopen, chestclose,
                      demontalk1, demontalk2, demontalk3,
                      spikeTrapFire, spikeTrapReset,
-                     stoneWallOpen,
-                     impactBox, destroyBox, igniteTarget,
+                     stoneWallOpen, secretRoomSfx,
+                     impactBox, destroyBox, igniteTarget, cannonShoot,
                      portalAppears, enterPortal, portIn,
-                     firstBossDeath;
+                     firstBossDeath,
+                     dungeonEnv;
     public AudioSource audioSrc;
 
     private void Awake()
@@ -31,6 +33,14 @@ public class SoundManager : MonoBehaviour {
         {
             instance = this;
         }
+    }
+
+    void OnEnable()
+    {
+        audioSrc = GetComponent<AudioSource>();
+
+        // subscribe from the scenemanager.
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Start () {
@@ -106,8 +116,12 @@ public class SoundManager : MonoBehaviour {
         portalAppears = Resources.Load<AudioClip>("Sound/" + "portal_appears");
         enterPortal = Resources.Load<AudioClip>("Sound/" + "enter_portal");
         portIn = Resources.Load<AudioClip>("Sound/" + "port_in");
+        cannonShoot = Resources.Load<AudioClip>("Sound/" + "cannon_fire");
 
-        audioSrc = GetComponent<AudioSource>();
+        secretRoomSfx = Resources.Load<AudioClip>("Sound/" + "secret_appear_sfx");
+
+        dungeonEnv = Resources.Load<AudioClip>("Sound/" + "dungeon_env");
+
     }
 
     public void PlayCombatSound(string clip)
@@ -156,6 +170,7 @@ public class SoundManager : MonoBehaviour {
 
                 case "Imp_Fireball_impact":
                 case "Imp_Fireball(Clone)_impact":
+
                     int randHitFire = Random.Range(1, 5);
                     if (randHitFire == 1)
                     {
@@ -489,8 +504,41 @@ public class SoundManager : MonoBehaviour {
                 audioSrc.PlayOneShot(igniteTarget);
                 break;
 
+            case "secretDoorSfx":
+                audioSrc.PlayOneShot(secretRoomSfx);
+                break;
+
+            case "cannon_shoot":
+                audioSrc.PlayOneShot(cannonShoot);
+                break;
 
             }
         }
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        switch (scene.name)
+        {
+            case "Caves_dungeon_indoor":
+                if (audioSrc.clip != dungeonEnv)
+                {
+                    audioSrc.clip = dungeonEnv;
+                    audioSrc.Play();
+                }
+
+                break;
+
+            default:
+                audioSrc.clip = null;
+                break;
+        }
+
+    }
+
+    private void OnDisable()
+    {
+        // unsubscribe from the scenemanager.
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

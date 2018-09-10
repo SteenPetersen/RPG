@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Destructable : MonoBehaviour {
 
-    public bool destroyed;
     public bool shaking;
     public bool obstructVision;
 
@@ -31,6 +30,9 @@ public class Destructable : MonoBehaviour {
 
     [Tooltip("The Object(s) inside this destructable that will spawn when destroyed")]
     [SerializeField] GameObject[] obj;
+
+    [SerializeField] bool isDestroyed;
+    [SerializeField] bool cannotMove;
 
     /// <summary>
     /// Prop needed by Projectiles that may need to disactivate their reenderer when box explodes.
@@ -60,7 +62,7 @@ public class Destructable : MonoBehaviour {
             GetComponent<MeshRenderer>().material = damagedMat;
         }
 
-        if (health < 0)
+        if (health < 0 && !isDestroyed)
         {
             GetComponent<Collider2D>().enabled = false;
             GetComponent<MeshRenderer>().enabled = false;
@@ -81,6 +83,26 @@ public class Destructable : MonoBehaviour {
             {
                 DetermineLoot();
             }
+
+            isDestroyed = true;
+        }
+    }
+
+    public void Impact(bool move)
+    {
+        if (move)
+        {
+            if (!cannotMove)
+            {
+                FindDirectionAndMove();
+                return;
+            }
+
+            ShakeManager.instance.shakeGameObject(gameObject, shakeTime, decreaseShakeTime, true, this);
+
+            impact.Play();
+            SoundManager.instance.PlayEnvironmentSound(impactSound);
+
         }
     }
 
@@ -145,6 +167,59 @@ public class Destructable : MonoBehaviour {
         SoundManager.instance.PlayEnvironmentSound(destroySound);
 
         Destroy(gameObject, 3);
+    }
+
+    void FindDirectionAndMove()
+    {
+        int obstacleLayer = 13;
+        int des = 19;
+        var obstacleLayerMask = 1 << obstacleLayer;
+        var desmask = 1 << des;
+
+        var final = obstacleLayerMask | desmask;
+
+        float range = 0.5f;
+
+        RaycastHit2D hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up, Vector2.up, range, final);
+        RaycastHit2D hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down, Vector2.down, range, final);
+        RaycastHit2D hit3 = Physics2D.Raycast((Vector2)transform.position + Vector2.right, Vector2.right, range, final);
+        RaycastHit2D hit4 = Physics2D.Raycast((Vector2)transform.position + Vector2.left, Vector2.left, range, final);
+
+        if (hit1.collider == null)
+        {
+            transform.position = transform.position + Vector3.up;
+            Debug.Log("Moving a destructable (" + gameObject.name + ") up");
+            return;
+        }
+
+        if (hit2.collider == null)
+        {
+            transform.position = transform.position + Vector3.down;
+            Debug.Log("Moving a destructable (" + gameObject.name + ") down");
+            return;
+        }
+
+        if (hit3.collider == null)
+        {
+            transform.position = transform.position + Vector3.right;
+            Debug.Log("Moving a destructable (" + gameObject.name + ") right");
+            return;
+        }
+
+        if (hit4.collider == null)
+        {
+            transform.position = transform.position + Vector3.left;
+            Debug.Log("Moving a destructable (" + gameObject.name + ") left");
+            return;
+        }
+
+        if (DebugControl.debugDungeon)
+        {
+            Debug.Log("Destroying a destructable (" + gameObject.name + ") because it had nowhere to go");
+        }
+
+        Destroy(gameObject);
+
     }
 
 }

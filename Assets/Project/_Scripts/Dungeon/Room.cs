@@ -25,8 +25,9 @@ public class Room
 
     public List<GameObject> secretCoverTiles;
     public List<GameObject> secretCornerTorches;
+    public bool secretsFaded;
 
-    public bool roundedBossRoom; // testing round rooms
+    public bool isBossRoom; // testing round rooms
 
     /// To decreases likelihood of going over the board boudaries 
     /// and thus resulting in an indexOutOfRangeException
@@ -155,202 +156,6 @@ public class Room
     }
 
     /// <summary>
-    /// Setup the Last room of the Dungeon
-    /// </summary>
-    /// <param name="widthRange">The range between which the width of the room is determined</param>
-    /// <param name="heightRange">The range between which the height of the room is determined</param>
-    /// <param name="columns">The amount of Columns in this Dungeon board</param>
-    /// <param name="rows">The amount of Rows in this Dungeon board</param>
-    /// <param name="corridor">Corridor leading to this room</param>
-    /// <param name="enemies">The range between which the amount of enemies in this room is determined</param>
-    /// <param name="bossRoom">Boolean that determines if this is a boss room or not</param>
-    public void SetupRoom(IntRange widthRange, IntRange heightRange, int columns, int rows, Corridor corridor, IntRange enemies, bool bossRoom)
-    {
-        // Set the entering corridor direction.
-        enteringCorridor = corridor.direction;
-
-        // Set random values for width and height.
-        int width = widthRange.Random;
-        int height = heightRange.Random;
-        roomWidth = Mathf.Clamp(width, 2, width * 2);
-        roomHeight = Mathf.Clamp(height, 2, height * 2);
-
-        switch (corridor.direction)
-        {
-            // If the corridor entering this room is going north...
-            case Direction.North:
-
-                if (bossRoom)
-                {
-                    roundedBossRoom = true;
-
-                    xPos = corridor.EndPositionX - 12;
-                    yPos = corridor.EndPositionY;
-
-                    roomWidth = 25;
-                    roomHeight = roomWidth;
-                    break;
-                }
-
-                roomHeight = Mathf.Clamp(roomHeight, 0, (rows - corridor.EndPositionY) - buffer);
-                yPos = corridor.EndPositionY;
-                xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
-                xPos = Mathf.Clamp(xPos, 0, (columns - roomWidth) - buffer);
-                break;
-
-
-            case Direction.East:
-
-                if (bossRoom)
-                {
-                    roundedBossRoom = true;
-
-                    xPos = corridor.EndPositionX;
-                    yPos = corridor.EndPositionY - 12;
-
-                    roomWidth = 25;
-                    roomHeight = roomWidth;
-                    break;
-                }
-
-                roomWidth = Mathf.Clamp(roomWidth, 1, (columns - corridor.EndPositionX) - buffer);
-                xPos = corridor.EndPositionX;
-
-                yPos = UnityEngine.Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
-                yPos = Mathf.Clamp(yPos, 0, (rows - roomHeight) - buffer);
-                break;
-
-
-
-            case Direction.South:
-
-                if (bossRoom)
-                {
-                    roundedBossRoom = true;
-
-                    xPos = corridor.EndPositionX - 12;
-                    yPos = corridor.EndPositionY - 25;
-
-                    roomWidth = 25;
-                    roomHeight = roomWidth;
-                    break;
-                }
-
-
-                roomHeight = Mathf.Clamp(roomHeight, 1, corridor.EndPositionY - buffer);
-                yPos = corridor.EndPositionY - roomHeight + 1;
-
-                xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 1, corridor.EndPositionX);
-                xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
-                break;
-
-
-            case Direction.West:
-
-
-                if (bossRoom)
-                {
-                    roundedBossRoom = true;
-
-                    xPos = corridor.EndPositionX - 25;
-                    yPos = corridor.EndPositionY - 12;
-
-                    roomWidth = 25;
-                    roomHeight = roomWidth;
-                    break;
-                }
-
-                roomWidth = Mathf.Clamp(roomWidth, 1, corridor.EndPositionX - buffer);
-                xPos = corridor.EndPositionX - roomWidth + 1;
-
-                yPos = UnityEngine.Random.Range(corridor.EndPositionY - roomHeight + 1, corridor.EndPositionY);
-                yPos = Mathf.Clamp(yPos, buffer, (rows - roomHeight) - buffer);
-                break;
-
-        }
-
-        middleTile = new TileLocation((roomWidth / 2) + xPos, (roomHeight / 2) + yPos);
-
-        //SetGoalLocation();
-    }
-
-    /// <summary>
-    /// Sets up the secret room according to the corridor that was made succesfully
-    /// </summary>
-    /// <param name="widthRange">The range between which the width of the room is determined</param>
-    /// <param name="heightRange">The range between which the height of the room is determined</param>
-    /// <param name="columns">The amount of Columns in this Dungeon board</param>
-    /// <param name="rows">The amount of Rows in this Dungeon board</param>
-    /// <param name="corridor">The Secret Corridor that Leads to this room</param>
-    public void SetupSecretRoom(IntRange widthRange, IntRange heightRange, int columns, int rows, Corridor corridor)
-    {
-        BoardCreator board = BoardCreator.instance;
-
-        enteringCorridor = corridor.direction;
-
-        roomWidth = widthRange.Random;
-        roomHeight = heightRange.Random;
-
-        switch (corridor.direction)
-        {
-            case Direction.North:
-                // ... the height of the room mustn't go beyond the board so it must be clamped based
-                // on the height of the board (rows) and the end of corridor that leads to the room.
-                roomHeight = Mathf.Clamp(roomHeight, 0, (rows - corridor.EndPositionY) - buffer);
-
-                // The y coordinate of the room must be at the end of the corridor (since the corridor leads to the bottom of the room).
-                yPos = corridor.EndPositionY;
-
-                // The x coordinate can be random but the left-most possibility is no further than the width
-                // and the right-most possibility is that the end of the corridor is at the position of the room.
-                xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 2, corridor.EndPositionX);
-
-                // This must be clamped to ensure that the room doesn't go off the board.
-                xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
-                break;
-
-            case Direction.East:
-                break;
-
-            case Direction.South:
-
-                roomHeight = Mathf.Clamp(roomHeight, 0, corridor.EndPositionY - buffer);
-                yPos = corridor.EndPositionY - roomHeight + 1;
-
-                xPos = UnityEngine.Random.Range(corridor.EndPositionX - roomWidth + 2, corridor.EndPositionX);
-                xPos = Mathf.Clamp(xPos, buffer, (columns - roomWidth) - buffer);
-
-                break;
-
-            case Direction.West:
-
-                break;
-
-            default:
-                break;
-        }
-
-        secretCornerTorches = new List<GameObject>();
-
-        Vector3[] corners = new[] { new Vector3(xPos, yPos, 0f),
-            new Vector3(xPos + roomWidth - 1, yPos, 0f),
-            new Vector3(xPos, yPos + roomHeight - 1, 0f),
-            new Vector3(xPos + roomWidth - 1, yPos + roomHeight - 1, 0f) };
-
-        foreach (var corner in corners)
-        {
-            GameObject torch = board.SpawnElement(corner, board.entranceTorch, secretCornerTorches);
-        }
-
-        foreach (GameObject torch in secretCornerTorches)
-        {
-            torch.transform.Find("Flame").GetComponent<ParticleSystem>().Stop();
-        }
-
-        middleTile = new TileLocation((roomWidth / 2) + xPos, (roomHeight / 2) + yPos);
-    }
-
-    /// <summary>
     /// Once the Farthest room has been determined call this Method in order to place
     /// The goal randomly inside that room
     /// </summary>
@@ -358,12 +163,7 @@ public class Room
     {
         BoardCreator board = BoardCreator.instance;
 
-        //int goalX = UnityEngine.Random.Range(xPos, xPos + roomWidth - 1);
-        //int goalY = UnityEngine.Random.Range(yPos, yPos + roomHeight - 1);
-
         middleFloorTilesInThisRoom.Shuffle();
-
-        //Debug.Log("Goal is Placed at position X " + goalX + " and Y " + goalY);
 
         Vector2 pos = new Vector2(middleFloorTilesInThisRoom[0].x, middleFloorTilesInThisRoom[0].y);
 

@@ -9,7 +9,7 @@ public class BoardCreator : MonoBehaviour
     // The type of tile that will be laid in a specific position.
     public enum TileType
     {
-        BlackArea, Floor, ColliderWall, Goal, SkullDoor, SecretWall
+        BlackArea, Floor, ColliderWall, Goal, SkullDoor, SecretWall, Transparent, WallTrapNorth, WallTrapEast, WallTrapSouth, WallTrapWest
     }
 
     public static BoardCreator instance;
@@ -81,6 +81,31 @@ public class BoardCreator : MonoBehaviour
 
     public CreateGraph aStarGridCreator;
 
+    Room highestRoom;
+    Room lowestRoom;
+    Room eastRoom;
+    Room farthestRoom;
+
+    [SerializeField] GameObject trapWall;
+
+
+    [SerializeField] GameObject[] prefabBossRooms;
+    [SerializeField] GameObject[] prefabSecretRooms;
+    
+    [Tooltip("Total Width of the boss room to check this int must be divisable by 2")]
+    [SerializeField] int checkTotalWidthBossRoom = 50; 
+    [Tooltip("half of the total Width of the boss room")]
+    [SerializeField] int halfWidthBossRoom = 25;
+    [Tooltip("Boss Room Height which to check")]
+    [SerializeField] int checkHeightBossRoom = 30;
+
+    [Tooltip("Total Width of the secret rooms to check this int must be divisable by 2")]
+    [SerializeField] int checkTotalWidthSecretRoom = 26;
+    [Tooltip("half of the total Width of the boss room")]
+    [SerializeField] int halfWidthSecretRoom = 13;
+    [Tooltip("Boss Room Height which to check")]
+    [SerializeField] int checkHeightSecretRoom = 20;
+
     /// <summary>
     /// Secret Room Variables
     /// </summary>
@@ -92,6 +117,14 @@ public class BoardCreator : MonoBehaviour
     int currentBoardFloorsBeforeBoss;
 
     List<GameObject> tileTraps = new List<GameObject>();
+
+    TileLocation northMost;
+    TileLocation eastMost;
+    TileLocation southMost;
+
+    bool northSecret, eastSecret, southSecret;
+    TileLocation northMain, northSide, eastMain, eastSide, southMain, southSide;
+    SecretRoom northSR, eastSR, southSR;
 
     private void Awake()
     {
@@ -152,13 +185,7 @@ public class BoardCreator : MonoBehaviour
             /// If it is the middle room, set the middleroom bool to true
             if (i == rooms.Count / 2)
             {
-                rooms[i].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[i - 1], numEnemy, numDestructables, true);
-            }
-
-            /// If it's the last room
-            if (i == corridors.Count)
-            {
-
+                //rooms[i].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[i - 1], numEnemy, numDestructables, true);
             }
 
             /// if we still have corridors to make
@@ -250,6 +277,21 @@ public class BoardCreator : MonoBehaviour
     }
 
     /// <summary>
+    /// Overload Method to also define rotation
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="obj"></param>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public GameObject SpawnElement(Vector3 pos, GameObject obj, Vector3 rot)
+    {
+        GameObject tmp = Instantiate(obj, pos, Quaternion.identity);
+        tmp.transform.Rotate(rot);
+
+        return tmp;
+    }
+
+    /// <summary>
     /// Returns true if a grid was created
     /// </summary>
     /// <returns></returns>
@@ -257,6 +299,8 @@ public class BoardCreator : MonoBehaviour
     {
         return aStarGridCreator.AiGridPath(columns, rows, 0.5f, 1, false);
     }
+
+    [SerializeField] float percentChanceTrapWall;
 
     void SetTilesValuesForRooms()
     {
@@ -379,7 +423,7 @@ public class BoardCreator : MonoBehaviour
                 }
             }
 
-            if (!currentRoom.roundedBossRoom && currentRoom != rooms[0])
+            if (!currentRoom.isBossRoom && currentRoom != rooms[0])
             {
                 // ... and for each room go through it's width.
                 for (int j = 0; j < currentRoom.roomWidth; j++)
@@ -390,29 +434,53 @@ public class BoardCreator : MonoBehaviour
                     for (int k = 0; k < currentRoom.roomHeight; k++)
                     {
                         int yCoord = currentRoom.yPos + k;
-                        //Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  room number is:   " + i + "  k is  " + k);
 
+                        int rand = UnityEngine.Random.Range(0, 100);
+
+                        /// Until player kinda understand the game dont spawn these traps
+                        if (ExperienceManager.MyLevel <= 2)
+                        {
+                            rand = 100;
+                        }
 
                         // Make the left wall have colliders
                         if (xCoord == currentRoom.xPos)
                         {
-                            if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
+                            if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord - 1] == TileType.Transparent)
                             {
+
                                 tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+
                             }
-                            if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+
+                            if (tiles[xCoord - 1][yCoord] == TileType.BlackArea || tiles[xCoord - 1][yCoord] == TileType.Transparent)
                             {
-                                tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
+                                if (rand < percentChanceTrapWall)
+                                {
+                                    tiles[xCoord - 1][yCoord] = TileType.WallTrapWest;
+                                }
+                                else
+                                {
+                                    tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
+                                }
                             }
 
                             if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
                             {
-                                if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+                                if (tiles[xCoord - 1][yCoord] == TileType.BlackArea || tiles[xCoord - 1][yCoord] == TileType.Transparent)
                                 {
-                                    tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
+                                    if (rand < percentChanceTrapWall)
+                                    {
+                                        tiles[xCoord - 1][yCoord] = TileType.WallTrapWest;
+                                    }
+                                    else
+                                    {
+                                        tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
+                                    }
+
                                 }
 
-                                if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                                if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord + 1] == TileType.Transparent)
                                 {
                                     tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
                                 }
@@ -424,24 +492,40 @@ public class BoardCreator : MonoBehaviour
                         // Make the Right wall have colliders
                         if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1)
                         {
-                            if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
+                            if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord - 1] == TileType.Transparent)
                             {
                                 tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
                             }
 
-                            if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                            if (tiles[xCoord + 1][yCoord] == TileType.BlackArea || tiles[xCoord + 1][yCoord] == TileType.Transparent)
                             {
-                                tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
-                            }
-
-                            if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
-                            {
-                                if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                                if (rand < percentChanceTrapWall)
+                                {
+                                    tiles[xCoord + 1][yCoord] = TileType.WallTrapEast;
+                                }
+                                else
                                 {
                                     tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
                                 }
 
-                                if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
+                            }
+
+                            if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
+                            {
+                                if (tiles[xCoord + 1][yCoord] == TileType.BlackArea || tiles[xCoord + 1][yCoord] == TileType.Transparent)
+                                {
+                                    if (rand < percentChanceTrapWall)
+                                    {
+                                        tiles[xCoord + 1][yCoord] = TileType.WallTrapEast;
+                                    }
+                                    else
+                                    {
+                                        tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
+                                    }
+
+                                }
+
+                                if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord + 1] == TileType.Transparent)
                                 {
                                     tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
                                 }
@@ -452,39 +536,68 @@ public class BoardCreator : MonoBehaviour
                         // Make the Top wall have colliders
                         if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
                         {
-                            if (tiles[xCoord][yCoord + 1] == TileType.BlackArea)
+                            if (tiles[xCoord][yCoord + 1] == TileType.BlackArea || tiles[xCoord][yCoord + 1] == TileType.Transparent)
                             {
-                                tiles[xCoord][yCoord + 1] = TileType.ColliderWall;
+                                if (rand < percentChanceTrapWall)
+                                {
+                                    tiles[xCoord][yCoord + 1] = TileType.WallTrapNorth;
+                                }
+                                else
+                                {
+                                    tiles[xCoord][yCoord + 1] = TileType.ColliderWall;
+                                }
                             }
 
-                            if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                            if (xCoord == currentRoom.xPos)
                             {
-                                tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
+                                if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord + 1] == TileType.Transparent)
+                                {
+                                    tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
+                                }
                             }
 
-                            if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
+                            if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1)
                             {
-                                tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
+                                if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord + 1] == TileType.Transparent)
+                                {
+                                    tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
+                                }
                             }
+
                         }
 
                         // Make the Bottom wall have colliders
                         if (yCoord == currentRoom.yPos)
                         {
-                            if (tiles[xCoord][yCoord - 1] == TileType.BlackArea)
+                            if (tiles[xCoord][yCoord - 1] == TileType.BlackArea || tiles[xCoord][yCoord - 1] == TileType.Transparent)
                             {
-                                tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
+                                if (rand < percentChanceTrapWall)
+                                {
+                                    tiles[xCoord][yCoord - 1] = TileType.WallTrapSouth;
+                                }
+                                else
+                                {
+                                    tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
+                                }
                             }
 
-                            if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
+                            if (xCoord == currentRoom.xPos)
                             {
-                                tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                                if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord - 1] == TileType.Transparent)
+                                {
+                                    tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
+                                }
                             }
 
-                            if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
+                            if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1)
                             {
-                                tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                                if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord - 1] == TileType.Transparent)
+                                {
+                                    tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
+                                }
                             }
+
+
                         }
 
                         // The coordinates in the jagged array are based on the room's position and it's width and height.
@@ -506,101 +619,6 @@ public class BoardCreator : MonoBehaviour
                         }
                     }
                 }
-            }
-
-            if (currentRoom.roundedBossRoom)
-            {
-                CreateBossRoom(currentRoom);
-            }
-
-            if (i == rooms.Count - 2)
-            {
-                if (ExperienceManager.MyLevel < playerLevelToSpawnBossRoom || DungeonManager.dungeonLevel <= currentBoardFloorsBeforeBoss)
-                {
-                    spaceForBossRoom = false;
-                    continue;
-                }
-
-                // check if the area is clear
-                Debug.Log("Im on second last room and checking its corridor for space for a boss room");
-
-                // grab the last corridor
-                Corridor c = corridors[corridors.Count - 1];
-
-                // Find out where you should start your search from depending on the directionality of the corridor...
-                if (c.direction == Direction.North)
-                {
-                    int xPos = c.EndPositionX - 12;
-                    int yPos = c.EndPositionY;
-
-                    int xSmall = 0;
-                    int xLarge = 25;
-                    int ySmall = 5;
-                    int yLarge = 25;
-
-                    // if there is space on the board for a boss room
-                    if (xPos > 0 && yPos > 0 && (xPos + 26) < columns && (yPos + 26) < rows)
-                    {
-                        spaceForBossRoom = CheckSpaceForBossRoom(xPos, yPos, xSmall, xLarge, ySmall, yLarge);
-                    }
-
-                    if (spaceForBossRoom)
-                    {
-                        Debug.Log("Boss room is possible");
-                    }
-
-                }
-
-                else if (c.direction == Direction.East)
-                {
-                    int xPos = c.EndPositionX;
-                    int yPos = c.EndPositionY - 12;
-
-                    int xSmall = 5;
-                    int xLarge = 25;
-                    int ySmall = 0;
-                    int yLarge = 25;
-
-                    if (xPos > 0 && yPos > 0 && (xPos + 26) < columns && (yPos + 26) < rows)
-                    {
-                        spaceForBossRoom = CheckSpaceForBossRoom(xPos, yPos, xSmall, xLarge, ySmall, yLarge);
-                    }
-                }
-
-                else if (c.direction == Direction.South)
-                {
-                    int xPos = c.EndPositionX - 12;
-                    int yPos = c.EndPositionY - 25;
-
-                    int xSmall = 0;
-                    int xLarge = 25;
-                    int ySmall = 0;
-                    int yLarge = 20;
-
-                    if (xPos > 0 && yPos > 0 && (xPos + 26) < columns && (yPos + 26) < rows)
-                    {
-                        spaceForBossRoom = CheckSpaceForBossRoom(xPos, yPos, xSmall, xLarge, ySmall, yLarge);
-                    }
-                }
-
-                else if (c.direction == Direction.West)
-                {
-                    int xPos = c.EndPositionX - 25;
-                    int yPos = c.EndPositionY - 12;
-
-                    int xSmall = 0;
-                    int xLarge = 20;
-                    int ySmall = 0;
-                    int yLarge = 25;
-
-                    if (xPos > 0 && yPos > 0 && (xPos + 26) < columns && (yPos + 26) < rows)
-                    {
-                        spaceForBossRoom = CheckSpaceForBossRoom(xPos, yPos, xSmall, xLarge, ySmall, yLarge);
-                    }
-                }
-
-                rooms[rooms.Count - 1].SetupRoom(roomWidth, roomHeight, columns, rows, corridors[corridors.Count - 1], numEnemy, spaceForBossRoom);
-
             }
         }
     }
@@ -970,23 +988,23 @@ public class BoardCreator : MonoBehaviour
                     /// Make the left wall have colliders
                     if (xCoord == currentRoom.xPos)
                     {
-                        if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
+                        if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord - 1] == TileType.Transparent)
                         {
                             tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
                         }
-                        if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+                        if (tiles[xCoord - 1][yCoord] == TileType.BlackArea || tiles[xCoord - 1][yCoord] == TileType.Transparent)
                         {
                             tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
                         }
 
                         if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
                         {
-                            if (tiles[xCoord - 1][yCoord] == TileType.BlackArea)
+                            if (tiles[xCoord - 1][yCoord] == TileType.BlackArea || tiles[xCoord - 1][yCoord] == TileType.Transparent)
                             {
                                 tiles[xCoord - 1][yCoord] = TileType.ColliderWall;
                             }
 
-                            if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                            if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord + 1] == TileType.Transparent)
                             {
                                 tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
                             }
@@ -998,24 +1016,24 @@ public class BoardCreator : MonoBehaviour
                     /// Make the Right wall have colliders
                     if (xCoord == currentRoom.xPos + currentRoom.roomWidth - 1)
                     {
-                        if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
+                        if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord - 1] == TileType.Transparent)
                         {
                             tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
                         }
 
-                        if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                        if (tiles[xCoord + 1][yCoord] == TileType.BlackArea || tiles[xCoord + 1][yCoord] == TileType.Transparent)
                         {
                             tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
                         }
 
                         if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
                         {
-                            if (tiles[xCoord + 1][yCoord] == TileType.BlackArea)
+                            if (tiles[xCoord + 1][yCoord] == TileType.BlackArea || tiles[xCoord + 1][yCoord] == TileType.Transparent)
                             {
                                 tiles[xCoord + 1][yCoord] = TileType.ColliderWall;
                             }
 
-                            if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
+                            if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord + 1] == TileType.Transparent)
                             {
                                 tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
                             }
@@ -1026,17 +1044,17 @@ public class BoardCreator : MonoBehaviour
                     /// Make the Top wall have colliders
                     if (yCoord == currentRoom.yPos + currentRoom.roomHeight - 1)
                     {
-                        if (tiles[xCoord][yCoord + 1] == TileType.BlackArea)
+                        if (tiles[xCoord][yCoord + 1] == TileType.BlackArea || tiles[xCoord][yCoord + 1] == TileType.Transparent)
                         {
                             tiles[xCoord][yCoord + 1] = TileType.ColliderWall;
                         }
 
-                        if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea)
+                        if (tiles[xCoord - 1][yCoord + 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord + 1] == TileType.Transparent)
                         {
                             tiles[xCoord - 1][yCoord + 1] = TileType.ColliderWall;
                         }
 
-                        if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea)
+                        if (tiles[xCoord + 1][yCoord + 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord + 1] == TileType.Transparent)
                         {
                             tiles[xCoord + 1][yCoord + 1] = TileType.ColliderWall;
                         }
@@ -1045,17 +1063,17 @@ public class BoardCreator : MonoBehaviour
                     /// Make the Bottom wall have colliders
                     if (yCoord == currentRoom.yPos)
                     {
-                        if (tiles[xCoord][yCoord - 1] == TileType.BlackArea)
+                        if (tiles[xCoord][yCoord - 1] == TileType.BlackArea || tiles[xCoord][yCoord - 1] == TileType.Transparent)
                         {
                             tiles[xCoord][yCoord - 1] = TileType.ColliderWall;
                         }
 
-                        if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea)
+                        if (tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord - 1] == TileType.Transparent)
                         {
                             tiles[xCoord - 1][yCoord - 1] = TileType.ColliderWall;
                         }
 
-                        if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea)
+                        if (tiles[xCoord + 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord + 1][yCoord - 1] == TileType.Transparent)
                         {
                             tiles[xCoord + 1][yCoord - 1] = TileType.ColliderWall;
                         }
@@ -1071,17 +1089,13 @@ public class BoardCreator : MonoBehaviour
                         yCoord == currentRoom.yPos)
                     {
                         StoreTileLocation(xCoord, yCoord, currentRoom.edgeFloorTilesOfThisRoom);
-                        Debug.Log("Storing edge tile");
                     }
                     else
                     {
                         StoreTileLocation(xCoord, yCoord, currentRoom.middleFloorTilesInThisRoom);
-                        Debug.Log("Storing middle tile");
                     }
                 }
             }
-
-            Debug.Log("Finished creating a secret room");
         }
     }
 
@@ -1106,7 +1120,6 @@ public class BoardCreator : MonoBehaviour
                     #region North
                     case Direction.North:
 
-                        Debug.Log("Making a North Corridor");
                         yCoord += j;
 
                         tiles[xCoord][yCoord] = TileType.Floor;
@@ -1245,8 +1258,6 @@ public class BoardCreator : MonoBehaviour
                     #region South
                     case Direction.South:
                         yCoord -= j;
-
-                        Debug.Log("Making a south Corridor");
 
                         tiles[xCoord][yCoord] = TileType.Floor;
                         tiles[xCoord + 1][yCoord] = TileType.Floor;
@@ -1409,1896 +1420,6 @@ public class BoardCreator : MonoBehaviour
     }
 
     /// <summary>
-    /// Runs through an area the size of the bossroom and checks to see if all tiletypes
-    /// are blackarea, in which case it allows for a boss room to be built</summary>
-    /// <param name="xPos">western most position of the room</param>
-    /// <param name="yPos">southern most position of the room</param>
-    /// <param name="xSmall">From which integer shall we start counting tiles on the x Axis?</param>
-    /// <param name="xLarge">Til which integer shall we keep counting on the X axis?</param>
-    /// <param name="ySmall">From which integer shall we start counting tiles on the Y Axis</param>
-    /// <param name="yLarge">Til which integer shall we keep counting on the Y Axis?</param>
-    private bool CheckSpaceForBossRoom(int xPos, int yPos , int xSmall , int xLarge, int ySmall, int yLarge)
-    {
-        if (DebugControl.debugDungeon)
-        {
-            Debug.Log("Scanning area for BossRoom");
-        }
-
-        for (int x = xSmall; x <= xLarge; x += 2) /// Check every other time to make scanning area more efficient
-        {
-            int xcoord = xPos + x;
-
-            for (int y = ySmall; y <= yLarge; y ++) 
-            {
-                int ycoord = yPos + y;
-
-                if (tiles[xcoord][ycoord] != TileType.BlackArea)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-
-    }
-
-    void CreateBossRoom(Room currentRoom)
-    {
-        if (DebugControl.debugDungeon)
-        {
-            Debug.Log("Creating Boss Room");
-        }
-
-        DungeonManager.instance.bossRoomAvailable = true;
-
-        int currentTile = 0;
-
-        TileLocation bossPos = new TileLocation();
-
-        if (corridors[corridors.Count - 1].direction == Direction.North)
-        {
-            for (int j = 0; j < currentRoom.roomWidth; j++)
-            {
-                int xCoord = currentRoom.xPos + j;
-
-                //// For each horizontal tile, go up vertically through the room's height.
-                for (int k = 0; k < currentRoom.roomHeight; k++)
-                {
-                    int yCoord = currentRoom.yPos + k;
-
-                    if (currentTile >= 6 && currentTile <= 18)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    //------- section 2
-
-                    else if (currentTile >= 29 && currentTile <= 30)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 31 && currentTile <= 43)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 44 && currentTile <= 45)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 3
-
-                    else if (currentTile >= 52 && currentTile <= 53)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 54 && currentTile <= 70)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 71 && currentTile <= 72)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 4
-
-                    else if (currentTile == 76)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 77 && currentTile <= 97)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 98)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 5
-                    else if (currentTile == 101)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 102 && currentTile <= 122)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 123)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 6
-                    else if (currentTile == 125)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 126 && currentTile <= 148)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 149)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 7
-                    else if (currentTile == 150)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 151 && currentTile <= 173)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 174)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 8
-                    else if (currentTile == 175)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 176 && currentTile <= 198)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 199)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 9
-                    else if (currentTile == 200)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 201 && currentTile <= 223)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 224)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 10
-                    else if (currentTile == 225)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 226 && currentTile <= 248)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 249)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 11
-                    else if (currentTile == 250)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 251 && currentTile <= 273)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 274)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 12
-                    else if (currentTile == 275)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 276 && currentTile <= 298)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 299)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 13
-                    else if (currentTile == 300)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        StoreTileLocation(xCoord, yCoord, skullDoorLocations);
-                    }
-
-                    else if (currentTile >= 301 && currentTile <= 323)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        if (currentTile == 310)
-                        {
-                            bossPos.x = xCoord;
-                            bossPos.y = yCoord;
-                        }
-                    }
-
-                    else if (currentTile == 324)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 14
-                    else if (currentTile == 325)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        StoreTileLocation(xCoord, yCoord, skullDoorLocations);
-                    }
-
-                    else if (currentTile >= 326 && currentTile <= 348)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 349)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 15
-                    else if (currentTile == 350)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 351 && currentTile <= 373)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 374)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 16
-                    else if (currentTile == 375)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 376 && currentTile <= 398)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 399)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 17
-                    else if (currentTile == 400)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 401 && currentTile <= 423)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 424)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 18
-                    else if (currentTile == 425)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 426 && currentTile <= 448)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 449)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 19
-                    else if (currentTile == 450)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 451 && currentTile <= 473)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 474)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 20
-                    else if (currentTile == 475)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 476 && currentTile <= 498)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 499)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 21
-                    else if (currentTile == 501)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 502 && currentTile <= 522)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 523)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 22
-                    else if (currentTile == 526)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 527 && currentTile <= 547)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 548)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 23
-                    else if (currentTile >= 552 && currentTile <= 553)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 554 && currentTile <= 570)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 571 && currentTile <= 572)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 24
-                    else if (currentTile >= 579 && currentTile <= 580)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 581 && currentTile <= 593)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 594 && currentTile <= 595)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 25
-                    else if (currentTile >= 606 && currentTile <= 618)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    // The coordinates in the jagged array are based on the room's position and it's width and height.
-                    //tiles[xCoord][yCoord] = TileType.Floor;
-                    currentTile++;
-                }
-            }
-        }
-
-        else if (corridors[corridors.Count - 1].direction == Direction.East)
-        {
-            for (int j = 0; j < currentRoom.roomWidth; j++)
-            {
-                int xCoord = currentRoom.xPos + j;
-
-                //// For each horizontal tile, go up vertically through the room's height.
-                for (int k = 0; k < currentRoom.roomHeight; k++)
-                {
-                    int yCoord = currentRoom.yPos + k;
-
-                    if (currentTile >= 6 && currentTile <= 10)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 11 && currentTile <= 12)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        StoreTileLocation(xCoord, yCoord, skullDoorLocations);
-                    }
-
-                    else if (currentTile >= 13 && currentTile <= 18)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    //------- section 2
-
-                    else if (currentTile >= 29 && currentTile <= 30)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 31 && currentTile <= 43)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 44 && currentTile <= 45)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 3
-
-                    else if (currentTile >= 52 && currentTile <= 53)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 54 && currentTile <= 70)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 71 && currentTile <= 72)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 4
-
-                    else if (currentTile == 76)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 77 && currentTile <= 97)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 98)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 5
-                    else if (currentTile == 101)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 102 && currentTile <= 122)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 123)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 6
-                    else if (currentTile == 125)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 126 && currentTile <= 148)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 149)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 7
-                    else if (currentTile == 150)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 151 && currentTile <= 173)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 174)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 8
-                    else if (currentTile == 175)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 176 && currentTile <= 198)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 199)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 9
-                    else if (currentTile == 200)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 201 && currentTile <= 223)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 224)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 10
-                    else if (currentTile == 225)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 226 && currentTile <= 248)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 249)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 11
-                    else if (currentTile == 250)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 251 && currentTile <= 273)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 274)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 12
-                    else if (currentTile == 275)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 276 && currentTile <= 298)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 299)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 13
-                    else if (currentTile == 300)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 301 && currentTile <= 323)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 324)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 14
-                    else if (currentTile == 325)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 326 && currentTile <= 348)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        if (currentTile == 336)
-                        {
-                            bossPos.x = xCoord;
-                            bossPos.y = yCoord;
-                        }
-                    }
-
-                    else if (currentTile == 349)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 15
-                    else if (currentTile == 350)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 351 && currentTile <= 373)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 374)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 16
-                    else if (currentTile == 375)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 376 && currentTile <= 398)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 399)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 17
-                    else if (currentTile == 400)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 401 && currentTile <= 423)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 424)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 18
-                    else if (currentTile == 425)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 426 && currentTile <= 448)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 449)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 19
-                    else if (currentTile == 450)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 451 && currentTile <= 473)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 474)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 20
-                    else if (currentTile == 475)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 476 && currentTile <= 498)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 499)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 21
-                    else if (currentTile == 501)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 502 && currentTile <= 522)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 523)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 22
-                    else if (currentTile == 526)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 527 && currentTile <= 547)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 548)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 23
-                    else if (currentTile >= 552 && currentTile <= 553)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 554 && currentTile <= 570)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 571 && currentTile <= 572)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 24
-                    else if (currentTile >= 579 && currentTile <= 580)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 581 && currentTile <= 593)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 594 && currentTile <= 595)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 25
-                    else if (currentTile >= 606 && currentTile <= 618)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    // The coordinates in the jagged array are based on the room's position and it's width and height.
-                    //tiles[xCoord][yCoord] = TileType.Floor;
-                    currentTile++;
-                }
-            }
-        }
-
-        else if (corridors[corridors.Count - 1].direction == Direction.South)
-        {
-            for (int j = 0; j < currentRoom.roomWidth; j++)
-            {
-                int xCoord = currentRoom.xPos + j;
-
-                //// For each horizontal tile, go up vertically through the room's height.
-                for (int k = 0; k < currentRoom.roomHeight; k++)
-                {
-                    int yCoord = currentRoom.yPos + k;
-
-                    if (currentTile >= 6 && currentTile <= 18)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    //------- section 2
-
-                    else if (currentTile >= 29 && currentTile <= 30)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 31 && currentTile <= 43)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 44 && currentTile <= 45)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 3
-
-                    else if (currentTile >= 52 && currentTile <= 53)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 54 && currentTile <= 70)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 71 && currentTile <= 72)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 4
-
-                    else if (currentTile == 76)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 77 && currentTile <= 97)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 98)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 5
-                    else if (currentTile == 101)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 102 && currentTile <= 122)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 123)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 6
-                    else if (currentTile == 125)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 126 && currentTile <= 148)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 149)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 7
-                    else if (currentTile == 150)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 151 && currentTile <= 173)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 174)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 8
-                    else if (currentTile == 175)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 176 && currentTile <= 198)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 199)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 9
-                    else if (currentTile == 200)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 201 && currentTile <= 223)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 224)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 10
-                    else if (currentTile == 225)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 226 && currentTile <= 248)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 249)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 11
-                    else if (currentTile == 250)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 251 && currentTile <= 273)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 274)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 12
-                    else if (currentTile == 275)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 276 && currentTile <= 298)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 299)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 13
-                    else if (currentTile == 300)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 301 && currentTile <= 323)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 324)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        StoreTileLocation(xCoord, yCoord, skullDoorLocations);
-                    }
-
-                    // -------- end section
-
-                    //------- section 14
-                    else if (currentTile == 325)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 326 && currentTile <= 348)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        if (currentTile == 336)
-                        {
-                            bossPos.x = xCoord;
-                            bossPos.y = yCoord;
-                        }
-                    }
-
-                    else if (currentTile == 349)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        StoreTileLocation(xCoord, yCoord, skullDoorLocations);
-                    }
-
-                    // -------- end section
-
-                    //------- section 15
-                    else if (currentTile == 350)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 351 && currentTile <= 373)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 374)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 16
-                    else if (currentTile == 375)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 376 && currentTile <= 398)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 399)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 17
-                    else if (currentTile == 400)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 401 && currentTile <= 423)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 424)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 18
-                    else if (currentTile == 425)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 426 && currentTile <= 448)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 449)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 19
-                    else if (currentTile == 450)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 451 && currentTile <= 473)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 474)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 20
-                    else if (currentTile == 475)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 476 && currentTile <= 498)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 499)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 21
-                    else if (currentTile == 501)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 502 && currentTile <= 522)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 523)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 22
-                    else if (currentTile == 526)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 527 && currentTile <= 547)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 548)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 23
-                    else if (currentTile >= 552 && currentTile <= 553)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 554 && currentTile <= 570)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 571 && currentTile <= 572)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 24
-                    else if (currentTile >= 579 && currentTile <= 580)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 581 && currentTile <= 593)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 594 && currentTile <= 595)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 25
-                    else if (currentTile >= 606 && currentTile <= 618)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    // The coordinates in the jagged array are based on the room's position and it's width and height.
-                    //tiles[xCoord][yCoord] = TileType.Floor;
-                    currentTile++;
-                }
-            }
-        }
-
-        else if (corridors[corridors.Count - 1].direction == Direction.West)
-        {
-            for (int j = 0; j < currentRoom.roomWidth; j++)
-            {
-                int xCoord = currentRoom.xPos + j;
-
-                //// For each horizontal tile, go up vertically through the room's height.
-                for (int k = 0; k < currentRoom.roomHeight; k++)
-                {
-                    int yCoord = currentRoom.yPos + k;
-
-                    if (currentTile >= 6 && currentTile <= 18)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    //------- section 2
-
-                    else if (currentTile >= 29 && currentTile <= 30)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 31 && currentTile <= 43)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 44 && currentTile <= 45)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 3
-
-                    else if (currentTile >= 52 && currentTile <= 53)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 54 && currentTile <= 70)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 71 && currentTile <= 72)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 4
-
-                    else if (currentTile == 76)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 77 && currentTile <= 97)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 98)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 5
-                    else if (currentTile == 101)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 102 && currentTile <= 122)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 123)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 6
-                    else if (currentTile == 125)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 126 && currentTile <= 148)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 149)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 7
-                    else if (currentTile == 150)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 151 && currentTile <= 173)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 174)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 8
-                    else if (currentTile == 175)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 176 && currentTile <= 198)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 199)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 9
-                    else if (currentTile == 200)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 201 && currentTile <= 223)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 224)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 10
-                    else if (currentTile == 225)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 226 && currentTile <= 248)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 249)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 11
-                    else if (currentTile == 250)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 251 && currentTile <= 273)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 274)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 12
-                    else if (currentTile == 275)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 276 && currentTile <= 298)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 299)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 13
-                    else if (currentTile == 300)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 301 && currentTile <= 323)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 324)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 14
-                    else if (currentTile == 325)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 326 && currentTile <= 348)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        if (currentTile == 336)
-                        {
-                            bossPos.x = xCoord;
-                            bossPos.y = yCoord;
-                        }
-                    }
-
-                    else if (currentTile == 349)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 15
-                    else if (currentTile == 350)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 351 && currentTile <= 373)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 374)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 16
-                    else if (currentTile == 375)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 376 && currentTile <= 398)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 399)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 17
-                    else if (currentTile == 400)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 401 && currentTile <= 423)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 424)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 18
-                    else if (currentTile == 425)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 426 && currentTile <= 448)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 449)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 19
-                    else if (currentTile == 450)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 451 && currentTile <= 473)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 474)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 20
-                    else if (currentTile == 475)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 476 && currentTile <= 498)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 499)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 21
-                    else if (currentTile == 501)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 502 && currentTile <= 522)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 523)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 22
-                    else if (currentTile == 526)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 527 && currentTile <= 547)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile == 548)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 23
-                    else if (currentTile >= 552 && currentTile <= 553)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 554 && currentTile <= 570)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 571 && currentTile <= 572)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 24
-                    else if (currentTile >= 579 && currentTile <= 580)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 581 && currentTile <= 593)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                    }
-
-                    else if (currentTile >= 594 && currentTile <= 595)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    //------- section 25
-                    else if (currentTile >= 606 && currentTile <= 610)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    else if (currentTile >= 611 && currentTile <= 612)
-                    {
-                        tiles[xCoord][yCoord] = TileType.Floor;
-                        StoreTileLocation(xCoord, yCoord, skullDoorLocations);
-                    }
-
-                    else if (currentTile >= 613 && currentTile <= 618)
-                    {
-                        tiles[xCoord][yCoord] = TileType.ColliderWall;
-                    }
-
-                    // -------- end section
-
-                    // The coordinates in the jagged array are based on the room's position and it's width and height.
-                    //tiles[xCoord][yCoord] = TileType.Floor;
-                    currentTile++;
-                }
-            }
-        }
-
-        Vector2 vec = new Vector2(bossPos.x, bossPos.y);
-        SpawnElement(vec, boss, false, true);
-    }
-
-    /// <summary>
     /// Store a tile location in a given list so that things may be instatiated 
     /// at a later time
     /// </summary>
@@ -3342,23 +1463,55 @@ public class BoardCreator : MonoBehaviour
                     InstantiateFromArrayWall(colliderWalls, i, j);
                 }
 
+                // If the tile type is a west trap...
+                else if (tiles[i][j] == TileType.WallTrapWest)
+                {
+                    Quaternion rot = Quaternion.Euler(0, 0, 90);
+                    InstantiateWall(trapWall, i, j, rot);
+                }
+
+                // If the tile type is a west trap...
+                else if (tiles[i][j] == TileType.WallTrapEast)
+                {
+                    Quaternion rot = Quaternion.Euler(0, 0, -90);
+                    InstantiateWall(trapWall, i, j, rot);
+                }
+
+                // If the tile type is a west trap...
+                else if (tiles[i][j] == TileType.WallTrapNorth)
+                {
+                    Quaternion rot = Quaternion.Euler(0, 0, 0);
+                    InstantiateWall(trapWall, i, j, rot);
+                }
+
+                // If the tile type is a west trap...
+                else if (tiles[i][j] == TileType.WallTrapSouth)
+                {
+                    Quaternion rot = Quaternion.Euler(0, 0, 180);
+                    InstantiateWall(trapWall, i, j, rot);
+                }
+
                 // If the tile type is Goal...
                 else if (tiles[i][j] == TileType.Goal)
                 {
-                    if (spaceForBossRoom)
-                    {
-                        SpawnARandomFloorTile(i,j);
-                        continue;
-                    }
-                    //Debug.Log("calling goal tile");
-                    // ... instantiate a goal see through floor over the top.
-                    //Vector3 position = new Vector3(float)i, j, 0f);
                     Vector3 position = new Vector3(goalPos.x, goalPos.y, 0f);
                     Instantiate(goalFloor, position, Quaternion.identity);
                 }
 
             }
         }
+    }
+
+    void InstantiateWall(GameObject wall, float x, float y, Quaternion rot)
+    {
+        // The position to be instantiated at is based on the coordinates.
+        Vector3 position = new Vector3(x, y, -0.5f);
+
+        // Create an instance of the prefab from the random index of the array.
+        GameObject wallInstance = Instantiate(wall, position, rot) as GameObject;
+
+        // Set the tile's parent to the board holder.
+        wallInstance.transform.parent = outterWallHolder.transform;
     }
 
     private void SpawnARandomFloorTile(int i, int j)
@@ -3465,7 +1618,6 @@ public class BoardCreator : MonoBehaviour
         ///make sure they dont spawn at the entrace
         if (tileInstance.name.StartsWith("Trap"))
         {
-            Debug.Log("Adding a tile trap to list");
             tileTraps.Add(tileInstance);
         }
     }
@@ -3548,67 +1700,12 @@ public class BoardCreator : MonoBehaviour
         }
     }
 
-    private void CheckForSecretRooms()
-    {
-        float avg = FindAverageRoomHeight();
-
-        Room highestRoom = rooms[0];
-        highestRoom = FindHighestRoom(avg, highestRoom);
-
-        Room lowestRoom = rooms[0];
-        lowestRoom = FindLowestRoom(avg, lowestRoom);
-
-        if (highestRoom.roundedBossRoom == false)
-        {
-            Corridor secretCorridorNorth = new Corridor();
-            bool northRoom = secretCorridorNorth.SetupCorridor(highestRoom, Direction.North);
-
-            if (northRoom)
-            {
-                secretCorridors.Add(secretCorridorNorth);
-
-                Room hiddenRoom = new Room();
-                hiddenRoom.SetupSecretRoom(hiddenRoomWidth, hiddenRoomHeight, columns, rows, secretCorridorNorth);
-
-                secretCorridorNorth.mySecretRoom = hiddenRoom;
-
-                secretRooms.Add(hiddenRoom);
-
-                Debug.Log("created secret room (North) start from secret corridor " + secretCorridorNorth.startXPos + "   " + secretCorridorNorth.startYPos);
-            }
-        }
-
-        if (lowestRoom.roundedBossRoom == false)
-        {
-            Corridor secretCorridorSouth = new Corridor();
-            bool southRoom = secretCorridorSouth.SetupCorridor(lowestRoom, Direction.South);
-
-            if (southRoom)
-            {
-                secretCorridors.Add(secretCorridorSouth);
-
-                Room hiddenRoom = new Room();
-                hiddenRoom.SetupSecretRoom(hiddenRoomWidth, hiddenRoomHeight, columns, rows, secretCorridorSouth);
-
-                secretCorridorSouth.mySecretRoom = hiddenRoom;
-
-                secretRooms.Add(hiddenRoom);
-
-                Debug.Log("created secret room (South) start from secret corridor " + secretCorridorSouth.startXPos + "   " + secretCorridorSouth.startYPos);
-            }
-        }
-
-    }
-
     /// <summary>
     /// Find the farthest room from the entrance and 
     /// sets the goal location randomly inside that room
     /// </summary>
     private void SetGoal()
     {
-        Room farthestRoom = rooms[rooms.Count - 1];
-        farthestRoom = FindFarthestRoom(farthestRoom);
-
         farthestRoom.SetGoalLocation();
     }
 
@@ -3652,36 +1749,79 @@ public class BoardCreator : MonoBehaviour
         return farthestRoom;
     }
 
+    /// <summary>
+    /// Finds the highest room by checking against all rooms against the average height
+    /// when it has checked all rooms returns the highest one.
+    /// </summary>
+    /// <param name="avg"></param>
+    /// <param name="highestRoom"></param>
+    /// <returns></returns>
     private Room FindHighestRoom(float avg, Room highestRoom)
     {
         float y = avg;
 
         foreach (var room in rooms)
         {
-            if (room.middleTile.y > y)
+            if (room != rooms[0])
             {
-                highestRoom = room;
-                y = room.middleTile.y;
+                if (room.middleTile.y > y)
+                {
+                    highestRoom = room;
+                    y = room.middleTile.y;
+                }
             }
         }
 
         return highestRoom;
     }
 
+    /// <summary>
+    /// Finds the lowest room by checking against all rooms against the average height
+    /// when it has checked all rooms returns the lowest one.
+    /// </summary>
+    /// <param name="avg"></param>
+    /// <param name="highestRoom"></param>
+    /// <returns></returns>
     private Room FindLowestRoom(float avg, Room lowestRoom)
     {
         float y = rows;
 
         foreach (var room in rooms)
         {
-            if (room.middleTile.y < y)
+            if (room != rooms[0])
             {
-                lowestRoom = room;
-                y = room.middleTile.y;
+                if (room.middleTile.y < y)
+                {
+                    lowestRoom = room;
+                    y = room.middleTile.y;
+                }
             }
         }
 
         return lowestRoom;
+    }
+
+    /// <summary>
+    /// Finds the Eastern most room by checking the x values
+    /// of all rooms and return the one with the highest value
+    /// </summary>
+    /// <param name="avg"></param>
+    /// <param name="eastRoom"></param>
+    /// <returns></returns>
+    private Room FindEastRoom(float avg, Room eastRoom)
+    {
+        float x = 0;
+
+        foreach (var room in rooms)
+        {
+            if (room.middleTile.x > x)
+            {
+                eastRoom = room;
+                x = room.middleTile.x;
+            }
+        }
+
+        return eastRoom;
     }
 
     int FindLowestYValue()
@@ -3784,7 +1924,7 @@ public class BoardCreator : MonoBehaviour
 
                     float distToPlayer = Vector2.Distance(player.transform.position, vec);
 
-                    if (distToPlayer > 9)
+                    if (distToPlayer > 10)
                     {
                         int rand = UnityEngine.Random.Range(0, enemy.Length);
                         room.middleFloorTilesInThisRoom.Remove(spawnTile);
@@ -3896,153 +2036,20 @@ public class BoardCreator : MonoBehaviour
         }
     }
 
-    public void SpawnSecretWalls()
-    {
-        foreach (Corridor cor in secretCorridors)
-        {
-            foreach (TileLocation tile in cor.secretFloorTiles)
-            {
-                GameObject secretWall = SpawnElement(tile.MyPosition, secretWalls[0], false, false, true);
-                SecretWall sw = secretWall.GetComponent<SecretWall>();
-                sw.myRoom = cor.mySecretRoom;
-            }
-        }
-    }
+    //public void SpawnSecretWalls()
+    //{
+    //    foreach (Corridor cor in secretCorridors)
+    //    {
+    //        foreach (TileLocation tile in cor.secretFloorTiles)
+    //        {
+    //            GameObject secretWall = SpawnElement(tile.MyPosition, secretWalls[0], false, false, true);
+    //            SecretWall sw = secretWall.GetComponent<SecretWall>();
+    //            sw.myRoom = cor.mySecretRoom;
+    //        }
+    //    }
+    //}
 
-    /// <summary>
-    /// Runs through all the secret rooms created and covers 
-    /// them with a black tile so they cannot be seen unless opened
-    /// </summary>
-    void CoverSecretArea()
-    {
-        float heightOfBlackArea = 1.001f;
 
-        foreach (Room room in secretRooms)
-        {
-            Debug.Log("Attempting to cover area, there are " + room.middleFloorTilesInThisRoom.Count + " middle floor tiles");
-
-            room.secretCoverTiles = new List<GameObject>();
-
-            foreach (TileLocation tile in room.middleFloorTilesInThisRoom)
-            {
-                Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -heightOfBlackArea);
-                SpawnElement(tilePos, secretCover, room.secretCoverTiles);
-            }
-
-            switch (room.enteringCorridor)
-            {
-                case Direction.North:
-
-                    foreach (TileLocation tile in room.edgeFloorTilesOfThisRoom)
-                    {
-                        Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -heightOfBlackArea);
-                        SpawnElement(tilePos, secretCover, room.secretCoverTiles);
-
-                        /// Left Wall
-                        if (tile.MyPosition.x == room.xPos && tile.MyPosition.y >= room.yPos)
-                        {
-                            Vector3 leftWall = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y, -heightOfBlackArea);
-                            SpawnElement(leftWall, secretCover, room.secretCoverTiles);
-
-                            /// Top left corner
-                            if (tile.MyPosition.y == room.yPos + room.roomHeight - 1)
-                            {
-                                Vector3 diagonallyUpLeft = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y + 1, -1.01f);
-                                SpawnElement(diagonallyUpLeft, secretCover, room.secretCoverTiles);
-
-                                Vector3 directlyAbove = new Vector3(tile.MyPosition.x, tile.MyPosition.y + 1, -1.01f);
-                                SpawnElement(directlyAbove, secretCover, room.secretCoverTiles);
-                            }
-                        }
-
-                        /// Top Wall
-                        else if (tile.MyPosition.y == room.yPos + room.roomHeight - 1)
-                        {
-                            Vector3 topWall = new Vector3(tile.MyPosition.x, tile.MyPosition.y + 1, -heightOfBlackArea);
-                            SpawnElement(topWall, secretCover, room.secretCoverTiles);
-
-                            /// Top Right Corner
-                            if (tile.MyPosition.x == room.xPos + room.roomWidth - 1)
-                            {
-                                Vector3 diagonallyUpRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y + 1, -heightOfBlackArea);
-                                SpawnElement(diagonallyUpRight, secretCover, room.secretCoverTiles);
-
-                                Vector3 directlyright = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -heightOfBlackArea);
-                                SpawnElement(directlyright, secretCover, room.secretCoverTiles);
-                            }
-                        }
-
-                        /// Right Wall
-                        else if (tile.MyPosition.x == room.xPos + room.roomWidth - 1)
-                        {
-                            Vector3 rightWall = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -heightOfBlackArea);
-                            SpawnElement(rightWall, secretCover, room.secretCoverTiles);
-                        }
-
-                    }
-
-                    break;
-                case Direction.East:
-                    break;
-                case Direction.South:
-
-                    foreach (TileLocation tile in room.edgeFloorTilesOfThisRoom)
-                    {
-                        Vector3 tilePos = new Vector3(tile.MyPosition.x, tile.MyPosition.y, -heightOfBlackArea);
-                        SpawnElement(tilePos, secretCover, room.secretCoverTiles);
-
-                        ///Left wall
-                        if (tile.MyPosition.x == room.xPos && tile.MyPosition.y >= room.yPos)
-                        {
-                            Vector3 leftWall = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y, -heightOfBlackArea);
-                            SpawnElement(leftWall, secretCover, room.secretCoverTiles);
-
-                            ///Bottom left corner
-                            if (tile.MyPosition.y == room.yPos)
-                            {
-                                Vector3 diagonallyUnder = new Vector3(tile.MyPosition.x - 1, tile.MyPosition.y - 1, -heightOfBlackArea);
-                                SpawnElement(diagonallyUnder, secretCover, room.secretCoverTiles);
-
-                                Vector3 directlyUnder = new Vector3(tile.MyPosition.x, tile.MyPosition.y - 1, -heightOfBlackArea);
-                                SpawnElement(directlyUnder, secretCover, room.secretCoverTiles);
-                            }
-                        }
-
-                        /// bottom wall
-                        else if (tile.MyPosition.y == room.yPos)
-                        {
-                            Vector3 bottomWall = new Vector3(tile.MyPosition.x, tile.MyPosition.y - 1, -heightOfBlackArea);
-                            SpawnElement(bottomWall, secretCover, room.secretCoverTiles);
-
-                            ///Bottom right corner
-                            if (tile.MyPosition.x == room.xPos + room.roomWidth - 1)
-                            {
-                                Vector3 diagonallyDownRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y - 1, -heightOfBlackArea);
-                                SpawnElement(diagonallyDownRight, secretCover, room.secretCoverTiles);
-
-                                Vector3 directlyToTheRight = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -heightOfBlackArea);
-                                SpawnElement(directlyToTheRight, secretCover, room.secretCoverTiles);
-                            }
-                        }
-
-                        /// right wall
-                        else if (tile.MyPosition.x == room.xPos + room.roomWidth - 1)
-                        {
-                            Vector3 rightWall = new Vector3(tile.MyPosition.x + 1, tile.MyPosition.y, -heightOfBlackArea);
-                            SpawnElement(rightWall, secretCover, room.secretCoverTiles);
-                        }
-
-                    }
-
-                    break;
-                case Direction.West:
-                    break;
-                default:
-                    break;
-            }
-        }
-
-    }
 
     /// <summary>
     /// After setting the location of the goal, this method sets the transparent floor above it.
@@ -4152,7 +2159,6 @@ public class BoardCreator : MonoBehaviour
                 break;
         }
 
-        Debug.Log("Managed to make an obstructed corridor");
         return isRelevant;
     }
 
@@ -4172,7 +2178,6 @@ public class BoardCreator : MonoBehaviour
                 for (int k = 0; k < currentRoom.roomHeight; k++)
                 {
                     int yCoord = currentRoom.yPos + k;
-                    Debug.Log("  xCoord is  " + xCoord + "  yCoord is  " + yCoord + "  i is   " + i + "  k is  " + k);
                     // Make the left wall have colliders
                     if (xCoord == currentRoom.xPos && tiles[xCoord - 1][yCoord - 1] == TileType.BlackArea || tiles[xCoord - 1][yCoord] == TileType.BlackArea)
                     {
@@ -4266,24 +2271,62 @@ public class BoardCreator : MonoBehaviour
             outterWallHolder = GameObject.Find("OutterWallHolder");
             currentBoardFloorsBeforeBoss = floorsBeforeBoss.Random;
 
+            percentChanceTrapWall = Mathf.Clamp(ExperienceManager.MyLevel - 3.5f, 0, 5);
+
+
             SetupTilesArray();
 
             CreateRoomsAndCorridors();
 
             try
             {
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogWarning("Running SetTileValuesForcorridors");
+                }
+
                 SetTilesValuesForCorridors();
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogWarning("Running SetTileValuesForRooms");
+                }
+
                 SetTilesValuesForRooms();
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogWarning("Running SetTargetRooms");
+                }
+
+                SetTargetRoomsAndTiles();
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogWarning("Running CheckSpaceForBossRoom");
+                }
+
+                if (ExperienceManager.MyLevel >= 5 && DungeonManager.dungeonLevel > currentBoardFloorsBeforeBoss)
+                {
+                    CheckForBossRoom();
+                }
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogWarning("Running Checkforsecretrooms");
+                }
 
                 ///Reliant on setTileValuesForRooms so it
                 ///knows wether the rooms it checks are boss rooms or not
                 CheckForSecretRooms();
 
-                SetTilesValuesForSecretCorridors();
-                SetTileValuesForSecretRooms();
-
                 if (!DungeonManager.instance.bossRoomAvailable)
                 {
+                    if (DebugControl.debugDungeon)
+                    {
+                        Debug.LogWarning("Running SetGoal");
+                    }
+
                     SetGoal();
                 }
 
@@ -4292,22 +2335,20 @@ public class BoardCreator : MonoBehaviour
             {
                 Debug.LogError("Caught an index Out of Range Exception redoing the dungeon");
                 Scene s = SceneManager.GetActiveScene();
-                StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(s.name, "Trying again!"));
+                StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene(s.name, "Generating Rooms"));
             }
 
             InstantiateOuterWalls();
 
-            BuildEntranceRoom();
+            BuildEntranceRoom(); // TODO rotate camera randomly and rotate the skull to fit
 
-            /// Clear the enemies from the preivous floor from the list
+            /// Clear the enemies from the previous floor from the list
             DungeonManager.instance.enemiesInDungeon.Clear();
 
             SpawnEnemies();
             SpawnDestructables();
 
             SpawnObstructedCorridor();
-            CoverSecretArea();
-
 
             InstantiateTiles();
 
@@ -4316,6 +2357,594 @@ public class BoardCreator : MonoBehaviour
             workDone = true;
         }
     }
+
+    /// <summary>
+    /// Finds all the rooms that will be used for creating secret
+    /// and boos rooms if there is space going off them.
+    /// </summary>
+    private void SetTargetRoomsAndTiles()
+    {
+        float avg = FindAverageRoomHeight();
+
+        highestRoom = rooms[1];
+        highestRoom = FindHighestRoom(avg, highestRoom);
+
+        northMost = new TileLocation(highestRoom.middleTile.x, highestRoom.yPos + highestRoom.roomHeight + 1);
+
+        lowestRoom = rooms[1];
+        lowestRoom = FindLowestRoom(avg, lowestRoom);
+
+        southMost = new TileLocation(lowestRoom.middleTile.x, lowestRoom.yPos - 2);
+
+        eastRoom = rooms[rooms.Count / 2];
+        eastRoom = FindEastRoom(avg, eastRoom);
+
+        eastMost = new TileLocation(eastRoom.xPos + eastRoom.roomWidth + 1, eastRoom.middleTile.y);
+
+        farthestRoom = rooms[rooms.Count - 1];
+        farthestRoom = FindFarthestRoom(farthestRoom);
+    }
+
+    /// <summary>
+    /// Checks to see if a boss room can be spawn and if it
+    /// can then it spawns a randomly determined prefab boss room
+    /// </summary>
+    private void CheckForBossRoom()
+    {
+        // Check all three directions for space
+        bool northBossRoom = CheckSpaceForBossRoom(northMost, Direction.North);
+
+        int rand = UnityEngine.Random.Range(0, prefabBossRooms.Length);
+
+        if (northBossRoom)
+        {
+            Vector2 pos = new Vector2(northMost.x, northMost.y);
+            SpawnElement(pos, prefabBossRooms[rand], Vector3.zero);
+            highestRoom.isBossRoom = true;
+            ClearBossArea(northMost, Direction.North);
+            DungeonManager.instance.bossRoomAvailable = true;
+            return;
+        }
+
+        bool southBossRoom = CheckSpaceForBossRoom(southMost, Direction.South);
+
+        if (southBossRoom)
+        {
+            Vector2 pos = new Vector2(southMost.x, southMost.y);
+            Vector3 rot = new Vector3(0, 0, -180);
+            SpawnElement(pos, prefabBossRooms[rand], rot);
+            lowestRoom.isBossRoom = true;
+            ClearBossArea(southMost, Direction.South);
+            DungeonManager.instance.bossRoomAvailable = true;
+            return;
+        }
+
+        bool EastBossRoom = CheckSpaceForBossRoom(eastMost, Direction.East);
+
+        if (EastBossRoom)
+        {
+            Vector2 pos = new Vector2(eastMost.x, eastMost.y);
+            Vector3 rot = new Vector3(0, 0, -90);
+            SpawnElement(pos, prefabBossRooms[rand], rot);
+            eastRoom.isBossRoom = true;
+            ClearBossArea(eastMost, Direction.East);
+            DungeonManager.instance.bossRoomAvailable = true;
+            return;
+        }
+
+    }
+
+    private void ClearBossArea(TileLocation startTile, Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.North:
+
+                TileLocation N = new TileLocation(startTile.x - halfWidthBossRoom, startTile.y);
+
+                for (int x = N.x; x <= N.x + checkTotalWidthBossRoom; x++)
+                {
+                    for (int y = N.y; y <= N.y + checkHeightBossRoom; y++)
+                    {
+                        if (tiles[x][y] != TileType.ColliderWall)
+                        {
+                            tiles[x][y] = TileType.Transparent;
+                        }
+                        
+                    }
+                }
+
+                tiles[startTile.x][startTile.y - 1] = TileType.Floor;
+                tiles[startTile.x + 1][startTile.y - 1] = TileType.Floor;
+
+                break;
+
+
+            case Direction.East:
+
+                TileLocation E = new TileLocation(startTile.x, startTile.y + halfWidthBossRoom);
+
+                for (int x = E.x; x <= E.x + checkHeightBossRoom; x++)
+                {
+                    for (int y = E.y; y >= E.y - checkTotalWidthBossRoom; y--)
+                    {
+                        if (tiles[x][y] != TileType.ColliderWall)
+                        {
+                            tiles[x][y] = TileType.Transparent;
+                        }
+                    }
+                }
+
+                tiles[startTile.x - 1][startTile.y] = TileType.Floor;
+                tiles[startTile.x - 1][startTile.y - 1] = TileType.Floor;
+
+                break;
+            case Direction.South:
+
+                TileLocation s = new TileLocation(startTile.x - halfWidthBossRoom, startTile.y - checkHeightBossRoom);
+
+                for (int x = s.x; x <= s.x + checkTotalWidthBossRoom; x++)
+                {
+                    for (int y = s.y; y <= s.y + checkHeightBossRoom; y++)
+                    {
+                        if (tiles[x][y] != TileType.ColliderWall)
+                        {
+                            tiles[x][y] = TileType.Transparent;
+                        }
+                    }
+                }
+
+                tiles[startTile.x][startTile.y + 1] = TileType.Floor;
+                tiles[startTile.x - 1][startTile.y + 1] = TileType.Floor;
+
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Runs through and check a large area for space for
+    /// a Boss room, in three different directions corresponding 
+    /// to three different rooms, highest, lowest and eastMost
+    /// </summary>
+    /// <param name="startTile"></param>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    private bool CheckSpaceForBossRoom(TileLocation startTile, Direction dir)
+    {
+        if (DebugControl.debugDungeon)
+        {
+            Debug.Log("Scanning area for BossRoom");
+        }
+
+        switch (dir)
+        {
+            case Direction.North:
+
+                /// Sanity Check
+                if (startTile.x - halfWidthBossRoom > 5 && startTile.x + halfWidthBossRoom < (columns - 5))
+                {
+                    if (startTile.y + checkHeightBossRoom < (rows - 5))
+                    {
+                        TileLocation startCheckPosition = new TileLocation(startTile.x - halfWidthBossRoom, startTile.y);
+
+                        for (int x = startCheckPosition.x; x <= startCheckPosition.x + checkTotalWidthBossRoom; x++)
+                        {
+                            for (int y = startCheckPosition.y; y <= startCheckPosition.y + checkHeightBossRoom; y++)
+                            {
+                                if (tiles[x][y] != TileType.BlackArea)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+
+                        if (DebugControl.debugDungeon)
+                        {
+                            Debug.Log("There is Space for a boss room in the North");
+                        }
+
+                        return true;
+
+                    }
+                }
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogError("Failed the sanity Check " + dir);
+                }
+
+                return false;
+
+            case Direction.East:
+
+                /// Sanity Check
+                if (startTile.x + checkHeightBossRoom < (columns - 5))
+                {
+                    if (startTile.y + halfWidthBossRoom < (rows - 5) && startTile.y - halfWidthBossRoom > 5)
+                    {
+                        TileLocation startCheckPosition = new TileLocation(startTile.x, startTile.y + halfWidthBossRoom);
+
+                        for (int x = startCheckPosition.x; x <= startCheckPosition.x + checkHeightBossRoom; x++)
+                        {
+                            for (int y = startCheckPosition.y; y >= startCheckPosition.y - checkTotalWidthBossRoom; y--)
+                            {
+                                if (tiles[x][y] != TileType.BlackArea)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+
+                        if (DebugControl.debugDungeon)
+                        {
+                            Debug.Log("There is Space for a boss room in the East");
+                        }
+
+                        return true;
+
+                    }
+                }
+
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogError("Failed the sanity Check" + dir);
+                }
+
+                return false;
+
+            case Direction.South:
+
+                /// Sanity Check
+                if (startTile.x - halfWidthBossRoom > 5 && startTile.x + halfWidthBossRoom < (columns - 5))
+                {
+                    if (startTile.y - checkHeightBossRoom > 5)
+                    {
+                        TileLocation startCheckPosition = new TileLocation(startTile.x - halfWidthBossRoom, startTile.y - checkHeightBossRoom);
+
+                        for (int x = startCheckPosition.x; x <= startCheckPosition.x + checkTotalWidthBossRoom; x++)
+                        {
+                            for (int y = startCheckPosition.y; y <= startCheckPosition.y + checkHeightBossRoom; y++)
+                            {
+                                if (tiles[x][y] != TileType.BlackArea)
+                                {
+                                    return false;
+                                }
+                            }
+
+                        }
+
+                        if (DebugControl.debugDungeon)
+                        {
+                            Debug.Log("There is Space for a boss room in the South");
+                        }
+
+                        return true;
+
+                    }
+                }
+
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogError("Failed the sanity Check" + dir);
+                }
+                return false;
+
+            default:
+                break;
+        }
+
+        return true;
+
+    }
+
+    private void CheckForSecretRooms()
+    {
+        if (!highestRoom.isBossRoom)
+        {
+            bool northSecretRoom = CheckSpaceForSecretRoom(northMost, Direction.North);
+
+            int rand = UnityEngine.Random.Range(0, prefabSecretRooms.Length);
+
+            if (northSecretRoom)
+            {
+                Vector2 pos = new Vector2(northMost.x, northMost.y);
+                GameObject NSR = SpawnElement(pos, prefabSecretRooms[rand], Vector3.zero);
+                ClearSecretArea(northMost, Direction.North);
+                northSecret = true;
+                northSR = NSR.GetComponent<SecretRoom>();
+            }
+        }
+
+        if (!eastRoom.isBossRoom)
+        {
+            bool eastSecretRoom = CheckSpaceForSecretRoom(eastMost, Direction.East);
+
+            int rand = UnityEngine.Random.Range(0, prefabSecretRooms.Length);
+
+            if (eastSecretRoom)
+            {
+                Vector2 pos = new Vector2(eastMost.x, eastMost.y);
+                Vector3 rot = new Vector3(0, 0, -90);
+                GameObject ESR = SpawnElement(pos, prefabSecretRooms[rand], rot);
+                ClearSecretArea(eastMost, Direction.East);
+                eastSecret = true;
+                eastSR = ESR.GetComponent<SecretRoom>();
+            }
+        }
+
+        if (!lowestRoom.isBossRoom)
+        {
+            bool southSecretRoom = CheckSpaceForSecretRoom(southMost, Direction.South);
+
+            int rand = UnityEngine.Random.Range(0, prefabSecretRooms.Length);
+
+            if (southSecretRoom)
+            {
+                Vector2 pos = new Vector2(southMost.x, southMost.y);
+                Vector3 rot = new Vector3(0, 0, -180);
+                GameObject SSR = SpawnElement(pos, prefabSecretRooms[rand], rot);
+                ClearSecretArea(southMost, Direction.South);
+                southSecret = true;
+                southSR = SSR.GetComponent<SecretRoom>();
+            }
+        }
+    }
+
+    private void ClearSecretArea(TileLocation startTile, Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.North:
+
+                TileLocation N = new TileLocation(startTile.x - halfWidthSecretRoom, startTile.y);
+
+                for (int x = N.x; x <= N.x + checkTotalWidthSecretRoom; x++)
+                {
+                    for (int y = N.y; y <= N.y + checkHeightSecretRoom; y++)
+                    {
+                        if (tiles[x][y] != TileType.ColliderWall)
+                        {
+                            tiles[x][y] = TileType.Transparent;
+                        }
+
+                    }
+                }
+
+                tiles[startTile.x][startTile.y - 1] = TileType.Floor;
+                tiles[startTile.x + 1][startTile.y - 1] = TileType.Floor;
+
+                northMain = new TileLocation(startTile.x, startTile.y-1);
+                northSide = new TileLocation(startTile.x + 1, startTile.y - 1);
+
+                break;
+
+
+            case Direction.East:
+
+                TileLocation E = new TileLocation(startTile.x, startTile.y + halfWidthSecretRoom);
+
+                for (int x = E.x; x <= E.x + checkHeightSecretRoom; x++)
+                {
+                    for (int y = E.y; y >= E.y - checkTotalWidthSecretRoom; y--)
+                    {
+                        if (tiles[x][y] != TileType.ColliderWall)
+                        {
+                            tiles[x][y] = TileType.Transparent;
+                        }
+                    }
+                }
+
+                tiles[startTile.x - 1][startTile.y] = TileType.Floor;
+                tiles[startTile.x - 1][startTile.y - 1] = TileType.Floor;
+
+                eastMain = new TileLocation(startTile.x - 1, startTile.y);
+                eastSide = new TileLocation(startTile.x - 1, startTile.y - 1);
+
+                break;
+            case Direction.South:
+
+                TileLocation s = new TileLocation(startTile.x - halfWidthSecretRoom, startTile.y - checkHeightSecretRoom);
+
+                for (int x = s.x; x <= s.x + checkTotalWidthSecretRoom; x++)
+                {
+                    for (int y = s.y; y <= s.y + checkHeightSecretRoom; y++)
+                    {
+                        if (tiles[x][y] != TileType.ColliderWall)
+                        {
+                            tiles[x][y] = TileType.Transparent;
+                        }
+                    }
+                }
+
+                tiles[startTile.x][startTile.y + 1] = TileType.Floor;
+                tiles[startTile.x - 1][startTile.y + 1] = TileType.Floor;
+
+                southMain = new TileLocation(startTile.x, startTile.y + 1);
+                southSide = new TileLocation(startTile.x - 1, startTile.y + 1);
+
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private bool CheckSpaceForSecretRoom(TileLocation startTile, Direction dir)
+    {
+        if (DebugControl.debugDungeon)
+        {
+            Debug.Log("Scanning area for Secret Room");
+        }
+
+        switch (dir)
+        {
+            case Direction.North:
+
+                Debug.Log(startTile.x + " |||| " + startTile.y);
+
+                /// Sanity Check
+                if (startTile.x - halfWidthSecretRoom > 5 && startTile.x + halfWidthSecretRoom < (columns - 5))
+                {
+                    if (startTile.y + checkHeightSecretRoom < (rows - 5))
+                    {
+                        TileLocation startCheckPosition = new TileLocation(startTile.x - halfWidthSecretRoom, startTile.y);
+
+                        for (int x = startCheckPosition.x; x <= startCheckPosition.x + checkTotalWidthSecretRoom; x++)
+                        {
+                            for (int y = startCheckPosition.y; y <= startCheckPosition.y + checkHeightSecretRoom; y++)
+                            {
+                                if (tiles[x][y] != TileType.BlackArea)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+
+                        if (DebugControl.debugDungeon)
+                        {
+                            Debug.Log("There is Space for a Secret room in the North");
+                        }
+
+                        return true;
+
+                    }
+                }
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogError("Failed the sanity Check for secret room " + dir);
+                }
+
+                return false;
+
+            case Direction.East:
+
+                /// Sanity Check
+                if (startTile.x + checkHeightSecretRoom < (columns - 5))
+                {
+                    if (startTile.y + halfWidthSecretRoom < (rows - 5) && startTile.y - halfWidthSecretRoom > 5)
+                    {
+                        TileLocation startCheckPosition = new TileLocation(startTile.x, startTile.y + halfWidthSecretRoom);
+
+                        for (int x = startCheckPosition.x; x <= startCheckPosition.x + checkHeightSecretRoom; x++)
+                        {
+                            for (int y = startCheckPosition.y; y >= startCheckPosition.y - checkTotalWidthSecretRoom; y--)
+                            {
+                                if (tiles[x][y] != TileType.BlackArea)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+
+                        if (DebugControl.debugDungeon)
+                        {
+                            Debug.Log("There is Space for a secret room in the East");
+                        }
+
+                        return true;
+
+                    }
+                }
+
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogError("Failed the sanity Check for secret room" + dir);
+                }
+
+                return false;
+
+            case Direction.South:
+
+                /// Sanity Check
+                if (startTile.x - halfWidthSecretRoom > 5 && startTile.x + halfWidthSecretRoom < (columns - 5))
+                {
+                    if (startTile.y - checkHeightSecretRoom > 5)
+                    {
+                        TileLocation startCheckPosition = new TileLocation(startTile.x - halfWidthSecretRoom, startTile.y - checkHeightSecretRoom);
+
+                        for (int x = startCheckPosition.x; x <= startCheckPosition.x + checkTotalWidthSecretRoom; x++)
+                        {
+                            for (int y = startCheckPosition.y; y <= startCheckPosition.y + checkHeightSecretRoom; y++)
+                            {
+                                if (tiles[x][y] != TileType.BlackArea)
+                                {
+                                    return false;
+                                }
+                            }
+
+                        }
+
+                        if (DebugControl.debugDungeon)
+                        {
+                            Debug.Log("There is Space for a secret room in the South");
+                        }
+
+                        return true;
+
+                    }
+                }
+
+
+                if (DebugControl.debugDungeon)
+                {
+                    Debug.LogError("Failed the sanity Check for secret room " + dir);
+                }
+                return false;
+
+            default:
+                break;
+        }
+
+        return true;
+
+    }
+
+    public void SpawnSecretWalls()
+    {
+        if (northSecret)
+        {
+            GameObject secretWallMain = SpawnElement(northMain.MyPosition, secretWalls[0], false, false, true);
+            GameObject secretWallSide = SpawnElement(northSide.MyPosition, secretWalls[0], false, false, true);
+
+            SecretWall sw = secretWallMain.GetComponent<SecretWall>();
+            SecretWall sws = secretWallSide.GetComponent<SecretWall>();
+
+            sw.myRoom = northSR;
+            sws.myRoom = northSR;
+        }
+
+        if (eastSecret)
+        {
+            GameObject secretWallMain = SpawnElement(eastMain.MyPosition, secretWalls[0], false, false, true);
+            GameObject secretWallSide = SpawnElement(eastSide.MyPosition, secretWalls[0], false, false, true);
+
+            SecretWall sw = secretWallMain.GetComponent<SecretWall>();
+            SecretWall sws = secretWallSide.GetComponent<SecretWall>();
+
+            sw.myRoom = eastSR;
+            sws.myRoom = eastSR;
+        }
+
+        if (southSecret)
+        {
+            GameObject secretWallMain = SpawnElement(southMain.MyPosition, secretWalls[0], false, false, true);
+            GameObject secretWallSide = SpawnElement(southSide.MyPosition, secretWalls[0], false, false, true);
+
+            SecretWall sw = secretWallMain.GetComponent<SecretWall>();
+            SecretWall sws = secretWallSide.GetComponent<SecretWall>();
+
+            sw.myRoom = southSR;
+            sws.myRoom = southSR;
+        }
+    }
+
 
     #region unusedMethods
 

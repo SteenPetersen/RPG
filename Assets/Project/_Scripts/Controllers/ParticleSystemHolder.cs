@@ -159,7 +159,17 @@ public class ParticleSystemHolder : MonoBehaviour {
         RaycastHit2D hit = new RaycastHit2D();
 
         return FindLocation(hit, dir, name, player, range);
+    }
 
+    /// <summary>
+    /// Simply spawns a port at a given Position
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="name"></param>
+    public void SpawnPort(Vector2 pos, string name)
+    {
+        PlaySpellEffect(pos, name);
+        SoundManager.instance.PlayEnvironmentSound("portal_appears");
     }
 
     /// <summary>

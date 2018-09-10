@@ -199,12 +199,14 @@ public class UiManager : MonoBehaviour {
             /// Spawn a new dungeon
             if (Input.GetKeyDown(KeyCode.M))
             {
+               // UsefulShortcuts.ClearConsole();
                 StartCoroutine(GameDetails.MyInstance.FadeOutAndLoadScene("Caves_dungeon_indoor", "Testing Loading"));
             }
 
             /// Remove Boss room key
             if (Input.GetKeyDown(KeyCode.N))
             {
+
                 Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
                 tmp.Remove();
             }

@@ -7,13 +7,14 @@ public class SecretWall : Interactable {
     [SerializeField] bool open;
     [SerializeField] Animator anim;
     [SerializeField] bool mouseOver;
+    [SerializeField] BoxCollider2D col;
 
-    public Room myRoom;
-    [SerializeField] bool faded;
+    public SecretRoom myRoom;
 
 	void Start ()
     {
         anim = GetComponent<Animator>();
+        col = GetComponent<BoxCollider2D>();
 	}
 	
 	void Update ()
@@ -22,7 +23,11 @@ public class SecretWall : Interactable {
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Interact();
+                if (!hasInteracted)
+                {
+                    Interact();
+                    hasInteracted = true;
+                }
             }
         }
 	}
@@ -37,45 +42,57 @@ public class SecretWall : Interactable {
         anim.SetTrigger("open");
         SoundManager.instance.PlayEnvironmentSound("stone_wall_open");
 
-        if (!faded)
+        StartCoroutine(RemoveCollider());
+
+        if (!myRoom.fading)
         {
-            StartCoroutine(UnFadeCover());
-
-
-
+            SoundManager.instance.PlayEnvironmentSound("secretDoorSfx");
             open = true;
-            faded = true;
+            myRoom.fading = true;
+            StartCoroutine(myRoom.FadeCover());
         }
 
     }
 
-    void OnMouseOver()
+    public override void OnMouseOver()
     {
-        Debug.Log("Mouse over secret wall");
-        mouseOver = true;
+        base.OnMouseOver();
+
+        if (!mouseOver)
+        {
+            mouseOver = true;
+        }
     }
 
-    void OnMouseExit()
+    public override void OnMouseExit()
     {
-        Debug.Log("Mouse Off secret wall");
+        base.OnMouseExit();
+
         mouseOver = false;
     }
 
-    IEnumerator UnFadeCover()
+    IEnumerator RemoveCollider()
     {
-        myRoom.secretCoverTiles.Shuffle();
-
-        foreach (GameObject secretCover in myRoom.secretCoverTiles)
-        {
-            secretCover.AddComponent<Fade>();
-            yield return new WaitForSeconds(0.03f);
-        }
-
-        foreach (GameObject torch in myRoom.secretCornerTorches)
-        {
-            torch.transform.Find("Flame").GetComponent<ParticleSystem>().Play();
-            SoundManager.instance.PlayEnvironmentSound("ignite_target");
-            yield return new WaitForSeconds(0.5f);
-        }
+        yield return new WaitForSeconds(0.5f);
+        col.enabled = false;
     }
+
+    //IEnumerator UnFadeCover()
+    //{
+    //    myRoom.secretCoverTiles.Shuffle();
+
+    //    foreach (GameObject secretCover in myRoom.secretCoverTiles)
+    //    {
+    //        secretCover.AddComponent<Fade>();
+    //        yield return new WaitForSeconds(0.03f);
+    //    }
+
+
+    //    foreach (GameObject torch in myRoom.secretCornerTorches)
+    //    {
+    //        torch.transform.Find("Flame").GetComponent<ParticleSystem>().Play();
+    //        SoundManager.instance.PlayEnvironmentSound("ignite_target");
+    //        yield return new WaitForSeconds(0.5f);
+    //    }
+    //}
 }

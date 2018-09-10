@@ -23,10 +23,7 @@ public class SettingsMenu : MonoBehaviour {
     {
         Scene s = SceneManager.GetActiveScene();
 
-        if (!s.name.EndsWith("_indoor"))
-        {
-            GameDetails.instance.Save(true);
-        }
+        GameDetails.instance.Save();
 
         Application.Quit();
     }

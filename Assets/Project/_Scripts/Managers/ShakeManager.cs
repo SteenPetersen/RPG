@@ -119,8 +119,11 @@ public class ShakeManager : MonoBehaviour {
                         }
                         else
                         {
-                            objTransform.position = defaultPos + UnityEngine.Random.insideUnitSphere * decreaseSpeed;
-                            objTransform.rotation = defaultRot * Quaternion.AngleAxis(UnityEngine.Random.Range(-decreaseAngle, decreaseAngle), new Vector3(1f, 1f, 1f));
+                            if (objTransform != null)
+                            {
+                                objTransform.position = defaultPos + UnityEngine.Random.insideUnitSphere * decreaseSpeed;
+                                objTransform.rotation = defaultRot * Quaternion.AngleAxis(UnityEngine.Random.Range(-decreaseAngle, decreaseAngle), new Vector3(1f, 1f, 1f));
+                            }
                         }
                         yield return null;
                     }

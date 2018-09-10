@@ -47,5 +47,7 @@ public class DungeonManager : MonoBehaviour {
     public bool bossKeyHasDropped;
     public bool bossRoomAvailable;
 
+    public bool dungeonReady;
+
     public bool teleport;
 }

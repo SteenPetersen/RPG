@@ -42,7 +42,8 @@ public class EnemyAI : AIPath
     /// </summary>
     [HideInInspector] public AIDestinationSetter setter;
 
-    /*[HideInInspector]*/ public bool isDead, inRange, haveAggro, pausingMovement, displayingHealth, alert, inMeleeRange;
+    public bool isDead, inRange, haveAggro, pausingMovement, displayingHealth, alert, inMeleeRange;
+    public bool stunned;
     [HideInInspector] public bool facingRight = true;
 
     [HideInInspector] public Transform playerObj;
@@ -129,22 +130,26 @@ public class EnemyAI : AIPath
 
         DetermineIfMoving();
 
-        if (haveAggro)
+        if (!stunned)
         {
-            CheckMeleeRange();
-            FaceTarget();
-
-            if (inMeleeRange && timer < 0)
+            if (haveAggro)
             {
-                anim.SetTrigger("Hit1");
-                timer = meleeDelay;
+                CheckMeleeRange();
+                FaceTarget();
 
-                if (seekingPlayer)
+                if (inMeleeRange && timer < 0)
                 {
-                    seekingPlayer = false;
+                    anim.SetTrigger("Hit1");
+                    timer = meleeDelay;
+
+                    if (seekingPlayer)
+                    {
+                        seekingPlayer = false;
+                    }
                 }
             }
         }
+
 
     }
 
@@ -436,28 +441,48 @@ public class EnemyAI : AIPath
 
     public virtual void Knockback(Vector3 dir)
     {
-        int obstacleLayer = 13;
-        var obstacleLayerMask = 1 << obstacleLayer;
-
-        // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
-        RaycastHit2D hit = Physics2D.Raycast(tr.position, dir, 1.2f, obstacleLayerMask);
-
-        RaycastHit2D hit1 = Physics2D.Raycast(tr.position, Vector2.up, 1.2f, obstacleLayerMask);
-        RaycastHit2D hit2 = Physics2D.Raycast(tr.position, Vector2.down, 1.2f, obstacleLayerMask);
-        RaycastHit2D hit3 = Physics2D.Raycast(tr.position, Vector2.right, 1.2f, obstacleLayerMask);
-        RaycastHit2D hit4 = Physics2D.Raycast(tr.position, Vector2.left, 1.2f, obstacleLayerMask);
-
-        Debug.DrawRay(transform.position, dir, Color.cyan, 1);
-        Debug.DrawRay(transform.position, Vector2.up, Color.cyan, 1);
-        Debug.DrawRay(transform.position, Vector2.down, Color.cyan, 1);
-        Debug.DrawRay(transform.position, Vector2.right, Color.cyan, 1);
-        Debug.DrawRay(transform.position, Vector2.left, Color.cyan, 1);
-
-
-        if (hit.collider == null && hit1.collider == null && hit2.collider == null && hit3.collider == null && hit4.collider == null)
+        if (!stunned)
         {
-            GetComponent<Rigidbody2D>().AddForce(dir * force * 10);
+            Debug.Log("Knocking back");
+
+            // stop the enemy from moving temporarily
+            pausingMovement = true;
+            canMove = false;
+
+            int obstacleLayer = 13;
+            var obstacleLayerMask = 1 << obstacleLayer;
+
+            // shoot a ray from the enemy in the direction of the player, the distance of the enemy from the player on the layer masks that we created above
+            RaycastHit2D hit = Physics2D.Raycast(tr.position, dir, 1.2f, obstacleLayerMask);
+
+            RaycastHit2D hit1 = Physics2D.Raycast(tr.position, Vector2.up, 1.2f, obstacleLayerMask);
+            RaycastHit2D hit2 = Physics2D.Raycast(tr.position, Vector2.down, 1.2f, obstacleLayerMask);
+            RaycastHit2D hit3 = Physics2D.Raycast(tr.position, Vector2.right, 1.2f, obstacleLayerMask);
+            RaycastHit2D hit4 = Physics2D.Raycast(tr.position, Vector2.left, 1.2f, obstacleLayerMask);
+
+            Debug.DrawRay(transform.position, dir, Color.cyan, 1);
+            Debug.DrawRay(transform.position, Vector2.up, Color.cyan, 1);
+            Debug.DrawRay(transform.position, Vector2.down, Color.cyan, 1);
+            Debug.DrawRay(transform.position, Vector2.right, Color.cyan, 1);
+            Debug.DrawRay(transform.position, Vector2.left, Color.cyan, 1);
+
+
+            if (hit.collider == null && hit1.collider == null && hit2.collider == null && hit3.collider == null && hit4.collider == null)
+            {
+                GetComponent<Rigidbody2D>().AddForce(dir * force * 10);
+            }
+
+            StartCoroutine(ReturnMovement(0.35f));
         }
+    }
+
+    IEnumerator ReturnMovement(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        timer -= time;
+        pausingMovement = false;
+        canMove = true;
     }
 
     public virtual void AggroFromDistance(int newLookDistance)
@@ -511,6 +536,7 @@ public class EnemyAI : AIPath
         // stop the enemy from moving temporarily
         pausingMovement = true;
         canMove = false;
+        stunned = true;
 
         // set the animation of stunned
         anim.SetBool("Stunned", true);
@@ -539,6 +565,7 @@ public class EnemyAI : AIPath
         anim.SetBool("Stunned", false);
         pausingMovement = false;
         canMove = true;
+        stunned = false;
         Destroy(go);
     }
 

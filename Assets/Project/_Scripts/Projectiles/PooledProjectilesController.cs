@@ -11,7 +11,7 @@ public class PooledProjectilesController : MonoBehaviour {
     public int pooledAmount;
     public bool willGrow = true;
 
-    public List<GameObject> impNets = new List<GameObject>();
+    public List<GameObject> trapCannonBalls = new List<GameObject>();
     public List<GameObject> impFireballs = new List<GameObject>();
     public List<GameObject> aoeFireballs = new List<GameObject>();
 
@@ -65,26 +65,6 @@ public class PooledProjectilesController : MonoBehaviour {
         return null;
     }
 
-    public GameObject GetPooledSword()
-    {
-        for (int i = 0; i < pooledSwords.Count; i++)
-        {
-            if (!pooledSwords[i].activeInHierarchy)
-            {
-                return pooledSwords[i];
-            }
-        }
-
-        if (willGrow)
-        {
-            GameObject obj = Instantiate(swordShot) as GameObject;
-            pooledSwords.Add(obj);
-            //obj.transform.SetParent(projectileHolder);
-            return obj;
-        }
-
-        return null;
-    }
 
     public GameObject GetEnemyProjectile(string enemyName, GameObject projectile)
     {
@@ -136,24 +116,24 @@ public class PooledProjectilesController : MonoBehaviour {
                 greenfireball.transform.SetParent(projectileHolder);
                 return greenfireball;
 
-            case "ImpNormal":
+            case "fireball_Cannon":
 
-                if (impNets.Count != 0)
+                if (trapCannonBalls.Count != 0)
                 {
-                    for (int i = 0; i < impNets.Count; i++)
+                    for (int i = 0; i < trapCannonBalls.Count; i++)
                     {
-                        if (!impNets[i].activeInHierarchy)
+                        if (!trapCannonBalls[i].activeInHierarchy)
                         {
-                            impNets[i].transform.SetParent(projectileHolder);
-                            return impNets[i];
+                            trapCannonBalls[i].transform.SetParent(projectileHolder);
+                            return trapCannonBalls[i];
                         }
                     }
                 }
 
-                GameObject net = Instantiate(projectile) as GameObject;
-                impNets.Add(net);
-                net.transform.SetParent(projectileHolder);
-                return net;
+                GameObject fb = Instantiate(projectile) as GameObject;
+                trapCannonBalls.Add(fb);
+                fb.transform.SetParent(projectileHolder);
+                return fb;
         }
 
 
@@ -189,7 +169,7 @@ public class PooledProjectilesController : MonoBehaviour {
         projectileHolder = new GameObject("ProjectileHolder").transform;
 
         pooledArrows.Clear();
-        impNets.Clear();
+        trapCannonBalls.Clear();
         impFireballs.Clear();
         pooledSwords.Clear();
 

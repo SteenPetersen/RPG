@@ -31,7 +31,6 @@ public class FollowLight : MonoBehaviour {
         if (target != null)
         {
             transform.position = Target.position;
-
         }
     }
 

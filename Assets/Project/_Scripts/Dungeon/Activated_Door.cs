@@ -5,6 +5,7 @@ public class Activated_Door : MonoBehaviour {
     public bool activated;
     [SerializeField] bool open;
     Animator anim;
+    [SerializeField] BoxCollider2D parentCollider;
 
 	void Start ()
     {
@@ -17,6 +18,7 @@ public class Activated_Door : MonoBehaviour {
         {
             anim.SetTrigger("open");
             SoundManager.instance.PlayEnvironmentSound("stone_wall_open");
+            parentCollider.enabled = false;
             open = true;
         }
 	}

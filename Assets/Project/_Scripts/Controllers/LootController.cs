@@ -259,7 +259,6 @@ public class LootController : MonoBehaviour {
 
         if (wallColliders.Length != 0)
         {
-            Debug.Log("Found a collider abandoning this location");
             return false;
         }
 

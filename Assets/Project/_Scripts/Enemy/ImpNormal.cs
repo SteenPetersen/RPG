@@ -5,17 +5,10 @@ using UnityEngine;
 
 public class ImpNormal : EnemyAI {
 
-    [Header("Dasher Variables")]
-    [SerializeField] float castingRange;
-    [SerializeField] float projectileSpeed = 0;
 
     [Tooltip("The value to which the timer shall be reset after casting")]
     [SerializeField] float castingDelay;
-    float originalCastDelay; /// Used to reset the castDelay back to its original number when enemy is moving
     [SerializeField] float castingTimer;
-
-
-    bool inCastingRange;
 
     bool stoppedMoving;
     bool playerApproriateLevel;
@@ -27,8 +20,6 @@ public class ImpNormal : EnemyAI {
     protected override void Start()
     {
         base.Start();
-
-        originalCastDelay = castingDelay;
 
         startSpeed = maxSpeed;
         maxDashSpeed = startSpeed * 2f;
@@ -43,59 +34,25 @@ public class ImpNormal : EnemyAI {
     {
         base.Update();
 
-        CheckCastingRange();
-
-        if (haveAggro)
+        if (canMove)
         {
-
-            castingTimer -= Time.deltaTime;
-
-
-            if (inCastingRange && castingTimer < 0)
+            if (haveAggro)
             {
-                if (playerApproriateLevel && !dashing)
+                castingTimer -= Time.deltaTime;
+
+                if (castingTimer < 0)
                 {
-                    StartCoroutine(Dash());
-                    timer = meleeDelay;
-                    dashing = true;
-                }
-            }
-        }
-    }
-
-    public virtual void CheckCastingRange()
-    {
-        //create layer masks for the player and the obstacles ending a finalmask combining both
-        int playerLayer = 10;
-        int obstacleLayer = 13;
-        var playerlayerMask = 1 << playerLayer;
-        var obstacleLayerMask = 1 << obstacleLayer;
-        var finalMask = playerlayerMask | obstacleLayerMask;
-
-        if (setter.targetASTAR != null)
-        {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, (playerObj.position - transform.position), castingRange, finalMask);
-            var drawdirection = (playerObj.position - transform.position).normalized;
-
-            if (hit.collider != null)
-            {
-                //Debug.Log(hit.collider.name);
-
-                if (hit.collider.name == "Player")
-                {
-                    Debug.DrawRay(transform.position, (playerObj.position - transform.position), Color.green);
-                    // Debug.Log("reach target, in melee range");
-                    inCastingRange = true;
-                    return;
-                }
-                else
-                {
-                    inCastingRange = false;
+                    if (playerApproriateLevel && !dashing)
+                    {
+                        StartCoroutine(Dash());
+                        timer = meleeDelay;
+                        dashing = true;
+                    }
                 }
             }
 
-            inCastingRange = false;
         }
+
     }
 
     public override void AggroFromDistance(int newLookDistance)
@@ -115,6 +72,8 @@ public class ImpNormal : EnemyAI {
         anim.SetBool("Dash", true);
         dashEffect.Play();
 
+        whenCloseToDestination = Pathfinding.CloseToDestinationMode.ContinueToExactDestination;
+
         while (maxSpeed < maxDashSpeed)
         {
             maxSpeed += 0.5f;
@@ -129,6 +88,7 @@ public class ImpNormal : EnemyAI {
         anim.SetBool("Dash", false);
         dashEffect.Stop();
 
+        whenCloseToDestination = Pathfinding.CloseToDestinationMode.Stop;
         castingTimer = castingDelay;
         dashing = false;
 

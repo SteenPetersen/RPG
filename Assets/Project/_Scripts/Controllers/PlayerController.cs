@@ -1219,6 +1219,7 @@ public class PlayerController : MonoBehaviour
                     {
                         // play the impact particles that belongs to this enemy
                         ParticleSystemHolder.instance.PlayImpactEffect(target.transform.parent.name + "_impact", target.transform.position);
+                        target.gameObject.transform.parent.GetComponent<EnemyAI>().Knockback(target.transform.position - transform.position);
 
                         if (maxChargedHit)
                         {
@@ -1226,6 +1227,7 @@ public class PlayerController : MonoBehaviour
                             GameDetails.fullChargeHits += 1;
                             return;
                         }
+
                         target.gameObject.transform.parent.GetComponent<EnemyStats>().TakeDamage(playerStat.damage.GetValue());
                         GameDetails.hits += 1;
                     }
@@ -1342,12 +1344,14 @@ public class PlayerController : MonoBehaviour
             dungeon = DungeonManager.instance;
 
             Item tmp = InventoryScript.instance.FindItemInInventory("Boss Room Key");
+
             if (tmp != null)
             {
                 tmp.Remove();
             }
 
             dungeon.townPortalDropped = false;
+            dungeon.dungeonReady = false;
 
             StartCoroutine(SpawnIn());
         }
@@ -1420,7 +1424,7 @@ public class PlayerController : MonoBehaviour
 
         CameraShaker.Instance.ShakeOnce(6f, 6f, 0.3f, 0.9f);
         transform.Find("Skeleton").gameObject.SetActive(true);
-        GameDetails.MyInstance.Save();
+        GameDetails.MyInstance.Save(SceneManager.GetActiveScene());
         portal = false;
         spawnInRunning = false;
     }
@@ -1485,7 +1489,6 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (ranged)
                 {
-                    Debug.Log(percentageCostOfChargingBow);
                     if (playerStat.MyCurrentStamina > percentageCostOfChargingBow)
                     {
                         chargedShot = true;

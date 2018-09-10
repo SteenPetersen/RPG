@@ -899,20 +899,19 @@ namespace DynamicLight2D
 				/// </summary>
 				public void GetCollidersOnScene()
 				{
-
 						// Get all box2D colliders
 						BoxCollider2D []_allBoxes = FindObjectsOfType(typeof(BoxCollider2D)) as BoxCollider2D[];
 
-						//PolygonCollider2D [] _allPolygons = FindObjectsOfType(typeof(PolygonCollider2D)) as PolygonCollider2D[];
+						PolygonCollider2D [] _allPolygons = FindObjectsOfType(typeof(PolygonCollider2D)) as PolygonCollider2D[];
 
 						CircleCollider2D [] _allCircles = FindObjectsOfType(typeof(CircleCollider2D)) as CircleCollider2D[];
 
-						//EdgeCollider2D [] _allEdges = FindObjectsOfType(typeof(EdgeCollider2D)) as EdgeCollider2D[];
+						EdgeCollider2D [] _allEdges = FindObjectsOfType(typeof(EdgeCollider2D)) as EdgeCollider2D[];
 
 						//CasterCollider c = new CasterCollider(_allCircles[0], (Vector2)transform.position);
 
 
-						_allMeshes = new CasterCollider[_allBoxes.Length /*+ _allPolygons.Length*/ + _allCircles.Length /*+ _allEdges.Length*/];
+						_allMeshes = new CasterCollider[_allBoxes.Length + _allPolygons.Length + _allCircles.Length + _allEdges.Length];
 
 						///int j2 = 0;
 						//int _counter = 0;
@@ -922,31 +921,33 @@ namespace DynamicLight2D
 								if(_allBoxes[j].enabled)
 									_allMeshes[j] = new CasterCollider(_allBoxes[j]);
 						}
-						
-						
-						// -- Polygons --//	
-						//for(int j = _allBoxes.Length; j < (_allBoxes.Length + _allPolygons.Length); j++){
-						//	if(_allPolygons[j - _allBoxes.Length].enabled)	
-						//		_allMeshes[j] = new CasterCollider(_allPolygons[j - _allBoxes.Length]);
-						//}
+
+
+                        // -- Polygons --//	
+                        for (int j = _allBoxes.Length; j < (_allBoxes.Length + _allPolygons.Length); j++)
+                        {
+                            if (_allPolygons[j - _allBoxes.Length].enabled)
+                                _allMeshes[j] = new CasterCollider(_allPolygons[j - _allBoxes.Length]);
+                        }
 
 
 
-						// -- Circles --//
-						for(int j = _allBoxes.Length; j < (_allBoxes.Length + _allCircles.Length); j++){
-							if(_allCircles[j - (_allBoxes.Length)].enabled)	
-								_allMeshes[j] = new CasterCollider(_allCircles[j - (_allBoxes.Length)], (Vector2)transform.position);
-						}
+                        // -- Circles --//
+                        for (int j = _allBoxes.Length; j < (_allBoxes.Length + _allCircles.Length); j++){
+							            if(_allCircles[j - (_allBoxes.Length)].enabled)	
+								            _allMeshes[j] = new CasterCollider(_allCircles[j - (_allBoxes.Length)], (Vector2)transform.position);
+						            }
 
-						// -- Edges --//
-						//for(int j = _allBoxes.Length + _allPolygons.Length+ _allCircles.Length; j < (_allBoxes.Length + _allPolygons.Length + _allCircles.Length + _allEdges.Length); j++){
-						//	if(_allEdges[j - (_allBoxes.Length + _allPolygons.Length + _allCircles.Length)].enabled)	
-						//		_allMeshes[j] = new CasterCollider(_allEdges[j - (_allBoxes.Length + _allPolygons.Length + _allCircles.Length)]);
-						//}
+                        //--Edges--//
+                        for (int j = _allBoxes.Length + _allPolygons.Length + _allCircles.Length; j < (_allBoxes.Length + _allPolygons.Length + _allCircles.Length + _allEdges.Length); j++)
+                        {
+                            if (_allEdges[j - (_allBoxes.Length + _allPolygons.Length + _allCircles.Length)].enabled)
+                                _allMeshes[j] = new CasterCollider(_allEdges[j - (_allBoxes.Length + _allPolygons.Length + _allCircles.Length)]);
+                        }
 
 
-						//Resize array
-						_allMeshes = _allMeshes.Where(c => c != null).ToArray();
+                         //Resize array
+                         _allMeshes = _allMeshes.Where(c => c != null).ToArray();
 
 						_maxTotalVerts = _allMeshes.Sum(p => p.getTotalPointsCount());
 						
